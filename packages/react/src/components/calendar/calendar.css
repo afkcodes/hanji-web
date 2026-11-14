@@ -1,0 +1,202 @@
+@layer hj.components {
+  /* Customise: --hj-calendar-cell (day size, default 40px) · --hj-calendar-gap */
+  .hj-calendar {
+    --_cell: var(--hj-calendar-cell, 40px);
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--hj-calendar-gap, 10px);
+    width: max-content;
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    user-select: none;
+  }
+
+  .hj-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 2px;
+  }
+  .hj-calendar-title {
+    margin: 0;
+    font: var(--hj-type-heading);
+    letter-spacing: var(--hj-tracking-heading);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-calendar-nav {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+    font-size: 17px;
+    line-height: 0;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-calendar-nav::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+  }
+  .hj-calendar-nav:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--hj-fg) 10%, transparent);
+  }
+  .hj-calendar-nav:active:not(:disabled) {
+    transform: scale(0.92);
+    transition-duration: 70ms;
+  }
+  .hj-calendar-nav:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .hj-calendar-nav svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .hj-calendar-grid {
+    border-collapse: separate;
+    border-spacing: 0 2px;
+    table-layout: fixed;
+  }
+  .hj-calendar-weekday {
+    width: var(--_cell);
+    height: 28px;
+    padding: 0;
+    font: var(--hj-type-label);
+    letter-spacing: var(--hj-tracking-label);
+    color: var(--hj-fg-mute);
+    text-align: center;
+  }
+  /* The month arrives from the side it came from; under reduced motion it only fades. */
+  .hj-calendar-grid[data-direction='next'] .hj-calendar-weeks {
+    animation: hj-calendar-from-next var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
+  }
+  .hj-calendar-grid[data-direction='prev'] .hj-calendar-weeks {
+    animation: hj-calendar-from-prev var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
+  }
+  @keyframes hj-calendar-from-next {
+    from {
+      opacity: 0;
+      transform: translateX(calc(16px * var(--hj-travel)));
+    }
+  }
+  @keyframes hj-calendar-from-prev {
+    from {
+      opacity: 0;
+      transform: translateX(calc(-16px * var(--hj-travel)));
+    }
+  }
+
+  .hj-calendar-cell {
+    position: relative;
+    width: var(--_cell);
+    height: var(--_cell);
+    padding: 0;
+    text-align: center;
+  }
+  /* The range band is drawn on the cell; the ends are capped half-cells. */
+  .hj-calendar-cell[data-in-range]::before,
+  .hj-calendar-cell[data-in-preview]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--hj-accent-soft);
+  }
+  .hj-calendar-cell[data-in-preview]::before {
+    background: color-mix(in srgb, var(--hj-accent-soft) 60%, transparent);
+  }
+  .hj-calendar-cell[data-range-start]::before {
+    left: 50%;
+  }
+  .hj-calendar-cell[data-range-end]::before {
+    right: 50%;
+  }
+  .hj-calendar-cell:first-child[data-in-range]::before,
+  .hj-calendar-cell:first-child[data-in-preview]::before {
+    border-radius: var(--hj-radius-pill) 0 0 var(--hj-radius-pill);
+  }
+  .hj-calendar-cell:last-child[data-in-range]::before,
+  .hj-calendar-cell:last-child[data-in-preview]::before {
+    border-radius: 0 var(--hj-radius-pill) var(--hj-radius-pill) 0;
+  }
+
+  .hj-calendar-day {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--_cell);
+    height: var(--_cell);
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--hj-fg);
+    font: 500 14.5px / 1 var(--hj-font-sans);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-calendar-day:hover:not([data-disabled]):not([data-selected]) {
+    background: color-mix(in srgb, var(--hj-fg) 7%, transparent);
+  }
+  .hj-calendar-day:active:not([data-disabled]) {
+    transform: scale(var(--hj-press));
+    transition-duration: 70ms;
+  }
+  .hj-calendar-day:focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: 0;
+  }
+  .hj-calendar-day[data-outside] {
+    color: var(--hj-fg-mute);
+  }
+  /* Today: a small mark under the number — present, never loud. */
+  .hj-calendar-day[data-today]::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: calc(50% - 2px);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--hj-accent);
+  }
+  .hj-calendar-day[data-today] {
+    font-weight: 700;
+  }
+  .hj-calendar-day[data-selected] {
+    background: var(--hj-accent);
+    color: var(--hj-on-accent);
+    font-weight: 600;
+    animation: hj-calendar-pick var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+  }
+  .hj-calendar-day[data-selected][data-today]::after {
+    background: var(--hj-on-accent);
+  }
+  @keyframes hj-calendar-pick {
+    from {
+      transform: scale(0.86);
+    }
+  }
+  /* Unavailable days fade (hanji's .4); the reason belongs in words beside the calendar. */
+  .hj-calendar-day[data-disabled] {
+    color: var(--hj-fg-mute);
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}

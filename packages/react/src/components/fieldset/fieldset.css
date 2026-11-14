@@ -1,0 +1,41 @@
+@layer hj.components {
+  /* Customise: --hj-fieldset-gap */
+  .hj-fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hj-fieldset-gap, var(--hj-space-4));
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  /* Consecutive sections are divided by a hairline, never boxed. */
+  .hj-fieldset + .hj-fieldset {
+    margin-top: var(--hj-space-3);
+    padding-top: var(--hj-space-6);
+    border-top: 1px solid var(--hj-line);
+  }
+  .hj-fieldset[data-disabled] .hj-fieldset-legend {
+    color: var(--hj-fg-mute);
+  }
+  .hj-fieldset-legend {
+    padding: 0;
+    color: var(--hj-fg);
+  }
+  .hj-fieldset-legend[data-variant='title'] {
+    font: var(--hj-type-subheading);
+    letter-spacing: var(--hj-tracking-subheading);
+  }
+  .hj-fieldset-legend[data-variant='eyebrow'] {
+    font: var(--hj-type-eyebrow);
+    letter-spacing: var(--hj-tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--hj-fg-mute);
+  }
+  .hj-fieldset-description {
+    margin: calc(var(--hj-space-3) * -1) 0 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--hj-fg-dim);
+  }
+}

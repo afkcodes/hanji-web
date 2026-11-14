@@ -1,0 +1,267 @@
+@layer hj.components {
+  /*
+   * Customise: --hj-select-height · --hj-select-radius · --hj-select-popup-radius
+   * · --hj-select-item-height. Set them on the trigger, the popup or any ancestor.
+   */
+  .hj-select-label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--hj-fg);
+    cursor: default;
+  }
+
+  /* Closed: drawn like a text field, so forms read as one family. */
+  .hj-select-trigger {
+    --_h: var(--hj-select-height, 48px);
+    --_ring: var(--hj-line);
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 200px;
+    width: 100%;
+    height: var(--_h);
+    padding: 0 12px 0 14px;
+    border: 0;
+    border-radius: var(--hj-select-radius, var(--hj-radius-sm));
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--_ring);
+    color: var(--hj-fg);
+    font: 500 15px / 1.2 var(--hj-font-sans);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      box-shadow var(--hj-dur-fast) var(--hj-ease-out),
+      background-color var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-select-trigger[data-size='sm'] {
+    --_h: var(--hj-select-height, 40px);
+    font-size: 14px;
+    padding: 0 10px 0 12px;
+  }
+  .hj-select-trigger[data-size='lg'] {
+    --_h: var(--hj-select-height, 56px);
+    font-size: 16px;
+  }
+  .hj-select-trigger:hover:not([data-disabled]):not(:focus-visible):not([data-popup-open]) {
+    --_ring: color-mix(in srgb, var(--hj-fg) 22%, transparent);
+  }
+  .hj-select-trigger:focus-visible,
+  .hj-select-trigger[data-popup-open] {
+    --_ring: var(--hj-accent);
+    box-shadow: inset 0 0 0 1.5px var(--_ring);
+    outline: none;
+  }
+  .hj-select-trigger[data-invalid] {
+    --_ring: var(--hj-danger);
+    box-shadow: inset 0 0 0 1.5px var(--_ring);
+  }
+  .hj-select-trigger[data-disabled] {
+    background: transparent;
+    color: var(--hj-fg-mute);
+    cursor: not-allowed;
+  }
+
+  .hj-select-value {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hj-select-value[data-placeholder] {
+    color: var(--hj-fg-mute);
+    font-weight: 400;
+  }
+  .hj-select-icon {
+    display: inline-flex;
+    flex: none;
+    font-size: 18px;
+    line-height: 0;
+    color: var(--hj-fg-mute);
+    transition:
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+  }
+  .hj-select-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-select-trigger[data-popup-open] .hj-select-icon {
+    color: var(--hj-fg);
+  }
+
+  .hj-select-positioner {
+    z-index: var(--hj-z-popover);
+    outline: none;
+  }
+  .hj-select-backdrop {
+    position: fixed;
+    inset: 0;
+  }
+
+  /* Open: grows from the trigger, lifts off the page — the one surface allowed a shadow. */
+  .hj-select-popup {
+    box-sizing: border-box;
+    min-width: var(--anchor-width);
+    max-width: var(--available-width);
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-select-popup-radius, var(--hj-radius-md));
+    background: var(--hj-surface-2);
+    background-clip: padding-box;
+    box-shadow: var(--hj-shadow-lift);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    outline: none;
+    transform-origin: var(--transform-origin);
+    transition:
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy),
+      opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-select-popup[data-starting-style],
+  .hj-select-popup[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  .hj-select-popup[data-ending-style] {
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+  /* Aligned over the trigger: no travel, only a fade. */
+  .hj-select-popup[data-side='none'] {
+    min-width: calc(var(--anchor-width) + 16px);
+  }
+  .hj-select-popup[data-side='none'][data-starting-style],
+  .hj-select-popup[data-side='none'][data-ending-style] {
+    transform: none;
+  }
+
+  .hj-select-list {
+    position: relative;
+    box-sizing: border-box;
+    max-height: var(--available-height);
+    padding: 6px;
+    overflow-y: auto;
+    scroll-padding-block: 28px;
+    outline: none;
+  }
+
+  .hj-select-item {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    column-gap: 10px;
+    align-items: center;
+    min-height: var(--hj-select-item-height, 40px);
+    padding: 6px 14px 6px 10px;
+    border-radius: var(--hj-radius-xs);
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--hj-fg);
+    cursor: default;
+    user-select: none;
+    outline: none;
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-select-item[data-highlighted] {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+  }
+  .hj-select-item[data-selected] .hj-select-item-text {
+    font-weight: 600;
+  }
+  .hj-select-item[data-disabled] {
+    opacity: 0.4;
+  }
+  .hj-select-item-indicator {
+    grid-column: 1;
+    display: inline-flex;
+    font-size: 17px;
+    line-height: 0;
+    color: var(--hj-accent);
+    animation: hj-fade-in var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-select-item-indicator svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-select-item-text {
+    grid-column: 2;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hj-select-item-description {
+    grid-column: 2;
+    font-size: 12.5px;
+    font-weight: 400;
+    line-height: 17px;
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-select-group + .hj-select-group {
+    margin-top: 4px;
+  }
+  .hj-select-group-label {
+    padding: 10px 10px 4px 38px;
+    font: var(--hj-type-eyebrow);
+    letter-spacing: var(--hj-tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--hj-fg-mute);
+    cursor: default;
+  }
+  .hj-select-separator {
+    height: 1px;
+    margin: 6px 4px;
+    background: var(--hj-line);
+  }
+
+  .hj-select-scroll-arrow {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 24px;
+    background: var(--hj-surface-2);
+    color: var(--hj-fg-mute);
+    font-size: 14px;
+    line-height: 0;
+    cursor: default;
+  }
+  .hj-select-scroll-arrow svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-select-scroll-arrow[data-direction='up'] {
+    top: 0;
+    border-radius: var(--hj-radius-md) var(--hj-radius-md) 0 0;
+  }
+  .hj-select-scroll-arrow[data-direction='down'] {
+    bottom: 0;
+    border-radius: 0 0 var(--hj-radius-md) var(--hj-radius-md);
+  }
+  .hj-select-scroll-arrow::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hj-select-scroll-arrow[data-direction='up'][data-side='none']::before {
+    top: -100%;
+  }
+  .hj-select-scroll-arrow[data-direction='down'][data-side='none']::before {
+    bottom: -100%;
+  }
+
+  .hj-select-arrow {
+    width: 12px;
+    height: 6px;
+  }
+}
