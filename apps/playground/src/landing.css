@@ -396,7 +396,7 @@
 /* ---- facts ---- */
 .lp-facts {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   max-width: 1240px;
   margin: 0 auto;
   padding: 0 32px;
@@ -789,7 +789,7 @@
     font-size: 14px;
     white-space: nowrap;
   }
-  .lp-nav .lp-links > :nth-child(2),
+  .lp-nav .lp-links > :nth-child(3),
   .lp-slug > span:last-child {
     display: none;
   }

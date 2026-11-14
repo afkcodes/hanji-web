@@ -1,3 +1,4 @@
+import { catalog as iconCatalog } from '@hanji/icons/catalog';
 import {
   Avatar,
   Button,
@@ -419,7 +420,7 @@ const ARTEFACTS = [
   ['manifest.json', 'Every part, prop, data attribute, CSS variable and token, typed.'],
   ['llms.txt', 'An index of the docs; llms-full.txt is the whole set in one read.'],
   ['registry/', 'Each component’s source, in the shadcn registry format.'],
-  ['@hanji/mcp', 'Eight read-only tools: search, get_component, get_example, get_tokens…'],
+  ['@hanji/mcp', 'Ten read-only tools: search_components, get_component, search_icons, get_icon…'],
 ] as const;
 
 const ROW = `<Field.Root className="setting">
@@ -562,6 +563,9 @@ export function Landing(props: LandingProps): React.JSX.Element {
           <Link href="#/components" tone="fg" underline="hover">
             Components
           </Link>
+          <Link href="#/icons" tone="fg" underline="hover">
+            Icons
+          </Link>
           <Link href="#agents" tone="fg" underline="hover">
             For agents
           </Link>
@@ -611,6 +615,10 @@ export function Landing(props: LandingProps): React.JSX.Element {
             <dd>{aiCount}</dd>
           </div>
           <div>
+            <dt>icons in outline, solid and wash</dt>
+            <dd>{iconCatalog.length.toLocaleString('en-GB')}</dd>
+          </div>
+          <div>
             <dt>papers × accents</dt>
             <dd>
               {paperNames.length}
@@ -620,7 +628,7 @@ export function Landing(props: LandingProps): React.JSX.Element {
           </div>
           <div>
             <dt>read-only MCP tools</dt>
-            <dd>8</dd>
+            <dd>10</dd>
           </div>
           <div>
             <dt>kB of CSS-in-JS runtime</dt>

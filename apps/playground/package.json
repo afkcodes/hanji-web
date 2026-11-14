@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
+    "@hanji/icons": "workspace:*",
     "@hanji/react": "workspace:*",
     "@hanji/tokens": "workspace:*",
     "react": "catalog:",

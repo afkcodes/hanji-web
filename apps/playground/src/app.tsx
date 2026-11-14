@@ -2,6 +2,7 @@ import { CodeBlock, SegmentedControl, Select, Toggle } from '@hanji/react';
 import { accentNames, accents } from '@hanji/tokens';
 import * as React from 'react';
 
+import { IconsPage } from './icons-page.tsx';
 import { Landing } from './landing.tsx';
 import { categories, entries } from './registry.ts';
 import type { Entry } from './registry.ts';
@@ -380,6 +381,13 @@ export function App(): React.JSX.Element {
         </div>
       </header>
       <nav className="pg-nav" aria-label="Components">
+        <div>
+          <h5>foundation</h5>
+          <a href="#/icons" aria-current={route === 'icons' ? 'page' : undefined}>
+            Icons
+            <i>new</i>
+          </a>
+        </div>
         {categories.map((c) => (
           <div key={c.id}>
             <h5>{c.id}</h5>
@@ -387,7 +395,7 @@ export function App(): React.JSX.Element {
               <a
                 key={e.meta.slug}
                 href={`#/${e.meta.slug}`}
-                aria-current={e === entry ? 'page' : undefined}
+                aria-current={route !== 'icons' && e === entry ? 'page' : undefined}
               >
                 {e.meta.name}
                 {e.meta.status === 'new' ? <i>new</i> : null}
@@ -397,7 +405,13 @@ export function App(): React.JSX.Element {
         ))}
       </nav>
       <main className="pg-main">
-        {entry ? <Page key={entry.meta.slug} entry={entry} /> : <p>No components yet.</p>}
+        {route === 'icons' ? (
+          <IconsPage />
+        ) : entry ? (
+          <Page key={entry.meta.slug} entry={entry} />
+        ) : (
+          <p>No components yet.</p>
+        )}
       </main>
     </div>
   );
