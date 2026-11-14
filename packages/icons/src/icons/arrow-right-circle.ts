@@ -1,0 +1,11 @@
+import { icon } from '../create-icon.tsx';
+import type { HanjiIcon } from '../create-icon.tsx';
+
+/** `arrow-right-circle` — outline, solid (filled) and wash. Also: direction, east, next, forward, round, circular, pointer, navigation. */
+export const IconArrowRightCircle: HanjiIcon = /* @__PURE__ */ icon(
+  'arrow-right-circle',
+  'M18 15l3-3l-3-3M3 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M7 12h14',
+  [
+    'M5 15c-1.657 0-3-1.343-3-3l.005-.176a3 3 0 0 1 5.825-.824h10.756l-1.292-1.293a1 1 0 0 1 -.083-1.32l.083-.094a1 1 0 0 1 1.414 0l3 3l.097.112l.071.11l.031.062l.034.081l.024.076l.03.148l.005.118l-.004.085l-.016.116l-.03.111l-.044.111l-.052.098l-.074.104l-.073.082l-3 3a1 1 0 0 1 -1.414-1.414l1.292-1.293h-10.756a3 3 0 0 1 -2.829 2',
+  ],
+);

@@ -19,6 +19,14 @@ export default defineConfig({
       },
       {
         resolve: { conditions: ['@hanji/source'] },
+        test: {
+          name: 'icons',
+          include: ['packages/icons/src/**/*.test.tsx'],
+          environment: 'happy-dom',
+        },
+      },
+      {
+        resolve: { conditions: ['@hanji/source'] },
         test: { name: 'mcp', include: ['packages/mcp/**/*.test.ts'], environment: 'node' },
       },
     ],

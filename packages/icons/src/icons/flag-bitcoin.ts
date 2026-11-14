@@ -1,0 +1,9 @@
+import { icon } from '../create-icon.tsx';
+import type { HanjiIcon } from '../create-icon.tsx';
+
+/** `flag-bitcoin` — outline, solid (bold line) and wash. Also: report, banner, milestone, crypto, cryptocurrency, btc, blockchain, mark. */
+export const IconFlagBitcoin: HanjiIcon = /* @__PURE__ */ icon(
+  'flag-bitcoin',
+  'M17 21v-6m2 0v-1.5m0 9v-1.5m-2-3h3m-1 0h.5a1.5 1.5 0 0 1 0 3h-3.5m3-3h.5a1.5 1.5 0 0 0 0-3h-3.5M13.222 14.882a5 5 0 0 1 -1.222-.882a5 5 0 0 0 -7 0v-9a5 5 0 0 1 7 0a5 5 0 0 0 7 0v5M5 21v-7',
+  null,
+);
