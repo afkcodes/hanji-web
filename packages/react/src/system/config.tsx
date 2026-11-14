@@ -53,6 +53,54 @@ export interface HanjiStrings {
   reorderDropped: (name: string, n: number, total: number) => string;
   /** “Low Tide put back at position 2.” */
   reorderCancelled: (name: string, n: number) => string;
+  /** SwipeActions: name of a row's menu of its swipe actions. */
+  moreActions: string;
+  /** SwipeActions: the same, for a named row: “More actions for Quarterly numbers”. */
+  moreActionsFor: (name: string) => string;
+  /** SwipeActions: said after a full swipe commits: “Archive: Quarterly numbers. Done.” */
+  swipeActionDone: (action: string, name?: string) => string;
+  /** DataTable: the header checkbox. */
+  selectAllRows: string;
+  /** DataTable: a row's checkbox, read before the row's name: “Select row Mira Okafor”. */
+  selectRow: string;
+  /** DataTable sort announcement: “Sorted by Amount, descending” · “No longer sorted by Amount”. */
+  sortedBy: (column: string, direction: 'ascending' | 'descending' | 'none') => string;
+  /** DataTable with no rows and no `empty` content. */
+  noRows: string;
+  /** Accessible name of the ⌘K dialog. */
+  commandPalette: string;
+  /** Accessible name of the command palette's search input. */
+  commandSearch: string;
+  /** Command palette empty state: “No results for “q”” (query may be empty). */
+  commandEmpty: (query: string) => string;
+  /** Drop zone prompt: “Drop files here”, or “Drop a file here” when it takes one. */
+  dropFiles: (multiple: boolean) => string;
+  /** The drop zone button that opens the file picker. */
+  browseFiles: string;
+  /** A file rejected because its type isn't accepted. */
+  fileTypeRejected: string;
+  /** A file rejected for size: “Over 10 MB” (the limit, formatted). */
+  fileTooLarge: (max: string) => string;
+  /** A file rejected past the file limit: “Over the 5-file limit”. */
+  tooManyFiles: (max: number) => string;
+  /** Announced when files land: “2 files added”. */
+  filesAdded: (n: number) => string;
+  /** A file that finished uploading. */
+  uploaded: string;
+  /** A failed upload, when the app gives no reason. */
+  uploadFailed: string;
+  /** Retry a failed upload: “Retry lease.pdf”. */
+  retry: string;
+  /** Tree: the row shown when a lazy item's children failed to load. */
+  treeLoadFailed: string;
+  /** Tree: the verb on that row — Enter or a click loads again. */
+  treeRetry: string;
+  /** Tree: the row inside an open item with no children. */
+  treeEmpty: string;
+  /** Tree: announced when lazy children arrive: “Archive 2019, 12 items”. */
+  treeLoaded: (name: string, count: number) => string;
+  /** Tree: announced when they fail: “Couldn’t load Archive 2019”. */
+  treeLoadFailedOf: (name: string) => string;
 }
 
 export const defaultStrings: HanjiStrings = {
@@ -93,6 +141,32 @@ export const defaultStrings: HanjiStrings = {
   reorderMoved: (name, n, total) => `${name}, position ${n} of ${total}.`,
   reorderDropped: (name, n, total) => `Moved ${name} to position ${n} of ${total}.`,
   reorderCancelled: (name, n) => `${name} put back at position ${n}.`,
+  moreActions: 'More actions',
+  moreActionsFor: (name) => `More actions for ${name}`,
+  swipeActionDone: (action, name) => (name ? `${action}: ${name}. Done.` : `${action}. Done.`),
+  selectAllRows: 'Select all rows',
+  selectRow: 'Select row',
+  sortedBy: (column, direction) =>
+    direction === 'none' ? `No longer sorted by ${column}` : `Sorted by ${column}, ${direction}`,
+  noRows: 'Nothing to show',
+  commandPalette: 'Command palette',
+  commandSearch: 'Search commands',
+  commandEmpty: (query) => (query ? `No results for “${query}”` : 'No results'),
+  dropFiles: (multiple) => (multiple ? 'Drop files here' : 'Drop a file here'),
+  browseFiles: 'Browse',
+  fileTypeRejected: 'File type not accepted',
+  fileTooLarge: (max) => `Over ${max}`,
+  tooManyFiles: (max) => (max === 1 ? 'Only one file allowed' : `Over the ${max}-file limit`),
+  filesAdded: (n) => (n === 1 ? '1 file added' : `${n} files added`),
+  uploaded: 'Uploaded',
+  uploadFailed: 'Upload failed',
+  retry: 'Retry',
+  treeLoadFailed: 'Couldn’t load',
+  treeRetry: 'Try again',
+  treeEmpty: 'Empty',
+  treeLoaded: (name, count) =>
+    count === 0 ? `${name} is empty` : `${name}, ${count} ${count === 1 ? 'item' : 'items'}`,
+  treeLoadFailedOf: (name) => `Couldn’t load ${name}`,
 };
 
 /**
