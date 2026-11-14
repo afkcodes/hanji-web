@@ -1,0 +1,57 @@
+@layer hj.components {
+  /* Customise: --hj-link-color · --hj-link-underline-offset */
+  .hj-link {
+    --_c: var(--hj-link-color, var(--hj-accent));
+    color: var(--_c);
+    font-weight: 500;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: var(--hj-link-underline-offset, 0.22em);
+    text-decoration-color: color-mix(in srgb, var(--_c) 40%, transparent);
+    border-radius: 3px;
+    cursor: pointer;
+    transition:
+      text-decoration-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-link:hover {
+    text-decoration-color: var(--_c);
+  }
+  .hj-link:active {
+    opacity: var(--hj-press-opacity);
+    transition-duration: 70ms;
+  }
+  .hj-link[data-tone='fg'] {
+    --_c: var(--hj-link-color, var(--hj-fg));
+  }
+  .hj-link[data-tone='dim'] {
+    --_c: var(--hj-link-color, var(--hj-fg-dim));
+  }
+  .hj-link[data-underline='hover'] {
+    text-decoration-color: transparent;
+  }
+  .hj-link[data-underline='hover']:hover {
+    text-decoration-color: color-mix(in srgb, var(--_c) 60%, transparent);
+  }
+
+  .hj-link-glyph {
+    display: inline-flex;
+    margin-left: 0.15em;
+    font-size: 0.85em;
+    vertical-align: -0.05em;
+    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-link:hover .hj-link-glyph {
+    transform: translate(calc(1.5px * var(--hj-travel)), calc(-1.5px * var(--hj-travel)));
+  }
+  .hj-link-note {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,46 @@
+@layer hj.components {
+  /* Customise: --hj-separator-color · --hj-separator-inset · --hj-separator-space */
+  .hj-separator {
+    flex: none;
+    border: 0;
+    margin: var(--hj-separator-space, 0) 0;
+    background: var(--hj-separator-color, var(--hj-line));
+  }
+  .hj-separator[data-orientation='horizontal'] {
+    width: 100%;
+    height: var(--hj-hairline);
+  }
+  .hj-separator[data-orientation='vertical'] {
+    width: var(--hj-hairline);
+    height: auto;
+    align-self: stretch;
+    margin: 0 var(--hj-separator-space, 0);
+  }
+  .hj-separator[data-variant='inset'][data-orientation='horizontal'] {
+    width: auto;
+    margin-left: var(--hj-separator-inset, 72px);
+  }
+
+  /* Labelled: a word sitting in the rule. The element stays a rule; the line is drawn either side. */
+  .hj-separator[data-label] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: auto;
+    background: none;
+    color: var(--hj-fg-mute);
+    font: var(--hj-type-eyebrow);
+    letter-spacing: var(--hj-tracking-eyebrow);
+    text-transform: uppercase;
+  }
+  .hj-separator[data-label]::before,
+  .hj-separator[data-label]::after {
+    content: '';
+    flex: 1;
+    height: var(--hj-hairline);
+    background: var(--hj-separator-color, var(--hj-line));
+  }
+  .hj-separator-label {
+    flex: none;
+  }
+}

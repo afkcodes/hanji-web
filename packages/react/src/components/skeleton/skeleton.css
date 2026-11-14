@@ -1,0 +1,56 @@
+@layer hj.components {
+  /* Customise: --hj-skeleton-color · --hj-skeleton-highlight · --hj-skeleton-radius */
+  .hj-skeleton {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 16px;
+    overflow: hidden;
+    border-radius: var(--hj-skeleton-radius, var(--hj-radius-xs));
+    /* a neutral tint, so the block reads on any paper step it sits on */
+    background: var(--hj-skeleton-color, color-mix(in srgb, var(--hj-fg) 7%, transparent));
+    isolation: isolate;
+  }
+  .hj-skeleton[data-shape='circle'] {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  .hj-skeleton[data-shape='text'] {
+    height: 0.72em;
+    margin: 0.32em 0;
+    border-radius: 4px;
+  }
+
+  /* One soft pass: 1000 ms across, 450 ms rest. Ambient — it holds still under reduced motion. */
+  .hj-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--hj-skeleton-highlight, color-mix(in srgb, var(--hj-fg) 6%, transparent)) 50%,
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: hj-skeleton-sweep 1450ms var(--hj-ease-out) infinite;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-skeleton-sweep {
+    0% {
+      transform: translateX(-100%);
+    }
+    69% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .hj-skeleton-text {
+    display: block;
+    width: 100%;
+  }
+}

@@ -1,0 +1,156 @@
+@layer hj.components {
+  /* Customise: --hj-chip-height · --hj-chip-padding · --hj-chip-gap (between chips) */
+  .hj-chip {
+    --_h: var(--hj-chip-height, 32px);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    height: var(--_h);
+    padding: 0 var(--hj-chip-padding, 13px);
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg-dim);
+    font: 600 13px / 1 var(--hj-font-sans);
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color var(--hj-dur-base) var(--hj-ease-out),
+      background-color var(--hj-dur-base) var(--hj-ease-out),
+      box-shadow var(--hj-dur-base) var(--hj-ease-out),
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      scale var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  /* 32px drawing, 44px target */
+  .hj-chip::before {
+    content: '';
+    position: absolute;
+    inset: calc((var(--_h) - var(--hj-touch)) / 2) -2px;
+  }
+  .hj-chip[data-size='sm'] {
+    --_h: var(--hj-chip-height, 28px);
+    padding: 0 var(--hj-chip-padding, 11px);
+    font-size: 12.5px;
+  }
+  .hj-chip:hover:not([data-disabled]) {
+    color: var(--hj-fg);
+  }
+  .hj-chip[data-kind='filter']:active:not([data-disabled]),
+  .hj-chip[data-kind='action']:active:not([data-disabled]) {
+    scale: var(--hj-press);
+    transition-duration:
+      var(--hj-dur-base), var(--hj-dur-base), var(--hj-dur-base), var(--hj-dur-fast), 70ms;
+  }
+  .hj-chip[data-pressed] {
+    background: var(--hj-accent-soft);
+    box-shadow: inset 0 0 0 1px transparent;
+    color: var(--hj-accent);
+  }
+  .hj-chip[data-pressed]:hover {
+    color: var(--hj-accent);
+  }
+  .hj-chip[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .hj-chip-check {
+    display: none;
+    margin-left: -3px;
+    font-size: 14px;
+    line-height: 0;
+  }
+  .hj-chip-check > svg {
+    stroke-width: 2;
+  }
+  .hj-chip[data-pressed] .hj-chip-check {
+    display: inline-flex;
+    animation: hj-chip-check-in var(--hj-dur-snappy) var(--hj-ease-snappy) both;
+  }
+  @keyframes hj-chip-check-in {
+    from {
+      scale: 0.3;
+      opacity: 0;
+    }
+  }
+  .hj-chip-icon {
+    display: inline-flex;
+    margin-left: -2px;
+    font-size: 16px;
+    line-height: 0;
+    color: var(--hj-fg-dim);
+  }
+  .hj-chip[data-pressed] .hj-chip-icon {
+    color: inherit;
+  }
+  .hj-chip-label {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* input: a value with a ✕ — it is not pressable itself, only its ✕ is */
+  .hj-chip[data-kind='input'] {
+    padding-right: 4px;
+    color: var(--hj-fg);
+    cursor: default;
+  }
+  .hj-chip[data-kind='action'] {
+    color: var(--hj-fg);
+  }
+  .hj-chip-remove {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--hj-fg-mute);
+    font-size: 14px;
+    line-height: 0;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-chip-remove::before {
+    content: '';
+    position: absolute;
+    inset: -10px -6px;
+  }
+  .hj-chip-remove:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--hj-fg) 8%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-chip-remove > svg {
+    stroke-width: 1.75;
+  }
+  .hj-chip-remove:disabled {
+    cursor: not-allowed;
+  }
+  /* Leaving: fade fast in place; neighbours glide after it is gone (Chip.List). */
+  .hj-chip[data-leaving] {
+    opacity: 0;
+    scale: 0.9;
+    pointer-events: none;
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      scale var(--hj-dur-fast) var(--hj-ease-out);
+  }
+
+  .hj-chip-group,
+  .hj-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--hj-chip-gap, 8px);
+  }
+}

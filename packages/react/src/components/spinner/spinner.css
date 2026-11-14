@@ -1,0 +1,59 @@
+@layer hj.components {
+  /* Customise: --hj-spinner-size · --hj-spinner-stroke · --hj-spinner-color */
+  .hj-spinner {
+    --_s: var(--hj-spinner-size, 20px);
+    --_w: var(--hj-spinner-stroke, 2px);
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: var(--_s);
+    height: var(--_s);
+    color: var(--hj-spinner-color, var(--hj-accent));
+    vertical-align: middle;
+    animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out) both;
+  }
+  .hj-spinner[data-size='sm'] {
+    --_s: var(--hj-spinner-size, 16px);
+  }
+  .hj-spinner[data-size='lg'] {
+    --_s: var(--hj-spinner-size, 40px);
+    --_w: var(--hj-spinner-stroke, 3px);
+  }
+  .hj-spinner[data-tone='current'] {
+    color: var(--hj-spinner-color, currentColor);
+  }
+  .hj-spinner[data-waiting] {
+    visibility: hidden;
+    animation: none;
+  }
+
+  /* The ring turns on its own element, so containers can scale the spinner freely. */
+  .hj-spinner-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    animation: var(--hj-anim-spin);
+  }
+  .hj-spinner-ring::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg 40deg, currentColor 360deg);
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - var(--_w) - 0.5px),
+      black calc(100% - var(--_w))
+    );
+  }
+  .hj-spinner-ring::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(50% - var(--_w) / 2);
+    width: var(--_w);
+    height: var(--_w);
+    border-radius: 50%;
+    background: currentColor;
+  }
+}

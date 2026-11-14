@@ -1,0 +1,91 @@
+@layer hj.components {
+  /* Customise: --hj-status-height */
+  .hj-status {
+    --_c: var(--hj-fg-dim);
+    --_bg: color-mix(in srgb, var(--hj-fg) 7%, transparent);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: var(--hj-status-height, 26px);
+    padding: 0 10px 0 8px;
+    border-radius: var(--hj-radius-pill);
+    background: var(--_bg);
+    color: var(--_c);
+    font: 600 12.5px / 1 var(--hj-font-sans);
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .hj-status[data-tone='success'] {
+    --_c: var(--hj-success);
+    --_bg: var(--hj-success-soft);
+  }
+  .hj-status[data-tone='warning'] {
+    --_c: var(--hj-warning);
+    --_bg: var(--hj-warning-soft);
+  }
+  .hj-status[data-tone='danger'] {
+    --_c: var(--hj-danger);
+    --_bg: var(--hj-danger-soft);
+  }
+  .hj-status[data-tone='info'] {
+    --_c: var(--hj-info);
+    --_bg: var(--hj-info-soft);
+  }
+  .hj-status[data-tone='pending'] {
+    --_c: var(--hj-accent);
+    --_bg: var(--hj-accent-soft);
+  }
+  .hj-status[data-variant='plain'] {
+    height: auto;
+    padding: 0;
+    background: none;
+  }
+
+  .hj-status-glyph {
+    display: inline-flex;
+    font-size: 15px;
+    line-height: 0;
+  }
+  .hj-status-glyph > svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-status-meta {
+    font-weight: 500;
+    color: var(--hj-fg-mute);
+  }
+  .hj-status-meta::before {
+    content: '·';
+    margin-right: 6px;
+  }
+
+  /* neutral: a still dot · pending: a dot with a ring that breathes outward while work runs */
+  .hj-status-dot {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    margin: 0 2px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .hj-status-dot[data-tone='pending']::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    animation: hj-status-ring 1600ms var(--hj-ease-out) infinite;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-status-ring {
+    from {
+      transform: scale(0.6);
+      opacity: 0.7;
+    }
+    to {
+      transform: scale(1.7);
+      opacity: 0;
+    }
+  }
+}

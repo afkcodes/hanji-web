@@ -1,0 +1,82 @@
+@layer hj.components {
+  /* Customise: --hj-badge-height · --hj-badge-ring (the gap ring when anchored) */
+  .hj-badge {
+    --_h: var(--hj-badge-height, 18px);
+    --_bg: var(--hj-accent);
+    --_fg: var(--hj-on-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    min-width: var(--_h);
+    height: var(--_h);
+    padding: 0;
+    border-radius: var(--hj-radius-pill);
+    background: var(--_bg);
+    color: var(--_fg);
+    font: 700 11px / 1 var(--hj-font-sans);
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .hj-badge[data-wide] {
+    padding: 0 5px;
+  }
+  .hj-badge[data-tone='danger'] {
+    --_bg: var(--hj-danger);
+    --_fg: var(--hj-bg);
+  }
+  .hj-badge[data-tone='neutral'] {
+    --_bg: color-mix(in srgb, var(--hj-fg) 10%, var(--hj-bg));
+    --_fg: var(--hj-fg-dim);
+  }
+  /* A changed count pops once on the bouncy spring (scale only). */
+  .hj-badge[data-pop='a'] {
+    animation: hj-badge-pop-a var(--hj-dur-bouncy) var(--hj-ease-bouncy);
+  }
+  .hj-badge[data-pop='b'] {
+    animation: hj-badge-pop-b var(--hj-dur-bouncy) var(--hj-ease-bouncy);
+  }
+  @keyframes hj-badge-pop-a {
+    from {
+      scale: 0.72;
+    }
+  }
+  @keyframes hj-badge-pop-b {
+    from {
+      scale: 0.72;
+    }
+  }
+  .hj-badge[data-dot] {
+    min-width: 8px;
+    width: 8px;
+    height: 8px;
+  }
+
+  .hj-badge-anchor {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    vertical-align: middle;
+  }
+  .hj-badge-anchor > .hj-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    translate: 40% -40%;
+    box-shadow: 0 0 0 2px var(--hj-badge-ring, var(--hj-bg));
+    pointer-events: none;
+  }
+  .hj-badge-anchor[data-shape='circle'] > .hj-badge {
+    translate: 15% -15%;
+  }
+  .hj-badge-anchor[data-placement='bottom-end'] > .hj-badge {
+    top: auto;
+    bottom: 0;
+    translate: 40% 40%;
+  }
+  .hj-badge-anchor[data-shape='circle'][data-placement='bottom-end'] > .hj-badge {
+    translate: 10% 10%;
+  }
+}
