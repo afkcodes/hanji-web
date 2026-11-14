@@ -1,0 +1,300 @@
+@layer hj.components {
+  /*
+   * Customise: --hj-swipe-actions-bg (the row's paper, default bg) · --hj-swipe-actions-row-height (56) ·
+   * --hj-swipe-actions-action-width (76) · --hj-swipe-actions-inset (where the hairline starts)
+   *
+   * Paint: actions are tints, never solid — a tone at 14% behind its glyph and verb. Past the point of
+   * no return the committing action takes the whole gap and its tint deepens to 26%.
+   */
+  .hj-swipe-actions-group {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hj-swipe-actions {
+    --_bg: var(--hj-swipe-actions-bg, var(--hj-bg));
+    position: relative;
+    display: block;
+    overflow: hidden;
+    overflow: clip;
+    isolation: isolate;
+    background: var(--_bg);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* A removal: the row has slid out; it fades on the exit clock, then the item goes. */
+  .hj-swipe-actions[data-removing] {
+    opacity: 0;
+    pointer-events: none;
+    transition-duration: var(--hj-dur-fast);
+  }
+  .hj-swipe-actions[data-dragging] {
+    cursor: grabbing;
+  }
+  /* Hairline between rows, from where the text starts; it stays put while the row slides. */
+  .hj-swipe-actions-group[data-divided] > .hj-swipe-actions + .hj-swipe-actions::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: var(--hj-swipe-actions-inset, 16px) 0;
+    z-index: 2;
+    height: 1px;
+    background: var(--hj-line);
+    pointer-events: none;
+  }
+
+  .hj-swipe-actions-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: calc(12px * var(--hj-density));
+    box-sizing: border-box;
+    min-height: var(--hj-swipe-actions-row-height, calc(56px * var(--hj-density-size)));
+    padding: calc(8px * var(--hj-density)) calc(16px * var(--hj-density));
+    --_row: var(--_bg);
+    background: var(--_row);
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /* A row that is a link or a button answers a press in its paper, never in opacity (the tray is beneath). */
+  .hj-swipe-actions-content:is(a[href], button):hover {
+    --_row: color-mix(in srgb, var(--hj-fg) 3%, var(--_bg));
+  }
+  .hj-swipe-actions-content:is(a[href], button):active {
+    --_row: color-mix(in srgb, var(--hj-fg) 6%, var(--_bg));
+    transition-duration: 70ms;
+  }
+  .hj-swipe-actions-content:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--hj-focus);
+  }
+
+  /* The trays sit under the content. Only the side being revealed shows (a removal clears the row). */
+  .hj-swipe-actions-tray {
+    position: absolute;
+    inset-block: 0;
+    z-index: 0;
+    display: flex;
+    opacity: 0;
+    /* reduced motion: travel is 0, so the actions fade in instead of spreading out */
+    transition: opacity calc(var(--hj-dur-fast) * (1 - var(--hj-travel))) var(--hj-ease-out);
+  }
+  .hj-swipe-actions-tray[data-side='leading'] {
+    inset-inline-start: 0;
+  }
+  .hj-swipe-actions-tray[data-side='trailing'] {
+    inset-inline-end: 0;
+  }
+  .hj-swipe-actions[data-revealing='leading'] > .hj-swipe-actions-tray[data-side='leading'],
+  .hj-swipe-actions[data-revealing='trailing'] > .hj-swipe-actions-tray[data-side='trailing'] {
+    opacity: 1;
+  }
+
+  .hj-swipe-actions-action {
+    --_t: var(--hj-fg);
+    --_rest: 8%;
+    --_hot: 12%;
+    --_armed: 16%;
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--hj-swipe-actions-action-width, 76px);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--_t);
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hj-swipe-actions-action:not([data-tone='neutral']) {
+    --_rest: 14%;
+    --_hot: 20%;
+    --_armed: 26%;
+  }
+  .hj-swipe-actions-action[data-tone='accent'] {
+    --_t: var(--hj-accent);
+  }
+  .hj-swipe-actions-action[data-tone='info'] {
+    --_t: var(--hj-info);
+  }
+  .hj-swipe-actions-action[data-tone='success'] {
+    --_t: var(--hj-success);
+  }
+  .hj-swipe-actions-action[data-tone='warning'] {
+    --_t: var(--hj-warning);
+  }
+  .hj-swipe-actions-action[data-tone='danger'] {
+    --_t: var(--hj-danger);
+  }
+  .hj-swipe-actions-action:disabled {
+    --_t: var(--hj-fg-mute);
+    --_rest: 6%;
+    cursor: not-allowed;
+  }
+
+  /* The tint is its own layer so it can stretch across the gap without stretching the glyph. */
+  .hj-swipe-actions-fill {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--_t) var(--_rest), var(--_bg));
+    transform-origin: center;
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-swipe-actions-action:not(:disabled):active > .hj-swipe-actions-fill {
+    background: color-mix(in srgb, var(--_t) var(--_hot), var(--_bg));
+    transition-duration: 70ms;
+  }
+  @media (hover: hover) {
+    .hj-swipe-actions-action:not(:disabled):hover > .hj-swipe-actions-fill {
+      background: color-mix(in srgb, var(--_t) var(--_hot), var(--_bg));
+    }
+  }
+  /* Past the point of no return: one tint, deeper — still a tint. */
+  .hj-swipe-actions-action[data-armed] > .hj-swipe-actions-fill {
+    background: color-mix(in srgb, var(--_t) var(--_armed), var(--_bg));
+  }
+  /* the ring is its own layer: an outline would paint beneath the stretched fill */
+  .hj-swipe-actions-action:focus-visible::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
+    box-shadow: inset 0 0 0 2px var(--hj-focus);
+    pointer-events: none;
+  }
+
+  .hj-swipe-actions-label {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(4px * var(--hj-density));
+    font: var(--hj-type-label);
+    letter-spacing: var(--hj-tracking-label);
+    white-space: nowrap;
+    pointer-events: none;
+    transform-origin: center;
+  }
+  .hj-swipe-actions-glyph {
+    display: inline-flex;
+    width: 1em;
+    height: 1em;
+    font-size: 20px;
+    line-height: 0;
+  }
+  .hj-swipe-actions-glyph > svg {
+    width: 100%;
+    height: 100%;
+  }
+  .hj-swipe-actions-action:disabled .hj-swipe-actions-glyph,
+  .hj-swipe-actions-action:disabled .hj-swipe-actions-verb {
+    opacity: 0.4;
+  }
+
+  /*
+   * The More button: the twin of every swipe. It sits over the row's end (like a mail list's hover
+   * actions), on the row's own paper, so it takes no room until it is wanted.
+   */
+  .hj-swipe-actions-more {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: calc(6px * var(--hj-density));
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: var(--hj-touch, 44px);
+    height: var(--hj-touch, 44px);
+    padding: 0;
+    border: 0;
+    background: var(--_row);
+    color: var(--hj-fg-mute);
+    font-size: 20px;
+    line-height: 0;
+    cursor: pointer;
+    translate: 0 -50%;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /* the row's text runs under a short fade, not into an edge */
+  .hj-swipe-actions-more::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 100%;
+    width: 28px;
+    background: linear-gradient(to left, var(--_row), transparent);
+    pointer-events: none;
+  }
+  .hj-swipe-actions-more:dir(rtl)::before {
+    background: linear-gradient(to right, var(--_row), transparent);
+  }
+  /* the hover disc, beneath the glyph */
+  .hj-swipe-actions-more::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    border-radius: var(--hj-radius-pill);
+    background: transparent;
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-swipe-actions-more > svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-swipe-actions-more:hover:not(:disabled),
+  .hj-swipe-actions-more[data-popup-open] {
+    color: var(--hj-fg);
+  }
+  .hj-swipe-actions-more:hover:not(:disabled)::after,
+  .hj-swipe-actions-more[data-popup-open]::after {
+    background: color-mix(in srgb, var(--hj-fg) 7%, transparent);
+  }
+  .hj-swipe-actions-more:focus-visible {
+    outline: none;
+  }
+  .hj-swipe-actions-more:focus-visible::after {
+    box-shadow: inset 0 0 0 2px var(--hj-focus);
+  }
+  .hj-swipe-actions-more:disabled {
+    color: color-mix(in srgb, var(--hj-fg-mute) 40%, transparent);
+    cursor: not-allowed;
+  }
+  /* Once the row moves its actions are in view: More steps aside (unless it holds focus). */
+  .hj-swipe-actions[data-revealing] .hj-swipe-actions-more:not(:focus-visible) {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* With a mouse it waits for the row to be hovered or focused; touch has the swipe. */
+  @media (hover: hover) {
+    .hj-swipe-actions-content:not(:hover, :focus-within)
+      > .hj-swipe-actions-more:not([data-popup-open]) {
+      opacity: 0;
+    }
+  }
+  @media (hover: none) {
+    .hj-swipe-actions-more:not(:focus-visible, [data-popup-open]) {
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+  }
+}

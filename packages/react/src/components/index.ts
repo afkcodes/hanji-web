@@ -70,6 +70,7 @@ export * from './status/index.ts';
 export * from './steps/index.ts';
 export * from './streaming-text/index.ts';
 export * from './suggestions/index.ts';
+export * from './swipe-actions/index.ts';
 export * from './switch/index.ts';
 export * from './tab-bar/index.ts';
 export * from './table/index.ts';
