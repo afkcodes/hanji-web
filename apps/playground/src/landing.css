@@ -1,0 +1,858 @@
+/* The landing page at #/. One lit place: the proof sheet (fibres, stamp). Everything else is matte
+   paper, hairlines and type. */
+
+.lp {
+  min-height: 100svh;
+  background: var(--hj-bg);
+  color: var(--hj-fg);
+  font-family: var(--hj-font-sans);
+  overflow-x: clip;
+}
+.lp-mono {
+  font-family: var(--hj-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.lp-eyebrow {
+  margin: 0;
+  font: 500 11.5px / 1.2 var(--hj-font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hj-fg-mute);
+}
+
+/* ---- nav ---- */
+.lp-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 22px 32px;
+}
+.lp-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--hj-fg);
+  font: 700 19px / 1 var(--hj-font-sans);
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+.lp-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+/* ---- hero ---- */
+.lp-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  align-items: center;
+  gap: 48px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 56px 32px 72px;
+}
+.lp-title {
+  margin: 20px 0 26px;
+  font: 600 clamp(52px, 6.6vw, 96px) / 0.9 var(--hj-font-sans);
+  letter-spacing: -0.058em;
+  text-wrap: balance;
+}
+.lp-lede {
+  max-width: 31em;
+  margin: 0;
+  font-size: 18.5px;
+  line-height: 1.55;
+  color: var(--hj-fg-dim);
+  text-wrap: pretty;
+}
+.lp-install {
+  margin-top: 30px;
+}
+.lp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* ---- the proof sheet ---- */
+.lp-proof {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  min-width: 0;
+  margin: 0;
+}
+/* The table the sheet lies on: its padding is where the crop and registration marks live. */
+.lp-table {
+  --_m: 30px;
+  position: relative;
+  width: min(100%, 680px);
+  padding: var(--_m);
+}
+.lp-sheet {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--hj-surface);
+  box-shadow:
+    0 0 0 1px var(--hj-line),
+    var(--hj-shadow-art);
+}
+/* A whisper of grain under the fibres, inked in the paper's own fg so it reads on every paper. */
+.lp-sheet::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--hj-fg);
+  opacity: 0.045;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.5 0 0 0 -.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-size: 160px 160px;
+  pointer-events: none;
+}
+/* Hanji's fibres: long, thin, every direction. */
+.lp-fibres {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--hj-fg);
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.lp-fibres > path {
+  vector-effect: non-scaling-stroke;
+}
+/* Light strands on a dark paper read louder than dark on light: quieter on ink and charcoal. */
+:root:is([data-hj-paper='ink'], [data-hj-paper='charcoal']) .lp-fibres {
+  opacity: 0.5;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-hj-paper='auto'] .lp-fibres {
+    opacity: 0.5;
+  }
+}
+.lp-fibres > [data-w='0'] {
+  stroke-width: 0.6;
+  opacity: 0.16;
+}
+.lp-fibres > [data-w='1'] {
+  stroke-width: 0.9;
+  opacity: 0.09;
+}
+.lp-fibres > [data-w='2'] {
+  stroke-width: 1.4;
+  opacity: 0.05;
+}
+.lp-slug {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 20px;
+  border-bottom: 1px solid var(--hj-line);
+  font: 500 10px / 1.2 var(--hj-font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hj-fg-mute);
+}
+.lp-slug > span:nth-child(2) {
+  color: var(--hj-fg-dim);
+}
+.lp-cells {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+.lp-cell {
+  position: relative;
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  min-height: calc(112px * var(--hj-density-size));
+  padding: calc(34px * var(--hj-density)) 20px calc(18px * var(--hj-density));
+  /* hairlines to the right and below; the outer ones are clipped by the grid */
+  box-shadow:
+    1px 0 0 var(--hj-line),
+    0 1px 0 var(--hj-line);
+}
+.lp-cell[data-wide] {
+  grid-column: 1 / -1;
+}
+.lp-cell-label {
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  font: 500 10px / 1 var(--hj-font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hj-fg-mute);
+}
+.lp-cell-label > b {
+  margin-left: 4px;
+  font-weight: 500;
+  color: var(--hj-fg-dim);
+}
+.lp-cell-body {
+  min-width: 0;
+}
+.lp-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.lp-small {
+  font-size: 13px;
+  color: var(--hj-fg-dim);
+}
+.lp-stack {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+.lp-setting {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lp-volume {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.lp-volume > .lp-mono {
+  width: 4ch;
+  font-size: 13px;
+  text-align: right;
+  color: var(--hj-fg-dim);
+}
+/* A printer's colour bar: the theme's own inks, live. */
+.lp-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 1px;
+  padding: 12px 20px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--hj-fg-mute);
+}
+.lp-strip-bars {
+  display: flex;
+  flex: none;
+}
+.lp-strip-bars > i {
+  width: 15px;
+  height: 11px;
+  transition: background-color var(--hj-dur-slow) var(--hj-ease-out);
+}
+/* The proof is approved: the seal, stamped once. */
+.lp-stamp {
+  position: absolute;
+  right: calc(var(--_m) + 22px);
+  bottom: calc(var(--_m) - 26px);
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 2.5px solid var(--hj-seal);
+  border-radius: 7px;
+  color: var(--hj-seal);
+  font: 900 15px / 1 serif;
+  letter-spacing: 0.12em;
+  writing-mode: vertical-rl;
+  opacity: 0.88;
+  transform: rotate(-7deg);
+  pointer-events: none;
+  animation: lp-stamp var(--hj-dur-bouncy) var(--hj-ease-bouncy) 450ms both;
+}
+@keyframes lp-stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-7deg) scale(calc(1 + 0.6 * var(--hj-travel)));
+  }
+}
+/* Crop marks: two 20px hairlines per corner, 8px clear of the sheet. */
+.lp-crop {
+  position: absolute;
+  width: var(--_m);
+  height: var(--_m);
+}
+.lp-crop::before,
+.lp-crop::after {
+  content: '';
+  position: absolute;
+  background: var(--hj-fg-mute);
+}
+.lp-crop::before {
+  width: 20px;
+  height: 1px;
+}
+.lp-crop::after {
+  width: 1px;
+  height: 20px;
+}
+.lp-crop[data-c='tl'] {
+  top: 0;
+  left: 0;
+}
+.lp-crop[data-c='tl']::before {
+  bottom: 0;
+  left: 0;
+}
+.lp-crop[data-c='tl']::after {
+  top: 0;
+  right: 0;
+}
+.lp-crop[data-c='tr'] {
+  top: 0;
+  right: 0;
+}
+.lp-crop[data-c='tr']::before {
+  right: 0;
+  bottom: 0;
+}
+.lp-crop[data-c='tr']::after {
+  top: 0;
+  left: 0;
+}
+.lp-crop[data-c='bl'] {
+  bottom: 0;
+  left: 0;
+}
+.lp-crop[data-c='bl']::before {
+  top: 0;
+  left: 0;
+}
+.lp-crop[data-c='bl']::after {
+  right: 0;
+  bottom: 0;
+}
+.lp-crop[data-c='br'] {
+  right: 0;
+  bottom: 0;
+}
+.lp-crop[data-c='br']::before {
+  top: 0;
+  right: 0;
+}
+.lp-crop[data-c='br']::after {
+  bottom: 0;
+  left: 0;
+}
+.lp-reg {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--hj-fg-mute);
+  stroke-width: 1.2;
+}
+.lp-reg[data-at='top'] {
+  top: 6px;
+  left: calc(50% - 9px);
+}
+.lp-reg[data-at='left'] {
+  top: calc(50% - 9px);
+  left: 6px;
+}
+.lp-press {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 14px;
+  max-width: 620px;
+}
+.lp-press-label {
+  font: 500 10.5px / 1 var(--hj-font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hj-fg-mute);
+}
+.lp-inks {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.lp-ink {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hj-fg) 14%, transparent);
+}
+
+/* ---- facts ---- */
+.lp-facts {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.lp-facts > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 26px 22px 28px;
+  border-top: 1px solid var(--hj-line);
+  border-bottom: 1px solid var(--hj-line);
+}
+.lp-facts > div + div {
+  border-left: 1px solid var(--hj-line);
+}
+.lp-facts > div:first-child {
+  padding-left: 0;
+}
+.lp-facts dd {
+  margin: 0;
+  font: 600 50px / 1 var(--hj-font-sans);
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+.lp-facts dd small {
+  margin: 0 0.12em;
+  font-size: 0.55em;
+  font-weight: 500;
+  color: var(--hj-fg-mute);
+}
+.lp-facts dt {
+  font-size: 13.5px;
+  color: var(--hj-fg-dim);
+}
+
+/* ---- sections ---- */
+.lp-section {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 128px 32px 0;
+  scroll-margin-top: 24px;
+}
+.lp-head {
+  max-width: 760px;
+  margin-bottom: 52px;
+}
+.lp-h2 {
+  margin: 16px 0 18px;
+  font: 600 clamp(40px, 5vw, 66px) / 0.98 var(--hj-font-sans);
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+.lp-body {
+  max-width: 36em;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--hj-fg-dim);
+  text-wrap: pretty;
+}
+.lp-code {
+  font: 400 12.5px / 1.5 var(--hj-font-mono);
+  color: var(--hj-fg);
+  white-space: pre;
+}
+
+/* anatomy */
+.lp-anatomy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 56px;
+}
+.lp-plate {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  padding: 64px 48px;
+  border-radius: var(--hj-radius-lg);
+  corner-shape: var(--hj-corner-shape, round);
+  background-color: var(--hj-bg-soft);
+  /* a drafting grid: this is a drawing of the part, not the page */
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--hj-fg) 14%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-position: center;
+  background-size: 16px 16px;
+}
+.lp-specimen {
+  width: 100%;
+  max-width: 400px;
+  zoom: 1.16;
+}
+.lp-specimen .hj-field-shell {
+  position: relative;
+}
+.lp-specimen .hj-field-description {
+  margin-top: 10px;
+}
+.lp-pin {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--hj-accent);
+  box-shadow: 0 0 0 3px var(--hj-bg-soft);
+  color: var(--hj-on-accent);
+  font: 500 11px / 1 var(--hj-font-mono);
+  vertical-align: 1px;
+}
+.lp-pin[data-at] {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+}
+.lp-pin[data-at='shell'] {
+  top: -10px;
+  right: -10px;
+}
+.lp-pin[data-at='adornment'] {
+  bottom: -10px;
+  left: 13px;
+}
+.lp-pin[data-at='control'] {
+  bottom: -10px;
+  left: 46%;
+}
+.lp-pin[data-static] {
+  margin: 0;
+  box-shadow: none;
+}
+.lp-spec {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.lp-spec th,
+.lp-spec td {
+  padding: 13px 10px 13px 0;
+  border-bottom: 1px solid var(--hj-line);
+  text-align: left;
+  vertical-align: middle;
+}
+.lp-spec thead th {
+  padding-top: 0;
+  border-bottom-color: var(--hj-fg);
+  font: 500 10.5px / 1 var(--hj-font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hj-fg-mute);
+}
+.lp-spec tbody th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.lp-spec td:last-child {
+  color: var(--hj-fg-dim);
+}
+.lp-spec td.lp-mono {
+  font-size: 12.5px;
+  color: var(--hj-fg-dim);
+}
+.lp-layers {
+  margin: 88px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hj-fg);
+}
+.lp-layers > li {
+  display: grid;
+  grid-template-columns: 52px 128px minmax(0, 1fr) minmax(0, 1.25fr);
+  align-items: baseline;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hj-line);
+}
+.lp-layer-n {
+  font: 500 12px / 1 var(--hj-font-mono);
+  color: var(--hj-fg-mute);
+}
+.lp-layer-name {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.lp-layer-what {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--hj-fg-dim);
+}
+.lp-layers .lp-code {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+/* agents */
+.lp-agents {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: 64px;
+}
+.lp-artefacts {
+  margin: 36px 0 28px;
+  border-top: 1px solid var(--hj-fg);
+}
+.lp-artefacts > div {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hj-line);
+}
+.lp-artefacts dt {
+  font-size: 13px;
+  color: var(--hj-fg);
+}
+.lp-artefacts dd {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--hj-fg-dim);
+}
+.lp-chat {
+  display: grid;
+  gap: 18px;
+  padding: 32px;
+  border-radius: var(--hj-radius-lg);
+  corner-shape: var(--hj-corner-shape, round);
+  background: var(--hj-bg-soft);
+}
+.lp-chat .hj-code-block {
+  margin-top: 12px;
+}
+.lp-result {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: var(--hj-radius-md);
+  corner-shape: var(--hj-corner-shape, round);
+  background: var(--hj-surface);
+  box-shadow: inset 0 0 0 1px var(--hj-line);
+}
+
+/* contents */
+.lp-toc {
+  columns: 3;
+  column-gap: 56px;
+}
+/* Chapters run on like a book's contents; a heading never ends a column. */
+.lp-chapter {
+  margin-bottom: 40px;
+}
+.lp-chapter > h3 {
+  break-after: avoid;
+}
+.lp-chapter li {
+  break-inside: avoid;
+}
+.lp-chapter > h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hj-fg);
+  font: 500 11px / 1 var(--hj-font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hj-fg-mute);
+}
+.lp-chapter > ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lp-chapter a {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 0;
+  color: var(--hj-fg);
+  font-size: 15px;
+  text-decoration: none;
+  transition: color var(--hj-dur-fast) var(--hj-ease-out);
+}
+.lp-leader {
+  flex: 1;
+  min-width: 16px;
+  border-bottom: 1px dotted color-mix(in srgb, var(--hj-fg) 30%, transparent);
+  transition: border-color var(--hj-dur-fast) var(--hj-ease-out);
+}
+.lp-chapter a > .lp-mono {
+  font-size: 12px;
+  color: var(--hj-fg-mute);
+}
+.lp-chapter a:hover {
+  color: var(--hj-accent);
+}
+.lp-chapter a:hover .lp-leader {
+  border-bottom-color: var(--hj-accent);
+}
+.lp-chapter a:focus-visible {
+  outline: 2px solid var(--hj-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.lp-new {
+  font: 500 9.5px / 1 var(--hj-font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hj-success);
+}
+
+/* footer: the wordmark closes the page; the colophon sits on its baseline */
+.lp-foot {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  gap: 24px 56px;
+  max-width: 1240px;
+  margin: 150px auto 0;
+  padding: 36px 32px 44px;
+  border-top: 1px solid var(--hj-fg);
+}
+.lp-wordmark {
+  margin: 0 0 -0.04em;
+  font: 600 clamp(110px, 29vw, 420px) / 0.98 var(--hj-font-sans);
+  letter-spacing: -0.075em;
+}
+.lp-foot-side {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  padding-bottom: 0.6em;
+}
+.lp-foot-side > p {
+  max-width: 40ch;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--hj-fg-dim);
+}
+
+/* ---- narrow ---- */
+@media (max-width: 1000px) {
+  .lp-hero,
+  .lp-anatomy,
+  .lp-agents {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lp-hero {
+    gap: 40px;
+  }
+  .lp-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .lp-facts > div:nth-child(4) {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .lp-toc {
+    columns: 2;
+  }
+  .lp-layers > li {
+    grid-template-columns: 40px minmax(0, 1fr);
+    row-gap: 6px;
+  }
+  .lp-layer-what,
+  .lp-layers .lp-code {
+    grid-column: 2;
+  }
+}
+@media (max-width: 640px) {
+  .lp-nav,
+  .lp-hero,
+  .lp-facts,
+  .lp-section,
+  .lp-foot {
+    padding-inline: 16px;
+  }
+  .lp-nav {
+    padding-block: 16px;
+  }
+  .lp-links {
+    gap: 18px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .lp-nav .lp-links > :nth-child(2),
+  .lp-slug > span:last-child {
+    display: none;
+  }
+  .lp-hero {
+    padding-top: 28px;
+  }
+  .lp-lede {
+    font-size: 17px;
+  }
+  .lp-table {
+    --_m: 18px;
+  }
+  .lp-crop::before {
+    width: 12px;
+  }
+  .lp-crop::after {
+    height: 12px;
+  }
+  .lp-reg {
+    display: none;
+  }
+  .lp-cells {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lp-strip > .lp-mono {
+    display: none;
+  }
+  .lp-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lp-facts > div,
+  .lp-facts > div:nth-child(4) {
+    padding-left: 16px;
+    border-left: 1px solid var(--hj-line);
+  }
+  .lp-facts > div:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .lp-facts dd {
+    font-size: 40px;
+  }
+  .lp-section {
+    padding-top: 88px;
+  }
+  .lp-plate {
+    padding: 48px 24px;
+  }
+  .lp-spec th:nth-child(3),
+  .lp-spec td:nth-child(3) {
+    display: none;
+  }
+  .lp-chat {
+    padding: 18px;
+  }
+  .lp-artefacts > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .lp-toc {
+    columns: 1;
+  }
+  .lp-foot {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

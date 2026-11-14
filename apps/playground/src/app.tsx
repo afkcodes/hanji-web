@@ -2,6 +2,7 @@ import { CodeBlock, SegmentedControl, Select, Toggle } from '@hanji/react';
 import { accentNames, accents } from '@hanji/tokens';
 import * as React from 'react';
 
+import { Landing } from './landing.tsx';
 import { categories, entries } from './registry.ts';
 import type { Entry } from './registry.ts';
 
@@ -33,13 +34,26 @@ function useSettings(): [Settings, (k: keyof Settings, v: string) => void] {
   return [s, (k, v) => setS((prev) => ({ ...prev, [k]: v }))];
 }
 
-const readRoute = (): string =>
-  decodeURIComponent(location.hash.replace(/^#\/?/, '')) || (entries[0]?.meta.slug ?? '');
+/**
+ * `#/` (or an in-page anchor such as `#agents`) is the landing page; `#/components` opens the
+ * showcase at its first component; `#/<slug>` opens that component.
+ */
+const readRoute = (): string => {
+  const h = location.hash;
+  if (!h.startsWith('#/')) return '';
+  const r = decodeURIComponent(h.slice(2));
+  return r === 'components' ? (entries[0]?.meta.slug ?? '') : r;
+};
 
 function useRoute(): string {
   const [route, setRoute] = React.useState(readRoute);
   React.useEffect(() => {
-    const on = (): void => setRoute(readRoute());
+    const on = (): void => {
+      const next = readRoute();
+      setRoute(next);
+      // A new page starts at the top; an anchor on the landing page is left to the browser.
+      if (location.hash.startsWith('#/')) window.scrollTo({ top: 0 });
+    };
     addEventListener('hashchange', on);
     return () => removeEventListener('hashchange', on);
   }, []);
@@ -320,6 +334,22 @@ export function App(): React.JSX.Element {
   const [s, set] = useSettings();
   const route = useRoute();
   const entry = entries.find((e) => e.meta.slug === route) ?? entries[0];
+  // Arriving on the landing page from elsewhere with an anchor (#agents): scroll once it exists.
+  React.useEffect(() => {
+    if (route !== '' || location.hash.length < 2 || location.hash.startsWith('#/')) return;
+    document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  }, [route]);
+  if (route === '') {
+    return (
+      <Landing
+        paper={s.paper}
+        accent={s.accent}
+        density={s.density}
+        onPaper={(v) => set('paper', v)}
+        onAccent={(v) => set('accent', v)}
+      />
+    );
+  }
   return (
     <div className="pg">
       <header className="pg-bar">

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 
 import '../../../packages/react/src/styles/base.css';
 import './playground.css';
+import './landing.css';
 import { App } from './app.tsx';
 
 // Tokens straight from source, so a token edit hot-reloads like any other change.
