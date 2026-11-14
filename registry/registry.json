@@ -401,6 +401,44 @@
       ]
     },
     {
+      "name": "squircle",
+      "type": "registry:ui",
+      "title": "Squircle",
+      "description": "A continuous-corner (squircle) surface — hanji’s corner, exact on every browser.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/squircle/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/squircle/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/squircle/squircle-path.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/squircle/squircle-path.ts"
+        },
+        {
+          "path": "packages/react/src/components/squircle/squircle.css",
+          "type": "registry:ui",
+          "target": "hanji/components/squircle/squircle.css"
+        },
+        {
+          "path": "packages/react/src/components/squircle/squircle.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/squircle/squircle.tsx"
+        }
+      ]
+    },
+    {
       "name": "status",
       "type": "registry:ui",
       "title": "Status",

@@ -26,7 +26,7 @@
       "path": "packages/react/src/components/toggle-group/toggle-group.css",
       "type": "registry:ui",
       "target": "hanji/components/toggle-group/toggle-group.css",
-      "content": "@layer hj.components {\n  /* Customise: --hj-toggle-group-pad · --hj-toggle-group-gap */\n  .hj-toggle-group {\n    display: inline-flex;\n    align-items: center;\n    gap: var(--hj-toggle-group-gap, 2px);\n    padding: var(--hj-toggle-group-pad, 4px);\n    border-radius: var(--hj-radius-pill);\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1px var(--hj-line);\n  }\n  .hj-toggle-group[data-size='sm'] {\n    padding: var(--hj-toggle-group-pad, 3px);\n  }\n  .hj-toggle-group[data-orientation='vertical'] {\n    flex-direction: column;\n    border-radius: var(--hj-radius-lg);\n  }\n  .hj-toggle-group[data-disabled] {\n    opacity: 0.6;\n  }\n}\n"
+      "content": "@layer hj.components {\n  /* Customise: --hj-toggle-group-pad · --hj-toggle-group-gap */\n  .hj-toggle-group {\n    display: inline-flex;\n    align-items: center;\n    gap: var(--hj-toggle-group-gap, 2px);\n    padding: var(--hj-toggle-group-pad, calc(4px * var(--hj-density)));\n    border-radius: var(--hj-radius-pill);\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1px var(--hj-line);\n  }\n  .hj-toggle-group[data-size='sm'] {\n    padding: var(--hj-toggle-group-pad, calc(3px * var(--hj-density)));\n  }\n  .hj-toggle-group[data-orientation='vertical'] {\n    flex-direction: column;\n    border-radius: var(--hj-radius-lg);\n    corner-shape: var(--hj-corner-shape, round);\n  }\n  .hj-toggle-group[data-disabled] {\n    opacity: 0.6;\n  }\n}\n"
     },
     {
       "path": "packages/react/src/components/toggle-group/toggle-group.tsx",

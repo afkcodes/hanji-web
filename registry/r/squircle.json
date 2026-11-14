@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "squircle",
+  "type": "registry:ui",
+  "title": "Squircle",
+  "description": "A continuous-corner (squircle) surface — hanji’s corner, exact on every browser.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/squircle/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/squircle/index.ts",
+      "content": "export { Squircle, cornerShape, squirclePath } from './squircle.tsx';\nexport type { SquircleOwnProps, SquircleProps } from './squircle.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/squircle/squircle-path.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/squircle/squircle-path.ts",
+      "content": "/**\n * The figma-style squircle (iOS continuous corners), as an SVG path: the geometry hanji's native\n * `Squircle` draws with fast-squircle. Each corner is a circular arc blended into the straight\n * edge by two cubic Béziers; `smoothing` (0–1) sets how far the blend reaches along the edge.\n */\n\nconst rad = (deg: number): number => (deg * Math.PI) / 180;\n\ninterface Corner {\n  a: number;\n  b: number;\n  c: number;\n  d: number;\n  p: number;\n  arc: number;\n  r: number;\n}\n\nfunction corner(radius: number, smoothing: number, budget: number): Corner {\n  const r = Math.min(radius, budget);\n  if (r <= 0) return { a: 0, b: 0, c: 0, d: 0, p: 0, arc: 0, r: 0 };\n  // keep the curve inside half the shorter side: reduce smoothing before reducing radius\n  const s = Math.max(0, Math.min(smoothing, budget / r - 1));\n  const p = Math.min((1 + s) * r, budget);\n  const arcMeasure = 90 * (1 - s);\n  const arc = Math.sin(rad(arcMeasure / 2)) * r * Math.SQRT2;\n  const alpha = (90 - arcMeasure) / 2;\n  const p3ToP4 = r * Math.tan(rad(alpha / 2));\n  const beta = 45 * s;\n  const c = p3ToP4 * Math.cos(rad(beta));\n  const d = c * Math.tan(rad(beta));\n  const b = (p - arc - c - d) / 3;\n  const a = 2 * b;\n  return { a, b, c, d, p, arc, r };\n}\n\nconst n = (v: number): string => (Math.round(v * 100) / 100).toString();\n\n/**\n * SVG path data for a `width × height` squircle.\n *\n * @param radius     corner radius in px (clamped to half the shorter side)\n * @param smoothing  0 = circular corners · .72 = hanji · 1 = most continuous\n */\nexport function squirclePath(\n  width: number,\n  height: number,\n  radius: number,\n  smoothing = 0.72,\n): string {\n  const k = corner(radius, smoothing, Math.min(width, height) / 2);\n  const { a, b, c, d, p, arc, r } = k;\n  if (r === 0) return `M0 0H${n(width)}V${n(height)}H0Z`;\n  return [\n    `M${n(width - p)} 0`,\n    `c${n(a)} 0 ${n(a + b)} 0 ${n(a + b + c)} ${n(d)}`,\n    `a${n(r)} ${n(r)} 0 0 1 ${n(arc)} ${n(arc)}`,\n    `c${n(d)} ${n(c)} ${n(d)} ${n(b + c)} ${n(d)} ${n(a + b + c)}`,\n    `L${n(width)} ${n(height - p)}`,\n    `c0 ${n(a)} 0 ${n(a + b)} ${n(-d)} ${n(a + b + c)}`,\n    `a${n(r)} ${n(r)} 0 0 1 ${n(-arc)} ${n(arc)}`,\n    `c${n(-c)} ${n(d)} ${n(-(b + c))} ${n(d)} ${n(-(a + b + c))} ${n(d)}`,\n    `L${n(p)} ${n(height)}`,\n    `c${n(-a)} 0 ${n(-(a + b))} 0 ${n(-(a + b + c))} ${n(-d)}`,\n    `a${n(r)} ${n(r)} 0 0 1 ${n(-arc)} ${n(-arc)}`,\n    `c${n(-d)} ${n(-c)} ${n(-d)} ${n(-(b + c))} ${n(-d)} ${n(-(a + b + c))}`,\n    `L0 ${n(p)}`,\n    `c0 ${n(-a)} 0 ${n(-(a + b))} ${n(d)} ${n(-(a + b + c))}`,\n    `a${n(r)} ${n(r)} 0 0 1 ${n(arc)} ${n(-arc)}`,\n    `c${n(c)} ${n(-d)} ${n(b + c)} ${n(-d)} ${n(a + b + c)} ${n(-d)}`,\n    'Z',\n  ].join(' ');\n}\n\n/** CSS `corner-shape` matching a smoothing — use with border-radius × (1 + smoothing). */\nexport { cornerShapeFor as cornerShape } from '@hanji/tokens';\n"
+    },
+    {
+      "path": "packages/react/src/components/squircle/squircle.css",
+      "type": "registry:ui",
+      "target": "hanji/components/squircle/squircle.css",
+      "content": "@layer hj.components {\n  /*\n   * A continuous-corner surface. --hj-squircle-radius / -shape / -span come from props.\n   * Where corner-shape exists the radius grows by (1 + smoothing) — the figma curve starts that\n   * far along each edge — and the superellipse is fitted to it. Elsewhere: circular, or the exact\n   * clip-path when the component measures itself.\n   */\n  .hj-squircle {\n    border-radius: var(--hj-squircle-radius, var(--hj-r-md));\n    corner-shape: var(--hj-squircle-shape, var(--hj-corner-shape, round));\n  }\n  @supports (corner-shape: superellipse(2)) {\n    .hj-squircle:not([data-clipped]) {\n      border-radius: calc(var(--hj-squircle-radius, var(--hj-r-md)) * var(--hj-squircle-span, 1));\n    }\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/squircle/squircle.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/squircle/squircle.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\nimport { cornerShape, squirclePath } from './squircle-path.ts';\n\nexport { cornerShape, squirclePath } from './squircle-path.ts';\n\nconst supportsCornerShape = (): boolean =>\n  typeof CSS !== 'undefined' &&\n  typeof CSS.supports === 'function' &&\n  CSS.supports('corner-shape', 'superellipse(2)');\n\n/** Props hanji adds. */\nexport interface SquircleOwnProps {\n  /** A radius token or px. @default 'md' */\n  radius?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;\n  /** 0 = circular · .72 = hanji (default) · 1 = most continuous. */\n  smoothing?: number;\n  /**\n   * Draw with a measured clip-path even where CSS corner-shape exists — pixel-identical to the\n   * native library. Default: only when corner-shape is unsupported.\n   */\n  exact?: boolean;\n}\n\nexport interface SquircleProps\n  extends SquircleOwnProps, Omit<React.ComponentProps<'div'>, 'className'> {\n  className?: string;\n  render?: useRender.RenderProp;\n}\n\n/**\n * A continuous-corner surface (hanji `Squircle`). Uses CSS `corner-shape` where the browser has\n * it — zero JavaScript — and otherwise clips to the exact figma squircle, re-measured on resize.\n * Clip-path also clips focus rings and shadows, so prefer it for art, avatars and tiles.\n */\nexport function Squircle(props: SquircleProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    radius = 'md',\n    smoothing = 0.72,\n    exact = false,\n    render,\n    className,\n    style,\n    ...rest\n  } = withDefaults(config, 'Squircle', props);\n  const ref = React.useRef<HTMLElement>(null);\n  const [clip, setClip] = React.useState<string | undefined>(undefined);\n\n  React.useLayoutEffect(() => {\n    const el = ref.current;\n    if (!el || (!exact && supportsCornerShape())) {\n      setClip(undefined);\n      return undefined;\n    }\n    const px = (): number =>\n      typeof radius === 'number'\n        ? radius\n        : Number.parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;\n    const measure = (): void => {\n      const { width, height } = el.getBoundingClientRect();\n      if (width > 0 && height > 0)\n        setClip(`path('${squirclePath(width, height, px(), smoothing)}')`);\n    };\n    measure();\n    const ro = new ResizeObserver(measure);\n    ro.observe(el);\n    return () => ro.disconnect();\n  }, [radius, smoothing, exact, ref]);\n\n  const radiusValue = typeof radius === 'number' ? `${radius}px` : `var(--hj-r-${radius})`;\n  const own = {\n    '--hj-squircle-radius': radiusValue,\n    '--hj-squircle-shape': cornerShape(smoothing),\n    '--hj-squircle-span': String(1 + Math.max(0, Math.min(1, smoothing))),\n    ...(clip ? { clipPath: clip, borderRadius: 0 } : null),\n    ...style,\n  } as React.CSSProperties;\n\n  return useRender({\n    render,\n    ref,\n    defaultTagName: 'div',\n    props: {\n      ...rest,\n      'data-clipped': clip ? '' : undefined,\n      className: cls(config, 'Squircle', 'hj-squircle', className) as string | undefined,\n      style: own,\n    },\n  });\n}\n"
+    }
+  ]
+}

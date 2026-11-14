@@ -21,6 +21,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 - [Separator](./packages/react/dist/docs/separator.md): A hairline between groups — hanji’s way of separating instead of boxing.
 - [Skeleton](./packages/react/dist/docs/skeleton.md): A still block in the shape of what is coming, so the page keeps its layout while it loads.
 - [Spinner](./packages/react/dist/docs/spinner.md): An ink ring for work that takes a moment and has no measurable progress.
+- [Squircle](./packages/react/dist/docs/squircle.md): A continuous-corner (squircle) surface — hanji’s corner, exact on every browser.
 - [Status](./packages/react/dist/docs/status.md): A state in words — word, glyph and tint — with when it happened.
 - [Text](./packages/react/dist/docs/text.md): Text set in one of hanji’s type roles, from the hero number down to the mono timecode.
 
