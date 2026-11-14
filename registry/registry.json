@@ -76,6 +76,44 @@
       ]
     },
     {
+      "name": "artwork",
+      "type": "registry:ui",
+      "title": "Artwork",
+      "description": "Generated cover art for anything without an image: 100 faces (ten palettes × ten compositions) chosen by hashing an id, printed on hanji’s paper fibres. Plus collage covers, glyph covers and a real image with art standing in.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/artwork/artwork.css",
+          "type": "registry:ui",
+          "target": "hanji/components/artwork/artwork.css"
+        },
+        {
+          "path": "packages/react/src/components/artwork/artwork.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/artwork/artwork.tsx"
+        },
+        {
+          "path": "packages/react/src/components/artwork/generate.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/artwork/generate.ts"
+        },
+        {
+          "path": "packages/react/src/components/artwork/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/artwork/index.ts"
+        }
+      ]
+    },
+    {
       "name": "avatar",
       "type": "registry:ui",
       "title": "Avatar",

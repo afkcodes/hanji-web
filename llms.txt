@@ -19,6 +19,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 
 ## Atoms
 
+- [Artwork](./packages/react/dist/docs/artwork.md): Generated cover art for anything without an image: 100 faces (ten palettes × ten compositions) chosen by hashing an id, printed on hanji’s paper fibres. Plus collage covers, glyph covers and a real image with art standing in.
 - [Avatar](./packages/react/dist/docs/avatar.md): A person as a picture, or as their initials on a tint that stays theirs everywhere.
 - [Badge](./packages/react/dist/docs/badge.md): A count or a dot on top of something: unread messages, new releases, items waiting.
 - [Button](./packages/react/dist/docs/button.md): The verb on a screen: triggers an action.
