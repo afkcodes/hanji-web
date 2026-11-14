@@ -188,7 +188,7 @@ export function createServer(data: HanjiData): McpServer {
     {
       title: 'Theme JSON Schema',
       description:
-        'The JSON Schema for createTheme() / <Theme>: paper, accent, density, motion, radius, fonts, colors, springs.',
+        'The JSON Schema for createTheme() / <Theme>: paper (a preset or your own ground: {bg, fg}, {light, dark}, {tint}), accent, density, motion, radius, smoothing, fonts, colors (incl. pending), data (chart series), springs.',
       annotations: READ_ONLY,
     },
     () => json(data.schema),
@@ -199,12 +199,12 @@ export function createServer(data: HanjiData): McpServer {
     {
       title: 'Validate a theme',
       description:
-        'Check a theme object before using it. Returns field-level issues, or the resolved attributes, CSS variables and the JSX to apply it.',
+        'Check a theme object before using it. Returns field-level issues, or the resolved attributes, CSS variables, the JSX to apply it and warnings about colours that work but read poorly (contrast, accent vs danger, flat surfaces, chart colours).',
       inputSchema: {
         theme: z
           .record(z.string(), z.unknown())
           .describe(
-            'A createTheme() input, e.g. {"paper":"ink","accent":"cobalt","density":"compact"}.',
+            'A createTheme() input, e.g. {"paper":"ink","accent":"cobalt"} or {"paper":{"tint":"#1e3a5f"},"accent":{"light":"#0b6bcb","dark":"#5aa9ff"}}.',
           ),
       },
       annotations: READ_ONLY,
@@ -222,6 +222,7 @@ export function createServer(data: HanjiData): McpServer {
         cssVariables: t.vars,
         jsx: `<Theme ${props}>…</Theme>`,
         css: t.toCss(),
+        warnings: t.warnings,
       });
     },
   );
