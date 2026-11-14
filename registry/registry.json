@@ -19,6 +19,11 @@
           "target": "hanji/system/config.tsx"
         },
         {
+          "path": "packages/react/src/system/flip.ts",
+          "type": "registry:lib",
+          "target": "hanji/system/flip.ts"
+        },
+        {
           "path": "packages/react/src/system/icon.tsx",
           "type": "registry:lib",
           "target": "hanji/system/icon.tsx"
