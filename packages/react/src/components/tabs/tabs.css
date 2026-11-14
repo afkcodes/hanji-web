@@ -157,8 +157,14 @@
     height: auto;
     border-radius: 0;
     background: var(--hj-tabs-indicator, var(--hj-accent-soft));
+    /*
+     * The bottom comes from top + height, not --active-tab-bottom: Base UI measures that against
+     * the list's scroll height, which the tabs' 44px hit areas (::before) stretch — the pill sat
+     * high by the overhang.
+     */
     clip-path: inset(
-      var(--active-tab-top, 50%) var(--active-tab-right, 50%) var(--active-tab-bottom, 50%)
+      var(--active-tab-top, 50%) var(--active-tab-right, 50%)
+        calc(100% - var(--active-tab-top, 50%) - var(--active-tab-height, 0px))
         var(--active-tab-left, 50%) round var(--hj-tabs-radius, var(--hj-radius-pill))
     );
   }
