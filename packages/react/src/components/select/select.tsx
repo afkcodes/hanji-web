@@ -160,10 +160,15 @@ export function ScrollDownArrow({
   );
 }
 
-/** Places the popup. Gap 6 (hanji menu gap); aligns the chosen item over the trigger by default. */
+/**
+ * Places the popup: below the trigger, 6px away (the hanji menu gap), flipping above when there's
+ * no room. Base UI's macOS-style overlay — the chosen item laid over the trigger — is opt-in with
+ * `alignItemWithTrigger`: over a label or a two-line item it hides what you were reading.
+ */
 export function Positioner({
   sideOffset = 6,
   collisionPadding = 8,
+  alignItemWithTrigger = false,
   className,
   ...props
 }: Base.Positioner.Props): React.ReactElement {
@@ -171,6 +176,7 @@ export function Positioner({
   return (
     <Base.Positioner
       {...props}
+      alignItemWithTrigger={alignItemWithTrigger}
       sideOffset={sideOffset}
       collisionPadding={collisionPadding}
       className={cls(config, 'Select.Positioner', 'hj-select-positioner', className)}
@@ -210,7 +216,10 @@ export interface ContentOwnProps {
   /** Passed to the Positioner. */
   side?: Base.Positioner.Props['side'];
   align?: Base.Positioner.Props['align'];
-  /** Keep the chosen item over the trigger (macOS style). @default true */
+  /**
+   * Lay the chosen item over the trigger (macOS style) instead of opening below. Base UI still
+   * opens below for touch, or when there isn't room to line it up. @default false
+   */
   alignItemWithTrigger?: boolean;
   container?: Base.Portal.Props['container'];
 }

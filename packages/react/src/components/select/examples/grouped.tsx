@@ -25,7 +25,7 @@ export function Example(): React.JSX.Element {
         <Select.Root items={items} defaultValue="Asia/Seoul">
           <Select.Label>Time zone</Select.Label>
           <Select.Trigger />
-          <Select.Content alignItemWithTrigger={false}>
+          <Select.Content>
             {Object.entries(zones).map(([region, list], i) => (
               <Select.Group key={region}>
                 {i > 0 ? <Select.Separator /> : null}

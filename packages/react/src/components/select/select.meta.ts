@@ -102,7 +102,7 @@ export const meta: ComponentMeta = defineMeta({
       slot: 'Select.Positioner',
       className: 'hj-select-positioner',
       description:
-        'Places the popup: sideOffset 6, collisionPadding 8, item aligned over the trigger by default.',
+        'Places the popup below the trigger (sideOffset 6, collisionPadding 8), flipping above when there’s no room; alignItemWithTrigger opts into the macOS-style overlay.',
     },
     {
       name: 'Popup',
@@ -183,8 +183,9 @@ export const meta: ComponentMeta = defineMeta({
         },
         alignItemWithTrigger: {
           type: 'boolean',
-          default: 'true',
-          description: 'Overlay the chosen item on the trigger.',
+          default: 'false',
+          description:
+            'Lay the chosen item over the trigger (macOS style) instead of opening below. Falls back to below for touch or when there isn’t room.',
         },
         container: {
           type: 'HTMLElement | ShadowRoot | RefObject',
@@ -264,7 +265,7 @@ export const meta: ComponentMeta = defineMeta({
   accessibility: [
     'Trigger is a combobox button; the popup is a listbox. Arrow keys move, typeahead jumps, Enter selects, Escape closes.',
     'Label it with Select.Label (or wrap in Field.Root with Field.Label).',
-    'With alignItemWithTrigger the chosen item opens under the pointer; otherwise the popup flips to stay in view.',
+    'The popup opens below the trigger and flips above to stay in view; with alignItemWithTrigger the chosen item opens under the pointer instead.',
   ],
   motion:
     'Popup grows from the trigger (scale .96 → 1 on snappy) and leaves in 180 ms; when aligned over the trigger it only fades. Focus and error are colour on ease-out.',
