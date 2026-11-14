@@ -147,6 +147,12 @@ export const meta: ComponentMeta = defineMeta({
         'A checkbox column with select-all and Shift-click ranges; the bar above counts the selection and acts on it.',
     },
     {
+      file: 'requests',
+      title: 'Rows that grow',
+      description:
+        'rowHeight="auto": summaries wrap to one, two or three lines and each row is measured as it arrives; the jump lands on No. 1,500 down even though most rows above were never drawn.',
+    },
+    {
       file: 'states',
       title: 'Loading and empty',
       description:
