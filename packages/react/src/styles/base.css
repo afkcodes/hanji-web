@@ -1,0 +1,59 @@
+/*
+ * hanji base: only what every component relies on. Scoped to hanji's own elements — the
+ * library never restyles your app's elements.
+ */
+@layer hj.base {
+  :where([class^='hj-'], [class*=' hj-']),
+  :where([class^='hj-'], [class*=' hj-'])::before,
+  :where([class^='hj-'], [class*=' hj-'])::after {
+    box-sizing: border-box;
+  }
+
+  .hj-theme:not([data-hj-surface]) {
+    display: contents;
+  }
+  .hj-theme[data-hj-surface] {
+    background: var(--hj-bg);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+  }
+
+  .hj-icon {
+    display: inline-flex;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    font-size: 20px;
+    line-height: 0;
+  }
+  .hj-icon > svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Shared keyframes. Components reference them through the motion-policy tokens. */
+  @keyframes hj-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes hj-pulse {
+    from {
+      opacity: 0.55;
+    }
+    to {
+      opacity: 0.9;
+    }
+  }
+  @keyframes hj-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Keyboard focus: one ring, the accent, never on pointer focus. */
+  :where([class^='hj-'], [class*=' hj-']):focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: 2px;
+  }
+}

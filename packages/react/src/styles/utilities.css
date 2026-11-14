@@ -1,0 +1,94 @@
+/* Opt-in helpers. Lowest-priority layer after components; your own CSS still wins. */
+@layer hj.utilities {
+  .hj-text-hero,
+  .hj-text-display,
+  .hj-text-title,
+  .hj-text-heading,
+  .hj-text-subheading,
+  .hj-text-body,
+  .hj-text-sub,
+  .hj-text-label,
+  .hj-text-eyebrow,
+  .hj-text-mono {
+    margin: 0;
+  }
+  .hj-text-hero {
+    font: var(--hj-type-hero);
+    letter-spacing: var(--hj-tracking-hero);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-text-display {
+    font: var(--hj-type-display);
+    letter-spacing: var(--hj-tracking-display);
+  }
+  .hj-text-title {
+    font: var(--hj-type-title);
+    letter-spacing: var(--hj-tracking-title);
+  }
+  .hj-text-heading {
+    font: var(--hj-type-heading);
+    letter-spacing: var(--hj-tracking-heading);
+  }
+  .hj-text-subheading {
+    font: var(--hj-type-subheading);
+    letter-spacing: var(--hj-tracking-subheading);
+  }
+  .hj-text-body {
+    font: var(--hj-type-body);
+    letter-spacing: var(--hj-tracking-body);
+  }
+  .hj-text-sub {
+    font: var(--hj-type-sub);
+    letter-spacing: var(--hj-tracking-sub);
+  }
+  .hj-text-label {
+    font: var(--hj-type-label);
+    letter-spacing: var(--hj-tracking-label);
+  }
+  .hj-text-eyebrow {
+    font: var(--hj-type-eyebrow);
+    letter-spacing: var(--hj-tracking-eyebrow);
+    text-transform: uppercase;
+  }
+  .hj-text-mono {
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-tone-dim {
+    color: var(--hj-fg-dim);
+  }
+  .hj-tone-mute {
+    color: var(--hj-fg-mute);
+  }
+  .hj-tone-accent {
+    color: var(--hj-accent);
+  }
+  .hj-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hj-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Staggered entrance for a list: one clock, 24 ms a row, capped at 10. Set --hj-i per child. */
+  .hj-stagger > * {
+    animation: hj-rise var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) both;
+    animation-delay: calc(min(var(--hj-i, 0), var(--hj-stagger-cap)) * var(--hj-stagger));
+  }
+  @keyframes hj-rise {
+    from {
+      opacity: 0;
+      transform: translateY(calc(var(--hj-rise) * var(--hj-travel)));
+    }
+  }
+}

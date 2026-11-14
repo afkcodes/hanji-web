@@ -1,0 +1,64 @@
+{
+  "name": "@hanji/react",
+  "version": "0.1.0",
+  "description": "hanji for the web: accessible compound components on Base UI, styled by tokens, with zero-runtime CSS and an agent-readable manifest.",
+  "keywords": [
+    "ai",
+    "base-ui",
+    "components",
+    "design-system",
+    "hanji",
+    "headless",
+    "react"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "@hanji/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./css/*": "./dist/css/*",
+    "./manifest.json": "./dist/manifest.json",
+    "./llms.txt": "./dist/llms.txt",
+    "./package.json": "./package.json",
+    "./llms-full.txt": "./dist/llms-full.txt",
+    "./docs/*": "./dist/docs/*",
+    "./theme.schema.json": "./dist/theme.schema.json"
+  },
+  "scripts": {
+    "build": "node scripts/gen-index.ts && tsdown && node scripts/build-css.ts && node scripts/build-ai.ts",
+    "typecheck": "node scripts/gen-index.ts && tsc --noEmit -p .",
+    "ai": "node scripts/build-ai.ts"
+  },
+  "dependencies": {
+    "@base-ui/react": "catalog:",
+    "@hanji/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "happy-dom": "catalog:",
+    "lightningcss": "catalog:",
+    "publint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
