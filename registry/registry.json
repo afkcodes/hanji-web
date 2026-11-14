@@ -2055,6 +2055,39 @@
       ]
     },
     {
+      "name": "drag-list",
+      "type": "registry:ui",
+      "title": "DragList",
+      "description": "A list you reorder by picking a row up: the handle lifts at once, a long press lifts from anywhere else, and every drag has a keyboard twin.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/drag-list/drag-list.css",
+          "type": "registry:ui",
+          "target": "hanji/components/drag-list/drag-list.css"
+        },
+        {
+          "path": "packages/react/src/components/drag-list/drag-list.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/drag-list/drag-list.tsx"
+        },
+        {
+          "path": "packages/react/src/components/drag-list/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/drag-list/index.ts"
+        }
+      ]
+    },
+    {
       "name": "empty-state",
       "type": "registry:ui",
       "title": "EmptyState",
@@ -2355,6 +2388,39 @@
           "path": "packages/react/src/components/timeline/timeline.tsx",
           "type": "registry:ui",
           "target": "hanji/components/timeline/timeline.tsx"
+        }
+      ]
+    },
+    {
+      "name": "virtual-list",
+      "type": "registry:ui",
+      "title": "VirtualList",
+      "description": "A long list that renders only the rows on screen: rows measure themselves, the reading position holds still as rows above change size, and scrollToIndex jumps anywhere.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/virtual-list/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/virtual-list/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/virtual-list/virtual-list.css",
+          "type": "registry:ui",
+          "target": "hanji/components/virtual-list/virtual-list.css"
+        },
+        {
+          "path": "packages/react/src/components/virtual-list/virtual-list.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/virtual-list/virtual-list.tsx"
         }
       ]
     },

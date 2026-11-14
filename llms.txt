@@ -90,6 +90,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 ## Data
 
 - [Counter](./packages/react/dist/docs/counter.md): A number whose changed digits roll into place, so a change is seen without re-reading the whole figure.
+- [DragList](./packages/react/dist/docs/drag-list.md): A list you reorder by picking a row up: the handle lifts at once, a long press lifts from anywhere else, and every drag has a keyboard twin.
 - [EmptyState](./packages/react/dist/docs/empty-state.md): What fills a region when there is nothing to show: a glyph, a title, one sentence and the way out.
 - [List](./packages/react/dist/docs/list.md): Rows of 56px: artwork or an icon, a title and a line under it, and a value or chevron on the right.
 - [Marquee](./packages/react/dist/docs/marquee.md): A single line too long for its box — a track title on a player — that rests, then travels so the whole of it can be read.
@@ -99,6 +100,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 - [Stat](./packages/react/dist/docs/stat.md): A number that matters: what it counts, the figure with its unit shrunk, how it compares in words, and the recent past as a line.
 - [Table](./packages/react/dist/docs/table.md): Rows of records compared across columns: hairlines, a sticky header, sortable columns, numbers right-aligned in tabular figures.
 - [Timeline](./packages/react/dist/docs/timeline.md): A vertical sequence of steps with their times: what happened, what is happening, what is next, and what failed.
+- [VirtualList](./packages/react/dist/docs/virtual-list.md): A long list that renders only the rows on screen: rows measure themselves, the reading position holds still as rows above change size, and scrollToIndex jumps anywhere.
 
 ## Ai
 
