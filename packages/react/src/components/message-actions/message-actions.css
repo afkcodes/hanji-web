@@ -1,0 +1,129 @@
+@layer hj.components {
+  /* Customise: --hj-message-actions-size (button size, default 32px) */
+  .hj-message-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: -6px;
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* Revealed by the message being hovered or focused — on devices that can hover. */
+  @media (hover: hover) {
+    [data-from]:not(:hover):not(:focus-within) .hj-message-actions[data-reveal='hover'] {
+      opacity: 0;
+      transition-duration: var(--hj-dur-fast);
+    }
+  }
+
+  .hj-message-actions-button {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: var(--hj-message-actions-size, 32px);
+    height: var(--hj-message-actions-size, 32px);
+    padding: 0;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: transparent;
+    color: var(--hj-fg-mute);
+    font-size: 16px;
+    line-height: 0;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-message-actions-button::before {
+    content: '';
+    position: absolute;
+    inset: -6px -2px;
+  }
+  .hj-message-actions-button:hover:not([data-disabled]) {
+    background: color-mix(in srgb, var(--hj-fg) 7%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-message-actions-button:active:not([data-disabled]) {
+    transform: scale(0.9);
+    transition-duration: 70ms;
+  }
+  .hj-message-actions-button[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-message-actions-button[data-pressed] {
+    color: var(--hj-accent);
+  }
+  .hj-message-actions-button[data-pressed] svg path {
+    fill: color-mix(in srgb, currentColor 18%, transparent);
+  }
+  .hj-message-actions-button svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .hj-message-actions-glyph {
+    grid-area: 1 / 1;
+    display: grid;
+    place-items: center;
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+  }
+  /* A pressed thumb gives one small bounce — the only celebration here. */
+  .hj-message-actions-button[data-pressed] .hj-message-actions-glyph {
+    animation: hj-message-actions-pop var(--hj-dur-bouncy) var(--hj-ease-bouncy);
+  }
+  @keyframes hj-message-actions-pop {
+    from {
+      transform: scale(0.7);
+    }
+  }
+  .hj-message-actions-button:active .hj-message-actions-glyph[data-glyph='regenerate'] {
+    transform: rotate(calc(-90deg * var(--hj-travel)));
+  }
+
+  /* Copy → check: the check draws itself. */
+  .hj-message-actions-button:not([data-copied]) .hj-message-actions-glyph[data-glyph='done'],
+  .hj-message-actions-button[data-copied] .hj-message-actions-glyph[data-glyph='copy'] {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  .hj-message-actions-button[data-copied] {
+    color: var(--hj-success);
+  }
+  .hj-message-actions-check {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .hj-message-actions-button[data-copied] .hj-message-actions-check {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset var(--hj-dur-slow) var(--hj-ease-out) 60ms;
+  }
+  .hj-message-actions-live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .hj-message-actions-feedback {
+    display: inline-flex;
+    gap: 2px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .hj-message-actions-separator {
+    display: inline-block;
+    align-self: center;
+    width: 1px;
+    height: 16px;
+    margin: 0 4px;
+    border: 0;
+    background: var(--hj-line);
+  }
+}

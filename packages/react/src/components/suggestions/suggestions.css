@@ -1,0 +1,98 @@
+@layer hj.components {
+  /* Customise: --hj-suggestions-height (chip height, default 36px) */
+  .hj-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hj-suggestions-item {
+    --_i: 10;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    height: var(--hj-suggestions-height, 36px);
+    padding: 0 14px;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg-dim);
+    font: 500 13.5px / 1 var(--hj-font-sans);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+    /* One clock: 24 ms a chip, counting stops at ten. */
+    animation: hj-suggestions-rise var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) both;
+    animation-delay: calc(var(--_i) * var(--hj-stagger));
+  }
+  .hj-suggestions-item:nth-child(1) {
+    --_i: 0;
+  }
+  .hj-suggestions-item:nth-child(2) {
+    --_i: 1;
+  }
+  .hj-suggestions-item:nth-child(3) {
+    --_i: 2;
+  }
+  .hj-suggestions-item:nth-child(4) {
+    --_i: 3;
+  }
+  .hj-suggestions-item:nth-child(5) {
+    --_i: 4;
+  }
+  .hj-suggestions-item:nth-child(6) {
+    --_i: 5;
+  }
+  .hj-suggestions-item:nth-child(7) {
+    --_i: 6;
+  }
+  .hj-suggestions-item:nth-child(8) {
+    --_i: 7;
+  }
+  .hj-suggestions-item:nth-child(9) {
+    --_i: 8;
+  }
+  .hj-suggestions-item:nth-child(10) {
+    --_i: 9;
+  }
+  @keyframes hj-suggestions-rise {
+    from {
+      opacity: 0;
+      transform: translateY(calc(var(--hj-rise) * var(--hj-travel)));
+    }
+  }
+  .hj-suggestions-item:hover:not([data-disabled]) {
+    background: var(--hj-accent-soft);
+    box-shadow: inset 0 0 0 1px transparent;
+    color: var(--hj-accent);
+  }
+  .hj-suggestions-item:active:not([data-disabled]) {
+    transform: scale(var(--hj-press));
+    transition-duration: 70ms;
+  }
+  .hj-suggestions-item[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-suggestions-icon {
+    display: inline-flex;
+    flex: none;
+    font-size: 15px;
+    line-height: 0;
+    color: var(--hj-fg-mute);
+  }
+  .hj-suggestions-item:hover .hj-suggestions-icon {
+    color: inherit;
+  }
+  .hj-suggestions-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+}

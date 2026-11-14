@@ -1,0 +1,114 @@
+@layer hj.components {
+  /* Customise: --hj-reasoning-max-height (panel scrolls past it) */
+  .hj-reasoning {
+    font-family: var(--hj-font-sans);
+    color: var(--hj-fg);
+  }
+  .hj-reasoning-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    margin-left: -6px;
+    padding: 0 8px 0 6px;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: transparent;
+    color: var(--hj-fg-dim);
+    font: 500 13px / 1 var(--hj-font-sans);
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-reasoning-trigger::before {
+    content: '';
+    position: absolute;
+    inset: -7px 0;
+  }
+  .hj-reasoning-trigger:hover {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-reasoning-glyph,
+  .hj-reasoning-chevron {
+    display: inline-flex;
+    font-size: 15px;
+    line-height: 0;
+  }
+  .hj-reasoning-glyph svg,
+  .hj-reasoning-chevron svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-reasoning-glyph {
+    color: var(--hj-accent);
+  }
+  .hj-reasoning-chevron {
+    color: var(--hj-fg-mute);
+    transition: transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+  }
+  .hj-reasoning-trigger[data-panel-open] .hj-reasoning-chevron {
+    transform: rotate(180deg);
+  }
+  /*
+   * While thinking, a light passes along the label. Ambient: it stops (and the label stays
+   * plain) under reduced motion. Paint-only on one short line of text.
+   */
+  .hj-reasoning-label[data-thinking] {
+    background: linear-gradient(
+        90deg,
+        var(--hj-fg-mute) 0%,
+        var(--hj-fg-mute) 35%,
+        var(--hj-fg) 50%,
+        var(--hj-fg-mute) 65%,
+        var(--hj-fg-mute) 100%
+      )
+      0 0 / 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: hj-reasoning-shimmer 1.8s linear infinite;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-reasoning-shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: -150% 0;
+    }
+  }
+
+  /* The one layout transition: height via Base UI's --collapsible-panel-height. */
+  .hj-reasoning-panel {
+    height: var(--collapsible-panel-height);
+    overflow: hidden;
+    transition: height var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
+  }
+  .hj-reasoning-panel[data-starting-style],
+  .hj-reasoning-panel[data-ending-style] {
+    height: 0;
+  }
+  .hj-reasoning-panel[data-ending-style] {
+    transition-duration: var(--hj-dur-base);
+    transition-timing-function: var(--hj-ease-out);
+  }
+  .hj-reasoning-body {
+    max-height: var(--hj-reasoning-max-height, 280px);
+    overflow-y: auto;
+    margin: 6px 0 4px 7px;
+    padding: 2px 0 2px 16px;
+    border-left: 1px solid var(--hj-line);
+    color: var(--hj-fg-mute);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .hj-reasoning-body > :first-child {
+    margin-top: 0;
+  }
+  .hj-reasoning-body > :last-child {
+    margin-bottom: 0;
+  }
+}

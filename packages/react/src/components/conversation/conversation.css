@@ -1,0 +1,66 @@
+@layer hj.components {
+  /* Customise: --hj-conversation-gap (between turns) · --hj-conversation-padding */
+  .hj-conversation {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-conversation-viewport {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    outline: none;
+  }
+  .hj-conversation-viewport:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--hj-focus);
+  }
+  .hj-conversation-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hj-conversation-gap, var(--hj-space-6));
+    padding: var(--hj-conversation-padding, var(--hj-space-6) var(--hj-space-4));
+  }
+
+  .hj-conversation-jump {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    z-index: var(--hj-z-sticky);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px 0 12px;
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface-2);
+    box-shadow: var(--hj-shadow-lift);
+    color: var(--hj-fg);
+    font: 600 13px / 1 var(--hj-font-sans);
+    cursor: pointer;
+    transform: translateX(-50%);
+    transition:
+      opacity var(--hj-dur-base) var(--hj-ease-out),
+      transform var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
+  }
+  .hj-conversation-jump svg {
+    width: 15px;
+    height: 15px;
+  }
+  .hj-conversation-jump:active {
+    transform: translateX(-50%) scale(var(--hj-press));
+    transition-duration: 70ms;
+  }
+  /* Away from the newest message, it rises into view; at the bottom it sinks and fades. */
+  .hj-conversation-jump[data-hidden] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, calc(var(--hj-rise) * var(--hj-travel)));
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+}

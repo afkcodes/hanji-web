@@ -1,0 +1,27 @@
+@layer hj.components {
+  /* Customise: --hj-streaming-text-caret (caret colour) */
+  .hj-streaming-text {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .hj-streaming-text-body {
+    white-space: inherit;
+  }
+  /* The caret blinks as ambient decoration: it holds still under reduced motion. */
+  .hj-streaming-text-caret {
+    display: inline-block;
+    width: 0.5em;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: -0.16em;
+    border-radius: 2px;
+    background: var(--hj-streaming-text-caret, var(--hj-accent));
+    animation: hj-streaming-text-blink 1s steps(2, jump-none) infinite;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-streaming-text-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+}

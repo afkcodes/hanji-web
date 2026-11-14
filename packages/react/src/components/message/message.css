@@ -1,0 +1,166 @@
+@layer hj.components {
+  /*
+   * Customise: --hj-message-bubble-bg · --hj-message-bubble-max · --hj-message-gap
+   */
+  .hj-message {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 4px;
+    align-items: start;
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    animation: hj-message-in var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) both;
+  }
+  .hj-message > :not(.hj-message-avatar) {
+    grid-column: 2;
+  }
+  .hj-message:not(:has(> .hj-message-avatar)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hj-message:not(:has(> .hj-message-avatar)) > * {
+    grid-column: 1;
+  }
+  /* A new turn rises a short way and fades in — once, on arrival. */
+  @keyframes hj-message-in {
+    from {
+      opacity: 0;
+      transform: translateY(calc(var(--hj-rise) * var(--hj-travel)));
+    }
+  }
+
+  .hj-message-avatar {
+    grid-row: 1 / span 4;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-top: 1px;
+    overflow: hidden;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg-dim);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 0;
+  }
+  .hj-message-avatar svg {
+    width: 16px;
+    height: 16px;
+  }
+  .hj-message-author {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 28px;
+    color: var(--hj-fg);
+  }
+  .hj-message-author time,
+  .hj-message-author small {
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--hj-fg-mute);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hj-message-content {
+    min-width: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .hj-message-content > :first-child {
+    margin-top: 0;
+  }
+  .hj-message-content > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* The person's turn: a bubble, on the right, on surface. */
+  .hj-message[data-from='user'] {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: end;
+  }
+  .hj-message[data-from='user'] > * {
+    grid-column: 1;
+  }
+  .hj-message[data-from='user'] .hj-message-avatar {
+    display: none;
+  }
+  .hj-message[data-from='user'] .hj-message-content {
+    max-width: var(--hj-message-bubble-max, min(80%, 560px));
+    padding: 10px 16px;
+    border-radius: var(--hj-radius-lg) var(--hj-radius-lg) var(--hj-radius-xs) var(--hj-radius-lg);
+    background: var(--hj-message-bubble-bg, var(--hj-surface));
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+  }
+
+  /* System notes: centred, quiet, no avatar. */
+  .hj-message[data-from='system'] {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+  }
+  .hj-message[data-from='system'] > * {
+    grid-column: 1;
+  }
+  .hj-message[data-from='system'] .hj-message-avatar {
+    display: none;
+  }
+  .hj-message[data-from='system'] .hj-message-content {
+    font-size: 12.5px;
+    line-height: 17px;
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-message[data-status='error'] .hj-message-content {
+    color: var(--hj-fg-dim);
+  }
+
+  .hj-message-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    font-size: 12px;
+    color: var(--hj-fg-mute);
+  }
+  .hj-message[data-from='user'] .hj-message-footer {
+    justify-content: flex-end;
+  }
+
+  .hj-message-error {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    padding: 10px 12px;
+    border-radius: var(--hj-radius-sm);
+    background: var(--hj-danger-soft);
+    color: var(--hj-danger);
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+  .hj-message-error-glyph {
+    display: inline-flex;
+    flex: none;
+    line-height: 0;
+  }
+  .hj-message-error-glyph svg {
+    width: 16px;
+    height: 16px;
+  }
+  .hj-message-error-text {
+    flex: 1;
+    min-width: 12ch;
+    color: var(--hj-fg);
+  }
+  .hj-message-error-action {
+    display: inline-flex;
+    margin-left: auto;
+  }
+}

@@ -1,0 +1,143 @@
+@layer hj.components {
+  /* Customise: --hj-citation-width (card width) */
+  .hj-citation-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    margin: 0 2px;
+    padding: 0 5px;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg-dim);
+    font: 500 11px / 1 var(--hj-font-mono);
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    vertical-align: 0.14em;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-citation-trigger::before {
+    content: '';
+    position: absolute;
+    inset: -8px -4px;
+  }
+  .hj-citation-trigger:hover,
+  .hj-citation-trigger[data-popup-open] {
+    background: var(--hj-accent-soft);
+    box-shadow: inset 0 0 0 1px transparent;
+    color: var(--hj-accent);
+  }
+
+  .hj-citation-positioner {
+    z-index: var(--hj-z-popover);
+  }
+  .hj-citation-popup {
+    width: var(--hj-citation-width, 300px);
+    max-width: var(--available-width);
+    padding: 14px 16px;
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-radius-md);
+    background: var(--hj-surface-2);
+    box-shadow: var(--hj-shadow-lift);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    transform-origin: var(--transform-origin);
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* Grows from the chip. */
+  .hj-citation-popup[data-starting-style],
+  .hj-citation-popup[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  .hj-citation-popup[data-ending-style] {
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+  .hj-citation-domain {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--hj-fg-mute);
+  }
+  .hj-citation-favicon {
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg-dim);
+    font-size: 9.5px;
+    font-weight: 700;
+  }
+  .hj-citation-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .hj-citation-snippet {
+    margin: 6px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--hj-fg-dim);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hj-citation-list {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-citation-list-item {
+    margin: 0;
+  }
+  .hj-citation-list-link,
+  .hj-citation-list-item:not(:has(a)) {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: var(--hj-radius-xs);
+    color: var(--hj-fg);
+    text-decoration: none;
+    font-size: 13px;
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-citation-list-link:hover {
+    background: color-mix(in srgb, var(--hj-fg) 5%, transparent);
+  }
+  .hj-citation-list-index {
+    font: 500 11px / 1 var(--hj-font-mono);
+    color: var(--hj-fg-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-citation-list-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .hj-citation-list-domain {
+    font-size: 12px;
+    color: var(--hj-fg-mute);
+  }
+}

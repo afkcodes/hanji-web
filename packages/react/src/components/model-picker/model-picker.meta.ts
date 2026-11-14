@@ -1,0 +1,160 @@
+import { defineMeta, props } from '../../system/meta.ts';
+import type { ComponentMeta } from '../../system/meta.ts';
+import type { ContentOwnProps, ItemOwnProps } from './model-picker.tsx';
+
+export const meta: ComponentMeta = defineMeta({
+  name: 'ModelPicker',
+  slug: 'model-picker',
+  category: 'ai',
+  status: 'new',
+  description:
+    'Chooses which model answers: the current one in a quiet trigger, each option with its provider, a capability line and tags.',
+  whenToUse: ['In a PromptInput toolbar or a chat header, when people can switch models.'],
+  whenNotToUse: [
+    'A generic list of options — use Select.',
+    'More than ~12 models — use a Combobox with search.',
+  ],
+  import: "import { ModelPicker } from '@hanji/react';",
+  parts: [
+    {
+      name: 'Root',
+      element: '(none)',
+      base: 'Select.Root',
+      slot: 'ModelPicker.Root',
+      className: '',
+      description: 'value, onValueChange, items (value → label shown in the trigger), disabled.',
+    },
+    {
+      name: 'Trigger',
+      element: 'button',
+      base: 'Select.Trigger',
+      slot: 'ModelPicker.Trigger',
+      className: 'hj-model-picker-trigger',
+      description: 'Quiet pill with the current model and a chevron that turns when open.',
+    },
+    {
+      name: 'Value',
+      element: 'span',
+      base: 'Select.Value',
+      slot: 'ModelPicker.Value',
+      className: 'hj-model-picker-value',
+      description: 'The selected model’s label (from Root items).',
+    },
+    {
+      name: 'Content',
+      element: '(portal)',
+      slot: 'ModelPicker.Popup',
+      className: 'hj-model-picker-popup',
+      description: 'Shorthand: Portal + Positioner + Popup + List. Opens above the trigger.',
+      props: props<ContentOwnProps>({
+        sideOffset: { type: 'number', default: '6', description: 'Gap to the trigger.' },
+        align: {
+          type: "'start' | 'center' | 'end'",
+          default: "'start'",
+          description: 'Alignment to the trigger.',
+        },
+        side: { type: "'top' | 'bottom'", default: "'top'", description: 'Preferred side.' },
+      }),
+      cssVars: { '--hj-model-picker-width': 'Minimum popup width. Default 320px.' },
+    },
+    {
+      name: 'Item',
+      element: 'div',
+      base: 'Select.Item',
+      slot: 'ModelPicker.Item',
+      className: 'hj-model-picker-item',
+      description: 'One model. Selected: name in accent and a check.',
+      props: props<ItemOwnProps>({
+        name: { type: 'string', description: 'Display name; also the typeahead text.' },
+        provider: { type: 'string', description: 'Who makes or serves it.' },
+        description: { type: 'string', description: 'One line on what it is good at.' },
+        badges: {
+          type: 'readonly string[]',
+          description: 'Short tags: fast, reasoning, vision, beta.',
+        },
+      }),
+      dataAttributes: {
+        'data-highlighted': 'Keyboard/pointer focus (Base UI).',
+        'data-selected': 'Current model (Base UI).',
+      },
+    },
+    {
+      name: 'Group',
+      element: 'div',
+      base: 'Select.Group',
+      slot: 'ModelPicker.Group',
+      className: 'hj-model-picker-group',
+      description: 'A group of models.',
+    },
+    {
+      name: 'GroupLabel',
+      element: 'div',
+      base: 'Select.GroupLabel',
+      slot: 'ModelPicker.GroupLabel',
+      className: 'hj-model-picker-group-label',
+      description: 'Eyebrow label for a group.',
+    },
+    {
+      name: 'Separator',
+      element: 'div',
+      base: 'Select.Separator',
+      slot: 'ModelPicker.Separator',
+      className: 'hj-model-picker-separator',
+      description: 'Hairline between groups.',
+    },
+    {
+      name: 'Portal',
+      element: '(portal)',
+      base: 'Select.Portal',
+      slot: 'ModelPicker.Portal',
+      className: '',
+      description: 'Keeps the nearest Theme.',
+    },
+    {
+      name: 'Positioner',
+      element: 'div',
+      base: 'Select.Positioner',
+      slot: 'ModelPicker.Positioner',
+      className: 'hj-model-picker-positioner',
+      description: 'Anchors the popup.',
+    },
+    {
+      name: 'Popup',
+      element: 'div',
+      base: 'Select.Popup',
+      slot: 'ModelPicker.Popup',
+      className: 'hj-model-picker-popup',
+      description: 'Surface-2 card with a lift.',
+    },
+    {
+      name: 'List',
+      element: 'div',
+      base: 'Select.List',
+      slot: 'ModelPicker.List',
+      className: 'hj-model-picker-list',
+      description: 'The options.',
+    },
+  ],
+  examples: [
+    {
+      file: 'picker',
+      title: 'In the composer',
+      description: 'Switch between three models; the trigger shows the current one.',
+    },
+    {
+      file: 'groups',
+      title: 'Grouped, with an unavailable model',
+      description: 'Models by provider; one disabled with a reason.',
+    },
+  ],
+  accessibility: [
+    'A listbox select (Base UI): arrow keys, typeahead by model name, Escape closes.',
+    'Badges and provider are part of each option’s text, so they are read with it.',
+    'Disabled models stay in the list; say why in the description.',
+  ],
+  motion:
+    'The popup grows from the trigger on snappy and fades out in 180 ms; the chevron turns on snappy, clamped. Rows dip to .75 opacity when pressed.',
+  tokens: ['surface-2', 'line', 'shadow-lift', 'accent', 'fg-mute', 'radius-md', 'radius-sm'],
+  related: ['prompt-input', 'select'],
+  baseUi: 'select',
+});

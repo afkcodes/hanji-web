@@ -1,0 +1,166 @@
+@layer hj.components {
+  /* Customise: --hj-attachment-max-width (chip width cap, default 260px) */
+  .hj-attachment-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hj-attachment {
+    --_p: 0;
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    align-items: center;
+    max-width: var(--hj-attachment-max-width, 260px);
+    min-height: 48px;
+    padding: 7px 6px 7px 8px;
+    overflow: hidden;
+    border-radius: var(--hj-radius-sm);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    animation: hj-attachment-in var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) both;
+  }
+  @keyframes hj-attachment-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+  .hj-attachment[data-status='error'] {
+    background: var(--hj-danger-soft);
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+
+  .hj-attachment-icon {
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--hj-radius-xs);
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg-dim);
+    font-size: 17px;
+    line-height: 0;
+  }
+  .hj-attachment-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-attachment-icon[data-kind='image'] {
+    color: var(--hj-data-1);
+  }
+  .hj-attachment-icon[data-kind='pdf'] {
+    color: var(--hj-data-2);
+  }
+  .hj-attachment-icon[data-kind='audio'] {
+    color: var(--hj-data-4);
+  }
+  .hj-attachment-icon[data-kind='code'] {
+    color: var(--hj-data-3);
+  }
+  .hj-attachment[data-status='error'] .hj-attachment-icon {
+    background: transparent;
+    color: var(--hj-danger);
+  }
+
+  .hj-attachment-name {
+    grid-column: 2;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 17px;
+  }
+  .hj-attachment-meta {
+    grid-column: 2;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 11.5px;
+    line-height: 15px;
+    color: var(--hj-fg-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-attachment[data-status='error'] .hj-attachment-meta {
+    color: var(--hj-danger);
+  }
+
+  .hj-attachment-remove {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: transparent;
+    color: var(--hj-fg-mute);
+    font-size: 14px;
+    line-height: 0;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-attachment-remove::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
+  .hj-attachment-remove:hover {
+    background: color-mix(in srgb, var(--hj-fg) 8%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-attachment-remove:active {
+    transform: scale(0.9);
+    transition-duration: 70ms;
+  }
+  .hj-attachment-remove svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  /* Drawn full width, filled by scaleX — never by animating width. */
+  .hj-attachment-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: color-mix(in srgb, var(--hj-accent) 22%, transparent);
+  }
+  .hj-attachment-progress::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--hj-accent);
+    transform-origin: left center;
+    transform: scaleX(var(--_p));
+    transition: transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+  }
+  .hj-attachment[data-indeterminate] .hj-attachment-progress::after {
+    transform: scaleX(0.33);
+    animation: hj-attachment-sweep 1.2s var(--hj-ease-out) infinite;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-attachment-sweep {
+    from {
+      translate: -100% 0;
+    }
+    to {
+      translate: 300% 0;
+    }
+  }
+}
