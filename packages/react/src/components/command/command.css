@@ -1,0 +1,348 @@
+@layer hj.components {
+  /* Customise: --hj-command-radius · --hj-command-input-height · --hj-command-list-height ·
+     --hj-command-item-height · --hj-command-dialog-width · --hj-command-dialog-top */
+  .hj-command {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-command-radius, var(--hj-radius-lg));
+    corner-shape: var(--hj-corner-shape, round);
+    background: var(--hj-surface-2);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+  }
+
+  /* ── Field ─────────────────────────────────────────────────────────────────────────────── */
+  .hj-command-field {
+    --_h: var(--hj-command-input-height, calc(56px * var(--hj-density-size)));
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: calc(10px * var(--hj-density));
+    height: var(--_h);
+    padding: 0 calc(18px * var(--hj-density));
+    border-bottom: 1px solid var(--hj-line);
+    cursor: text;
+  }
+  .hj-command-field-icon {
+    display: inline-flex;
+    flex: none;
+    font-size: 19px;
+    line-height: 0;
+    color: var(--hj-fg-mute);
+    transition: color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-command-field:focus-within .hj-command-field-icon {
+    color: var(--hj-accent);
+  }
+  .hj-command-field-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-command-input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--hj-fg);
+    font: 500 16px / 1.2 var(--hj-font-sans);
+    letter-spacing: -0.005em;
+    caret-color: var(--hj-accent);
+    outline: none;
+  }
+  /* The field is the focus indicator: the glyph turns accent and the caret blinks in accent. */
+  .hj-command-input:focus-visible {
+    outline: none;
+  }
+  .hj-command-input::placeholder {
+    color: var(--hj-fg-mute);
+    font-weight: 400;
+    opacity: 1;
+  }
+  .hj-command-input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  /* Breadcrumb chip: the page you are on. Click, Backspace or Escape steps back out. */
+  .hj-command-crumb {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    height: 26px;
+    padding: 0 calc(10px * var(--hj-density)) 0 calc(5px * var(--hj-density));
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-accent-soft);
+    color: var(--hj-accent);
+    font: 600 12.5px / 1 var(--hj-font-sans);
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+    cursor: pointer;
+    animation: hj-command-crumb-in var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-command-crumb::before {
+    /* 44px hit area around a 26px chip */
+    content: '';
+    position: absolute;
+    inset: -9px -2px;
+  }
+  .hj-command-crumb svg {
+    width: 14px;
+    height: 14px;
+  }
+  .hj-command-crumb:active {
+    transform: scale(var(--hj-press));
+    transition-duration: 70ms;
+  }
+  @keyframes hj-command-crumb-in {
+    from {
+      opacity: 0;
+      transform: translateX(calc(6px * var(--hj-travel))) scale(calc(1 - 0.08 * var(--hj-travel)));
+    }
+  }
+
+  /* ── List ──────────────────────────────────────────────────────────────────────────────── */
+  .hj-command-list {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    max-height: var(--hj-command-list-height, 340px);
+    padding: calc(6px * var(--hj-density));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: calc(6px * var(--hj-density));
+    outline: none;
+  }
+  .hj-command-list:not(:has([role='option'])) {
+    padding: 0;
+  }
+  /*
+   * The one motion detail: opening a page slides its list in from the right, leaving one slides
+   * the parent back in from the left — depth you can feel. The list remounts on every page
+   * change, so the entrance replays; travel is 0 under reduced motion, leaving a fade.
+   */
+  .hj-command-list[data-nav] {
+    --_from: calc(18px * var(--hj-travel));
+    animation: hj-command-page var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) both;
+  }
+  .hj-command-list[data-nav='back'] {
+    --_from: calc(-18px * var(--hj-travel));
+  }
+  @keyframes hj-command-page {
+    from {
+      opacity: 0;
+      transform: translateX(var(--_from));
+    }
+  }
+
+  .hj-command-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .hj-command-group[hidden] {
+    display: none;
+  }
+  .hj-command-group + .hj-command-group {
+    margin-top: calc(4px * var(--hj-density));
+  }
+  .hj-command-group-label {
+    order: -1;
+    display: flex;
+    align-items: center;
+    padding: calc(10px * var(--hj-density)) calc(10px * var(--hj-density))
+      calc(5px * var(--hj-density));
+    font: var(--hj-type-eyebrow);
+    letter-spacing: var(--hj-tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--hj-fg-mute);
+    cursor: default;
+    user-select: none;
+  }
+
+  .hj-command-item {
+    position: relative;
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: calc(12px * var(--hj-density));
+    min-height: var(--hj-command-item-height, calc(42px * var(--hj-density-size)));
+    padding: calc(6px * var(--hj-density)) calc(10px * var(--hj-density));
+    border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--hj-fg);
+    cursor: default;
+    user-select: none;
+    outline: none;
+    scroll-margin-block: calc(6px * var(--hj-density));
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-command-item > .hj-icon {
+    font-size: 18px;
+    color: var(--hj-fg-mute);
+    transition: color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-command-item[data-highlighted] {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+  }
+  .hj-command-item[data-highlighted] > .hj-icon {
+    color: var(--hj-fg);
+  }
+  .hj-command-item:active:not([data-disabled]) {
+    opacity: var(--hj-press-opacity);
+    transition-duration: 70ms;
+  }
+  .hj-command-item[data-disabled] {
+    opacity: 0.4;
+  }
+
+  .hj-command-shortcut,
+  .hj-command-detail,
+  .hj-command-chevron {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    margin-left: auto;
+  }
+  .hj-command-detail {
+    font-size: 12.5px;
+    font-weight: 450;
+    color: var(--hj-fg-mute);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .hj-command-chevron {
+    margin-right: calc(-2px * var(--hj-density));
+    font-size: 16px;
+    line-height: 0;
+    color: var(--hj-fg-mute);
+  }
+  .hj-command-chevron svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-command-detail + .hj-command-shortcut,
+  .hj-command-detail + .hj-command-chevron,
+  .hj-command-shortcut + .hj-command-chevron {
+    margin-left: calc(10px * var(--hj-density));
+  }
+
+  .hj-command-separator {
+    flex: none;
+    height: 1px;
+    margin: calc(6px * var(--hj-density)) calc(-6px * var(--hj-density));
+    border: 0;
+    background: var(--hj-line);
+  }
+
+  /* ── States ────────────────────────────────────────────────────────────────────────────── */
+  .hj-command-empty[data-empty] {
+    padding: calc(30px * var(--hj-density)) calc(24px * var(--hj-density));
+    text-align: center;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--hj-fg-mute);
+    text-wrap: balance;
+    animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-command-empty b,
+  .hj-command-empty strong {
+    color: var(--hj-fg);
+    font-weight: 600;
+  }
+  .hj-command-loading[data-loading] {
+    display: flex;
+    align-items: center;
+    gap: calc(10px * var(--hj-density));
+    padding: calc(13px * var(--hj-density)) calc(16px * var(--hj-density));
+    font-size: 13.5px;
+    color: var(--hj-fg-mute);
+    animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* While loading the list is stale: dim it rather than blank it. */
+  .hj-command-loading[data-loading] ~ .hj-command-list {
+    opacity: 0.55;
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+
+  .hj-command-footer {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(4px * var(--hj-density)) calc(16px * var(--hj-density));
+    min-height: calc(40px * var(--hj-density-size));
+    padding: calc(6px * var(--hj-density)) calc(14px * var(--hj-density));
+    border-top: 1px solid var(--hj-line);
+    font-size: 12px;
+    color: var(--hj-fg-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-command-footer > * {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(6px * var(--hj-density));
+  }
+
+  /* ── Dialog ────────────────────────────────────────────────────────────────────────────── */
+  .hj-command-viewport {
+    position: fixed;
+    inset: 0;
+    z-index: var(--hj-z-overlay);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: var(--hj-command-dialog-top, 12vh) calc(16px * var(--hj-density))
+      calc(16px * var(--hj-density));
+    overflow: hidden;
+  }
+  /* Top-aligned so the field never moves: results grow and shrink downward as you type. */
+  .hj-command-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(var(--hj-command-dialog-width, 600px), 100%);
+    max-height: calc(100dvh - var(--hj-command-dialog-top, 12vh) - 16px);
+    overflow: hidden;
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-command-radius, var(--hj-radius-lg));
+    corner-shape: var(--hj-corner-shape, round);
+    background: var(--hj-surface-2);
+    color: var(--hj-fg);
+    outline: none;
+    transform-origin: 50% 0;
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-command-dialog[data-starting-style] {
+    opacity: 0;
+    transform: scale(calc(1 - 0.04 * var(--hj-travel)));
+  }
+  .hj-command-dialog[data-ending-style] {
+    opacity: 0;
+    transform: scale(calc(1 - 0.02 * var(--hj-travel)));
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+  .hj-command-dialog > .hj-command {
+    flex: 0 1 auto;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  .hj-command-dialog .hj-command-list {
+    max-height: var(--hj-command-list-height, min(380px, 56dvh));
+  }
+}
