@@ -8,6 +8,7 @@ import type {
   VirtualizerHandle,
 } from 'virtua';
 
+import { prefersReducedMotion } from '../../system/motion.ts';
 import { cls } from '../../system/slot.ts';
 import { useSlot } from '../../system/use-slot.ts';
 
@@ -19,6 +20,7 @@ import { useSlot } from '../../system/use-slot.ts';
 interface ListContext {
   count: number;
   gap: number;
+  horizontal: boolean;
   label: string | undefined;
   labelledBy: string | undefined;
   styled: boolean;
@@ -26,6 +28,7 @@ interface ListContext {
 const Context = React.createContext<ListContext>({
   count: 0,
   gap: 0,
+  horizontal: false,
   label: undefined,
   labelledBy: undefined,
   styled: true,
@@ -47,13 +50,17 @@ function List({ style, children, ref }: CustomContainerComponentProps): React.Re
   );
 }
 
-const spacers = new Map<number, React.CSSProperties>();
-/** The gap as a block inside the row: virtua measures the content box, so padding wouldn't count. */
-function spacer(gap: number): React.CSSProperties {
-  let s = spacers.get(gap);
+const spacers = new Map<string, React.CSSProperties>();
+/**
+ * The gap as a block inside the row, after its content: virtua measures the content box, so
+ * padding or margin wouldn't count. Horizontal rows are inline-flex, so there it is a width.
+ */
+function spacer(gap: number, horizontal: boolean): React.CSSProperties {
+  const key = `${horizontal ? 'h' : 'v'}${gap}`;
+  let s = spacers.get(key);
   if (!s) {
-    s = { display: 'block', height: gap };
-    spacers.set(gap, s);
+    s = horizontal ? { flex: 'none', width: gap } : { display: 'block', height: gap };
+    spacers.set(key, s);
   }
   return s;
 }
@@ -71,7 +78,9 @@ function Row({ style, index, children, ref }: CustomItemComponentProps): React.R
       className={c.styled ? 'hj-virtual-list-item' : undefined}
     >
       {children}
-      {c.gap && index < c.count - 1 ? <span aria-hidden="true" style={spacer(c.gap)} /> : null}
+      {c.gap && index < c.count - 1 ? (
+        <span aria-hidden="true" style={spacer(c.gap, c.horizontal)} />
+      ) : null}
     </li>
   );
 }
@@ -96,11 +105,16 @@ export interface RootOwnProps {
   count: number;
   /** Draws row `index`. Rows measure themselves, so heights may vary. */
   children: (index: number) => React.ReactNode;
-  /** A row's height before it is measured. Omit it and virtua estimates from measured rows. */
+  /**
+   * vertical (rows down a column) or horizontal (items along a shelf). A horizontal list needs a
+   * height: the item's, plus the scrollbar where it takes space. @default 'vertical'
+   */
+  orientation?: 'vertical' | 'horizontal';
+  /** A row's height (width when horizontal) before it is measured; omit it and virtua estimates. */
   estimateSize?: number;
   /** Rows' worth of space kept rendered beyond each edge. @default 6 */
   overscan?: number;
-  /** Space between rows in px. @default 0 */
+  /** Space between rows (items, when horizontal) in px. @default 0 */
   gap?: number;
   /** A stable key per row (an id); defaults to the index. */
   getKey?: (index: number) => React.Key;
@@ -135,6 +149,7 @@ export function Root(props: RootProps): React.ReactElement {
     {
       count,
       children,
+      orientation = 'vertical',
       estimateSize,
       overscan = 6,
       gap = 0,
@@ -153,9 +168,10 @@ export function Root(props: RootProps): React.ReactElement {
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
   const handle = React.useRef<VirtualizerHandle | null>(null);
   const data = React.useMemo(() => ({ length: count }), [count]);
+  const horizontal = orientation === 'horizontal';
   const ctx = React.useMemo(
-    () => ({ count, gap, label, labelledBy, styled: !config.unstyled }),
-    [count, gap, label, labelledBy, config.unstyled],
+    () => ({ count, gap, horizontal, label, labelledBy, styled: !config.unstyled }),
+    [count, gap, horizontal, label, labelledBy, config.unstyled],
   );
 
   const range = React.useRef({ start: -1, end: -1 });
@@ -183,7 +199,8 @@ export function Root(props: RootProps): React.ReactElement {
         const align = !options.align || options.align === 'auto' ? 'nearest' : options.align;
         handle.current?.scrollToIndex(Math.min(count - 1, Math.max(0, index)), {
           align,
-          smooth: options.behavior === 'smooth',
+          // a jump, not a glide, for people who asked for less motion
+          smooth: options.behavior === 'smooth' && !prefersReducedMotion(scrollRef.current),
         });
       },
       scrollTo(offset) {
@@ -204,6 +221,7 @@ export function Root(props: RootProps): React.ReactElement {
       // a scroll region must be keyboard-reachable (WCAG 2.1.1)
       tabIndex: 0,
       ...rest,
+      'data-orientation': orientation,
       className: cls(config, 'VirtualList.Root', 'hj-virtual-list', className) as
         | string
         | undefined,
@@ -213,8 +231,10 @@ export function Root(props: RootProps): React.ReactElement {
             ref={handle}
             scrollRef={scrollRef}
             data={data}
-            itemSize={estimateSize}
-            bufferSize={overscan * (estimateSize ?? 56)}
+            horizontal={horizontal}
+            // virtua sizes the whole row, and the gap is drawn inside it
+            itemSize={estimateSize === undefined ? undefined : estimateSize + gap}
+            bufferSize={overscan * ((estimateSize ?? 56) + gap)}
             shift={shift}
             keepMounted={keepMounted}
             as={List}

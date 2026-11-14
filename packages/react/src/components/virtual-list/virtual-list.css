@@ -1,5 +1,5 @@
 @layer hj.components {
-  /* Customise: --hj-virtual-list-height (the viewport; or size the Root yourself) */
+  /* Customise: --hj-virtual-list-height (the viewport, 480px; a shelf's, 200px; or size the Root) */
   .hj-virtual-list {
     position: relative;
     height: var(--hj-virtual-list-height, 480px);
@@ -13,6 +13,12 @@
     color: var(--hj-fg);
     scrollbar-color: color-mix(in srgb, var(--hj-fg) 22%, transparent) transparent;
     scrollbar-width: thin;
+  }
+  /* a shelf: scrolls sideways; its height is the item's (default 200px) */
+  .hj-virtual-list[data-orientation='horizontal'] {
+    height: var(--hj-virtual-list-height, 200px);
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   .hj-virtual-list:focus-visible {
     box-shadow: inset 0 0 0 2px var(--hj-focus);

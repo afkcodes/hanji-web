@@ -73,6 +73,21 @@ describe('VirtualList', () => {
     expect(rows.at(-1)?.querySelector('[aria-hidden]')).toBeNull();
   });
 
+  it('lays a shelf out sideways, the gap as a width', async () => {
+    const { container } = render(
+      <VirtualList.Root orientation="horizontal" count={3} estimateSize={40} gap={12}>
+        {(i) => i}
+      </VirtualList.Root>,
+    );
+    await flush();
+    expect(container.querySelector('.hj-virtual-list')?.getAttribute('data-orientation')).toBe(
+      'horizontal',
+    );
+    const first = container.querySelector('li');
+    expect(first?.style.display).toBe('inline-flex');
+    expect((first?.lastElementChild as HTMLElement | null)?.style.width).toBe('12px');
+  });
+
   it('hands scrollToIndex to virtua', async () => {
     const actions: { current: VirtualListActions | null } = { current: null };
     const { container } = render(
