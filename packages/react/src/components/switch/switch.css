@@ -1,0 +1,72 @@
+@layer hj.components {
+  /* Customise: --hj-switch-width · --hj-switch-height · --hj-switch-thumb */
+  .hj-switch {
+    --_w: var(--hj-switch-width, 46px);
+    --_h: var(--hj-switch-height, 28px);
+    --_k: var(--hj-switch-thumb, 22px);
+    --_pad: calc((var(--_h) - var(--_k)) / 2);
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: var(--_w);
+    height: var(--_h);
+    padding: 0;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface-2);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--hj-dur-base) var(--hj-ease-out),
+      box-shadow var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* 44px hit area around the drawing */
+  .hj-switch::before {
+    content: '';
+    position: absolute;
+    inset: calc((var(--_h) - var(--hj-touch)) / 2) -4px;
+  }
+  .hj-switch[data-size='sm'] {
+    --_w: var(--hj-switch-width, 38px);
+    --_h: var(--hj-switch-height, 24px);
+    --_k: var(--hj-switch-thumb, 18px);
+  }
+  .hj-switch[data-checked] {
+    background: var(--hj-accent);
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+  .hj-switch[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-switch[data-invalid] {
+    box-shadow: inset 0 0 0 1.5px var(--hj-danger);
+  }
+
+  .hj-switch-thumb {
+    position: absolute;
+    top: var(--_pad);
+    left: var(--_pad);
+    width: var(--_k);
+    height: var(--_k);
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-fg-mute);
+    transform-origin: left center;
+    /* Clamped: two properties fade with it, and an overshoot would flash. */
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      background-color var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-switch-thumb[data-checked] {
+    background: var(--hj-on-accent);
+    transform: translateX(calc(var(--_w) - var(--_k) - var(--_pad) * 2));
+  }
+  /* The track never dips under the finger; the thumb stretches toward where it is going. */
+  .hj-switch:active:not([data-disabled]) .hj-switch-thumb {
+    transform: scaleX(1.27);
+  }
+  .hj-switch:active:not([data-disabled]) .hj-switch-thumb[data-checked] {
+    transform: translateX(calc(var(--_w) - var(--_k) * 1.27 - var(--_pad) * 2)) scaleX(1.27);
+  }
+}

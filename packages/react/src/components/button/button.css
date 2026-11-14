@@ -1,0 +1,146 @@
+@layer hj.components {
+  /*
+   * Customise without overriding selectors: set any --hj-button-* on the button or an ancestor.
+   * --hj-button-height · --hj-button-padding · --hj-button-radius · --hj-button-font-size
+   */
+  .hj-button {
+    --_h: var(--hj-button-height, 44px);
+    --_bg: var(--hj-accent);
+    --_fg: var(--hj-on-accent);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: var(--_h);
+    padding: 0 var(--hj-button-padding, 20px);
+    border: 0;
+    border-radius: var(--hj-button-radius, var(--hj-radius-pill));
+    background: var(--_bg);
+    color: var(--_fg);
+    font: 600 var(--hj-button-font-size, 15px) / 1 var(--hj-font-sans);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy),
+      background-color var(--hj-dur-base) var(--hj-ease-out),
+      color var(--hj-dur-base) var(--hj-ease-out),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /* Feedback in one frame: the dip lands on press, the release rides the spring. */
+  .hj-button:active:not([data-disabled]) {
+    transform: scale(var(--hj-press));
+    transition-duration: 70ms, var(--hj-dur-base), var(--hj-dur-base), var(--hj-dur-fast);
+  }
+  .hj-button:hover:not([data-disabled]) {
+    --_bg: color-mix(in srgb, var(--hj-accent) 88%, var(--hj-fg));
+  }
+
+  .hj-button[data-variant='ink'] {
+    --_bg: var(--hj-fg);
+    --_fg: var(--hj-bg);
+  }
+  .hj-button[data-variant='ink']:hover:not([data-disabled]) {
+    --_bg: color-mix(in srgb, var(--hj-fg) 86%, var(--hj-bg));
+  }
+  .hj-button[data-variant='secondary'] {
+    --_bg: color-mix(in srgb, var(--hj-fg) 8%, transparent);
+    --_fg: var(--hj-fg);
+  }
+  .hj-button[data-variant='secondary']:hover:not([data-disabled]) {
+    --_bg: color-mix(in srgb, var(--hj-fg) 12%, transparent);
+  }
+  .hj-button[data-variant='quiet'] {
+    --_bg: transparent;
+    --_fg: var(--hj-fg);
+  }
+  .hj-button[data-variant='quiet']:hover:not([data-disabled]) {
+    --_bg: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+  }
+  /* Danger is a tint with a verb — never a solid red that could be mistaken for the accent. */
+  .hj-button[data-variant='danger'] {
+    --_bg: var(--hj-danger-soft);
+    --_fg: var(--hj-danger);
+  }
+  .hj-button[data-variant='danger']:hover:not([data-disabled]) {
+    --_bg: color-mix(in srgb, var(--hj-danger) 20%, var(--hj-bg));
+  }
+
+  .hj-button[data-size='sm'] {
+    --_h: var(--hj-button-height, 34px);
+    padding: 0 var(--hj-button-padding, 14px);
+    gap: 6px;
+    font-size: var(--hj-button-font-size, 13.5px);
+  }
+  .hj-button[data-size='lg'] {
+    --_h: var(--hj-button-height, 52px);
+    padding: 0 var(--hj-button-padding, 26px);
+    font-size: var(--hj-button-font-size, 16px);
+  }
+  .hj-button[data-icon-only] {
+    width: var(--_h);
+    padding: 0;
+  }
+  .hj-button[data-block] {
+    display: flex;
+    width: 100%;
+  }
+  .hj-button[data-disabled]:not([data-loading]) {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-button[data-loading] {
+    cursor: progress;
+  }
+
+  .hj-button-label {
+    display: inline-flex;
+    align-items: center;
+    gap: inherit;
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+  }
+  .hj-button-label .hj-icon {
+    font-size: 1.2em;
+  }
+  .hj-button[data-loading] .hj-button-label {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+
+  /* The ink ring: a constant turn, a fading tail, a round head. */
+  .hj-button-spinner {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    animation:
+      var(--hj-anim-spin),
+      hj-fade-in var(--hj-dur-base) var(--hj-ease-out) both;
+  }
+  .hj-button-spinner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg 40deg, currentColor 360deg);
+    mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), black calc(100% - 2px));
+  }
+  .hj-button-spinner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(50% - 1px);
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
