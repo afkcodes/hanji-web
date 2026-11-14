@@ -19,14 +19,23 @@
   --color-accent: var(--hj-accent);
   --color-on-accent: var(--hj-on-accent);
   --color-accent-soft: var(--hj-accent-soft);
+  /* *-text: the same hue nudged to read at 4.5:1 — use for text (text-accent-text), not fills */
+  --color-accent-text: var(--hj-accent-text);
   --color-danger: var(--hj-danger);
   --color-danger-soft: var(--hj-danger-soft);
+  --color-danger-text: var(--hj-danger-text);
   --color-success: var(--hj-success);
   --color-success-soft: var(--hj-success-soft);
+  --color-success-text: var(--hj-success-text);
   --color-warning: var(--hj-warning);
   --color-warning-soft: var(--hj-warning-soft);
+  --color-warning-text: var(--hj-warning-text);
   --color-info: var(--hj-info);
   --color-info-soft: var(--hj-info-soft);
+  --color-info-text: var(--hj-info-text);
+  --color-pending: var(--hj-pending);
+  --color-pending-soft: var(--hj-pending-soft);
+  --color-pending-text: var(--hj-pending-text);
   --color-scrim: var(--hj-scrim);
   --color-on-scrim: var(--hj-on-scrim);
   --color-seal: var(--hj-seal);

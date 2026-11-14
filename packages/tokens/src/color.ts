@@ -81,3 +81,59 @@ export function contrastRatio(a: string, b: string): number {
   const lb = relativeLuminance(b);
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
+
+/** OKLab coordinates of an sRGB hex: L 0–1, a/b roughly −0.4–0.4. */
+export function oklab(hex: string): { L: number; a: number; b: number } {
+  const { r, g, b } = parseHex(hex);
+  const lr = linearChannel(r);
+  const lg = linearChannel(g);
+  const lb = linearChannel(b);
+  const l = Math.cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb);
+  const m = Math.cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb);
+  const s = Math.cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
+  return {
+    L: 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    a: 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    b: 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  };
+}
+
+/**
+ * Perceptual distance between two colours (Euclidean in OKLab). Under ~.02 they look the same;
+ * under ~.1 two hues read as one family at a glance — too close for meanings that must differ.
+ */
+export function deltaE(x: string, y: string): number {
+  const p = oklab(x);
+  const q = oklab(y);
+  return Math.hypot(p.L - q.L, p.a - q.a, p.b - q.b);
+}
+
+/** The ink (near-black or white) with the higher WCAG contrast on `hex`. */
+export function bestInkOn(hex: string): string {
+  const dark = '#0b0a09';
+  const light = '#ffffff';
+  return contrastRatio(hex, dark) >= contrastRatio(hex, light) ? dark : light;
+}
+
+/**
+ * `color` as text, nudged just far enough toward the ground's opposite that it reads (≥ `min`)
+ * on each ground and on its own soft tint there (`soft` = the tint's mix, as color-mix draws it).
+ * Unchanged when it already reads, so brand colours stay exact wherever they can.
+ */
+export function readable(
+  color: string,
+  grounds: readonly string[],
+  soft = 0.14,
+  min = 4.5,
+): string {
+  const tints = grounds.flatMap((g) => [g, blend(g, color, soft)]);
+  const dark = grounds.every((g) => luminance(g) < 0.5);
+  const target = dark ? '#ffffff' : '#000000';
+  const reads = (c: string): boolean => tints.every((t) => contrastRatio(c, t) >= min);
+  if (reads(color)) return color;
+  for (let i = 1; i <= 50; i++) {
+    const c = blend(color, target, i * 0.02);
+    if (reads(c)) return c;
+  }
+  return target;
+}

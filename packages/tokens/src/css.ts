@@ -1,4 +1,4 @@
-import { contrastOn } from './color.ts';
+import { contrastOn, deltaE, readable } from './color.ts';
 import {
   EASE_OUT_CUBIC,
   REDUCED_SPRING,
@@ -11,7 +11,9 @@ import {
 } from './motion.ts';
 import type { Spring, SpringName } from './motion.ts';
 import {
+  ACCENT_DANGER_CLASH,
   ACCENT_SOFT_ALPHA,
+  DANGER,
   ON_SCRIM,
   SCRIM,
   accentNames,
@@ -48,7 +50,31 @@ export const THEME_ATTRS = {
   motion: 'data-hj-motion',
   radius: 'data-hj-radius',
   smoothing: 'data-hj-smoothing',
+  /** Set by every Theme: its soft tints are re-derived there, from whatever it changed. */
+  theme: 'data-hj-theme',
 } as const;
+
+/** The light ground and the dark grounds hanji's preset colours must read on. */
+export const LIGHT_GROUNDS: readonly string[] = [papers.paper.bg];
+export const DARK_GROUNDS: readonly string[] = [papers.charcoal.bg, papers.ink.bg];
+
+/** A colour pair as text: each stop nudged until it reads on its grounds and its own soft tint. */
+export function textRamp(
+  ramp: AccentRamp,
+  soft: number = ACCENT_SOFT_ALPHA,
+  light: readonly string[] = LIGHT_GROUNDS,
+  dark: readonly string[] = DARK_GROUNDS,
+): string {
+  return `light-dark(${readable(ramp.light, light, soft)}, ${readable(ramp.dark, dark, soft)})`;
+}
+
+/** True when the accent would be mistaken for danger in either scheme. */
+export function clashesWithDanger(accent: AccentRamp, danger: AccentRamp = DANGER): boolean {
+  return (
+    deltaE(accent.light, danger.light) < ACCENT_DANGER_CLASH ||
+    deltaE(accent.dark, danger.dark) < ACCENT_DANGER_CLASH
+  );
+}
 
 const pct = (n: number): string => `${Math.round(n * 1000) / 10}%`;
 const ld = (ramp: AccentRamp): string => `light-dark(${ramp.light}, ${ramp.dark})`;
@@ -70,33 +96,51 @@ export function paperVars(p: PaperColors): Record<`--hj-${string}`, string> {
     '--hj-fg-dim': p.fgDim,
     '--hj-fg-mute': p.fgMute,
     '--hj-danger': p.danger,
+    '--hj-danger-text': readable(p.danger, [p.bg]),
     '--hj-shadow-lift': p.isDark ? shadows.liftDark : shadows.lift,
   } as Record<`--hj-${string}`, string>;
 }
 
 /** CSS variables an accent defines: the stop is picked by the element's colour scheme. */
 export function accentVars(ramp: AccentRamp): Record<`--hj-${string}`, string> {
+  const clash = clashesWithDanger(ramp);
   return {
     '--hj-accent': ld(ramp),
     '--hj-on-accent': `light-dark(${contrastOn(ramp.light)}, ${contrastOn(ramp.dark)})`,
+    // the accent as text: labels on accent-soft, links — AA on the ground and the tint
+    '--hj-accent-text': textRamp(ramp),
+    // work in progress is the accent, unless the accent could be read as danger
+    '--hj-pending': clash ? 'var(--hj-info)' : 'var(--hj-accent)',
+    '--hj-pending-text': clash ? 'var(--hj-info-text)' : 'var(--hj-accent-text)',
   };
 }
 
-/** Values derived from paper + accent. Re-declared wherever either changes, so nesting stays true. */
-const derived: Record<string, string> = {
-  '--hj-accent-soft': `color-mix(in srgb, var(--hj-accent) ${pct(ACCENT_SOFT_ALPHA)}, var(--hj-bg))`,
-  '--hj-danger-soft': 'color-mix(in srgb, var(--hj-danger) 14%, var(--hj-bg))',
+/** Fixed colours: the same token everywhere, each stop picked by the element's colour scheme. */
+const semantic: Record<string, string> = {
   '--hj-success': ld(status.success),
-  '--hj-success-soft': 'color-mix(in srgb, var(--hj-success) 14%, var(--hj-bg))',
+  '--hj-success-text': textRamp(status.success),
   '--hj-warning': ld(status.warning),
-  '--hj-warning-soft': 'color-mix(in srgb, var(--hj-warning) 16%, var(--hj-bg))',
+  '--hj-warning-text': textRamp(status.warning, 0.16),
   '--hj-info': ld(status.info),
-  '--hj-info-soft': 'color-mix(in srgb, var(--hj-info) 14%, var(--hj-bg))',
-  '--hj-focus': 'var(--hj-accent)',
+  '--hj-info-text': textRamp(status.info),
   '--hj-seal': ld(seal),
   '--hj-scrim': SCRIM,
   '--hj-on-scrim': ON_SCRIM,
   ...Object.fromEntries(dataSeries.map((n, i) => [`--hj-data-${i + 1}`, ld(accents[n])])),
+};
+
+/**
+ * Mixed from paper + accent + the status colours. Re-declared wherever any of them can change
+ * (a paper, an accent or a Theme), so a scope's tints always come from that scope's colours.
+ */
+const derived: Record<string, string> = {
+  '--hj-accent-soft': `color-mix(in srgb, var(--hj-accent) ${pct(ACCENT_SOFT_ALPHA)}, var(--hj-bg))`,
+  '--hj-danger-soft': 'color-mix(in srgb, var(--hj-danger) 14%, var(--hj-bg))',
+  '--hj-success-soft': 'color-mix(in srgb, var(--hj-success) 14%, var(--hj-bg))',
+  '--hj-warning-soft': 'color-mix(in srgb, var(--hj-warning) 16%, var(--hj-bg))',
+  '--hj-info-soft': 'color-mix(in srgb, var(--hj-info) 14%, var(--hj-bg))',
+  '--hj-pending-soft': 'color-mix(in srgb, var(--hj-pending) 14%, var(--hj-bg))',
+  '--hj-focus': 'var(--hj-accent)',
 };
 
 /** CSS variables for one spring (free and clamped). */
@@ -223,12 +267,15 @@ export function tokensCss(
   out.push(
     `@media (prefers-color-scheme: dark) {\n${block(`[${D.paper}="auto"]`, paperVars(papers.charcoal))}\n}`,
   );
+  // a custom paper (createTheme) brings its colours inline; its scheme rides on a variable
+  out.push(block(`[${D.paper}="custom"]`, { 'color-scheme': 'var(--hj-color-scheme, light)' }));
   // accents
   out.push(block(':root', accentVars(accents[accent])));
+  out.push(block(':root', semantic));
   for (const name of accentNames)
     out.push(block(`[${D.accent}="${name}"]`, accentVars(accents[name])));
   // derived — recomputed wherever paper or accent changes
-  out.push(block(`:root, [${D.paper}], [${D.accent}]`, derived));
+  out.push(block(`:root, [${D.paper}], [${D.accent}], [${D.theme}]`, derived));
   // corners — circular everywhere; squircle (scaled radius + superellipse) where supported
   const cornerSel = `:root, [${D.smoothing}], [${D.radius}]`;
   out.push(block(cornerSel, cornerVars('1')));
