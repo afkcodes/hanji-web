@@ -20,6 +20,4 @@ export const IconMagicStick: HanjiIcon = /* @__PURE__ */ icon('magic-stick', {
     ],
     ['f', 'M19.53 18.47a.75.75 0 1 0 -1.06 1.06l2 2a.75.75 0 1 0 1.06-1.06l-2-2z'],
   ],
-  duo: [1],
-  duoSolid: [1],
 });

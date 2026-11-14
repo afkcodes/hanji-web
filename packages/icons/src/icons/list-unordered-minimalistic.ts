@@ -39,7 +39,5 @@ export const IconListUnorderedMinimalistic: HanjiIcon = /* @__PURE__ */ icon(
         'M5 15.25c.41 0 .75.34.75.75c0 .41-.34.75-.75.75c-.41 0-.75-.34-.75-.75c0-.41.34-.75.75-.75z',
       ],
     ],
-    duo: [0, 1, 2],
-    duoSolid: [0, 1, 2],
   },
 );

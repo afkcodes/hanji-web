@@ -35,6 +35,4 @@ export const IconHeadphonesRoundSound: HanjiIcon = /* @__PURE__ */ icon('headpho
       'M9 7.25c.41 0 .75.34.75.75v2c0 .41-.34.75-.75.75c-.41 0-.75-.34-.75-.75v-2c0-.41.34-.75.75-.75z',
     ],
   ],
-  duo: [0],
-  duoSolid: [1, 2, 3],
 });

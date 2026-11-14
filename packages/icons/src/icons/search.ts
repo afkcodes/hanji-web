@@ -11,6 +11,4 @@ export const IconSearch: HanjiIcon = /* @__PURE__ */ icon('search', {
     ['f', 'M11 2.75a8.25 8.25 0 1 1 0 16.5a8.25 8.25 0 0 1 0-16.5z'],
     ['s', 'M17.25 17.25l3.75 3.75'],
   ],
-  duo: [1],
-  duoSolid: [0],
 });

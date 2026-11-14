@@ -1,7 +1,7 @@
 {
   "name": "@hanji/icons",
   "version": "0.1.0",
-  "description": "hanji icons: 1,500+ icons in five styles (outline, solid, wash, duotone, duotone solid), reshaped from Solar by 480 Design with hanji's softened joins and rounder corners. Tree-shakable React components, raw SVGs and a searchable catalog.",
+  "description": "hanji icons: 1,500+ icons in outline, solid and wash, with hanji motion (ink-fill toggles, draw, pop, ring, shake, spin). Reshaped from Solar by 480 Design with softened joins and rounder corners. Tree-shakable React components, raw SVGs and a searchable catalog.",
   "keywords": [
     "hanji",
     "icons",

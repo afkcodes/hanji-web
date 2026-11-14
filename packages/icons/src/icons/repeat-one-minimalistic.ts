@@ -27,7 +27,5 @@ export const IconRepeatOneMinimalistic: HanjiIcon = /* @__PURE__ */ icon(
         'M5.49 12c0-2.04 1.66-3.69 3.72-3.69h5.58c2.06 0 3.72 1.65 3.72 3.69c0 2.04-1.66 3.69-3.72 3.69h-5.58c-2.06 0-3.72-1.65-3.72-3.69z',
       ],
     ],
-    duo: [1],
-    duoSolid: [2],
   },
 );

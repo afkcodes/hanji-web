@@ -10,6 +10,4 @@ export const IconWiFiNone: HanjiIcon = /* @__PURE__ */ icon('wi-fi-none', {
       'M12.02 18.71c.41 0 .75.34.75.75c0 .42-.34.75-.75.75c-.42 0-.75-.33-.75-.75c0-.41.33-.75.75-.75z',
     ],
   ],
-  duo: [],
-  duoSolid: [],
 });

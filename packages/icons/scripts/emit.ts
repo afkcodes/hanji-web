@@ -22,7 +22,7 @@ const { catalog, source } = (await import(join(dist, 'catalog.js'))) as {
   source: string;
 };
 
-const variants = ['outline', 'solid', 'wash', 'duotone', 'duotone-solid'] as const;
+const variants = ['outline', 'solid', 'wash'] as const;
 for (const v of variants) mkdirSync(join(dist, 'svg', v), { recursive: true });
 const entries = catalog.map((c) => {
   const icon = icons[c.component];

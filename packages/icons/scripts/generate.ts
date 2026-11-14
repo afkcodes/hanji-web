@@ -6,7 +6,6 @@
  *   - every sharp vertex between two straight strokes or edges gets a soft fillet
  *     (FILLET_LINE on lines, FILLET_FILL on solids), and every line join and cap is round;
  *   - every circular rounded corner becomes hanji's continuous corner (corners.ts);
- *   - two-ink styles: Solar's secondary marks are redrawn in a second ink (the accent in hanji);
  *   - a wash style: the line over its own solid at 16%;
  *   - hanji names, aliases and search words; and hanji's own glyphs where Solar has none.
  * Icons whose line drawing needs SVG masks are skipped; other styles fall back as noted.
@@ -138,8 +137,6 @@ interface Picked {
   aliases: string[];
   line: Drawing;
   solid: Drawing;
-  duo: Drawing;
-  duoSolid: Drawing;
   original: boolean;
 }
 
@@ -173,7 +170,6 @@ for (const base of [...bases].toSorted()) {
     skipped++;
     continue;
   }
-  const duo = get(base, 'line-duotone') ?? line;
   const aliases = aliasesOf.get(base) ?? [];
   const tagSet = new Set<string>([...words(base), ...aliases.flatMap(words)]);
   for (const w of Array.from(tagSet)) for (const syn of SYNONYMS[w] ?? []) tagSet.add(syn);
@@ -185,8 +181,6 @@ for (const base of [...bases].toSorted()) {
     aliases,
     line: flat(line),
     solid: flat(solid),
-    duo,
-    duoSolid: boldDuo ?? solid,
     original: false,
   });
 }
@@ -210,8 +204,6 @@ for (const o of ORIGINALS) {
     aliases,
     line: shape(o.line),
     solid: shape(o.solid),
-    duo: shape(o.duo ?? o.line),
-    duoSolid: shape(o.duoSolid ?? o.solid),
     original: true,
   });
 }
@@ -231,16 +223,9 @@ for (const p of picked) {
 // ---------- emit ----------
 
 const q = (s: string): string => `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
-const code = (n: Node): string => `${n.secondary ? '~' : ''}${n.kind}${n.width ?? ''}`;
-const same = (a: Drawing, b: Drawing): boolean =>
-  a.length === b.length && a.every((n, i) => n.kind === b[i]?.kind && n.d === b[i]?.d);
+const code = (n: Node): string => `${n.kind}${n.width ?? ''}`;
 const drawing = (d: Drawing): string =>
   `[${d.map((n) => `[${q(code(n))}, ${q(n.d)}]`).join(', ')}]`;
-/** A two-ink drawing that only re-marks an existing one is stored as the marked indices. */
-const twoInk = (duo: Drawing, base: Drawing): string =>
-  same(duo, base)
-    ? `[${duo.flatMap((n, i) => (n.secondary ? [i] : [])).join(', ')}]`
-    : drawing(duo);
 
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
@@ -257,8 +242,6 @@ import type { HanjiIcon } from '../create-icon.tsx';
 export const ${p.component}: HanjiIcon = /* @__PURE__ */ icon(${q(p.name)}, {
   line: ${drawing(p.line)},
   solid: ${drawing(p.solid)},
-  duo: ${twoInk(p.duo, p.line)},
-  duoSolid: ${twoInk(p.duoSolid, p.solid)},
 });
 `,
   );
@@ -271,7 +254,15 @@ const byName = new Map(picked.map((p) => [p.name, p]));
 writeFileSync(
   join(src, 'index.ts'),
   `${header}export { icon, toSvg } from './create-icon.tsx';
-export type { Drawing, HanjiIcon, IconProps, IconVariant } from './create-icon.tsx';
+export type {
+  Drawing,
+  HanjiIcon,
+  IconAnimation,
+  IconDrawings,
+  IconProps,
+  IconVariant,
+} from './create-icon.tsx';
+export { MOTION_HREF, motionCss } from './motion.ts';
 export { iconNames } from './names.ts';
 export type { IconName } from './names.ts';
 ${picked.map((p) => `export { ${p.component} } from './icons/${p.name}.ts';`).join('\n')}

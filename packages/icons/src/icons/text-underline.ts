@@ -14,6 +14,4 @@ export const IconTextUnderline: HanjiIcon = /* @__PURE__ */ icon('text-underline
     ],
     ['f', 'M4 20c-.55 0-1 .45-1 1c0 .55.45 1 1 1h16c.55 0 1-.45 1-1c0-.55-.45-1-1-1h-16z'],
   ],
-  duo: [1],
-  duoSolid: [0],
 });

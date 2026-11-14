@@ -56,6 +56,4 @@ export const IconServerSquareCloud: HanjiIcon = /* @__PURE__ */ icon('server-squ
       'M18 6.75c.41 0 .75.34.75.75c0 .41-.34.75-.75.75h-4.5c-.41 0-.75-.34-.75-.75c0-.41.34-.75.75-.75h4.5z',
     ],
   ],
-  duo: [0],
-  duoSolid: [0, 1],
 });

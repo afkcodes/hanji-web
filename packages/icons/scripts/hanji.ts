@@ -7,7 +7,7 @@
 export interface Node {
   kind: 'f' | 'e' | 's';
   d: string;
-  /** Drawn in the second ink in the two-ink styles. */
+  /** Solar marks secondary strokes in its duotone styles; hanji draws them in one ink. */
   secondary: boolean;
   /** Stroke width when it isn't 1.5. */
   width?: number | undefined;
@@ -197,8 +197,6 @@ export interface Original {
   tags: readonly string[];
   line: Drawing;
   solid: Drawing;
-  duo?: Drawing;
-  duoSolid?: Drawing;
 }
 
 export const ORIGINALS: readonly Original[] = [
@@ -212,14 +210,6 @@ export const ORIGINALS: readonly Original[] = [
     ],
     solid: [
       { kind: 'f', d: lens, secondary: false },
-      { kind: 's', d: handle, secondary: false },
-    ],
-    duo: [
-      { kind: 's', d: lens, secondary: false },
-      { kind: 's', d: handle, secondary: true },
-    ],
-    duoSolid: [
-      { kind: 'f', d: lens, secondary: true },
       { kind: 's', d: handle, secondary: false },
     ],
   },

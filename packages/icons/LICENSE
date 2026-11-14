@@ -7,9 +7,9 @@ https://creativecommons.org/licenses/by/4.0/).
 
 Changes made by hanji: every sharp straight-to-straight vertex is filleted and
 every join and cap is round; rounded corners are redrawn as larger continuous
-corners; coordinates are re-quantised; secondary marks are re-inked for the
-two-ink styles; the wash style is new; icons are renamed, aliased and tagged;
-`search` and `wrench` are drawn for hanji. Solar's drawings are otherwise kept.
+corners; coordinates are re-quantised; the wash style and the motion layer are
+new; icons are renamed, aliased and tagged; `search` and `wrench` are drawn for
+hanji. Solar's drawings are otherwise kept.
 
 The React components, the generator and the hanji-drawn icons are released
 under the MIT License:

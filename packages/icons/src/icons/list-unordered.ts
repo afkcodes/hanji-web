@@ -47,6 +47,4 @@ export const IconListUnordered: HanjiIcon = /* @__PURE__ */ icon('list-unordered
       'M5 17.25c.41 0 .75.34.75.75c0 .41-.34.75-.75.75c-.41 0-.75-.34-.75-.75c0-.41.34-.75.75-.75z',
     ],
   ],
-  duo: [0, 1, 2, 3],
-  duoSolid: [0, 1, 2, 3],
 });

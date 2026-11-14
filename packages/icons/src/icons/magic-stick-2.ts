@@ -23,6 +23,4 @@ export const IconMagicStick2: HanjiIcon = /* @__PURE__ */ icon('magic-stick-2', 
       'M15.93 16.99c.13-.27.24-.45.39-.6c.17-.17.38-.28.71-.42l4.5 4.5a.75.75 0 0 1 -1.06 1.06l-4.54-4.54z',
     ],
   ],
-  duo: [1],
-  duoSolid: [1],
 });

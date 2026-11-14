@@ -9,6 +9,7 @@ import {
   IconBell,
   IconChevronDown,
   IconAltArrowDown,
+  IconHeart,
   IconSearch,
   iconNames,
   toSvg,
@@ -65,7 +66,7 @@ describe('icons', () => {
     expect(catalog.filter((c) => c.original).map((c) => c.name)).toEqual(['search', 'wrench']);
   });
 
-  it('draws all five styles', () => {
+  it('draws outline, solid and wash', () => {
     const { container, rerender } = render(<IconBell />);
     const svg = (): SVGSVGElement => container.querySelector('svg') as SVGSVGElement;
     expect(svg().getAttribute('fill')).toBe('none');
@@ -75,10 +76,33 @@ describe('icons', () => {
     expect(svg().querySelector('path')?.getAttribute('fill')).toBe('currentColor');
     rerender(<IconBell variant="wash" />);
     expect(svg().querySelector('g')?.getAttribute('opacity')).toBe('0.16');
-    rerender(<IconBell variant="duotone" />);
-    expect(svg().querySelector('[style*="--hj-icon-second"]')).toBeTruthy();
-    rerender(<IconBell variant="duotone-solid" />);
-    expect(svg().getAttribute('data-variant')).toBe('duotone-solid');
+  });
+
+  it('floods a toggle with ink when it becomes active', () => {
+    const { container, rerender } = render(<IconHeart active={false} />);
+    const fill = (): Element | null => container.querySelector('[data-hj-fill]');
+    expect(fill()?.getAttribute('data-hj-fill')).toBe('off');
+    expect(fill()?.querySelectorAll('[data-layer]')).toHaveLength(2);
+    rerender(<IconHeart active />);
+    expect(fill()?.getAttribute('data-hj-fill')).toBe('on');
+    expect(container.querySelector('svg')?.getAttribute('data-variant')).toBe('solid');
+  });
+
+  it('replays an animation when its trigger changes', () => {
+    const { container, rerender } = render(<IconBell animate="ring" trigger={0} />);
+    const first = container.querySelector('[data-hj-anim="ring"]');
+    expect(first).toBeTruthy();
+    rerender(<IconBell animate="ring" trigger={0} />);
+    expect(container.querySelector('[data-hj-anim="ring"]')).toBe(first);
+    rerender(<IconBell animate="ring" trigger={1} />);
+    expect(container.querySelector('[data-hj-anim="ring"]')).not.toBe(first);
+  });
+
+  it('draws strokes in order', () => {
+    const { container } = render(<IconBell animate="draw" />);
+    const strokes = container.querySelectorAll('path[pathLength="1"]');
+    expect(strokes.length).toBeGreaterThan(1);
+    expect((strokes[1] as SVGPathElement).style.getPropertyValue('--hj-icon-i')).toBe('1');
   });
 
   it('exports familiar aliases for the same drawing', () => {
@@ -93,7 +117,7 @@ describe('icons', () => {
 
   it('renders standalone SVG strings', () => {
     expect(toSvg(IconBell, 'solid')).toMatch(/^<svg[^>]+><path d="M[^"]+" fill="currentColor"/);
-    expect(toSvg(IconBell, 'duotone')).toContain('opacity="0.5"');
+    expect(toSvg(IconBell, 'wash')).toContain('opacity="0.16"');
   });
 
   it('loads an icon by name or alias', async () => {

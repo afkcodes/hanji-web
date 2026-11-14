@@ -20,6 +20,4 @@ export const IconMagicWand: HanjiIcon = /* @__PURE__ */ icon('magic-wand', {
       'M19.53 18.47c-.29-.29-.77-.29-1.06 0c-.29.29-.29.77 0 1.06l2 2c.29.29.77.29 1.06 0c.29-.29.29-.77 0-1.06l-2-2z',
     ],
   ],
-  duo: [1],
-  duoSolid: [1],
 });

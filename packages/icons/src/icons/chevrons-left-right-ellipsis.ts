@@ -32,7 +32,5 @@ export const IconChevronsLeftRightEllipsis: HanjiIcon = /* @__PURE__ */ icon(
         'M16 11.25c.41 0 .75.34.75.75c0 .41-.34.75-.75.75h-.01c-.41 0-.75-.34-.75-.75c0-.41.34-.75.75-.75h.01z',
       ],
     ],
-    duo: [2],
-    duoSolid: [2, 3, 4],
   },
 );
