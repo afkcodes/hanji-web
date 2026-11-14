@@ -41,6 +41,18 @@ export interface HanjiStrings {
   characterOf: (n: number, total: number) => string;
   /** “Rated 4.6 out of 5 from 2,184 ratings” (value and count are pre-formatted) */
   ratedOutOf: (value: string, max: number, count?: string) => string;
+  /** Read once for a reorderable list: how the keyboard twin works. */
+  reorderHint: string;
+  /** aria-roledescription of a reorderable item. */
+  reorderable: string;
+  /** “Lifted Low Tide, position 2 of 6. …” */
+  reorderLifted: (name: string, n: number, total: number) => string;
+  /** “Low Tide, position 3 of 6.” while moving with the keyboard. */
+  reorderMoved: (name: string, n: number, total: number) => string;
+  /** “Moved Low Tide to position 3 of 6.” */
+  reorderDropped: (name: string, n: number, total: number) => string;
+  /** “Low Tide put back at position 2.” */
+  reorderCancelled: (name: string, n: number) => string;
 }
 
 export const defaultStrings: HanjiStrings = {
@@ -73,6 +85,14 @@ export const defaultStrings: HanjiStrings = {
   characterOf: (n, total) => `Character ${n} of ${total}`,
   ratedOutOf: (value, max, count) =>
     `Rated ${value} out of ${max}${count ? ` from ${count} ratings` : ''}`,
+  reorderHint:
+    'Reorderable list. Space lifts an item, arrow keys move it, Space drops it, Escape cancels.',
+  reorderable: 'reorderable item',
+  reorderLifted: (name, n, total) =>
+    `Lifted ${name}, position ${n} of ${total}. Arrow keys move it, Space drops it, Escape cancels.`,
+  reorderMoved: (name, n, total) => `${name}, position ${n} of ${total}.`,
+  reorderDropped: (name, n, total) => `Moved ${name} to position ${n} of ${total}.`,
+  reorderCancelled: (name, n) => `${name} put back at position ${n}.`,
 };
 
 /**

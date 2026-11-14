@@ -1,0 +1,113 @@
+@layer hj.components {
+  /* Customise: --hj-drag-list-row-height (56) · --hj-drag-list-inset (where the hairline starts) */
+  .hj-drag-list {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--hj-font-sans);
+    color: var(--hj-fg);
+  }
+  .hj-drag-list[data-dragging] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .hj-drag-list-item {
+    position: relative;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    gap: calc(12px * var(--hj-density));
+    min-height: var(--hj-drag-list-row-height, calc(56px * var(--hj-density-size)));
+    padding: calc(8px * var(--hj-density)) calc(4px * var(--hj-density))
+      calc(8px * var(--hj-density)) calc(16px * var(--hj-density));
+    border-radius: var(--hj-radius-sm);
+    corner-shape: var(--hj-corner-shape, round);
+    outline: none;
+    touch-action: pan-y;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    /* the others make room on snappy, clamped */
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      scale var(--hj-dur-snappy) var(--hj-ease-snappy),
+      background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /* Lifting is the one time a row casts a shadow: it has left the page. */
+  .hj-drag-list-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    corner-shape: inherit;
+    box-shadow: var(--hj-shadow-lift);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* Hairline between rows, from where the text starts. */
+  .hj-drag-list-item::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: var(--hj-drag-list-inset, 16px);
+    height: 1px;
+    background: var(--hj-line);
+    pointer-events: none;
+    transition: opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-drag-list-item:last-child::after,
+  .hj-drag-list-item[data-held]::after,
+  .hj-drag-list-item[data-settling]::after {
+    opacity: 0;
+  }
+  .hj-drag-list-item[data-held],
+  .hj-drag-list-item[data-settling] {
+    z-index: 5;
+  }
+  .hj-drag-list-item[data-held] {
+    scale: 1.03;
+    background: var(--hj-surface-2);
+  }
+  /* held by a finger: the row follows 1:1, with no easing in the way */
+  .hj-drag-list-item[data-held]:not([data-keyed]) {
+    transition:
+      scale var(--hj-dur-snappy) var(--hj-ease-snappy),
+      background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-drag-list-item[data-held]::before {
+    opacity: 1;
+  }
+  .hj-drag-list-item:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--hj-focus);
+  }
+  .hj-drag-list[data-resetting] > .hj-drag-list-item {
+    transition: none;
+  }
+
+  .hj-drag-list-handle {
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 40px;
+    height: 44px;
+    margin-left: auto;
+    color: var(--hj-fg-mute);
+    font-size: 20px;
+    cursor: grab;
+    touch-action: none;
+    transition: color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-drag-list-item[data-held] .hj-drag-list-handle {
+    color: var(--hj-fg);
+    cursor: grabbing;
+  }
+  .hj-drag-list[data-disabled] .hj-drag-list-handle {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
