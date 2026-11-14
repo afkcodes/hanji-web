@@ -1,6 +1,8 @@
 @layer hj.components {
-  /* Customise: --hj-code-block-max-height · --hj-code-block-bg · --hj-code-block-font-size */
+  /* Customise: --hj-code-block-max-height · --hj-code-block-bg · --hj-code-block-font-size ·
+     token colours --hj-code-block-{keyword,string,number,constant,function,type,tag,attr,property,variable,comment,punct} */
   .hj-code-block {
+    position: relative;
     margin: 0;
     overflow: hidden;
     border-radius: var(--hj-radius-md);
@@ -9,6 +11,11 @@
     box-shadow: inset 0 0 0 1px var(--hj-line);
     color: var(--hj-fg);
     font-family: var(--hj-font-sans);
+    transition: box-shadow var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* A copied block answers with a brief success hairline. */
+  .hj-code-block[data-copied] {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hj-success) 55%, var(--hj-line));
   }
   .hj-code-block-header {
     display: flex;
@@ -114,13 +121,32 @@
     stroke-dashoffset: 0;
     transition: stroke-dashoffset var(--hj-dur-slow) var(--hj-ease-out) 60ms;
   }
-  .hj-code-block-live {
+  /* Copy as a direct child of Root floats over the code's top-right corner. */
+  .hj-code-block > .hj-code-block-button {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+    z-index: 1;
+    top: calc(8px * var(--hj-density));
+    right: calc(8px * var(--hj-density));
+    background: var(--hj-code-block-bg, var(--hj-surface));
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+  }
+  .hj-code-block > .hj-code-block-button:hover {
+    background: color-mix(in srgb, var(--hj-fg) 7%, var(--hj-code-block-bg, var(--hj-surface)));
+  }
+  @media (hover: hover) {
+    .hj-code-block > .hj-code-block-button {
+      opacity: 0;
+      transition:
+        opacity var(--hj-dur-fast) var(--hj-ease-out),
+        background-color var(--hj-dur-fast) var(--hj-ease-out),
+        color var(--hj-dur-fast) var(--hj-ease-out),
+        transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+    }
+    .hj-code-block:hover > .hj-code-block-button,
+    .hj-code-block:focus-within > .hj-code-block-button,
+    .hj-code-block > .hj-code-block-button[data-copied] {
+      opacity: 1;
+    }
   }
 
   .hj-code-block-code {
@@ -162,5 +188,91 @@
     opacity: 0.7;
     user-select: none;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Syntax: hanji's data hues, pulled 20% toward the ink so small mono type keeps its contrast on
+     every paper. Each kind reads a --hj-code-block-<kind> hook first. */
+  .hj-code-block-token[data-token='keyword'] {
+    color: var(--hj-code-block-keyword, color-mix(in oklab, var(--hj-data-4) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='string'] {
+    color: var(--hj-code-block-string, color-mix(in oklab, var(--hj-data-3) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='number'] {
+    color: var(--hj-code-block-number, color-mix(in oklab, var(--hj-data-2) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='constant'] {
+    color: var(--hj-code-block-constant, color-mix(in oklab, var(--hj-data-2) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='function'] {
+    color: var(--hj-code-block-function, color-mix(in oklab, var(--hj-data-1) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='type'] {
+    color: var(--hj-code-block-type, color-mix(in oklab, var(--hj-data-6) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='tag'] {
+    color: var(--hj-code-block-tag, color-mix(in oklab, var(--hj-data-1) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='attr'] {
+    color: var(--hj-code-block-attr, color-mix(in oklab, var(--hj-data-5) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='property'] {
+    color: var(--hj-code-block-property, color-mix(in oklab, var(--hj-data-1) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='variable'] {
+    color: var(--hj-code-block-variable, color-mix(in oklab, var(--hj-data-5) 80%, var(--hj-fg)));
+  }
+  .hj-code-block-token[data-token='comment'] {
+    color: var(--hj-code-block-comment, var(--hj-fg-mute));
+  }
+  .hj-code-block-token[data-token='punct'] {
+    color: var(--hj-code-block-punct, var(--hj-fg-dim));
+  }
+
+  /* Snippet: one line, copy-first. */
+  .hj-code-block-snippet {
+    --_h: var(--hj-code-block-snippet-height, calc(40px * var(--hj-density-size)));
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    min-width: 0;
+    height: var(--_h);
+    padding: 0 calc(6px * var(--hj-density)) 0 calc(14px * var(--hj-density));
+    border-radius: var(--hj-radius-sm);
+    corner-shape: var(--hj-corner-shape, round);
+    background: var(--hj-code-block-bg, var(--hj-surface));
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    font: 400 var(--hj-code-block-font-size, 12.5px) / 1 var(--hj-font-mono);
+    color: var(--hj-fg);
+    transition: box-shadow var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-code-block-snippet[data-copied] {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hj-success) 55%, var(--hj-line));
+  }
+  .hj-code-block-prompt {
+    flex: none;
+    margin-right: 1ch;
+    color: var(--hj-fg-mute);
+    user-select: none;
+  }
+  /* One click selects the whole line; long lines scroll under a fade instead of wrapping. */
+  .hj-code-block-snippet-code {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: calc(10px * var(--hj-density)) calc(14px * var(--hj-density))
+      calc(10px * var(--hj-density)) 0;
+    overflow-x: auto;
+    font: inherit;
+    white-space: pre;
+    user-select: all;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, black calc(100% - 14px), transparent);
+  }
+  .hj-code-block-snippet-code::-webkit-scrollbar {
+    display: none;
+  }
+  .hj-code-block-snippet > .hj-code-block-button {
+    flex: none;
   }
 }
