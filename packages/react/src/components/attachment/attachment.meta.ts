@@ -50,6 +50,7 @@ export const meta: ComponentMeta = defineMeta({
         'data-status': 'uploading | ready | error',
         'data-kind': 'The kind.',
         'data-indeterminate': 'Uploading without a known progress.',
+        'data-leaving': 'Fading out after Remove (with onRemove).',
       },
       cssVars: { '--hj-attachment-max-width': 'Chip width cap. Default 260px.' },
     },
@@ -84,9 +85,15 @@ export const meta: ComponentMeta = defineMeta({
       base: 'Button',
       slot: 'Attachment.Remove',
       className: 'hj-attachment-remove',
-      description: '✕ with a 44px hit area. Also cancels an upload.',
+      description:
+        '✕ with a 44px hit area. Also cancels an upload. With `onRemove`, the attachment fades out first and focus moves to a neighbour’s ✕.',
       props: props<RemoveOwnProps>({
         label: { type: 'string', default: '`Remove ${name}`', description: 'Accessible label.' },
+        onRemove: {
+          type: '() => void',
+          description:
+            'Called after the fade (180 ms) — remove the file from your state here. `onClick` still fires at once.',
+        },
       }),
     },
     {
@@ -102,7 +109,7 @@ export const meta: ComponentMeta = defineMeta({
       element: 'div',
       slot: 'Attachment.List',
       className: 'hj-attachment-list',
-      description: 'Wrapping row of chips.',
+      description: 'Wrapping row of chips; when one leaves, the rest glide into place (FLIP).',
     },
   ],
   examples: [
@@ -118,7 +125,7 @@ export const meta: ComponentMeta = defineMeta({
     'aria-busy while uploading. Put the error in Meta as words — the tint is not the message.',
   ],
   motion:
-    'A chip scales in from .96 on gentle, clamped. The upload bar fills by scaleX on snappy, clamped; indeterminate sweeps as ambient motion (stops under reduced motion).',
+    'A chip scales in from .96 on gentle, clamped. Removing (onRemove) fades it and shrinks it to .94 on the fast clock, then the rest of the List glide into place on snappy, clamped — translate only. The upload bar fills by scaleX on snappy, clamped; indeterminate sweeps as ambient motion (stops under reduced motion).',
   tokens: [
     'surface',
     'line',

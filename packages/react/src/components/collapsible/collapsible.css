@@ -3,7 +3,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--hj-space-2);
     min-width: 0;
     font-family: var(--hj-font-sans);
   }
@@ -64,6 +63,13 @@
     transition:
       height var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),
       opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* The space above the content lives inside the panel, so it opens and closes with the height
+     instead of popping in when the panel mounts (a gap on the root would). */
+  .hj-collapsible-panel::before {
+    content: '';
+    display: block;
+    height: var(--hj-space-2);
   }
   .hj-collapsible-panel[data-starting-style],
   .hj-collapsible-panel[data-ending-style] {

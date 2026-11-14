@@ -79,6 +79,11 @@
     opacity: 0;
     transform: scale(0.94);
   }
+  /* exits leave on the fast clock */
+  .hj-coach-mark-popup[data-ending-style] {
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
   .hj-coach-mark-popup[data-centered] {
     position: fixed;
     inset: 0;

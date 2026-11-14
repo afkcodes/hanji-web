@@ -51,7 +51,9 @@ export function Example(): React.JSX.Element {
                     ? `${Math.round((it.progress ?? 0) * 100)}% of ${formatBytes(it.size)}`
                     : formatBytes(it.size)}
               </Attachment.Meta>
-              <Attachment.Remove onClick={() => setItems((l) => l.filter((x) => x.id !== it.id))} />
+              <Attachment.Remove
+                onRemove={() => setItems((l) => l.filter((x) => x.id !== it.id))}
+              />
               <Attachment.Progress />
             </Attachment.Root>
           ))}

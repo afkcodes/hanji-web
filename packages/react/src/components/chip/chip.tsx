@@ -6,64 +6,11 @@ import { useRender } from '@base-ui/react/use-render';
 import * as React from 'react';
 
 import { useHanjiConfig } from '../../system/config.tsx';
+import { msVar, useFlip } from '../../system/flip.ts';
 import { cls, flag, withDefaults } from '../../system/slot.ts';
 
-/* ---------------------------------------------------------------------------------------------
- * FLIP for a row of chips: when a chip changes width (its check appears) or leaves, its
- * neighbours glide to their new place on the clamped snappy spring — transform only, and never
- * a bounce. Layout positions come from offsetLeft/Top, which ignore running transforms.
- * ------------------------------------------------------------------------------------------- */
-
-function msVar(cs: CSSStyleDeclaration, name: string, fallback: number): number {
-  const v = cs.getPropertyValue(name).trim();
-  const n = v.endsWith('ms') ? Number.parseFloat(v) : Number.parseFloat(v) * 1000;
-  return Number.isFinite(n) && n >= 0 ? n : fallback;
-}
-
-function useFlip(ref: React.RefObject<HTMLElement | null>): void {
-  React.useLayoutEffect(() => {
-    const host = ref.current;
-    if (!host || typeof MutationObserver === 'undefined') return undefined;
-    let places = new Map<Element, { x: number; y: number }>();
-    const snapshot = (): void => {
-      places = new Map();
-      for (const c of host.children) {
-        if (c instanceof HTMLElement) places.set(c, { x: c.offsetLeft, y: c.offsetTop });
-      }
-    };
-    snapshot();
-    const mo = new MutationObserver(() => {
-      const cs = getComputedStyle(host);
-      const duration = msVar(cs, '--hj-dur-snappy-settle', 180);
-      const easing = cs.getPropertyValue('--hj-ease-snappy-settle').trim() || 'ease-out';
-      for (const c of host.children) {
-        if (!(c instanceof HTMLElement)) continue;
-        const before = places.get(c);
-        if (!before) continue;
-        const dx = before.x - c.offsetLeft;
-        const dy = before.y - c.offsetTop;
-        if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) continue;
-        c.animate([{ translate: `${dx}px ${dy}px` }, { translate: '0px 0px' }], {
-          duration,
-          easing,
-        });
-      }
-      snapshot();
-    });
-    mo.observe(host, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['data-pressed', 'data-leaving'],
-    });
-    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(snapshot);
-    ro?.observe(host);
-    return () => {
-      mo.disconnect();
-      ro?.disconnect();
-    };
-  }, [ref]);
-}
+/** Attribute changes that move a chip row: a check appearing, a chip leaving. */
+const CHIP_ATTRS = ['data-pressed', 'data-leaving'] as const;
 
 /** Point a forwarded ref at a node (callback or object form). */
 function assignRef<T>(ref: React.Ref<T> | undefined, node: T | null): void {
@@ -145,7 +92,7 @@ export function Group(props: GroupProps): React.ReactElement {
     own.current = node;
     assignRef(ref as React.Ref<HTMLDivElement> | undefined, node);
   };
-  useFlip(own);
+  useFlip(own, CHIP_ATTRS);
   return (
     <BaseToggleGroup
       {...rest}
@@ -171,7 +118,7 @@ export function List(props: ListProps): React.ReactElement {
   const config = useHanjiConfig();
   const { render, className, ref, ...rest } = withDefaults(config, 'Chip.List', props);
   const own = React.useRef<HTMLDivElement>(null);
-  useFlip(own);
+  useFlip(own, CHIP_ATTRS);
   return useRender({
     render,
     ref: ref ? [own, ref] : own,

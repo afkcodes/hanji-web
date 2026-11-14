@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -47,5 +47,29 @@ describe('Attachment', () => {
     expect(Attachment.kindOf('photo.HEIC')).toBe('image');
     expect(Attachment.kindOf('audio/mpeg')).toBe('audio');
     expect(Attachment.kindOf('notes')).toBe('file');
+  });
+
+  it('onRemove fades the attachment, hands focus on, then calls back', async () => {
+    const onRemove = vi.fn<() => void>();
+    render(
+      <Attachment.List>
+        <Attachment.Root name="setlist.pdf">
+          <Attachment.Name />
+          <Attachment.Remove onRemove={onRemove} />
+        </Attachment.Root>
+        <Attachment.Root name="cover.png">
+          <Attachment.Name />
+          <Attachment.Remove />
+        </Attachment.Root>
+      </Attachment.List>,
+    );
+    const first = screen.getByRole('button', { name: 'Remove setlist.pdf' });
+    await userEvent.click(first);
+    expect(screen.getByRole('group', { name: 'setlist.pdf' }).hasAttribute('data-leaving')).toBe(
+      true,
+    );
+    expect(onRemove).not.toHaveBeenCalled();
+    await waitFor(() => expect(onRemove).toHaveBeenCalledOnce(), { timeout: 1000 });
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Remove cover.png' }));
   });
 });

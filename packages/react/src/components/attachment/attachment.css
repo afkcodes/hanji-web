@@ -24,7 +24,17 @@
     box-shadow: inset 0 0 0 1px var(--hj-line);
     color: var(--hj-fg);
     font-family: var(--hj-font-sans);
-    animation: hj-attachment-in var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) both;
+    /* backwards, not both: once arrived, the entrance lets go so the exit can transition */
+    animation: hj-attachment-in var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) backwards;
+  }
+  /* Leaving: fades and shrinks in place on the fast clock; Attachment.List glides the rest in. */
+  .hj-attachment[data-leaving] {
+    opacity: 0;
+    scale: 0.94;
+    pointer-events: none;
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      scale var(--hj-dur-fast) var(--hj-ease-out);
   }
   @keyframes hj-attachment-in {
     from {

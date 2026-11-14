@@ -3,6 +3,7 @@ import { Button as BaseButton } from '@base-ui/react/button';
 import { useRender } from '@base-ui/react/use-render';
 import * as React from 'react';
 
+import { msVar, useFlip } from '../../system/flip.ts';
 import { elementPart } from '../../system/part.tsx';
 import type { ElementPartProps } from '../../system/part.tsx';
 import { cls } from '../../system/slot.ts';
@@ -61,10 +62,13 @@ export function formatBytes(bytes: number): string {
 interface AttachmentContextValue {
   name: string;
   status: AttachmentStatus;
+  /** Fade this attachment out, then run `then` (Remove's onRemove). */
+  leave: (then?: () => void) => void;
 }
 const AttachmentContext = React.createContext<AttachmentContextValue>({
   name: '',
   status: 'ready',
+  leave: (then) => then?.(),
 });
 
 /** Props hanji adds to the chip. */
@@ -95,9 +99,33 @@ export interface RootProps extends RootOwnProps, Omit<React.ComponentProps<'div'
 export function Root(props: RootProps): React.ReactElement {
   const [
     config,
-    { name, status = 'ready', progress, kind, className, render, style, children, ...rest },
+    { name, status = 'ready', progress, kind, className, render, style, children, ref, ...rest },
   ] = useSlot('Attachment.Root', props);
-  const ctx = React.useMemo(() => ({ name, status }), [name, status]);
+  const own = React.useRef<HTMLDivElement>(null);
+  const [leaving, setLeaving] = React.useState(false);
+  const leave = React.useCallback((then?: () => void) => {
+    const el = own.current;
+    if (!el) {
+      then?.();
+      return;
+    }
+    // Hand focus to a neighbour's ✕ before this one goes.
+    const all = [
+      ...(el.parentElement?.querySelectorAll<HTMLElement>('[data-attachment-remove]') ?? []),
+    ];
+    const mine = el.querySelector<HTMLElement>('[data-attachment-remove]');
+    const i = mine ? all.indexOf(mine) : -1;
+    const next = all[i + 1] ?? all[i - 1] ?? null;
+    setLeaving(true);
+    window.setTimeout(
+      () => {
+        if (mine && document.activeElement === mine) next?.focus();
+        then?.();
+      },
+      msVar(getComputedStyle(el), '--hj-dur-fast', 180),
+    );
+  }, []);
+  const ctx = React.useMemo(() => ({ name, status, leave }), [name, status, leave]);
   const p = progress === undefined ? undefined : Math.min(1, Math.max(0, progress));
   const merged = React.useMemo(
     () => (p === undefined ? style : ({ ...style, '--_p': String(p) } as React.CSSProperties)),
@@ -105,12 +133,14 @@ export function Root(props: RootProps): React.ReactElement {
   );
   return useRender({
     render,
+    ref: ref ? [own, ref] : own,
     defaultTagName: 'div',
     props: {
       role: 'group',
       'aria-label': name,
       ...rest,
       style: merged,
+      'data-leaving': leaving ? '' : undefined,
       'data-status': status,
       'data-kind': kind ?? kindOf(name),
       'data-indeterminate': status === 'uploading' && p === undefined ? '' : undefined,
@@ -188,18 +218,32 @@ export const Meta: (props: ElementPartProps<'span'>) => React.ReactElement = ele
 export interface RemoveOwnProps {
   /** @default `Remove ${name}` */
   label?: string;
+  /**
+   * Called after the attachment has faded out (180 ms; quicker under reduced motion) and focus
+   * has moved to a neighbour's ✕. Remove it from your state here; the rest of an Attachment.List
+   * then glides into place.
+   */
+  onRemove?: () => void;
 }
 export interface RemoveProps extends RemoveOwnProps, Omit<BaseButton.Props, 'children'> {}
 
 /** Removes (or cancels the upload of) this file. */
 export function Remove(props: RemoveProps): React.ReactElement {
-  const [config, { label, className, ...rest }] = useSlot('Attachment.Remove', props);
-  const { name } = React.useContext(AttachmentContext);
+  const [config, { label, onRemove, onClick, className, ...rest }] = useSlot(
+    'Attachment.Remove',
+    props,
+  );
+  const { name, leave } = React.useContext(AttachmentContext);
   return (
     <BaseButton
       type="button"
       aria-label={label ?? `Remove ${name}`}
+      data-attachment-remove=""
       {...rest}
+      onClick={(e) => {
+        onClick?.(e);
+        if (onRemove && !e.defaultPrevented) leave(onRemove);
+      }}
       className={cls(config, 'Attachment.Remove', 'hj-attachment-remove', className)}
     >
       {config.icons.x}
@@ -227,9 +271,25 @@ export function Progress(
   );
 }
 
-/** A wrapping row of attachments (in a composer or under a message). */
-export const List: (props: ElementPartProps<'div'>) => React.ReactElement = elementPart(
-  'div',
-  'Attachment.List',
-  'hj-attachment-list',
-);
+const LIST_ATTRS = ['data-leaving'] as const;
+
+/**
+ * A wrapping row of attachments (in a composer or under a message). When one leaves, the rest
+ * glide into place on the settled snappy spring.
+ */
+export function List(props: ElementPartProps<'div'>): React.ReactElement {
+  const [config, { render, className, ref, ...rest }] = useSlot('Attachment.List', props);
+  const own = React.useRef<HTMLDivElement>(null);
+  useFlip(own, LIST_ATTRS);
+  return useRender({
+    render,
+    ref: ref ? [own, ref] : own,
+    defaultTagName: 'div',
+    props: {
+      ...rest,
+      className: cls(config, 'Attachment.List', 'hj-attachment-list', className) as
+        | string
+        | undefined,
+    },
+  });
+}
