@@ -82,4 +82,5 @@ export * from './toggle/index.ts';
 export * from './tool-call/index.ts';
 export * from './toolbar/index.ts';
 export * from './tooltip/index.ts';
+export * from './tree/index.ts';
 export * from './virtual-list/index.ts';
