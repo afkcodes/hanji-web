@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "context-menu",
+  "type": "registry:ui",
+  "title": "ContextMenu",
+  "description": "A Menu opened by right-click or long-press on an area, at the pointer.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system",
+    "menu"
+  ],
+  "categories": [
+    "surfaces"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/context-menu/context-menu.css",
+      "type": "registry:ui",
+      "target": "hanji/components/context-menu/context-menu.css",
+      "content": "@layer hj.components {\n  /* Rows and popup are Menu's (hj-menu-*). This file styles only the trigger area and positioner. */\n  .hj-context-menu-trigger {\n    -webkit-touch-callout: none;\n    user-select: none;\n  }\n  .hj-context-menu-trigger[data-popup-open] {\n    outline: 1.5px solid color-mix(in srgb, var(--hj-accent) 45%, transparent);\n    outline-offset: 2px;\n  }\n  .hj-context-menu-positioner {\n    z-index: var(--hj-z-popover);\n    outline: none;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/context-menu/context-menu.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/context-menu/context-menu.tsx",
+      "content": "'use client';\nimport { ContextMenu as Base } from '@base-ui/react/context-menu';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { part } from '../../system/part.tsx';\nimport type { HanjiPart } from '../../system/part.tsx';\nimport { withDefaults } from '../../system/slot.ts';\nimport { Popup, Portal } from '../menu/menu.tsx';\nimport type { ContentProps as MenuContentProps } from '../menu/menu.tsx';\n\n/*\n * A context menu is a Menu opened by right-click or long-press. Every row part is Menu's own,\n * re-exported here, so a context menu looks and behaves exactly like the menus beside it.\n */\nexport {\n  Arrow,\n  Backdrop,\n  CheckboxItem,\n  CheckboxItemIndicator,\n  Group,\n  GroupLabel,\n  Item,\n  LinkItem,\n  Popup,\n  Portal,\n  RadioGroup,\n  RadioItem,\n  RadioItemIndicator,\n  Separator,\n  Shortcut,\n  SubmenuRoot,\n  SubmenuTrigger,\n} from '../menu/menu.tsx';\n\nexport const Root: typeof Base.Root = Base.Root;\n/** The area that opens the menu on right-click or long-press. */\nexport const Trigger: HanjiPart<typeof Base.Trigger> = part(\n  Base.Trigger,\n  'ContextMenu.Trigger',\n  'hj-context-menu-trigger',\n);\nexport const Positioner: HanjiPart<typeof Base.Positioner> = part(\n  Base.Positioner,\n  'ContextMenu.Positioner',\n  'hj-context-menu-positioner',\n);\n\nexport type ContentOwnProps = Pick<MenuContentProps, 'container' | 'keepMounted'>;\nexport interface ContentProps\n  extends\n    ContentOwnProps,\n    Omit<\n      MenuContentProps,\n      | 'container'\n      | 'keepMounted'\n      | 'side'\n      | 'align'\n      | 'sideOffset'\n      | 'alignOffset'\n      | 'collisionPadding'\n    > {}\n\n/** Shorthand for Portal + Positioner (at the pointer) + Popup. */\nexport function Content(props: ContentProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { container, keepMounted, ...popup } = withDefaults(config, 'ContextMenu.Content', props);\n  return (\n    <Portal container={container} keepMounted={keepMounted}>\n      <Positioner collisionPadding={8}>\n        <Popup {...popup} />\n      </Positioner>\n    </Portal>\n  );\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/context-menu/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/context-menu/index.ts",
+      "content": "export * as ContextMenu from './context-menu.tsx';\nexport type {\n  ContentOwnProps as ContextMenuContentOwnProps,\n  ContentProps as ContextMenuContentProps,\n} from './context-menu.tsx';\n"
+    }
+  ]
+}

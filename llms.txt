@@ -1,0 +1,106 @@
+# hanji (@hanji/react)
+
+> hanji for the web: accessible compound components on Base UI, styled by tokens, with zero-runtime CSS and an agent-readable manifest.
+
+Compound React components on Base UI. Plain CSS in cascade layers, themed by --hj-* tokens (three papers × twelve accents, density, motion policy). Install `@hanji/react @hanji/tokens @base-ui/react`, import `@hanji/react/styles.css` once, wrap the app in `<Theme>`. Every part takes className (string or fn of state), style, and render. Prefer the documented parts; do not restyle internals — use variants, tokens, slot classes or `--hj-<component>-*` variables.
+
+## Setup
+
+- [Theme schema](./theme.schema.json): JSON Schema for createTheme() — paper, accent, density, motion, radius, fonts, colors, springs.
+- [Manifest](./manifest.json): every component as structured JSON.
+
+## Atoms
+
+- [Avatar](./packages/react/dist/docs/avatar.md): A person as a picture, or as their initials on a tint that stays theirs everywhere.
+- [Badge](./packages/react/dist/docs/badge.md): A count or a dot on top of something: unread messages, new releases, items waiting.
+- [Button](./packages/react/dist/docs/button.md): The verb on a screen: triggers an action.
+- [Chip](./packages/react/dist/docs/chip.md): Small, tappable facts: a filter to turn on, a value that was picked, a suggested action.
+- [Kbd](./packages/react/dist/docs/kbd.md): A keyboard key, set in mono on a hairline, for shortcuts in menus, fields and help text.
+- [Link](./packages/react/dist/docs/link.md): A styled anchor that goes somewhere, in running text or in chrome.
+- [Scrim](./packages/react/dist/docs/scrim.md): A gradient that darkens imagery just enough for text to sit on it, in one colour fading by opacity.
+- [Separator](./packages/react/dist/docs/separator.md): A hairline between groups — hanji’s way of separating instead of boxing.
+- [Skeleton](./packages/react/dist/docs/skeleton.md): A still block in the shape of what is coming, so the page keeps its layout while it loads.
+- [Spinner](./packages/react/dist/docs/spinner.md): An ink ring for work that takes a moment and has no measurable progress.
+- [Status](./packages/react/dist/docs/status.md): A state in words — word, glyph and tint — with when it happened.
+- [Text](./packages/react/dist/docs/text.md): Text set in one of hanji’s type roles, from the hero number down to the mono timecode.
+
+## Controls
+
+- [Autocomplete](./packages/react/dist/docs/autocomplete.md): A text input that suggests as you type. The value is the text; suggestions only help.
+- [Calendar](./packages/react/dist/docs/calendar.md): A month grid for picking a day or a range. No dependencies: local days, names from Intl.
+- [Checkbox](./packages/react/dist/docs/checkbox.md): A box you tick for a yes/no choice that takes effect when the form is saved.
+- [CheckboxGroup](./packages/react/dist/docs/checkbox-group.md): Several related checkboxes sharing one value array, with an optional “Select all” parent.
+- [ChoiceCard](./packages/react/dist/docs/choice-card.md): A radio group drawn as cards, each stating what choosing it will cost.
+- [Combobox](./packages/react/dist/docs/combobox.md): Type to filter a list and pick one value, or several shown as chips in the field.
+- [DatePicker](./packages/react/dist/docs/date-picker.md): A field-like trigger that opens a Calendar in a popover, for a day or a range.
+- [Field](./packages/react/dist/docs/field.md): A labelled text input with its help line and its error, wired for validation and screen readers.
+- [Fieldset](./packages/react/dist/docs/fieldset.md): Groups related fields under a legend; consecutive groups are divided by a hairline, never boxed.
+- [Form](./packages/react/dist/docs/form.md): A form that validates its Fields together, takes server errors by field name, and sums them up after a failed submit.
+- [NumberField](./packages/react/dist/docs/number-field.md): A number stepped with − and +, held to repeat, or typed — with changed digits rolling into place.
+- [OTPField](./packages/react/dist/docs/otp-field.md): A one-time code entered one character per cell, pasted or typed.
+- [PasswordField](./packages/react/dist/docs/password-field.md): A Field for passwords: a reveal toggle and an optional strength line that says what to do.
+- [RadioGroup](./packages/react/dist/docs/radio-group.md): Exactly one of a few options, all visible at once.
+- [Rating](./packages/react/dist/docs/rating.md): Choose one to five stars, or read an average as stars and a number.
+- [SegmentedControl](./packages/react/dist/docs/segmented-control.md): Two to five short, mutually exclusive options in one pill, with an indicator that slides to the choice.
+- [Select](./packages/react/dist/docs/select.md): Choose one value (or several) from a list that is too long, or too dynamic, for radios.
+- [Slider](./packages/react/dist/docs/slider.md): A value on a continuous scale where the feel matters more than the exact number.
+- [Switch](./packages/react/dist/docs/switch.md): An on/off setting that applies the moment it is flipped.
+- [Toggle](./packages/react/dist/docs/toggle.md): A button that stays pressed until pressed again: Shuffle, Bold, Mute.
+- [ToggleGroup](./packages/react/dist/docs/toggle-group.md): A row of Toggles in one frame, sharing a value array.
+
+## Surfaces
+
+- [AlertDialog](./packages/react/dist/docs/alert-dialog.md): A confirm that must be answered: says what will happen to what, and offers at most two choices.
+- [Banner](./packages/react/dist/docs/banner.md): An inline notice that stays on the page until it is resolved or dismissed.
+- [Card](./packages/react/dist/docs/card.md): A surface for one thing — an album, an episode, an article — usually a link to it.
+- [CoachMark](./packages/react/dist/docs/coach-mark.md): A short product tour: a spotlight on a real control and a bubble that says what it does, one step at a time.
+- [ContextMenu](./packages/react/dist/docs/context-menu.md): A Menu opened by right-click or long-press on an area, at the pointer.
+- [Dialog](./packages/react/dist/docs/dialog.md): A centred question or short task that stops the page until it is answered.
+- [Menu](./packages/react/dist/docs/menu.md): A list of commands that opens from a button: actions, options and nested choices.
+- [Menubar](./packages/react/dist/docs/menubar.md): A row of menus (File · Edit · View) that behave as one, for desktop-style apps.
+- [Popover](./packages/react/dist/docs/popover.md): A small anchored surface for detail or a quick task that belongs to the thing that opened it.
+- [PreviewCard](./packages/react/dist/docs/preview-card.md): A card that previews where a link goes when the pointer rests on it or it gets focus.
+- [ScrollArea](./packages/react/dist/docs/scroll-area.md): A native scroll container with a thin overlay scrollbar and edges that fade where content continues.
+- [Sheet](./packages/react/dist/docs/sheet.md): A surface that rises from an edge with options or detail, keeping the screen behind it in view. Swipe it away.
+- [Toast](./packages/react/dist/docs/toast.md): A brief, announced message about something that just happened, with at most one action.
+- [Tooltip](./packages/react/dist/docs/tooltip.md): A short label that names a control on hover or keyboard focus.
+
+## Navigation
+
+- [Accordion](./packages/react/dist/docs/accordion.md): A stack of headings that each reveal their own section.
+- [Breadcrumbs](./packages/react/dist/docs/breadcrumbs.md): Where this page sits in a hierarchy, with a way back up each level.
+- [Collapsible](./packages/react/dist/docs/collapsible.md): One region the user can show or hide: “Show 6 more”, “Advanced options”.
+- [NavigationMenu](./packages/react/dist/docs/navigation-menu.md): A site’s top navigation: links and triggers that open rich link panels in one shared, morphing surface.
+- [Pagination](./packages/react/dist/docs/pagination.md): Moves through numbered pages of a long list or table.
+- [Steps](./packages/react/dist/docs/steps.md): Shows progress through a short ordered task: where you are, what’s done, what’s left.
+- [TabBar](./packages/react/dist/docs/tab-bar.md): The mobile-web bottom bar: three to five top-level destinations, icon over label.
+- [Tabs](./packages/react/dist/docs/tabs.md): Switches between views of the same subject without leaving the page.
+- [Toolbar](./packages/react/dist/docs/toolbar.md): A group of controls that acts as one tab stop; arrow keys move inside it.
+
+## Data
+
+- [Counter](./packages/react/dist/docs/counter.md): A number whose changed digits roll into place, so a change is seen without re-reading the whole figure.
+- [EmptyState](./packages/react/dist/docs/empty-state.md): What fills a region when there is nothing to show: a glyph, a title, one sentence and the way out.
+- [List](./packages/react/dist/docs/list.md): Rows of 56px: artwork or an icon, a title and a line under it, and a value or chevron on the right.
+- [Marquee](./packages/react/dist/docs/marquee.md): A single line too long for its box — a track title on a player — that rests, then travels so the whole of it can be read.
+- [Meter](./packages/react/dist/docs/meter.md): A measurement within a known range, coloured by how good it is: storage, battery, signal, password strength.
+- [Progress](./packages/react/dist/docs/progress.md): How far a task has got: a 4px track with a fill, and an optional label and value.
+- [ProgressRing](./packages/react/dist/docs/progress-ring.md): Progress as a ring: a 40px status beside a row, or a 96px summary with the value inside.
+- [Stat](./packages/react/dist/docs/stat.md): A number that matters: what it counts, the figure with its unit shrunk, how it compares in words, and the recent past as a line.
+- [Table](./packages/react/dist/docs/table.md): Rows of records compared across columns: hairlines, a sticky header, sortable columns, numbers right-aligned in tabular figures.
+- [Timeline](./packages/react/dist/docs/timeline.md): A vertical sequence of steps with their times: what happened, what is happening, what is next, and what failed.
+
+## Ai
+
+- [Attachment](./packages/react/dist/docs/attachment.md): A file attached to a prompt or message: type glyph, name, size or error, remove, and an upload bar.
+- [Citation](./packages/react/dist/docs/citation.md): An inline numbered source in a reply, with a preview card of the source on hover or focus.
+- [CodeBlock](./packages/react/dist/docs/code-block.md): Code inside a reply or doc: language and filename, copy, soft-wrap, optional line numbers. No highlighter bundled.
+- [Conversation](./packages/react/dist/docs/conversation.md): A scrolling log of turns that keeps the newest reply in view while it streams — until the person scrolls up to read.
+- [Message](./packages/react/dist/docs/message.md): One turn in a conversation: the person’s bubble, the assistant’s reply, or a system note.
+- [MessageActions](./packages/react/dist/docs/message-actions.md): The small icon actions under an assistant reply: copy, regenerate, rate, more.
+- [ModelPicker](./packages/react/dist/docs/model-picker.md): Chooses which model answers: the current one in a quiet trigger, each option with its provider, a capability line and tags.
+- [PromptInput](./packages/react/dist/docs/prompt-input.md): The box a person types a prompt into: grows with the text, sends on Enter, becomes Stop while a reply streams.
+- [Reasoning](./packages/react/dist/docs/reasoning.md): A model’s visible thinking: open while it works, folded to “Thought for 12 s” when the answer starts.
+- [StreamingText](./packages/react/dist/docs/streaming-text.md): Renders a model’s streamed text with zero React work per token.
+- [Suggestions](./packages/react/dist/docs/suggestions.md): A row of ready-made prompts the person can send with one tap.
+- [ToolCall](./packages/react/dist/docs/tool-call.md): One tool an assistant called — name, status, arguments and result — collapsed to a line until opened.

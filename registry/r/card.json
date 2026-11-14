@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card",
+  "type": "registry:ui",
+  "title": "Card",
+  "description": "A surface for one thing — an album, an episode, an article — usually a link to it.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "surfaces"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/card/card.css",
+      "type": "registry:ui",
+      "target": "hanji/components/card/card.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-card-radius · --hj-card-padding · --hj-card-media-size (horizontal) */\n  .hj-card {\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    min-width: 0;\n    overflow: hidden;\n    border-radius: var(--hj-card-radius, var(--hj-radius-md));\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1px var(--hj-line);\n    color: var(--hj-fg);\n    font-family: var(--hj-font-sans);\n    text-align: left;\n    text-decoration: none;\n    -webkit-tap-highlight-color: transparent;\n    transition:\n      transform var(--hj-dur-snappy) var(--hj-ease-snappy),\n      background-color var(--hj-dur-base) var(--hj-ease-out);\n  }\n  .hj-card[data-pressable] {\n    cursor: pointer;\n  }\n  /* depth is a paper step, never a shadow */\n  .hj-card[data-pressable]:hover {\n    background: var(--hj-surface-2);\n  }\n  .hj-card[data-pressable]:active {\n    transform: scale(var(--hj-press));\n    transition-duration: 70ms, var(--hj-dur-base);\n  }\n  .hj-card[data-pressable]:focus-visible {\n    outline: 2px solid var(--hj-focus);\n    outline-offset: 2px;\n  }\n\n  .hj-card-media {\n    position: relative;\n    flex: none;\n    aspect-ratio: var(--_ratio, 16 / 9);\n    overflow: hidden;\n    background: var(--hj-bg-soft);\n  }\n  .hj-card-media > img,\n  .hj-card-media > video {\n    display: block;\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n  }\n\n  .hj-card[data-orientation='horizontal'] {\n    flex-direction: row;\n    align-items: center;\n  }\n  .hj-card[data-orientation='horizontal'] > .hj-card-media {\n    width: var(--hj-card-media-size, 88px);\n    margin: 8px 0 8px 8px;\n    border-radius: calc(var(--hj-card-radius, var(--hj-radius-md)) - 6px);\n  }\n\n  .hj-card-body {\n    display: flex;\n    flex: 1;\n    flex-direction: column;\n    gap: 4px;\n    min-width: 0;\n    padding: var(--hj-card-padding, 14px 16px 16px);\n  }\n  .hj-card-eyebrow {\n    margin: 0 0 2px;\n    font: var(--hj-type-eyebrow);\n    letter-spacing: var(--hj-tracking-eyebrow);\n    text-transform: uppercase;\n    color: var(--hj-fg-mute);\n  }\n  .hj-card-title {\n    margin: 0;\n    font: var(--hj-type-heading);\n    letter-spacing: var(--hj-tracking-heading);\n    overflow-wrap: anywhere;\n  }\n  .hj-card-description {\n    margin: 0;\n    font-size: 13.5px;\n    line-height: 1.5;\n    color: var(--hj-fg-dim);\n  }\n  .hj-card-footer {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    gap: 8px;\n    padding: 0 16px 14px;\n    font-size: 12.5px;\n    color: var(--hj-fg-mute);\n    font-variant-numeric: tabular-nums;\n  }\n  .hj-card[data-orientation='horizontal'] .hj-card-footer {\n    padding: 0 16px 0 0;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/card/card.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/card/card.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { elementPart } from '../../system/part.tsx';\nimport type { ElementPartProps } from '../../system/part.tsx';\nimport { cls, flag, withDefaults } from '../../system/slot.ts';\n\nexport interface RootOwnProps {\n  /**\n   * The whole card is one target: hover steps up a paper, press dips to .97. Render it as a\n   * link or button (`render={<a href=\"…\" />}`) so it is reachable and announced.\n   */\n  pressable?: boolean;\n  /** vertical = media on top · horizontal = a compact row with square media. @default 'vertical' */\n  orientation?: 'vertical' | 'horizontal';\n}\nexport interface RootProps extends RootOwnProps, Omit<React.ComponentProps<'div'>, 'className'> {\n  className?: string;\n  render?: useRender.RenderProp;\n}\n\n/** A surface for one thing: an album, an episode, an article. Not a layout tool. */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    pressable = false,\n    orientation = 'vertical',\n    render,\n    className,\n    ...rest\n  } = withDefaults(config, 'Card.Root', props);\n  return useRender({\n    render,\n    defaultTagName: 'div',\n    props: {\n      ...rest,\n      'data-pressable': flag(pressable),\n      'data-orientation': orientation,\n      className: cls(config, 'Card.Root', 'hj-card', className) as string | undefined,\n    },\n  });\n}\n\nexport interface MediaOwnProps {\n  /** Aspect ratio of the media. @default '16:9' (hanji card media) */\n  ratio?: '16:9' | '4:3' | '1:1' | '3:4';\n}\nexport interface MediaProps extends MediaOwnProps, ElementPartProps<'div'> {}\n\nconst RATIO: Readonly<Record<NonNullable<MediaOwnProps['ratio']>, string>> = {\n  '16:9': '16 / 9',\n  '4:3': '4 / 3',\n  '1:1': '1 / 1',\n  '3:4': '3 / 4',\n};\n\n/** Image or art, full bleed. Put an `<img>` (object-fit: cover) or any art inside. */\nexport function Media(props: MediaProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    ratio = '16:9',\n    render,\n    className,\n    style,\n    ...rest\n  } = withDefaults(config, 'Card.Media', props);\n  const merged = { '--_ratio': RATIO[ratio], ...style } as React.CSSProperties;\n  return useRender({\n    render,\n    defaultTagName: 'div',\n    props: {\n      ...rest,\n      style: merged,\n      className: cls(config, 'Card.Media', 'hj-card-media', className) as string | undefined,\n    },\n  });\n}\n\nexport const Body: (props: ElementPartProps<'div'>) => React.ReactElement = elementPart(\n  'div',\n  'Card.Body',\n  'hj-card-body',\n);\n/** Optional small label above the title. */\nexport const Eyebrow: (props: ElementPartProps<'p'>) => React.ReactElement = elementPart(\n  'p',\n  'Card.Eyebrow',\n  'hj-card-eyebrow',\n);\nexport const Title: (props: ElementPartProps<'h3'>) => React.ReactElement = elementPart(\n  'h3',\n  'Card.Title',\n  'hj-card-title',\n);\nexport const Description: (props: ElementPartProps<'p'>) => React.ReactElement = elementPart(\n  'p',\n  'Card.Description',\n  'hj-card-description',\n);\n/** Meta row at the bottom: counts, time, a quiet action. */\nexport const Footer: (props: ElementPartProps<'div'>) => React.ReactElement = elementPart(\n  'div',\n  'Card.Footer',\n  'hj-card-footer',\n);\n"
+    },
+    {
+      "path": "packages/react/src/components/card/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/card/index.ts",
+      "content": "export * as Card from './card.tsx';\nexport type {\n  MediaOwnProps as CardMediaOwnProps,\n  MediaProps as CardMediaProps,\n  RootOwnProps as CardRootOwnProps,\n  RootProps as CardRootProps,\n} from './card.tsx';\n"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switch",
+  "type": "registry:ui",
+  "title": "Switch",
+  "description": "An on/off setting that applies the moment it is flipped.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "controls"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/switch/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/switch/index.ts",
+      "content": "export * as Switch from './switch.tsx';\nexport type {\n  RootOwnProps as SwitchRootOwnProps,\n  RootProps as SwitchRootProps,\n} from './switch.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/switch/switch.css",
+      "type": "registry:ui",
+      "target": "hanji/components/switch/switch.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-switch-width · --hj-switch-height · --hj-switch-thumb */\n  .hj-switch {\n    --_w: var(--hj-switch-width, 46px);\n    --_h: var(--hj-switch-height, 28px);\n    --_k: var(--hj-switch-thumb, 22px);\n    --_pad: calc((var(--_h) - var(--_k)) / 2);\n    position: relative;\n    display: inline-block;\n    flex: none;\n    width: var(--_w);\n    height: var(--_h);\n    padding: 0;\n    border: 0;\n    border-radius: var(--hj-radius-pill);\n    background: var(--hj-surface-2);\n    box-shadow: inset 0 0 0 1px var(--hj-line);\n    cursor: pointer;\n    -webkit-tap-highlight-color: transparent;\n    transition:\n      background-color var(--hj-dur-base) var(--hj-ease-out),\n      box-shadow var(--hj-dur-base) var(--hj-ease-out);\n  }\n  /* 44px hit area around the drawing */\n  .hj-switch::before {\n    content: '';\n    position: absolute;\n    inset: calc((var(--_h) - var(--hj-touch)) / 2) -4px;\n  }\n  .hj-switch[data-size='sm'] {\n    --_w: var(--hj-switch-width, 38px);\n    --_h: var(--hj-switch-height, 24px);\n    --_k: var(--hj-switch-thumb, 18px);\n  }\n  .hj-switch[data-checked] {\n    background: var(--hj-accent);\n    box-shadow: inset 0 0 0 1px transparent;\n  }\n  .hj-switch[data-disabled] {\n    opacity: 0.4;\n    cursor: not-allowed;\n  }\n  .hj-switch[data-invalid] {\n    box-shadow: inset 0 0 0 1.5px var(--hj-danger);\n  }\n\n  .hj-switch-thumb {\n    position: absolute;\n    top: var(--_pad);\n    left: var(--_pad);\n    width: var(--_k);\n    height: var(--_k);\n    border-radius: var(--hj-radius-pill);\n    background: var(--hj-fg-mute);\n    transform-origin: left center;\n    /* Clamped: two properties fade with it, and an overshoot would flash. */\n    transition:\n      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),\n      background-color var(--hj-dur-base) var(--hj-ease-out);\n  }\n  .hj-switch-thumb[data-checked] {\n    background: var(--hj-on-accent);\n    transform: translateX(calc(var(--_w) - var(--_k) - var(--_pad) * 2));\n  }\n  /* The track never dips under the finger; the thumb stretches toward where it is going. */\n  .hj-switch:active:not([data-disabled]) .hj-switch-thumb {\n    transform: scaleX(1.27);\n  }\n  .hj-switch:active:not([data-disabled]) .hj-switch-thumb[data-checked] {\n    transform: translateX(calc(var(--_w) - var(--_k) * 1.27 - var(--_pad) * 2)) scaleX(1.27);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/switch/switch.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/switch/switch.tsx",
+      "content": "'use client';\nimport { Switch as Base } from '@base-ui/react/switch';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { part } from '../../system/part.tsx';\nimport type { HanjiPart } from '../../system/part.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\nexport const Thumb: HanjiPart<typeof Base.Thumb> = part(\n  Base.Thumb,\n  'Switch.Thumb',\n  'hj-switch-thumb',\n);\n\nexport interface RootOwnProps {\n  /** md = 46×28 (hanji), sm = 38×24. */\n  size?: 'sm' | 'md';\n}\nexport interface RootProps extends RootOwnProps, Base.Root.Props {}\n\n/**\n * An on/off setting that applies immediately. Renders its Thumb when given no children, so\n * `<Switch.Root />` is a complete switch.\n */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { size = 'md', className, children, ...rest } = withDefaults(config, 'Switch.Root', props);\n  return (\n    <Base.Root\n      {...rest}\n      data-size={size}\n      className={cls(config, 'Switch.Root', 'hj-switch', className)}\n    >\n      {children ?? <Thumb />}\n    </Base.Root>\n  );\n}\n"
+    }
+  ]
+}

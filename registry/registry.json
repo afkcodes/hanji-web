@@ -1,0 +1,2677 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "hanji",
+  "homepage": "https://github.com/afkcodes/hanji",
+  "items": [
+    {
+      "name": "hanji-system",
+      "type": "registry:lib",
+      "title": "hanji system",
+      "description": "Provider, Theme, slot helpers, part factories, icon adapter, springs and base styles every hanji component uses.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/system/config.tsx",
+          "type": "registry:lib",
+          "target": "hanji/system/config.tsx"
+        },
+        {
+          "path": "packages/react/src/system/icon.tsx",
+          "type": "registry:lib",
+          "target": "hanji/system/icon.tsx"
+        },
+        {
+          "path": "packages/react/src/system/icons.tsx",
+          "type": "registry:lib",
+          "target": "hanji/system/icons.tsx"
+        },
+        {
+          "path": "packages/react/src/system/meta.ts",
+          "type": "registry:lib",
+          "target": "hanji/system/meta.ts"
+        },
+        {
+          "path": "packages/react/src/system/motion.ts",
+          "type": "registry:lib",
+          "target": "hanji/system/motion.ts"
+        },
+        {
+          "path": "packages/react/src/system/part.tsx",
+          "type": "registry:lib",
+          "target": "hanji/system/part.tsx"
+        },
+        {
+          "path": "packages/react/src/system/slot.ts",
+          "type": "registry:lib",
+          "target": "hanji/system/slot.ts"
+        },
+        {
+          "path": "packages/react/src/system/theme.tsx",
+          "type": "registry:lib",
+          "target": "hanji/system/theme.tsx"
+        },
+        {
+          "path": "packages/react/src/system/use-slot.ts",
+          "type": "registry:lib",
+          "target": "hanji/system/use-slot.ts"
+        },
+        {
+          "path": "packages/react/src/styles/base.css",
+          "type": "registry:style",
+          "target": "hanji/styles/base.css"
+        },
+        {
+          "path": "packages/react/src/styles/utilities.css",
+          "type": "registry:style",
+          "target": "hanji/styles/utilities.css"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "A person as a picture, or as their initials on a tint that stays theirs everywhere.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/avatar/avatar.css",
+          "type": "registry:ui",
+          "target": "hanji/components/avatar/avatar.css"
+        },
+        {
+          "path": "packages/react/src/components/avatar/avatar.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/avatar/avatar.tsx"
+        },
+        {
+          "path": "packages/react/src/components/avatar/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/avatar/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "A count or a dot on top of something: unread messages, new releases, items waiting.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/badge/badge.css",
+          "type": "registry:ui",
+          "target": "hanji/components/badge/badge.css"
+        },
+        {
+          "path": "packages/react/src/components/badge/badge.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/badge/badge.tsx"
+        },
+        {
+          "path": "packages/react/src/components/badge/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/badge/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "The verb on a screen: triggers an action.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/button/button.css",
+          "type": "registry:ui",
+          "target": "hanji/components/button/button.css"
+        },
+        {
+          "path": "packages/react/src/components/button/button.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/button/button.tsx"
+        },
+        {
+          "path": "packages/react/src/components/button/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/button/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "chip",
+      "type": "registry:ui",
+      "title": "Chip",
+      "description": "Small, tappable facts: a filter to turn on, a value that was picked, a suggested action.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/chip/chip.css",
+          "type": "registry:ui",
+          "target": "hanji/components/chip/chip.css"
+        },
+        {
+          "path": "packages/react/src/components/chip/chip.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/chip/chip.tsx"
+        },
+        {
+          "path": "packages/react/src/components/chip/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/chip/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "registry:ui",
+      "title": "Kbd",
+      "description": "A keyboard key, set in mono on a hairline, for shortcuts in menus, fields and help text.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/kbd/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/kbd/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/kbd/kbd.css",
+          "type": "registry:ui",
+          "target": "hanji/components/kbd/kbd.css"
+        },
+        {
+          "path": "packages/react/src/components/kbd/kbd.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/kbd/kbd.tsx"
+        }
+      ]
+    },
+    {
+      "name": "link",
+      "type": "registry:ui",
+      "title": "Link",
+      "description": "A styled anchor that goes somewhere, in running text or in chrome.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/link/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/link/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/link/link.css",
+          "type": "registry:ui",
+          "target": "hanji/components/link/link.css"
+        },
+        {
+          "path": "packages/react/src/components/link/link.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/link/link.tsx"
+        }
+      ]
+    },
+    {
+      "name": "scrim",
+      "type": "registry:ui",
+      "title": "Scrim",
+      "description": "A gradient that darkens imagery just enough for text to sit on it, in one colour fading by opacity.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/scrim/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/scrim/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/scrim/scrim.css",
+          "type": "registry:ui",
+          "target": "hanji/components/scrim/scrim.css"
+        },
+        {
+          "path": "packages/react/src/components/scrim/scrim.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/scrim/scrim.tsx"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "A hairline between groups — hanji’s way of separating instead of boxing.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/separator/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/separator/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/separator/separator.css",
+          "type": "registry:ui",
+          "target": "hanji/components/separator/separator.css"
+        },
+        {
+          "path": "packages/react/src/components/separator/separator.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/separator/separator.tsx"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "A still block in the shape of what is coming, so the page keeps its layout while it loads.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/skeleton/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/skeleton/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/skeleton/skeleton.css",
+          "type": "registry:ui",
+          "target": "hanji/components/skeleton/skeleton.css"
+        },
+        {
+          "path": "packages/react/src/components/skeleton/skeleton.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/skeleton/skeleton.tsx"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "An ink ring for work that takes a moment and has no measurable progress.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/spinner/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/spinner/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/spinner/spinner.css",
+          "type": "registry:ui",
+          "target": "hanji/components/spinner/spinner.css"
+        },
+        {
+          "path": "packages/react/src/components/spinner/spinner.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/spinner/spinner.tsx"
+        }
+      ]
+    },
+    {
+      "name": "status",
+      "type": "registry:ui",
+      "title": "Status",
+      "description": "A state in words — word, glyph and tint — with when it happened.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/status/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/status/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/status/status.css",
+          "type": "registry:ui",
+          "target": "hanji/components/status/status.css"
+        },
+        {
+          "path": "packages/react/src/components/status/status.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/status/status.tsx"
+        }
+      ]
+    },
+    {
+      "name": "text",
+      "type": "registry:ui",
+      "title": "Text",
+      "description": "Text set in one of hanji’s type roles, from the hero number down to the mono timecode.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "atoms"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/text/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/text/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/text/text.css",
+          "type": "registry:ui",
+          "target": "hanji/components/text/text.css"
+        },
+        {
+          "path": "packages/react/src/components/text/text.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/text/text.tsx"
+        }
+      ]
+    },
+    {
+      "name": "autocomplete",
+      "type": "registry:ui",
+      "title": "Autocomplete",
+      "description": "A text input that suggests as you type. The value is the text; suggestions only help.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/autocomplete/autocomplete.css",
+          "type": "registry:ui",
+          "target": "hanji/components/autocomplete/autocomplete.css"
+        },
+        {
+          "path": "packages/react/src/components/autocomplete/autocomplete.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/autocomplete/autocomplete.tsx"
+        },
+        {
+          "path": "packages/react/src/components/autocomplete/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/autocomplete/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "A month grid for picking a day or a range. No dependencies: local days, names from Intl.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/calendar/calendar.css",
+          "type": "registry:ui",
+          "target": "hanji/components/calendar/calendar.css"
+        },
+        {
+          "path": "packages/react/src/components/calendar/calendar.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/calendar/calendar.tsx"
+        },
+        {
+          "path": "packages/react/src/components/calendar/dates.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/calendar/dates.ts"
+        },
+        {
+          "path": "packages/react/src/components/calendar/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/calendar/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "A box you tick for a yes/no choice that takes effect when the form is saved.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/checkbox/checkbox.css",
+          "type": "registry:ui",
+          "target": "hanji/components/checkbox/checkbox.css"
+        },
+        {
+          "path": "packages/react/src/components/checkbox/checkbox.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/checkbox/checkbox.tsx"
+        },
+        {
+          "path": "packages/react/src/components/checkbox/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/checkbox/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-group",
+      "type": "registry:ui",
+      "title": "CheckboxGroup",
+      "description": "Several related checkboxes sharing one value array, with an optional “Select all” parent.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/checkbox-group/checkbox-group.css",
+          "type": "registry:ui",
+          "target": "hanji/components/checkbox-group/checkbox-group.css"
+        },
+        {
+          "path": "packages/react/src/components/checkbox-group/checkbox-group.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/checkbox-group/checkbox-group.tsx"
+        },
+        {
+          "path": "packages/react/src/components/checkbox-group/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/checkbox-group/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "choice-card",
+      "type": "registry:ui",
+      "title": "ChoiceCard",
+      "description": "A radio group drawn as cards, each stating what choosing it will cost.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/choice-card/choice-card.css",
+          "type": "registry:ui",
+          "target": "hanji/components/choice-card/choice-card.css"
+        },
+        {
+          "path": "packages/react/src/components/choice-card/choice-card.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/choice-card/choice-card.tsx"
+        },
+        {
+          "path": "packages/react/src/components/choice-card/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/choice-card/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Type to filter a list and pick one value, or several shown as chips in the field.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/combobox/combobox.css",
+          "type": "registry:ui",
+          "target": "hanji/components/combobox/combobox.css"
+        },
+        {
+          "path": "packages/react/src/components/combobox/combobox.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/combobox/combobox.tsx"
+        },
+        {
+          "path": "packages/react/src/components/combobox/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/combobox/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "DatePicker",
+      "description": "A field-like trigger that opens a Calendar in a popover, for a day or a range.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "calendar"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/date-picker/date-picker.css",
+          "type": "registry:ui",
+          "target": "hanji/components/date-picker/date-picker.css"
+        },
+        {
+          "path": "packages/react/src/components/date-picker/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/date-picker/date-picker.tsx"
+        },
+        {
+          "path": "packages/react/src/components/date-picker/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/date-picker/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "A labelled text input with its help line and its error, wired for validation and screen readers.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/field/field.css",
+          "type": "registry:ui",
+          "target": "hanji/components/field/field.css"
+        },
+        {
+          "path": "packages/react/src/components/field/field.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/field/field.tsx"
+        },
+        {
+          "path": "packages/react/src/components/field/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/field/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "fieldset",
+      "type": "registry:ui",
+      "title": "Fieldset",
+      "description": "Groups related fields under a legend; consecutive groups are divided by a hairline, never boxed.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/fieldset/fieldset.css",
+          "type": "registry:ui",
+          "target": "hanji/components/fieldset/fieldset.css"
+        },
+        {
+          "path": "packages/react/src/components/fieldset/fieldset.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/fieldset/fieldset.tsx"
+        },
+        {
+          "path": "packages/react/src/components/fieldset/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/fieldset/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "form",
+      "type": "registry:ui",
+      "title": "Form",
+      "description": "A form that validates its Fields together, takes server errors by field name, and sums them up after a failed submit.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/form/form.css",
+          "type": "registry:ui",
+          "target": "hanji/components/form/form.css"
+        },
+        {
+          "path": "packages/react/src/components/form/form.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/form/form.tsx"
+        },
+        {
+          "path": "packages/react/src/components/form/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/form/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "number-field",
+      "type": "registry:ui",
+      "title": "NumberField",
+      "description": "A number stepped with − and +, held to repeat, or typed — with changed digits rolling into place.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "counter"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/number-field/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/number-field/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/number-field/number-field.css",
+          "type": "registry:ui",
+          "target": "hanji/components/number-field/number-field.css"
+        },
+        {
+          "path": "packages/react/src/components/number-field/number-field.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/number-field/number-field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "otp-field",
+      "type": "registry:ui",
+      "title": "OTPField",
+      "description": "A one-time code entered one character per cell, pasted or typed.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/otp-field/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/otp-field/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/otp-field/otp-field.css",
+          "type": "registry:ui",
+          "target": "hanji/components/otp-field/otp-field.css"
+        },
+        {
+          "path": "packages/react/src/components/otp-field/otp-field.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/otp-field/otp-field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "password-field",
+      "type": "registry:ui",
+      "title": "PasswordField",
+      "description": "A Field for passwords: a reveal toggle and an optional strength line that says what to do.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "field"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/password-field/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/password-field/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/password-field/password-field.css",
+          "type": "registry:ui",
+          "target": "hanji/components/password-field/password-field.css"
+        },
+        {
+          "path": "packages/react/src/components/password-field/password-field.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/password-field/password-field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "RadioGroup",
+      "description": "Exactly one of a few options, all visible at once.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/radio-group/group.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/radio-group/group.ts"
+        },
+        {
+          "path": "packages/react/src/components/radio-group/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/radio-group/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/radio-group/radio-group.css",
+          "type": "registry:ui",
+          "target": "hanji/components/radio-group/radio-group.css"
+        },
+        {
+          "path": "packages/react/src/components/radio-group/radio-group.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/radio-group/radio-group.tsx"
+        },
+        {
+          "path": "packages/react/src/components/radio-group/radio.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/radio-group/radio.ts"
+        }
+      ]
+    },
+    {
+      "name": "rating",
+      "type": "registry:ui",
+      "title": "Rating",
+      "description": "Choose one to five stars, or read an average as stars and a number.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/rating/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/rating/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/rating/rating.css",
+          "type": "registry:ui",
+          "target": "hanji/components/rating/rating.css"
+        },
+        {
+          "path": "packages/react/src/components/rating/rating.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/rating/rating.tsx"
+        }
+      ]
+    },
+    {
+      "name": "segmented-control",
+      "type": "registry:ui",
+      "title": "SegmentedControl",
+      "description": "Two to five short, mutually exclusive options in one pill, with an indicator that slides to the choice.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/segmented-control/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/segmented-control/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/segmented-control/segmented-control.css",
+          "type": "registry:ui",
+          "target": "hanji/components/segmented-control/segmented-control.css"
+        },
+        {
+          "path": "packages/react/src/components/segmented-control/segmented-control.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/segmented-control/segmented-control.tsx"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Choose one value (or several) from a list that is too long, or too dynamic, for radios.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/select/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/select/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/select/select.css",
+          "type": "registry:ui",
+          "target": "hanji/components/select/select.css"
+        },
+        {
+          "path": "packages/react/src/components/select/select.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/select/select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "A value on a continuous scale where the feel matters more than the exact number.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/slider/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/slider/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/slider/slider.css",
+          "type": "registry:ui",
+          "target": "hanji/components/slider/slider.css"
+        },
+        {
+          "path": "packages/react/src/components/slider/slider.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/slider/slider.tsx"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "An on/off setting that applies the moment it is flipped.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/switch/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/switch/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/switch/switch.css",
+          "type": "registry:ui",
+          "target": "hanji/components/switch/switch.css"
+        },
+        {
+          "path": "packages/react/src/components/switch/switch.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/switch/switch.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "A button that stays pressed until pressed again: Shuffle, Bold, Mute.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/toggle/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/toggle/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/toggle/toggle.css",
+          "type": "registry:ui",
+          "target": "hanji/components/toggle/toggle.css"
+        },
+        {
+          "path": "packages/react/src/components/toggle/toggle.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/toggle/toggle.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "ToggleGroup",
+      "description": "A row of Toggles in one frame, sharing a value array.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "toggle"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/toggle-group/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/toggle-group/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/toggle-group/toggle-group.css",
+          "type": "registry:ui",
+          "target": "hanji/components/toggle-group/toggle-group.css"
+        },
+        {
+          "path": "packages/react/src/components/toggle-group/toggle-group.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/toggle-group/toggle-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "AlertDialog",
+      "description": "A confirm that must be answered: says what will happen to what, and offers at most two choices.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/alert-dialog/alert-dialog.css",
+          "type": "registry:ui",
+          "target": "hanji/components/alert-dialog/alert-dialog.css"
+        },
+        {
+          "path": "packages/react/src/components/alert-dialog/alert-dialog.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/alert-dialog/alert-dialog.tsx"
+        },
+        {
+          "path": "packages/react/src/components/alert-dialog/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/alert-dialog/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "banner",
+      "type": "registry:ui",
+      "title": "Banner",
+      "description": "An inline notice that stays on the page until it is resolved or dismissed.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/banner/banner.css",
+          "type": "registry:ui",
+          "target": "hanji/components/banner/banner.css"
+        },
+        {
+          "path": "packages/react/src/components/banner/banner.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/banner/banner.tsx"
+        },
+        {
+          "path": "packages/react/src/components/banner/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/banner/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A surface for one thing — an album, an episode, an article — usually a link to it.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/card/card.css",
+          "type": "registry:ui",
+          "target": "hanji/components/card/card.css"
+        },
+        {
+          "path": "packages/react/src/components/card/card.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/card/card.tsx"
+        },
+        {
+          "path": "packages/react/src/components/card/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/card/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "coach-mark",
+      "type": "registry:ui",
+      "title": "CoachMark",
+      "description": "A short product tour: a spotlight on a real control and a bubble that says what it does, one step at a time.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "button"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/coach-mark/coach-mark.css",
+          "type": "registry:ui",
+          "target": "hanji/components/coach-mark/coach-mark.css"
+        },
+        {
+          "path": "packages/react/src/components/coach-mark/coach-mark.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/coach-mark/coach-mark.tsx"
+        },
+        {
+          "path": "packages/react/src/components/coach-mark/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/coach-mark/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "ContextMenu",
+      "description": "A Menu opened by right-click or long-press on an area, at the pointer.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "menu"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/context-menu/context-menu.css",
+          "type": "registry:ui",
+          "target": "hanji/components/context-menu/context-menu.css"
+        },
+        {
+          "path": "packages/react/src/components/context-menu/context-menu.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/context-menu/context-menu.tsx"
+        },
+        {
+          "path": "packages/react/src/components/context-menu/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/context-menu/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "A centred question or short task that stops the page until it is answered.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/dialog/dialog.css",
+          "type": "registry:ui",
+          "target": "hanji/components/dialog/dialog.css"
+        },
+        {
+          "path": "packages/react/src/components/dialog/dialog.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/dialog/dialog.tsx"
+        },
+        {
+          "path": "packages/react/src/components/dialog/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/dialog/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "menu",
+      "type": "registry:ui",
+      "title": "Menu",
+      "description": "A list of commands that opens from a button: actions, options and nested choices.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/menu/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/menu/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/menu/menu.css",
+          "type": "registry:ui",
+          "target": "hanji/components/menu/menu.css"
+        },
+        {
+          "path": "packages/react/src/components/menu/menu.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/menu/menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "menubar",
+      "type": "registry:ui",
+      "title": "Menubar",
+      "description": "A row of menus (File · Edit · View) that behave as one, for desktop-style apps.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "menu"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/menubar/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/menubar/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/menubar/menubar.css",
+          "type": "registry:ui",
+          "target": "hanji/components/menubar/menubar.css"
+        },
+        {
+          "path": "packages/react/src/components/menubar/menubar.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/menubar/menubar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "A small anchored surface for detail or a quick task that belongs to the thing that opened it.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/popover/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/popover/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/popover/popover.css",
+          "type": "registry:ui",
+          "target": "hanji/components/popover/popover.css"
+        },
+        {
+          "path": "packages/react/src/components/popover/popover.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/popover/popover.tsx"
+        }
+      ]
+    },
+    {
+      "name": "preview-card",
+      "type": "registry:ui",
+      "title": "PreviewCard",
+      "description": "A card that previews where a link goes when the pointer rests on it or it gets focus.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/preview-card/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/preview-card/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/preview-card/preview-card.css",
+          "type": "registry:ui",
+          "target": "hanji/components/preview-card/preview-card.css"
+        },
+        {
+          "path": "packages/react/src/components/preview-card/preview-card.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/preview-card/preview-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "ScrollArea",
+      "description": "A native scroll container with a thin overlay scrollbar and edges that fade where content continues.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/scroll-area/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/scroll-area/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/scroll-area/scroll-area.css",
+          "type": "registry:ui",
+          "target": "hanji/components/scroll-area/scroll-area.css"
+        },
+        {
+          "path": "packages/react/src/components/scroll-area/scroll-area.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/scroll-area/scroll-area.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "A surface that rises from an edge with options or detail, keeping the screen behind it in view. Swipe it away.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/sheet/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/sheet/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/sheet/sheet.css",
+          "type": "registry:ui",
+          "target": "hanji/components/sheet/sheet.css"
+        },
+        {
+          "path": "packages/react/src/components/sheet/sheet.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/sheet/sheet.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "A brief, announced message about something that just happened, with at most one action.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/toast/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/toast/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/toast/toast.css",
+          "type": "registry:ui",
+          "target": "hanji/components/toast/toast.css"
+        },
+        {
+          "path": "packages/react/src/components/toast/toast.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/toast/toast.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "A short label that names a control on hover or keyboard focus.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "surfaces"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/tooltip/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/tooltip/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/tooltip/tooltip.css",
+          "type": "registry:ui",
+          "target": "hanji/components/tooltip/tooltip.css"
+        },
+        {
+          "path": "packages/react/src/components/tooltip/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/tooltip/tooltip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "A stack of headings that each reveal their own section.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/accordion/accordion.css",
+          "type": "registry:ui",
+          "target": "hanji/components/accordion/accordion.css"
+        },
+        {
+          "path": "packages/react/src/components/accordion/accordion.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/accordion/accordion.tsx"
+        },
+        {
+          "path": "packages/react/src/components/accordion/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/accordion/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumbs",
+      "type": "registry:ui",
+      "title": "Breadcrumbs",
+      "description": "Where this page sits in a hierarchy, with a way back up each level.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/breadcrumbs/breadcrumbs.css",
+          "type": "registry:ui",
+          "target": "hanji/components/breadcrumbs/breadcrumbs.css"
+        },
+        {
+          "path": "packages/react/src/components/breadcrumbs/breadcrumbs.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/breadcrumbs/breadcrumbs.tsx"
+        },
+        {
+          "path": "packages/react/src/components/breadcrumbs/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/breadcrumbs/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "One region the user can show or hide: “Show 6 more”, “Advanced options”.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/collapsible/collapsible.css",
+          "type": "registry:ui",
+          "target": "hanji/components/collapsible/collapsible.css"
+        },
+        {
+          "path": "packages/react/src/components/collapsible/collapsible.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/collapsible/collapsible.tsx"
+        },
+        {
+          "path": "packages/react/src/components/collapsible/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/collapsible/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "NavigationMenu",
+      "description": "A site’s top navigation: links and triggers that open rich link panels in one shared, morphing surface.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/navigation-menu/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/navigation-menu/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/navigation-menu/navigation-menu.css",
+          "type": "registry:ui",
+          "target": "hanji/components/navigation-menu/navigation-menu.css"
+        },
+        {
+          "path": "packages/react/src/components/navigation-menu/navigation-menu.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/navigation-menu/navigation-menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Moves through numbered pages of a long list or table.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/pagination/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/pagination/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/pagination/pagination.css",
+          "type": "registry:ui",
+          "target": "hanji/components/pagination/pagination.css"
+        },
+        {
+          "path": "packages/react/src/components/pagination/pagination.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/pagination/pagination.tsx"
+        }
+      ]
+    },
+    {
+      "name": "steps",
+      "type": "registry:ui",
+      "title": "Steps",
+      "description": "Shows progress through a short ordered task: where you are, what’s done, what’s left.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/steps/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/steps/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/steps/steps.css",
+          "type": "registry:ui",
+          "target": "hanji/components/steps/steps.css"
+        },
+        {
+          "path": "packages/react/src/components/steps/steps.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/steps/steps.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tab-bar",
+      "type": "registry:ui",
+      "title": "TabBar",
+      "description": "The mobile-web bottom bar: three to five top-level destinations, icon over label.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/tab-bar/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/tab-bar/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/tab-bar/tab-bar.css",
+          "type": "registry:ui",
+          "target": "hanji/components/tab-bar/tab-bar.css"
+        },
+        {
+          "path": "packages/react/src/components/tab-bar/tab-bar.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/tab-bar/tab-bar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Switches between views of the same subject without leaving the page.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/tabs/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/tabs/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/tabs/tabs.css",
+          "type": "registry:ui",
+          "target": "hanji/components/tabs/tabs.css"
+        },
+        {
+          "path": "packages/react/src/components/tabs/tabs.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/tabs/tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toolbar",
+      "type": "registry:ui",
+      "title": "Toolbar",
+      "description": "A group of controls that acts as one tab stop; arrow keys move inside it.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/toolbar/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/toolbar/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/toolbar/toolbar.css",
+          "type": "registry:ui",
+          "target": "hanji/components/toolbar/toolbar.css"
+        },
+        {
+          "path": "packages/react/src/components/toolbar/toolbar.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/toolbar/toolbar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "counter",
+      "type": "registry:ui",
+      "title": "Counter",
+      "description": "A number whose changed digits roll into place, so a change is seen without re-reading the whole figure.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/counter/counter.css",
+          "type": "registry:ui",
+          "target": "hanji/components/counter/counter.css"
+        },
+        {
+          "path": "packages/react/src/components/counter/counter.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/counter/counter.tsx"
+        },
+        {
+          "path": "packages/react/src/components/counter/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/counter/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:ui",
+      "title": "EmptyState",
+      "description": "What fills a region when there is nothing to show: a glyph, a title, one sentence and the way out.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/empty-state/empty-state.css",
+          "type": "registry:ui",
+          "target": "hanji/components/empty-state/empty-state.css"
+        },
+        {
+          "path": "packages/react/src/components/empty-state/empty-state.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/empty-state/empty-state.tsx"
+        },
+        {
+          "path": "packages/react/src/components/empty-state/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/empty-state/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "list",
+      "type": "registry:ui",
+      "title": "List",
+      "description": "Rows of 56px: artwork or an icon, a title and a line under it, and a value or chevron on the right.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/list/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/list/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/list/list.css",
+          "type": "registry:ui",
+          "target": "hanji/components/list/list.css"
+        },
+        {
+          "path": "packages/react/src/components/list/list.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/list/list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "marquee",
+      "type": "registry:ui",
+      "title": "Marquee",
+      "description": "A single line too long for its box — a track title on a player — that rests, then travels so the whole of it can be read.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/marquee/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/marquee/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/marquee/marquee.css",
+          "type": "registry:ui",
+          "target": "hanji/components/marquee/marquee.css"
+        },
+        {
+          "path": "packages/react/src/components/marquee/marquee.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/marquee/marquee.tsx"
+        }
+      ]
+    },
+    {
+      "name": "meter",
+      "type": "registry:ui",
+      "title": "Meter",
+      "description": "A measurement within a known range, coloured by how good it is: storage, battery, signal, password strength.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "progress"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/meter/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/meter/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/meter/meter.css",
+          "type": "registry:ui",
+          "target": "hanji/components/meter/meter.css"
+        },
+        {
+          "path": "packages/react/src/components/meter/meter.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/meter/meter.tsx"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "How far a task has got: a 4px track with a fill, and an optional label and value.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/progress/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/progress/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/progress/progress-math.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/progress/progress-math.ts"
+        },
+        {
+          "path": "packages/react/src/components/progress/progress.css",
+          "type": "registry:ui",
+          "target": "hanji/components/progress/progress.css"
+        },
+        {
+          "path": "packages/react/src/components/progress/progress.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/progress/progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "progress-ring",
+      "type": "registry:ui",
+      "title": "ProgressRing",
+      "description": "Progress as a ring: a 40px status beside a row, or a 96px summary with the value inside.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "progress"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/progress-ring/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/progress-ring/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/progress-ring/progress-ring.css",
+          "type": "registry:ui",
+          "target": "hanji/components/progress-ring/progress-ring.css"
+        },
+        {
+          "path": "packages/react/src/components/progress-ring/progress-ring.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/progress-ring/progress-ring.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stat",
+      "type": "registry:ui",
+      "title": "Stat",
+      "description": "A number that matters: what it counts, the figure with its unit shrunk, how it compares in words, and the recent past as a line.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/stat/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/stat/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/stat/stat.css",
+          "type": "registry:ui",
+          "target": "hanji/components/stat/stat.css"
+        },
+        {
+          "path": "packages/react/src/components/stat/stat.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/stat/stat.tsx"
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Rows of records compared across columns: hairlines, a sticky header, sortable columns, numbers right-aligned in tabular figures.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/table/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/table/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/table/table.css",
+          "type": "registry:ui",
+          "target": "hanji/components/table/table.css"
+        },
+        {
+          "path": "packages/react/src/components/table/table.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/table/table.tsx"
+        }
+      ]
+    },
+    {
+      "name": "timeline",
+      "type": "registry:ui",
+      "title": "Timeline",
+      "description": "A vertical sequence of steps with their times: what happened, what is happening, what is next, and what failed.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/timeline/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/timeline/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/timeline/timeline.css",
+          "type": "registry:ui",
+          "target": "hanji/components/timeline/timeline.css"
+        },
+        {
+          "path": "packages/react/src/components/timeline/timeline.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/timeline/timeline.tsx"
+        }
+      ]
+    },
+    {
+      "name": "attachment",
+      "type": "registry:ui",
+      "title": "Attachment",
+      "description": "A file attached to a prompt or message: type glyph, name, size or error, remove, and an upload bar.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/attachment/attachment.css",
+          "type": "registry:ui",
+          "target": "hanji/components/attachment/attachment.css"
+        },
+        {
+          "path": "packages/react/src/components/attachment/attachment.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/attachment/attachment.tsx"
+        },
+        {
+          "path": "packages/react/src/components/attachment/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/attachment/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "citation",
+      "type": "registry:ui",
+      "title": "Citation",
+      "description": "An inline numbered source in a reply, with a preview card of the source on hover or focus.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/citation/citation.css",
+          "type": "registry:ui",
+          "target": "hanji/components/citation/citation.css"
+        },
+        {
+          "path": "packages/react/src/components/citation/citation.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/citation/citation.tsx"
+        },
+        {
+          "path": "packages/react/src/components/citation/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/citation/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "CodeBlock",
+      "description": "Code inside a reply or doc: language and filename, copy, soft-wrap, optional line numbers. No highlighter bundled.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/code-block/code-block.css",
+          "type": "registry:ui",
+          "target": "hanji/components/code-block/code-block.css"
+        },
+        {
+          "path": "packages/react/src/components/code-block/code-block.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/code-block/code-block.tsx"
+        },
+        {
+          "path": "packages/react/src/components/code-block/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/code-block/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "conversation",
+      "type": "registry:ui",
+      "title": "Conversation",
+      "description": "A scrolling log of turns that keeps the newest reply in view while it streams — until the person scrolls up to read.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/conversation/conversation.css",
+          "type": "registry:ui",
+          "target": "hanji/components/conversation/conversation.css"
+        },
+        {
+          "path": "packages/react/src/components/conversation/conversation.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/conversation/conversation.tsx"
+        },
+        {
+          "path": "packages/react/src/components/conversation/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/conversation/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "type": "registry:ui",
+      "title": "Message",
+      "description": "One turn in a conversation: the person’s bubble, the assistant’s reply, or a system note.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/message/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/message/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/message/message.css",
+          "type": "registry:ui",
+          "target": "hanji/components/message/message.css"
+        },
+        {
+          "path": "packages/react/src/components/message/message.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/message/message.tsx"
+        }
+      ]
+    },
+    {
+      "name": "message-actions",
+      "type": "registry:ui",
+      "title": "MessageActions",
+      "description": "The small icon actions under an assistant reply: copy, regenerate, rate, more.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/message-actions/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/message-actions/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/message-actions/message-actions.css",
+          "type": "registry:ui",
+          "target": "hanji/components/message-actions/message-actions.css"
+        },
+        {
+          "path": "packages/react/src/components/message-actions/message-actions.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/message-actions/message-actions.tsx"
+        }
+      ]
+    },
+    {
+      "name": "model-picker",
+      "type": "registry:ui",
+      "title": "ModelPicker",
+      "description": "Chooses which model answers: the current one in a quiet trigger, each option with its provider, a capability line and tags.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/model-picker/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/model-picker/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/model-picker/model-picker.css",
+          "type": "registry:ui",
+          "target": "hanji/components/model-picker/model-picker.css"
+        },
+        {
+          "path": "packages/react/src/components/model-picker/model-picker.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/model-picker/model-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "prompt-input",
+      "type": "registry:ui",
+      "title": "PromptInput",
+      "description": "The box a person types a prompt into: grows with the text, sends on Enter, becomes Stop while a reply streams.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/prompt-input/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/prompt-input/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/prompt-input/prompt-input.css",
+          "type": "registry:ui",
+          "target": "hanji/components/prompt-input/prompt-input.css"
+        },
+        {
+          "path": "packages/react/src/components/prompt-input/prompt-input.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/prompt-input/prompt-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "reasoning",
+      "type": "registry:ui",
+      "title": "Reasoning",
+      "description": "A model’s visible thinking: open while it works, folded to “Thought for 12 s” when the answer starts.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/reasoning/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/reasoning/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/reasoning/reasoning.css",
+          "type": "registry:ui",
+          "target": "hanji/components/reasoning/reasoning.css"
+        },
+        {
+          "path": "packages/react/src/components/reasoning/reasoning.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/reasoning/reasoning.tsx"
+        }
+      ]
+    },
+    {
+      "name": "streaming-text",
+      "type": "registry:ui",
+      "title": "StreamingText",
+      "description": "Renders a model’s streamed text with zero React work per token.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/streaming-text/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/streaming-text/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/streaming-text/streaming-text.css",
+          "type": "registry:ui",
+          "target": "hanji/components/streaming-text/streaming-text.css"
+        },
+        {
+          "path": "packages/react/src/components/streaming-text/streaming-text.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/streaming-text/streaming-text.tsx"
+        }
+      ]
+    },
+    {
+      "name": "suggestions",
+      "type": "registry:ui",
+      "title": "Suggestions",
+      "description": "A row of ready-made prompts the person can send with one tap.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/suggestions/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/suggestions/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/suggestions/suggestions.css",
+          "type": "registry:ui",
+          "target": "hanji/components/suggestions/suggestions.css"
+        },
+        {
+          "path": "packages/react/src/components/suggestions/suggestions.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/suggestions/suggestions.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tool-call",
+      "type": "registry:ui",
+      "title": "ToolCall",
+      "description": "One tool an assistant called — name, status, arguments and result — collapsed to a line until opened.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system"
+      ],
+      "categories": [
+        "ai"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/tool-call/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/tool-call/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/tool-call/tool-call.css",
+          "type": "registry:ui",
+          "target": "hanji/components/tool-call/tool-call.css"
+        },
+        {
+          "path": "packages/react/src/components/tool-call/tool-call.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/tool-call/tool-call.tsx"
+        }
+      ]
+    }
+  ]
+}

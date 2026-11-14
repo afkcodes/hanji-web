@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "menubar",
+  "type": "registry:ui",
+  "title": "Menubar",
+  "description": "A row of menus (File · Edit · View) that behave as one, for desktop-style apps.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system",
+    "menu"
+  ],
+  "categories": [
+    "surfaces"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/menubar/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/menubar/index.ts",
+      "content": "export * as Menubar from './menubar.tsx';\nexport type { RootProps as MenubarRootProps } from './menubar.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/menubar/menubar.css",
+      "type": "registry:ui",
+      "target": "hanji/components/menubar/menubar.css",
+      "content": "@layer hj.components {\n  /* Rows and popups are Menu's (hj-menu-*). This file styles the bar and its triggers. */\n  .hj-menubar {\n    display: inline-flex;\n    align-items: center;\n    gap: 2px;\n    padding: 3px;\n    border-radius: var(--hj-radius-sm);\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1px var(--hj-line);\n    font-family: var(--hj-font-sans);\n  }\n  .hj-menubar[data-orientation='vertical'] {\n    flex-direction: column;\n    align-items: stretch;\n  }\n  .hj-menubar-trigger {\n    position: relative;\n    height: var(--hj-menubar-trigger-height, 32px);\n    padding: 0 12px;\n    border: 0;\n    border-radius: var(--hj-radius-xs);\n    background: transparent;\n    color: var(--hj-fg-dim);\n    font: 500 13.5px / 1 var(--hj-font-sans);\n    cursor: default;\n    user-select: none;\n    transition:\n      background-color var(--hj-dur-fast) var(--hj-ease-out),\n      color var(--hj-dur-fast) var(--hj-ease-out);\n  }\n  .hj-menubar-trigger:hover:not([data-disabled]),\n  .hj-menubar-trigger[data-popup-open] {\n    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);\n    color: var(--hj-fg);\n  }\n  .hj-menubar-trigger[data-disabled] {\n    opacity: 0.4;\n  }\n  .hj-menubar-trigger:focus-visible {\n    outline: 2px solid var(--hj-focus);\n    outline-offset: -2px;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/menubar/menubar.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/menubar/menubar.tsx",
+      "content": "'use client';\nimport { Menu as BaseMenu } from '@base-ui/react/menu';\nimport { Menubar as Base } from '@base-ui/react/menubar';\nimport type * as React from 'react';\n\nimport { part } from '../../system/part.tsx';\nimport type { HanjiPart } from '../../system/part.tsx';\n\n/*\n * A row of menus (File · Edit · View) that behave as one: hover moves between open menus, ←/→\n * move between triggers. Each menu's popup and rows are Menu's own parts, re-exported here.\n */\nexport {\n  Arrow,\n  Backdrop,\n  CheckboxItem,\n  CheckboxItemIndicator,\n  Content,\n  Group,\n  GroupLabel,\n  Item,\n  LinkItem,\n  Popup,\n  Portal,\n  Positioner,\n  RadioGroup,\n  RadioItem,\n  RadioItemIndicator,\n  Separator,\n  Shortcut,\n  SubmenuRoot,\n  SubmenuTrigger,\n} from '../menu/menu.tsx';\n\n/** The bar. Renders a `<div role=\"menubar\">`. */\nexport const Root: HanjiPart<typeof Base> = part(Base, 'Menubar.Root', 'hj-menubar');\n/** One menu in the bar (Base UI Menu.Root). */\nexport const Menu: typeof BaseMenu.Root = BaseMenu.Root;\n/** The bar's quiet text trigger. */\nexport const Trigger: HanjiPart<typeof BaseMenu.Trigger> = part(\n  BaseMenu.Trigger,\n  'Menubar.Trigger',\n  'hj-menubar-trigger',\n);\n\n/** Props of the bar itself. */\nexport type RootProps = React.ComponentProps<typeof Base>;\n"
+    }
+  ]
+}

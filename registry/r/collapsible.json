@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "collapsible",
+  "type": "registry:ui",
+  "title": "Collapsible",
+  "description": "One region the user can show or hide: “Show 6 more”, “Advanced options”.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "navigation"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/collapsible/collapsible.css",
+      "type": "registry:ui",
+      "target": "hanji/components/collapsible/collapsible.css",
+      "content": "@layer hj.components {\n  .hj-collapsible-root {\n    display: flex;\n    flex-direction: column;\n    align-items: flex-start;\n    gap: var(--hj-space-2);\n    min-width: 0;\n    font-family: var(--hj-font-sans);\n  }\n\n  .hj-collapsible-trigger {\n    position: relative;\n    display: inline-flex;\n    align-items: center;\n    gap: 6px;\n    height: 32px;\n    padding: 0 2px;\n    border: 0;\n    background: none;\n    color: var(--hj-accent);\n    font: 600 14px / 1 var(--hj-font-sans);\n    cursor: pointer;\n    -webkit-tap-highlight-color: transparent;\n    transition:\n      opacity var(--hj-dur-fast) var(--hj-ease-out),\n      transform var(--hj-dur-snappy) var(--hj-ease-snappy);\n  }\n  /* 44px hit area around a 32px line of text */\n  .hj-collapsible-trigger::before {\n    content: '';\n    position: absolute;\n    inset: -6px -4px;\n  }\n  .hj-collapsible-trigger:active:not([data-disabled]) {\n    transform: scale(var(--hj-press));\n    transition-duration: var(--hj-dur-fast), 70ms;\n  }\n  .hj-collapsible-trigger[data-disabled] {\n    opacity: 0.4;\n    cursor: not-allowed;\n  }\n  .hj-collapsible-trigger:focus-visible {\n    border-radius: var(--hj-radius-xs);\n  }\n  .hj-collapsible-chevron {\n    display: inline-flex;\n    font-size: 16px;\n    line-height: 0;\n    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);\n  }\n  .hj-collapsible-trigger[data-panel-open] .hj-collapsible-chevron {\n    transform: rotate(180deg);\n  }\n\n  /*\n   * The one declared layout transition: height from Base UI's measured\n   * --collapsible-panel-height. Clipped, clamped and short; content fades with it.\n   */\n  .hj-collapsible-panel {\n    align-self: stretch;\n    height: var(--collapsible-panel-height);\n    overflow: hidden;\n    transition:\n      height var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),\n      opacity var(--hj-dur-base) var(--hj-ease-out);\n  }\n  .hj-collapsible-panel[data-starting-style],\n  .hj-collapsible-panel[data-ending-style] {\n    height: 0;\n    opacity: 0;\n  }\n  .hj-collapsible-panel[data-ending-style] {\n    transition-duration: var(--hj-dur-fast);\n    transition-timing-function: var(--hj-ease-out);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/collapsible/collapsible.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/collapsible/collapsible.tsx",
+      "content": "'use client';\nimport { Collapsible as Base } from '@base-ui/react/collapsible';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { part } from '../../system/part.tsx';\nimport type { HanjiPart } from '../../system/part.tsx';\nimport { cls, flag, withDefaults } from '../../system/slot.ts';\n\nexport const Root: HanjiPart<typeof Base.Root> = part(\n  Base.Root,\n  'Collapsible.Root',\n  'hj-collapsible-root',\n);\nexport const Panel: HanjiPart<typeof Base.Panel> = part(\n  Base.Panel,\n  'Collapsible.Panel',\n  'hj-collapsible-panel',\n);\n\nexport interface TriggerOwnProps {\n  /** Draw a trailing chevron that turns 180° when open. @default true */\n  chevron?: boolean;\n}\nexport interface TriggerProps extends TriggerOwnProps, Base.Trigger.Props {}\n\n/** Shows or hides the panel. A quiet text button with a chevron unless you render your own. */\nexport function Trigger(props: TriggerProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    chevron = true,\n    className,\n    children,\n    ...rest\n  } = withDefaults(config, 'Collapsible.Trigger', props);\n  return (\n    <Base.Trigger\n      {...rest}\n      data-chevron={flag(chevron)}\n      className={cls(config, 'Collapsible.Trigger', 'hj-collapsible-trigger', className)}\n    >\n      {children}\n      {chevron ? (\n        <span className={config.unstyled ? undefined : 'hj-collapsible-chevron'} aria-hidden=\"true\">\n          {config.icons.chevronDown}\n        </span>\n      ) : null}\n    </Base.Trigger>\n  );\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/collapsible/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/collapsible/index.ts",
+      "content": "export * as Collapsible from './collapsible.tsx';\nexport type {\n  TriggerOwnProps as CollapsibleTriggerOwnProps,\n  TriggerProps as CollapsibleTriggerProps,\n} from './collapsible.tsx';\n"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "checkbox-group",
+  "type": "registry:ui",
+  "title": "CheckboxGroup",
+  "description": "Several related checkboxes sharing one value array, with an optional “Select all” parent.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "controls"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/checkbox-group/checkbox-group.css",
+      "type": "registry:ui",
+      "target": "hanji/components/checkbox-group/checkbox-group.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-checkbox-group-gap · --hj-checkbox-group-indent */\n  .hj-checkbox-group {\n    display: flex;\n    flex-direction: column;\n    gap: var(--hj-checkbox-group-gap, 2px);\n    font-family: var(--hj-font-sans);\n  }\n  .hj-checkbox-group[data-orientation='horizontal'] {\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: var(--hj-checkbox-group-gap, var(--hj-space-2) var(--hj-space-6));\n  }\n  .hj-checkbox-group[data-disabled] {\n    color: var(--hj-fg-mute);\n  }\n  .hj-checkbox-group-item {\n    display: flex;\n    align-items: center;\n    gap: 12px;\n    min-height: var(--hj-touch);\n    font: var(--hj-type-body);\n    letter-spacing: var(--hj-tracking-body);\n    color: var(--hj-fg);\n    cursor: pointer;\n    -webkit-tap-highlight-color: transparent;\n  }\n  .hj-checkbox-group-item:has([data-disabled]) {\n    color: var(--hj-fg-mute);\n    cursor: not-allowed;\n  }\n  .hj-checkbox-group-description {\n    margin-left: auto;\n    font: var(--hj-type-mono);\n    letter-spacing: var(--hj-tracking-mono);\n    font-variant-numeric: tabular-nums;\n    color: var(--hj-fg-mute);\n  }\n  .hj-checkbox-group-children {\n    display: flex;\n    flex-direction: column;\n    gap: var(--hj-checkbox-group-gap, 2px);\n    /* a hairline guide from the parent's box; children line up with the parent's text */\n    margin-inline-start: 10.5px;\n    padding-inline-start: calc(var(--hj-checkbox-group-indent, 34px) - 11px);\n    border-inline-start: 1px solid var(--hj-line);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/checkbox-group/checkbox-group.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/checkbox-group/checkbox-group.tsx",
+      "content": "'use client';\nimport { CheckboxGroup as Base } from '@base-ui/react/checkbox-group';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { elementPart } from '../../system/part.tsx';\nimport type { ElementPartProps } from '../../system/part.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\nexport interface RootOwnProps {\n  /** Stack (default) or lay the options out in a row. */\n  orientation?: 'vertical' | 'horizontal';\n}\nexport interface RootProps extends RootOwnProps, React.ComponentProps<typeof Base> {}\n\n/**\n * Several related checkboxes sharing one value array. Give it `allValues` and mark one\n * `<Checkbox.Root parent />` to get a “Select all” that goes mixed when some are ticked.\n */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    orientation = 'vertical',\n    className,\n    ...rest\n  } = withDefaults(config, 'CheckboxGroup.Root', props);\n  return (\n    <Base\n      {...rest}\n      data-orientation={orientation}\n      className={cls(config, 'CheckboxGroup.Root', 'hj-checkbox-group', className)}\n    />\n  );\n}\n\n/** One option row: a `<label>` holding a Checkbox.Root and its text, so the whole row toggles. */\nexport const Item: (props: ElementPartProps<'label'>) => React.ReactElement = elementPart(\n  'label',\n  'CheckboxGroup.Item',\n  'hj-checkbox-group-item',\n);\n\n/** The children under a parent checkbox, indented to its text. */\nexport const Children: (props: ElementPartProps<'div'>) => React.ReactElement = elementPart(\n  'div',\n  'CheckboxGroup.Children',\n  'hj-checkbox-group-children',\n);\n\n/** Secondary line inside an Item (size, count, consequence). */\nexport const Description: (props: ElementPartProps<'span'>) => React.ReactElement = elementPart(\n  'span',\n  'CheckboxGroup.Description',\n  'hj-checkbox-group-description',\n);\n"
+    },
+    {
+      "path": "packages/react/src/components/checkbox-group/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/checkbox-group/index.ts",
+      "content": "export * as CheckboxGroup from './checkbox-group.tsx';\nexport type {\n  RootOwnProps as CheckboxGroupRootOwnProps,\n  RootProps as CheckboxGroupRootProps,\n} from './checkbox-group.tsx';\n"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "accordion",
+  "type": "registry:ui",
+  "title": "Accordion",
+  "description": "A stack of headings that each reveal their own section.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "navigation"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/accordion/accordion.css",
+      "type": "registry:ui",
+      "target": "hanji/components/accordion/accordion.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-accordion-row-height · --hj-accordion-gap (panel bottom spacing) */\n  .hj-accordion-root {\n    display: flex;\n    flex-direction: column;\n    min-width: 0;\n    font-family: var(--hj-font-sans);\n  }\n  .hj-accordion-root[data-variant='lined'] {\n    border-top: 1px solid var(--hj-line);\n  }\n  .hj-accordion-root[data-variant='lined'] .hj-accordion-item {\n    border-bottom: 1px solid var(--hj-line);\n  }\n  .hj-accordion-header {\n    margin: 0;\n    font: inherit;\n  }\n\n  .hj-accordion-trigger {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    gap: var(--hj-space-4);\n    width: 100%;\n    min-height: var(--hj-accordion-row-height, 56px);\n    padding: var(--hj-space-3) 0;\n    border: 0;\n    background: none;\n    color: var(--hj-fg);\n    font: 600 15px / 1.35 var(--hj-font-sans);\n    letter-spacing: -0.01em;\n    text-align: left;\n    cursor: pointer;\n    -webkit-tap-highlight-color: transparent;\n    transition: color var(--hj-dur-fast) var(--hj-ease-out);\n  }\n  .hj-accordion-trigger:hover:not([data-disabled]) .hj-accordion-chevron {\n    color: var(--hj-fg);\n  }\n  .hj-accordion-trigger:active:not([data-disabled]) .hj-accordion-label {\n    opacity: var(--hj-press-opacity);\n  }\n  .hj-accordion-trigger[data-disabled] {\n    color: var(--hj-fg-mute);\n    cursor: not-allowed;\n  }\n  .hj-accordion-trigger:focus-visible {\n    outline-offset: -2px;\n    border-radius: var(--hj-radius-xs);\n  }\n  .hj-accordion-label {\n    min-width: 0;\n    transition: opacity var(--hj-dur-fast) var(--hj-ease-out);\n  }\n  .hj-accordion-chevron {\n    display: inline-flex;\n    flex: none;\n    color: var(--hj-fg-mute);\n    font-size: 20px;\n    line-height: 0;\n    transition:\n      transform var(--hj-dur-snappy) var(--hj-ease-snappy),\n      color var(--hj-dur-fast) var(--hj-ease-out);\n  }\n  .hj-accordion-trigger[data-panel-open] .hj-accordion-chevron {\n    transform: rotate(180deg);\n  }\n\n  /*\n   * The one declared layout transition: the panel's height, from Base UI's measured\n   * --accordion-panel-height. Clipped, clamped and short; content fades with it.\n   */\n  .hj-accordion-panel {\n    height: var(--accordion-panel-height);\n    overflow: hidden;\n    color: var(--hj-fg-dim);\n    font-size: 14.5px;\n    line-height: 1.6;\n    transition:\n      height var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),\n      opacity var(--hj-dur-base) var(--hj-ease-out);\n  }\n  .hj-accordion-panel > :first-child {\n    margin-top: 0;\n  }\n  .hj-accordion-panel > :last-child {\n    margin-bottom: var(--hj-accordion-gap, var(--hj-space-4));\n  }\n  .hj-accordion-panel[data-starting-style],\n  .hj-accordion-panel[data-ending-style] {\n    height: 0;\n    opacity: 0;\n  }\n  .hj-accordion-panel[data-ending-style] {\n    transition-duration: var(--hj-dur-fast);\n    transition-timing-function: var(--hj-ease-out);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/accordion/accordion.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/accordion/accordion.tsx",
+      "content": "'use client';\nimport { Accordion as Base } from '@base-ui/react/accordion';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { part } from '../../system/part.tsx';\nimport type { HanjiPart } from '../../system/part.tsx';\nimport { cls, flag, withDefaults } from '../../system/slot.ts';\n\nexport const Item: HanjiPart<typeof Base.Item> = part(\n  Base.Item,\n  'Accordion.Item',\n  'hj-accordion-item',\n);\nexport const Header: HanjiPart<typeof Base.Header> = part(\n  Base.Header,\n  'Accordion.Header',\n  'hj-accordion-header',\n);\nexport const Panel: HanjiPart<typeof Base.Panel> = part(\n  Base.Panel,\n  'Accordion.Panel',\n  'hj-accordion-panel',\n);\n\nexport interface RootOwnProps {\n  /** lined = hairlines between items (hanji) · plain = no rules, for nesting inside a surface. */\n  variant?: 'lined' | 'plain';\n}\nexport interface RootProps extends RootOwnProps, Base.Root.Props {}\n\n/** Owns which items are open (value / defaultValue / onValueChange, multiple). */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { variant = 'lined', className, ...rest } = withDefaults(config, 'Accordion.Root', props);\n  return (\n    <Base.Root\n      {...rest}\n      data-variant={variant}\n      className={cls(config, 'Accordion.Root', 'hj-accordion-root', className)}\n    />\n  );\n}\n\nexport interface TriggerOwnProps {\n  /** Draw the chevron that turns 180° when open. @default true */\n  chevron?: boolean;\n}\nexport interface TriggerProps extends TriggerOwnProps, Base.Trigger.Props {}\n\n/** The row that opens and closes its item. Put it inside `Accordion.Header`. */\nexport function Trigger(props: TriggerProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    chevron = true,\n    className,\n    children,\n    ...rest\n  } = withDefaults(config, 'Accordion.Trigger', props);\n  const styled = !config.unstyled;\n  return (\n    <Base.Trigger\n      {...rest}\n      data-chevron={flag(chevron)}\n      className={cls(config, 'Accordion.Trigger', 'hj-accordion-trigger', className)}\n    >\n      <span className={styled ? 'hj-accordion-label' : undefined}>{children}</span>\n      {chevron ? (\n        <span className={styled ? 'hj-accordion-chevron' : undefined} aria-hidden=\"true\">\n          {config.icons.chevronDown}\n        </span>\n      ) : null}\n    </Base.Trigger>\n  );\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/accordion/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/accordion/index.ts",
+      "content": "export * as Accordion from './accordion.tsx';\nexport type {\n  RootOwnProps as AccordionRootOwnProps,\n  RootProps as AccordionRootProps,\n  TriggerOwnProps as AccordionTriggerOwnProps,\n  TriggerProps as AccordionTriggerProps,\n} from './accordion.tsx';\n"
+    }
+  ]
+}

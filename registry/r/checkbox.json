@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "checkbox",
+  "type": "registry:ui",
+  "title": "Checkbox",
+  "description": "A box you tick for a yes/no choice that takes effect when the form is saved.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "controls"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/checkbox/checkbox.css",
+      "type": "registry:ui",
+      "target": "hanji/components/checkbox/checkbox.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-checkbox-size · --hj-checkbox-radius */\n  .hj-checkbox {\n    --_s: var(--hj-checkbox-size, 22px);\n    position: relative;\n    display: inline-grid;\n    flex: none;\n    place-items: center;\n    width: var(--_s);\n    height: var(--_s);\n    border-radius: var(--hj-checkbox-radius, calc(var(--hj-radius-xs) - 2px));\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg) 26%, transparent);\n    color: var(--hj-on-accent);\n    vertical-align: middle;\n    cursor: pointer;\n    -webkit-tap-highlight-color: transparent;\n    transition:\n      background-color var(--hj-dur-fast) var(--hj-ease-out),\n      box-shadow var(--hj-dur-fast) var(--hj-ease-out),\n      transform var(--hj-dur-snappy) var(--hj-ease-snappy);\n  }\n  /* 44px hit area around a 22px drawing */\n  .hj-checkbox::before {\n    content: '';\n    position: absolute;\n    inset: calc((var(--_s) - var(--hj-touch)) / 2);\n  }\n  .hj-checkbox[data-size='sm'] {\n    --_s: var(--hj-checkbox-size, 18px);\n  }\n  .hj-checkbox:hover:not([data-disabled]):not([data-checked]):not([data-indeterminate]) {\n    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg) 44%, transparent);\n  }\n  .hj-checkbox:active:not([data-disabled]) {\n    transform: scale(0.92);\n    transition-duration: var(--hj-dur-fast), var(--hj-dur-fast), 70ms;\n  }\n  .hj-checkbox[data-checked],\n  .hj-checkbox[data-indeterminate] {\n    background: var(--hj-accent);\n    box-shadow: inset 0 0 0 1.5px transparent;\n  }\n  .hj-checkbox[data-invalid]:not([data-checked]) {\n    box-shadow: inset 0 0 0 1.5px var(--hj-danger);\n  }\n  .hj-checkbox[data-disabled] {\n    opacity: 0.4;\n    cursor: not-allowed;\n  }\n  .hj-checkbox[data-readonly] {\n    cursor: default;\n  }\n\n  .hj-checkbox-indicator {\n    display: block;\n    width: 100%;\n    height: 100%;\n  }\n  .hj-checkbox-indicator svg {\n    display: block;\n  }\n  .hj-checkbox-indicator path {\n    stroke: currentColor;\n    stroke-width: 2;\n    stroke-linecap: round;\n    stroke-linejoin: round;\n    stroke-dasharray: 1;\n    stroke-dashoffset: 1;\n    /* leaving: quick and un-drawn backwards */\n    transition: stroke-dashoffset var(--hj-dur-fast) var(--hj-ease-out);\n  }\n  /* The tick draws itself: a settled spring, so it never overshoots the corner. */\n  .hj-checkbox-indicator[data-checked]:not([data-indeterminate]) path[data-mark='check'],\n  .hj-checkbox-indicator[data-indeterminate] path[data-mark='dash'] {\n    stroke-dashoffset: 0;\n    transition: stroke-dashoffset var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle) 40ms;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/checkbox/checkbox.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/checkbox/checkbox.tsx",
+      "content": "'use client';\nimport { Checkbox as Base } from '@base-ui/react/checkbox';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\n/** The tick and the dash, drawn on a 22-grid so they can draw themselves (pathLength = 1). */\nfunction Marks(): React.ReactElement {\n  return (\n    <svg\n      viewBox=\"0 0 22 22\"\n      width=\"100%\"\n      height=\"100%\"\n      fill=\"none\"\n      aria-hidden=\"true\"\n      focusable=\"false\"\n    >\n      <path data-mark=\"check\" d=\"M6 11.4 9.4 14.8 16 8\" pathLength={1} />\n      <path data-mark=\"dash\" d=\"M6.5 11h9\" pathLength={1} />\n    </svg>\n  );\n}\n\nexport interface IndicatorProps extends Base.Indicator.Props {}\n\n/**\n * The tick. Kept mounted so it can draw itself in and out; renders hanji's tick and dash when\n * given no children (pass your own icon to replace them).\n */\nexport function Indicator(props: IndicatorProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    className,\n    children,\n    keepMounted = true,\n    ...rest\n  } = withDefaults(config, 'Checkbox.Indicator', props);\n  return (\n    <Base.Indicator\n      {...rest}\n      keepMounted={keepMounted}\n      className={cls(config, 'Checkbox.Indicator', 'hj-checkbox-indicator', className)}\n    >\n      {children ?? <Marks />}\n    </Base.Indicator>\n  );\n}\n\nexport interface RootOwnProps {\n  /** md = 22 (hanji), sm = 18. */\n  size?: 'sm' | 'md';\n}\nexport interface RootProps extends RootOwnProps, Base.Root.Props {}\n\n/**\n * A box you tick for a choice that waits for a Save. Renders its Indicator when given no\n * children, so `<Checkbox.Root />` is complete. Label it by wrapping in a `<label>` or a Field.\n */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    size = 'md',\n    className,\n    children,\n    ...rest\n  } = withDefaults(config, 'Checkbox.Root', props);\n  return (\n    <Base.Root\n      {...rest}\n      data-size={size}\n      className={cls(config, 'Checkbox.Root', 'hj-checkbox', className)}\n    >\n      {children ?? <Indicator />}\n    </Base.Root>\n  );\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/checkbox/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/checkbox/index.ts",
+      "content": "export * as Checkbox from './checkbox.tsx';\nexport type {\n  IndicatorProps as CheckboxIndicatorProps,\n  RootOwnProps as CheckboxRootOwnProps,\n  RootProps as CheckboxRootProps,\n} from './checkbox.tsx';\n"
+    }
+  ]
+}

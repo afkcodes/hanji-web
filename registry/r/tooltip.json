@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip",
+  "type": "registry:ui",
+  "title": "Tooltip",
+  "description": "A short label that names a control on hover or keyboard focus.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "surfaces"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/tooltip/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/tooltip/index.ts",
+      "content": "export * as Tooltip from './tooltip.tsx';\nexport type {\n  ContentOwnProps as TooltipContentOwnProps,\n  ContentProps as TooltipContentProps,\n  HintOwnProps as TooltipHintProps,\n} from './tooltip.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/tooltip/tooltip.css",
+      "type": "registry:ui",
+      "target": "hanji/components/tooltip/tooltip.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-tooltip-width · --hj-tooltip-radius */\n  .hj-tooltip-positioner {\n    z-index: var(--hj-z-tooltip);\n    pointer-events: none;\n  }\n\n  /* An ink pill: the paper's own ink as the fill, its ground as the text. */\n  .hj-tooltip-popup {\n    position: relative;\n    max-width: var(--hj-tooltip-width, 240px);\n    padding: 6px 10px;\n    border-radius: var(--hj-tooltip-radius, var(--hj-radius-xs));\n    background: var(--hj-fg);\n    color: var(--hj-bg);\n    font: 600 12.5px / 1.35 var(--hj-font-sans);\n    letter-spacing: 0;\n    text-wrap: balance;\n    transform-origin: var(--transform-origin);\n    transition:\n      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),\n      opacity var(--hj-dur-fast) var(--hj-ease-out);\n  }\n  .hj-tooltip-popup[data-starting-style],\n  .hj-tooltip-popup[data-ending-style] {\n    opacity: 0;\n    transform: scale(0.94);\n  }\n  .hj-tooltip-popup[data-ending-style] {\n    transition-duration: var(--hj-dur-fast);\n    transition-timing-function: var(--hj-ease-out);\n  }\n  /* Moving between grouped tooltips: no fade in, no fade out. */\n  .hj-tooltip-popup[data-instant] {\n    transition: none;\n  }\n\n  .hj-tooltip-viewport {\n    position: relative;\n    overflow: clip;\n  }\n\n  .hj-tooltip-arrow {\n    position: relative;\n    display: block;\n    width: 10px;\n    height: 5px;\n    overflow: clip;\n  }\n  .hj-tooltip-arrow[data-side='top'] {\n    bottom: -5px;\n    rotate: 180deg;\n  }\n  .hj-tooltip-arrow[data-side='bottom'] {\n    top: -5px;\n  }\n  .hj-tooltip-arrow[data-side='left'] {\n    right: -7.5px;\n    rotate: 90deg;\n  }\n  .hj-tooltip-arrow[data-side='right'] {\n    left: -7.5px;\n    rotate: -90deg;\n  }\n  .hj-tooltip-arrow::before {\n    content: '';\n    position: absolute;\n    bottom: 0;\n    left: 50%;\n    width: 7px;\n    height: 7px;\n    border-radius: 1px;\n    background: var(--hj-fg);\n    transform: translate(-50%, 50%) rotate(45deg);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/tooltip/tooltip.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/tooltip/tooltip.tsx",
+      "content": "'use client';\nimport { Tooltip as Base } from '@base-ui/react/tooltip';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { part } from '../../system/part.tsx';\nimport type { HanjiPart } from '../../system/part.tsx';\nimport { withDefaults } from '../../system/slot.ts';\nimport { ThemeScope } from '../../system/theme.tsx';\n\n/** hanji waits half a second before explaining: long enough to never flash, short enough to help. */\nconst HANJI_DELAY = 500;\n\nexport const Root: typeof Base.Root = Base.Root;\nexport const Positioner: HanjiPart<typeof Base.Positioner> = part(\n  Base.Positioner,\n  'Tooltip.Positioner',\n  'hj-tooltip-positioner',\n);\nexport const Popup: HanjiPart<typeof Base.Popup> = part(\n  Base.Popup,\n  'Tooltip.Popup',\n  'hj-tooltip-popup',\n);\nexport const Arrow: HanjiPart<typeof Base.Arrow> = part(\n  Base.Arrow,\n  'Tooltip.Arrow',\n  'hj-tooltip-arrow',\n);\nexport const Viewport: HanjiPart<typeof Base.Viewport> = part(\n  Base.Viewport,\n  'Tooltip.Viewport',\n  'hj-tooltip-viewport',\n);\nexport const createHandle: typeof Base.createHandle = Base.createHandle;\n\nconst TriggerPart = part(Base.Trigger, 'Tooltip.Trigger', 'hj-tooltip-trigger');\n\n/** The element being explained. Opens after 500 ms of hover or on keyboard focus. */\nexport function Trigger({ delay = HANJI_DELAY, ...props }: Base.Trigger.Props): React.ReactElement {\n  return <TriggerPart delay={delay} {...props} />;\n}\n\n/**\n * Groups tooltips so moving between them opens the next instantly instead of waiting again.\n * Wrap a toolbar or the whole app.\n */\nexport function Provider({\n  delay = HANJI_DELAY,\n  ...props\n}: Base.Provider.Props): React.ReactElement {\n  return <Base.Provider delay={delay} {...props} />;\n}\n\n/** Portals to `<body>` but keeps the nearest `<Theme>`. */\nexport function Portal({ children, ...props }: Base.Portal.Props): React.ReactElement {\n  return (\n    <Base.Portal {...props}>\n      <ThemeScope>{children}</ThemeScope>\n    </Base.Portal>\n  );\n}\n\nexport interface ContentOwnProps {\n  side?: Base.Positioner.Props['side'];\n  align?: Base.Positioner.Props['align'];\n  /** Gap from the anchor in px. @default 8 */\n  sideOffset?: Base.Positioner.Props['sideOffset'];\n  /** Draw the arrow. @default true */\n  arrow?: boolean;\n  container?: Base.Portal.Props['container'];\n}\nexport interface ContentProps extends ContentOwnProps, Base.Popup.Props {}\n\n/** Shorthand for Portal + Positioner + Popup + Arrow. */\nexport function Content(props: ContentProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    side = 'top',\n    align,\n    sideOffset = 8,\n    arrow = true,\n    container,\n    children,\n    ...popup\n  } = withDefaults(config, 'Tooltip.Content', props);\n  return (\n    <Portal container={container}>\n      <Positioner side={side} align={align} sideOffset={sideOffset} collisionPadding={8}>\n        <Popup {...popup}>\n          {arrow ? <Arrow /> : null}\n          {children}\n        </Popup>\n      </Positioner>\n    </Portal>\n  );\n}\n\nexport interface HintOwnProps {\n  /** The tooltip text. */\n  label: React.ReactNode;\n  /** The one element to explain. It must accept a ref and spread props. */\n  children: React.ReactElement;\n  side?: Base.Positioner.Props['side'];\n  delay?: number;\n  disabled?: boolean;\n}\n\n/**\n * One-line tooltip: `<Tooltip.Hint label=\"Copy link\"><Button iconOnly … /></Tooltip.Hint>`.\n * The label is supplementary — icon-only controls still need their own `aria-label`.\n */\nexport function Hint({ label, children, side, delay, disabled }: HintOwnProps): React.ReactElement {\n  return (\n    <Root disabled={disabled}>\n      <Trigger delay={delay} render={children} />\n      <Content side={side}>{label}</Content>\n    </Root>\n  );\n}\n"
+    }
+  ]
+}

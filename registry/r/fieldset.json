@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "fieldset",
+  "type": "registry:ui",
+  "title": "Fieldset",
+  "description": "Groups related fields under a legend; consecutive groups are divided by a hairline, never boxed.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "controls"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/fieldset/fieldset.css",
+      "type": "registry:ui",
+      "target": "hanji/components/fieldset/fieldset.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-fieldset-gap */\n  .hj-fieldset {\n    display: flex;\n    flex-direction: column;\n    gap: var(--hj-fieldset-gap, var(--hj-space-4));\n    min-width: 0;\n    margin: 0;\n    padding: 0;\n    border: 0;\n  }\n  /* Consecutive sections are divided by a hairline, never boxed. */\n  .hj-fieldset + .hj-fieldset {\n    margin-top: var(--hj-space-3);\n    padding-top: var(--hj-space-6);\n    border-top: 1px solid var(--hj-line);\n  }\n  .hj-fieldset[data-disabled] .hj-fieldset-legend {\n    color: var(--hj-fg-mute);\n  }\n  .hj-fieldset-legend {\n    padding: 0;\n    color: var(--hj-fg);\n  }\n  .hj-fieldset-legend[data-variant='title'] {\n    font: var(--hj-type-subheading);\n    letter-spacing: var(--hj-tracking-subheading);\n  }\n  .hj-fieldset-legend[data-variant='eyebrow'] {\n    font: var(--hj-type-eyebrow);\n    letter-spacing: var(--hj-tracking-eyebrow);\n    text-transform: uppercase;\n    color: var(--hj-fg-mute);\n  }\n  .hj-fieldset-description {\n    margin: calc(var(--hj-space-3) * -1) 0 0;\n    font-size: 13.5px;\n    line-height: 1.5;\n    color: var(--hj-fg-dim);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/fieldset/fieldset.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/fieldset/fieldset.tsx",
+      "content": "'use client';\nimport { Fieldset as Base } from '@base-ui/react/fieldset';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { elementPart, part } from '../../system/part.tsx';\nimport type { ElementPartProps, HanjiPart } from '../../system/part.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\n/** Groups related fields; `disabled` disables every Field inside. */\nexport const Root: HanjiPart<typeof Base.Root> = part(Base.Root, 'Fieldset.Root', 'hj-fieldset');\n/** One line under the legend: what this group is for. */\nexport const Description: (props: ElementPartProps<'p'>) => React.ReactElement = elementPart(\n  'p',\n  'Fieldset.Description',\n  'hj-fieldset-description',\n);\n\nexport interface LegendOwnProps {\n  /** title = a section heading (default) · eyebrow = a quiet caps label for small groups. */\n  variant?: 'title' | 'eyebrow';\n}\nexport interface LegendProps extends LegendOwnProps, Base.Legend.Props {}\n\n/** Names the group (announced with every field in it). */\nexport function Legend(props: LegendProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { variant = 'title', className, ...rest } = withDefaults(config, 'Fieldset.Legend', props);\n  return (\n    <Base.Legend\n      {...rest}\n      data-variant={variant}\n      className={cls(config, 'Fieldset.Legend', 'hj-fieldset-legend', className)}\n    />\n  );\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/fieldset/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/fieldset/index.ts",
+      "content": "export * as Fieldset from './fieldset.tsx';\nexport type {\n  LegendOwnProps as FieldsetLegendOwnProps,\n  LegendProps as FieldsetLegendProps,\n} from './fieldset.tsx';\n"
+    }
+  ]
+}

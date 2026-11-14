@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spinner",
+  "type": "registry:ui",
+  "title": "Spinner",
+  "description": "An ink ring for work that takes a moment and has no measurable progress.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/spinner/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/spinner/index.ts",
+      "content": "export { Spinner } from './spinner.tsx';\nexport type { SpinnerOwnProps, SpinnerProps } from './spinner.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/spinner/spinner.css",
+      "type": "registry:ui",
+      "target": "hanji/components/spinner/spinner.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-spinner-size · --hj-spinner-stroke · --hj-spinner-color */\n  .hj-spinner {\n    --_s: var(--hj-spinner-size, 20px);\n    --_w: var(--hj-spinner-stroke, 2px);\n    position: relative;\n    display: inline-block;\n    flex: none;\n    width: var(--_s);\n    height: var(--_s);\n    color: var(--hj-spinner-color, var(--hj-accent));\n    vertical-align: middle;\n    animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out) both;\n  }\n  .hj-spinner[data-size='sm'] {\n    --_s: var(--hj-spinner-size, 16px);\n  }\n  .hj-spinner[data-size='lg'] {\n    --_s: var(--hj-spinner-size, 40px);\n    --_w: var(--hj-spinner-stroke, 3px);\n  }\n  .hj-spinner[data-tone='current'] {\n    color: var(--hj-spinner-color, currentColor);\n  }\n  .hj-spinner[data-waiting] {\n    visibility: hidden;\n    animation: none;\n  }\n\n  /* The ring turns on its own element, so containers can scale the spinner freely. */\n  .hj-spinner-ring {\n    position: absolute;\n    inset: 0;\n    border-radius: 50%;\n    animation: var(--hj-anim-spin);\n  }\n  .hj-spinner-ring::before {\n    content: '';\n    position: absolute;\n    inset: 0;\n    border-radius: 50%;\n    background: conic-gradient(from 0deg, transparent 0deg 40deg, currentColor 360deg);\n    mask: radial-gradient(\n      farthest-side,\n      transparent calc(100% - var(--_w) - 0.5px),\n      black calc(100% - var(--_w))\n    );\n  }\n  .hj-spinner-ring::after {\n    content: '';\n    position: absolute;\n    top: 0;\n    left: calc(50% - var(--_w) / 2);\n    width: var(--_w);\n    height: var(--_w);\n    border-radius: 50%;\n    background: currentColor;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/spinner/spinner.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/spinner/spinner.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, flag, withDefaults } from '../../system/slot.ts';\n\n/** Props hanji adds to the spinner. */\nexport interface SpinnerOwnProps {\n  /** sm 16 (inline) · md 20 (buttons) · lg 40 (a page or a panel). */\n  size?: 'sm' | 'md' | 'lg';\n  /** accent, or `current` to take the surrounding text colour (inside buttons). */\n  tone?: 'accent' | 'current';\n  /**\n   * Wait before appearing, so fast work never flashes a ring. `true` = 400 ms, or a number of ms.\n   * @default false\n   */\n  delay?: boolean | number;\n  /** Accessible name. Defaults to the provider's `strings.loading`. */\n  label?: string;\n  render?: useRender.RenderProp;\n}\n\nexport interface SpinnerProps\n  extends SpinnerOwnProps, Omit<React.ComponentProps<'span'>, 'className' | 'children'> {\n  className?: string;\n}\n\nconst DEFAULT_DELAY = 400;\n\n/**\n * The ink ring: a constant turn, a tail that fades behind a round head. Feedback, not\n * decoration — under reduced motion it pulses in place instead of turning.\n *\n * @example\n * <Spinner delay /> {/* appears only if the wait passes 400 ms *\\/}\n */\nexport function Spinner(props: SpinnerProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    size = 'md',\n    tone = 'accent',\n    delay = false,\n    label,\n    render,\n    className,\n    ...rest\n  } = withDefaults(config, 'Spinner', props);\n  const wait = delay === true ? DEFAULT_DELAY : typeof delay === 'number' ? delay : 0;\n  const [shown, setShown] = React.useState(wait === 0);\n  React.useEffect(() => {\n    if (wait === 0) return undefined;\n    const t = window.setTimeout(() => setShown(true), wait);\n    return () => window.clearTimeout(t);\n  }, [wait]);\n\n  return useRender({\n    render,\n    defaultTagName: 'span',\n    props: {\n      role: shown ? 'progressbar' : undefined,\n      'aria-label': shown ? (label ?? config.strings.loading) : undefined,\n      'aria-hidden': shown ? undefined : true,\n      ...rest,\n      'data-size': size,\n      'data-tone': tone,\n      'data-waiting': flag(!shown),\n      className: cls(config, 'Spinner', 'hj-spinner', className) as string | undefined,\n      children: <span className={config.unstyled ? undefined : 'hj-spinner-ring'} />,\n    },\n  });\n}\n"
+    }
+  ]
+}

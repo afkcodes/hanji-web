@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "form",
+  "type": "registry:ui",
+  "title": "Form",
+  "description": "A form that validates its Fields together, takes server errors by field name, and sums them up after a failed submit.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "controls"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/form/form.css",
+      "type": "registry:ui",
+      "target": "hanji/components/form/form.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-form-gap · --hj-form-column */\n  .hj-form {\n    display: flex;\n    flex-direction: column;\n    gap: var(--hj-form-gap, var(--hj-space-5));\n    min-width: 0;\n    font-family: var(--hj-font-sans);\n  }\n  .hj-form[data-layout='grid'] {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(var(--hj-form-column, 240px), 1fr));\n    align-items: start;\n  }\n  /* In a grid, sections, summaries and actions span every column. */\n  .hj-form[data-layout='grid'] > .hj-form-actions,\n  .hj-form[data-layout='grid'] > .hj-form-error-summary,\n  .hj-form[data-layout='grid'] > fieldset {\n    grid-column: 1 / -1;\n  }\n\n  .hj-form-actions {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: center;\n    gap: 8px;\n    margin-top: var(--hj-space-2);\n  }\n\n  .hj-form-error-summary {\n    padding: 16px 18px;\n    border-radius: var(--hj-radius-md);\n    background: var(--hj-danger-soft);\n    box-shadow: inset 3px 0 0 var(--hj-danger);\n    color: var(--hj-fg);\n    outline: none;\n    animation: hj-form-summary-in var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);\n  }\n  .hj-form-error-summary:focus-visible {\n    box-shadow:\n      inset 3px 0 0 var(--hj-danger),\n      0 0 0 2px var(--hj-focus);\n  }\n  @keyframes hj-form-summary-in {\n    from {\n      opacity: 0;\n      transform: translateY(calc(var(--hj-rise) * -0.5 * var(--hj-travel)));\n    }\n  }\n  .hj-form-error-summary-title {\n    display: flex;\n    align-items: center;\n    gap: 8px;\n    margin: 0 0 6px;\n    font-size: 15px;\n    font-weight: 600;\n    color: var(--hj-danger);\n  }\n  .hj-form-error-summary-title svg {\n    flex: none;\n    width: 18px;\n    height: 18px;\n  }\n  .hj-form-error-summary-list {\n    margin: 0;\n    padding: 0 0 0 26px;\n    font-size: 14px;\n    line-height: 1.55;\n  }\n  .hj-form-error-summary-list a {\n    color: var(--hj-fg);\n    text-decoration: underline;\n    text-decoration-color: color-mix(in srgb, var(--hj-danger) 60%, transparent);\n    text-underline-offset: 3px;\n  }\n  .hj-form-error-summary-list a:hover {\n    text-decoration-color: var(--hj-danger);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/form/form.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/form/form.tsx",
+      "content": "'use client';\nimport { Form as BaseForm } from '@base-ui/react/form';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { elementPart } from '../../system/part.tsx';\nimport type { ElementPartProps } from '../../system/part.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\n/** The submit row: primary action last, aligned to the reading edge. */\nexport const Actions: (props: ElementPartProps<'div'>) => React.ReactElement = elementPart(\n  'div',\n  'Form.Actions',\n  'hj-form-actions',\n);\n\nexport interface RootOwnProps {\n  /** stack = one column (default) · grid = fields flow into columns of at least 240px. */\n  layout?: 'stack' | 'grid';\n}\n// oxlint-disable-next-line typescript/no-explicit-any -- mirrors Base UI's own FormValues bound\nexport type FormValues = Record<string, any>;\nexport interface RootProps<V extends FormValues = FormValues>\n  extends RootOwnProps, BaseForm.Props<V> {}\n\n/**\n * A form that validates its Fields together and takes server errors by field name\n * (`errors={{ email: 'Already registered' }}`), shown by each Field.Error.\n */\nexport function Root<V extends FormValues = FormValues>(props: RootProps<V>): React.ReactElement {\n  const config = useHanjiConfig();\n  const { layout = 'stack', className, ...rest } = withDefaults(config, 'Form.Root', props);\n  return (\n    <BaseForm<V>\n      {...rest}\n      data-layout={layout}\n      className={cls(config, 'Form.Root', 'hj-form', className)}\n    />\n  );\n}\n\nexport interface ErrorSummaryOwnProps {\n  /** Errors by field name — the same object you pass to Root's `errors`. Renders nothing when empty. */\n  errors?: Readonly<Record<string, string | readonly string[] | undefined>>;\n  /** Heading. @default 'There’s a problem' */\n  title?: React.ReactNode;\n  /** Move focus to the summary when errors arrive, so keyboard and screen-reader users land on it. @default true */\n  autoFocus?: boolean;\n}\nexport interface ErrorSummaryProps\n  extends ErrorSummaryOwnProps, Omit<React.ComponentProps<'div'>, 'title' | 'children'> {}\n\n/**\n * After a failed submit: one place that lists every problem as a link to its field. The fields\n * still show their own messages.\n */\nexport function ErrorSummary(props: ErrorSummaryProps): React.ReactElement | null {\n  const config = useHanjiConfig();\n  const {\n    errors,\n    title = 'There’s a problem',\n    autoFocus = true,\n    className,\n    ...rest\n  } = withDefaults(config, 'Form.ErrorSummary', props);\n  const ref = React.useRef<HTMLDivElement>(null);\n  const entries = Object.entries(errors ?? {}).flatMap(([name, v]) =>\n    v === undefined ? [] : (typeof v === 'string' ? [v] : v).map((message) => ({ name, message })),\n  );\n  const key = entries.map((e) => `${e.name}:${e.message}`).join('|');\n  React.useEffect(() => {\n    if (autoFocus && key) ref.current?.focus();\n  }, [autoFocus, key]);\n  if (entries.length === 0) return null;\n  const styled = !config.unstyled;\n  const focusField = (name: string): void => {\n    const form = ref.current?.closest('form') ?? document;\n    const el = form.querySelector<HTMLElement>(`[name=\"${CSS.escape(name)}\"]`);\n    el?.focus();\n  };\n  return (\n    <div\n      {...rest}\n      ref={ref}\n      role=\"alert\"\n      tabIndex={-1}\n      className={cls(config, 'Form.ErrorSummary', 'hj-form-error-summary', className) as string}\n    >\n      <p className={styled ? 'hj-form-error-summary-title' : undefined}>\n        {config.icons.alert}\n        {title}\n      </p>\n      <ul className={styled ? 'hj-form-error-summary-list' : undefined}>\n        {entries.map((e) => (\n          <li key={`${e.name}:${e.message}`}>\n            <a\n              href={`#${e.name}`}\n              onClick={(ev) => {\n                ev.preventDefault();\n                focusField(e.name);\n              }}\n            >\n              {e.message}\n            </a>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/form/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/form/index.ts",
+      "content": "export * as Form from './form.tsx';\nexport type {\n  ErrorSummaryProps as FormErrorSummaryProps,\n  RootOwnProps as FormRootOwnProps,\n  RootProps as FormRootProps,\n} from './form.tsx';\n"
+    }
+  ]
+}

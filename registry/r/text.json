@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "text",
+  "type": "registry:ui",
+  "title": "Text",
+  "description": "Text set in one of hanji’s type roles, from the hero number down to the mono timecode.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/text/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/text/index.ts",
+      "content": "export { Text } from './text.tsx';\nexport type { TextOwnProps, TextProps, TextVariant } from './text.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/text/text.css",
+      "type": "registry:ui",
+      "target": "hanji/components/text/text.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-text-color (overrides tone) */\n  .hj-text {\n    --_r: var(--hj-type-body);\n    --_t: var(--hj-tracking-body);\n    margin: 0;\n    font: var(--_r);\n    letter-spacing: var(--_t);\n    color: var(--hj-text-color, inherit);\n  }\n  .hj-text[data-variant='hero'] {\n    --_r: var(--hj-type-hero);\n    --_t: var(--hj-tracking-hero);\n    font-variant-numeric: tabular-nums;\n  }\n  .hj-text[data-variant='display'] {\n    --_r: var(--hj-type-display);\n    --_t: var(--hj-tracking-display);\n  }\n  .hj-text[data-variant='title'] {\n    --_r: var(--hj-type-title);\n    --_t: var(--hj-tracking-title);\n  }\n  .hj-text[data-variant='heading'] {\n    --_r: var(--hj-type-heading);\n    --_t: var(--hj-tracking-heading);\n  }\n  .hj-text[data-variant='subheading'] {\n    --_r: var(--hj-type-subheading);\n    --_t: var(--hj-tracking-subheading);\n  }\n  .hj-text[data-variant='sub'] {\n    --_r: var(--hj-type-sub);\n    --_t: var(--hj-tracking-sub);\n  }\n  .hj-text[data-variant='label'] {\n    --_r: var(--hj-type-label);\n    --_t: var(--hj-tracking-label);\n  }\n  .hj-text[data-variant='eyebrow'] {\n    --_r: var(--hj-type-eyebrow);\n    --_t: var(--hj-tracking-eyebrow);\n    text-transform: uppercase;\n  }\n  .hj-text[data-variant='mono'] {\n    --_r: var(--hj-type-mono);\n    --_t: var(--hj-tracking-mono);\n    font-variant-numeric: tabular-nums;\n  }\n\n  .hj-text[data-tone='fg'] {\n    color: var(--hj-text-color, var(--hj-fg));\n  }\n  .hj-text[data-tone='dim'] {\n    color: var(--hj-text-color, var(--hj-fg-dim));\n  }\n  .hj-text[data-tone='mute'] {\n    color: var(--hj-text-color, var(--hj-fg-mute));\n  }\n  .hj-text[data-tone='accent'] {\n    color: var(--hj-text-color, var(--hj-accent));\n  }\n  .hj-text[data-tone='danger'] {\n    color: var(--hj-text-color, var(--hj-danger));\n  }\n  .hj-text[data-tone='success'] {\n    color: var(--hj-text-color, var(--hj-success));\n  }\n\n  .hj-text[data-truncate] {\n    overflow: hidden;\n    white-space: nowrap;\n    text-overflow: ellipsis;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/text/text.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/text/text.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, flag, withDefaults } from '../../system/slot.ts';\n\n/** hanji's type roles. `hero` is one number per screen; `mono` is for timecodes and values. */\nexport type TextVariant =\n  | 'hero'\n  | 'display'\n  | 'title'\n  | 'heading'\n  | 'subheading'\n  | 'body'\n  | 'sub'\n  | 'label'\n  | 'eyebrow'\n  | 'mono';\n\n/** Props hanji adds to a plain element. */\nexport interface TextOwnProps {\n  /** The type role. Sets size, weight, line height and tracking from the tokens. */\n  variant?: TextVariant;\n  /** Ink. Omit to inherit the surrounding colour. Muted ink is for plain surfaces only. */\n  tone?: 'fg' | 'dim' | 'mute' | 'accent' | 'danger' | 'success';\n  /** Clip to one line with an ellipsis. */\n  truncate?: boolean;\n  /** Replace the element (e.g. `<h1 />` for a page title) or compose with your own component. */\n  render?: useRender.RenderProp;\n}\n\nexport interface TextProps extends TextOwnProps, Omit<React.ComponentProps<'p'>, 'className'> {\n  className?: string;\n}\n\n/** Default element per role. Headings are a guess — pass `render` to fit the page's outline. */\nconst TAGS: Readonly<Record<TextVariant, keyof React.JSX.IntrinsicElements>> = {\n  hero: 'p',\n  display: 'h1',\n  title: 'h2',\n  heading: 'h3',\n  subheading: 'h4',\n  body: 'p',\n  sub: 'p',\n  label: 'span',\n  eyebrow: 'span',\n  mono: 'span',\n};\n\n/**\n * Text in one of hanji's nine roles (plus `hero`). Character comes from how the sans is set —\n * weight and tight tracking at the top, plain at reading size — and numbers are always tabular.\n *\n * @example\n * <Text variant=\"eyebrow\" tone=\"mute\">Now playing</Text>\n * <Text variant=\"title\" render={<h1 />}>Recently played</Text>\n */\nexport function Text(props: TextProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    variant = 'body',\n    tone,\n    truncate = false,\n    render,\n    className,\n    ...rest\n  } = withDefaults(config, 'Text', props);\n  return useRender({\n    render,\n    defaultTagName: TAGS[variant],\n    props: {\n      ...rest,\n      'data-variant': variant,\n      'data-tone': tone,\n      'data-truncate': flag(truncate),\n      className: cls(config, 'Text', 'hj-text', className) as string | undefined,\n    },\n  });\n}\n"
+    }
+  ]
+}

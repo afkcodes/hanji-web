@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "suggestions",
+  "type": "registry:ui",
+  "title": "Suggestions",
+  "description": "A row of ready-made prompts the person can send with one tap.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "ai"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/suggestions/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/suggestions/index.ts",
+      "content": "export * as Suggestions from './suggestions.tsx';\nexport type {\n  ItemProps as SuggestionsItemProps,\n  RootOwnProps as SuggestionsRootOwnProps,\n  RootProps as SuggestionsRootProps,\n} from './suggestions.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/suggestions/suggestions.css",
+      "type": "registry:ui",
+      "target": "hanji/components/suggestions/suggestions.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-suggestions-height (chip height, default 36px) */\n  .hj-suggestions {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 8px;\n  }\n  .hj-suggestions-item {\n    --_i: 10;\n    position: relative;\n    display: inline-flex;\n    align-items: center;\n    gap: 7px;\n    max-width: 100%;\n    height: var(--hj-suggestions-height, 36px);\n    padding: 0 14px;\n    border: 0;\n    border-radius: var(--hj-radius-pill);\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1px var(--hj-line);\n    color: var(--hj-fg-dim);\n    font: 500 13.5px / 1 var(--hj-font-sans);\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    cursor: pointer;\n    transition:\n      background-color var(--hj-dur-fast) var(--hj-ease-out),\n      color var(--hj-dur-fast) var(--hj-ease-out),\n      transform var(--hj-dur-snappy) var(--hj-ease-snappy);\n    /* One clock: 24 ms a chip, counting stops at ten. */\n    animation: hj-suggestions-rise var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle) both;\n    animation-delay: calc(var(--_i) * var(--hj-stagger));\n  }\n  .hj-suggestions-item:nth-child(1) {\n    --_i: 0;\n  }\n  .hj-suggestions-item:nth-child(2) {\n    --_i: 1;\n  }\n  .hj-suggestions-item:nth-child(3) {\n    --_i: 2;\n  }\n  .hj-suggestions-item:nth-child(4) {\n    --_i: 3;\n  }\n  .hj-suggestions-item:nth-child(5) {\n    --_i: 4;\n  }\n  .hj-suggestions-item:nth-child(6) {\n    --_i: 5;\n  }\n  .hj-suggestions-item:nth-child(7) {\n    --_i: 6;\n  }\n  .hj-suggestions-item:nth-child(8) {\n    --_i: 7;\n  }\n  .hj-suggestions-item:nth-child(9) {\n    --_i: 8;\n  }\n  .hj-suggestions-item:nth-child(10) {\n    --_i: 9;\n  }\n  @keyframes hj-suggestions-rise {\n    from {\n      opacity: 0;\n      transform: translateY(calc(var(--hj-rise) * var(--hj-travel)));\n    }\n  }\n  .hj-suggestions-item:hover:not([data-disabled]) {\n    background: var(--hj-accent-soft);\n    box-shadow: inset 0 0 0 1px transparent;\n    color: var(--hj-accent);\n  }\n  .hj-suggestions-item:active:not([data-disabled]) {\n    transform: scale(var(--hj-press));\n    transition-duration: 70ms;\n  }\n  .hj-suggestions-item[data-disabled] {\n    opacity: 0.4;\n    cursor: not-allowed;\n  }\n  .hj-suggestions-icon {\n    display: inline-flex;\n    flex: none;\n    font-size: 15px;\n    line-height: 0;\n    color: var(--hj-fg-mute);\n  }\n  .hj-suggestions-item:hover .hj-suggestions-icon {\n    color: inherit;\n  }\n  .hj-suggestions-icon svg {\n    width: 1em;\n    height: 1em;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/suggestions/suggestions.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/suggestions/suggestions.tsx",
+      "content": "'use client';\nimport { Button as BaseButton } from '@base-ui/react/button';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\nconst SelectContext = React.createContext<((prompt: string) => void) | undefined>(undefined);\n\n/** Props hanji adds to the row. */\nexport interface RootOwnProps {\n  /** Called with the chosen suggestion's prompt. */\n  onSelect?: (prompt: string) => void;\n  /** Accessible name for the group. @default 'Suggestions' */\n  label?: string;\n}\nexport interface RootProps\n  extends RootOwnProps, Omit<React.ComponentProps<'div'>, 'className' | 'onSelect'> {\n  className?: string;\n  render?: useRender.RenderProp;\n}\n\n/**\n * A row of prompts the person can send with one tap. Chips cascade in on mount — 24 ms apart,\n * counting stops at ten.\n */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    onSelect,\n    label = 'Suggestions',\n    className,\n    render,\n    children,\n    ...rest\n  } = withDefaults(config, 'Suggestions.Root', props);\n  return useRender({\n    render,\n    defaultTagName: 'div',\n    props: {\n      role: 'group',\n      'aria-label': label,\n      ...rest,\n      className: cls(config, 'Suggestions.Root', 'hj-suggestions', className) as string | undefined,\n      children: <SelectContext.Provider value={onSelect}>{children}</SelectContext.Provider>,\n    },\n  });\n}\n\nexport interface ItemOwnProps {\n  /** What gets sent. Defaults to the chip's text when children is a string. */\n  prompt?: string;\n  /** A leading glyph. */\n  icon?: React.ReactNode;\n}\nexport interface ItemProps extends ItemOwnProps, BaseButton.Props {}\n\n/** One suggestion chip. */\nexport function Item(props: ItemProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const onSelect = React.useContext(SelectContext);\n  const { prompt, icon, className, children, onClick, ...rest } = withDefaults(\n    config,\n    'Suggestions.Item',\n    props,\n  );\n  return (\n    <BaseButton\n      type=\"button\"\n      {...rest}\n      className={cls(config, 'Suggestions.Item', 'hj-suggestions-item', className)}\n      onClick={(e) => {\n        onClick?.(e);\n        if (e.defaultPrevented) return;\n        const value = prompt ?? (typeof children === 'string' ? children : '');\n        if (value) onSelect?.(value);\n      }}\n    >\n      {icon ? (\n        <span className={config.unstyled ? undefined : 'hj-suggestions-icon'} aria-hidden=\"true\">\n          {icon}\n        </span>\n      ) : null}\n      {children}\n    </BaseButton>\n  );\n}\n"
+    }
+  ]
+}

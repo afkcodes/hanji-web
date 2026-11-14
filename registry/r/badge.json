@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge",
+  "type": "registry:ui",
+  "title": "Badge",
+  "description": "A count or a dot on top of something: unread messages, new releases, items waiting.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/badge/badge.css",
+      "type": "registry:ui",
+      "target": "hanji/components/badge/badge.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-badge-height · --hj-badge-ring (the gap ring when anchored) */\n  .hj-badge {\n    --_h: var(--hj-badge-height, 18px);\n    --_bg: var(--hj-accent);\n    --_fg: var(--hj-on-accent);\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    flex: none;\n    min-width: var(--_h);\n    height: var(--_h);\n    padding: 0;\n    border-radius: var(--hj-radius-pill);\n    background: var(--_bg);\n    color: var(--_fg);\n    font: 700 11px / 1 var(--hj-font-sans);\n    letter-spacing: 0;\n    font-variant-numeric: tabular-nums;\n    white-space: nowrap;\n    vertical-align: middle;\n  }\n  .hj-badge[data-wide] {\n    padding: 0 5px;\n  }\n  .hj-badge[data-tone='danger'] {\n    --_bg: var(--hj-danger);\n    --_fg: var(--hj-bg);\n  }\n  .hj-badge[data-tone='neutral'] {\n    --_bg: color-mix(in srgb, var(--hj-fg) 10%, var(--hj-bg));\n    --_fg: var(--hj-fg-dim);\n  }\n  /* A changed count pops once on the bouncy spring (scale only). */\n  .hj-badge[data-pop='a'] {\n    animation: hj-badge-pop-a var(--hj-dur-bouncy) var(--hj-ease-bouncy);\n  }\n  .hj-badge[data-pop='b'] {\n    animation: hj-badge-pop-b var(--hj-dur-bouncy) var(--hj-ease-bouncy);\n  }\n  @keyframes hj-badge-pop-a {\n    from {\n      scale: 0.72;\n    }\n  }\n  @keyframes hj-badge-pop-b {\n    from {\n      scale: 0.72;\n    }\n  }\n  .hj-badge[data-dot] {\n    min-width: 8px;\n    width: 8px;\n    height: 8px;\n  }\n\n  .hj-badge-anchor {\n    position: relative;\n    display: inline-flex;\n    flex: none;\n    vertical-align: middle;\n  }\n  .hj-badge-anchor > .hj-badge {\n    position: absolute;\n    top: 0;\n    right: 0;\n    translate: 40% -40%;\n    box-shadow: 0 0 0 2px var(--hj-badge-ring, var(--hj-bg));\n    pointer-events: none;\n  }\n  .hj-badge-anchor[data-shape='circle'] > .hj-badge {\n    translate: 15% -15%;\n  }\n  .hj-badge-anchor[data-placement='bottom-end'] > .hj-badge {\n    top: auto;\n    bottom: 0;\n    translate: 40% 40%;\n  }\n  .hj-badge-anchor[data-shape='circle'][data-placement='bottom-end'] > .hj-badge {\n    translate: 10% 10%;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/badge/badge.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/badge/badge.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, flag, withDefaults } from '../../system/slot.ts';\n\n/** Props hanji adds to the badge. */\nexport interface RootOwnProps {\n  /** The number. Above `max` it reads `max+` so the pill keeps a bounded width. */\n  count?: number;\n  /** @default 99 */\n  max?: number;\n  /** An 8px dot instead of a number: “something new”, no count. */\n  dot?: boolean;\n  /** Render when count is 0. Off by default — an empty badge is noise. */\n  showZero?: boolean;\n  /** accent for new things · danger only for problems · neutral for plain counts. */\n  tone?: 'accent' | 'danger' | 'neutral';\n  /** Accessible text, e.g. “3 unread messages”. Defaults to the count. */\n  label?: string;\n  render?: useRender.RenderProp;\n}\n\nexport interface RootProps\n  extends RootOwnProps, Omit<React.ComponentProps<'span'>, 'className' | 'children'> {\n  className?: string;\n}\n\n/**\n * A count or a dot. When the count changes it pops once on the bouncy spring — the one place a\n * badge earns motion. A zero badge renders nothing unless `showZero`.\n *\n * @example\n * <Badge.Root count={3} label=\"3 new releases\" />\n * <Badge.Anchor><Avatar.Root name=\"Mira Okafor\" /><Badge.Root dot /></Badge.Anchor>\n */\nexport function Root(props: RootProps): React.ReactElement | null {\n  const config = useHanjiConfig();\n  const {\n    count = 0,\n    max = 99,\n    dot = false,\n    showZero = false,\n    tone = 'accent',\n    label,\n    render,\n    className,\n    ref,\n    ...rest\n  } = withDefaults(config, 'Badge.Root', props);\n  // Pop when the count changes (not on mount): track the last count in state and alternate\n  // between two identical keyframes, which restarts the animation without remounting the node.\n  const [last, setLast] = React.useState(count);\n  const [pops, setPops] = React.useState(0);\n  if (count !== last) {\n    setLast(count);\n    setPops((n) => n + 1);\n  }\n\n  const hidden = !dot && count <= 0 && !showZero;\n  const text = dot ? '' : count > max ? `${max}+` : String(count);\n  const element = useRender({\n    render,\n    ref,\n    defaultTagName: 'span',\n    enabled: !hidden,\n    props: {\n      role: 'status',\n      'aria-label': label ?? (dot ? undefined : text),\n      ...rest,\n      'data-tone': tone,\n      'data-dot': flag(dot),\n      'data-wide': flag(text.length > 1),\n      'data-pop': pops === 0 ? undefined : pops % 2 ? 'a' : 'b',\n      className: cls(config, 'Badge.Root', 'hj-badge', className) as string | undefined,\n      children: dot ? null : text,\n    },\n  });\n  return element;\n}\n\n/** Props hanji adds to the anchor. */\nexport interface AnchorOwnProps {\n  /** Where the badge sits: top-end for counts, bottom-end for presence-like dots. */\n  placement?: 'top-end' | 'bottom-end';\n  /** circle = the anchored thing is round (avatars): the badge tucks in toward the curve. */\n  shape?: 'circle' | 'rect';\n  render?: useRender.RenderProp;\n}\n\nexport interface AnchorProps\n  extends AnchorOwnProps, Omit<React.ComponentProps<'span'>, 'className'> {\n  className?: string;\n}\n\n/** Wraps an icon, avatar or button and positions a Badge.Root over its corner. */\nexport function Anchor(props: AnchorProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    placement = 'top-end',\n    shape = 'rect',\n    render,\n    className,\n    ...rest\n  } = withDefaults(config, 'Badge.Anchor', props);\n  return useRender({\n    render,\n    defaultTagName: 'span',\n    props: {\n      ...rest,\n      'data-placement': placement,\n      'data-shape': shape,\n      className: cls(config, 'Badge.Anchor', 'hj-badge-anchor', className) as string | undefined,\n    },\n  });\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/badge/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/badge/index.ts",
+      "content": "export * as Badge from './badge.tsx';\nexport type {\n  AnchorOwnProps as BadgeAnchorOwnProps,\n  AnchorProps as BadgeAnchorProps,\n  RootOwnProps as BadgeRootOwnProps,\n  RootProps as BadgeRootProps,\n} from './badge.tsx';\n"
+    }
+  ]
+}

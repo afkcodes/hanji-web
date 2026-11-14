@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "kbd",
+  "type": "registry:ui",
+  "title": "Kbd",
+  "description": "A keyboard key, set in mono on a hairline, for shortcuts in menus, fields and help text.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/kbd/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/kbd/index.ts",
+      "content": "export { Kbd } from './kbd.tsx';\nexport type { KbdOwnProps, KbdProps } from './kbd.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/kbd/kbd.css",
+      "type": "registry:ui",
+      "target": "hanji/components/kbd/kbd.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-kbd-height · --hj-kbd-bg */\n  .hj-kbd {\n    --_h: var(--hj-kbd-height, 22px);\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    min-width: var(--_h);\n    height: var(--_h);\n    padding: 0 6px;\n    border-radius: 6px;\n    background: var(--hj-kbd-bg, var(--hj-surface-2));\n    box-shadow:\n      inset 0 0 0 1px var(--hj-line),\n      inset 0 -1px 0 var(--hj-line);\n    color: var(--hj-fg-dim);\n    font: 500 12px / 1 var(--hj-font-mono);\n    letter-spacing: 0;\n    font-variant-numeric: tabular-nums;\n    white-space: nowrap;\n    vertical-align: baseline;\n  }\n  .hj-kbd[data-size='sm'] {\n    --_h: var(--hj-kbd-height, 18px);\n    padding: 0 4px;\n    border-radius: 5px;\n    font-size: 10.5px;\n  }\n  .hj-kbd + .hj-kbd {\n    margin-left: 3px;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/kbd/kbd.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/kbd/kbd.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\n/** Props hanji adds to `<kbd>`. */\nexport interface KbdOwnProps {\n  /** sm 18 tall (inside fields and menus) · md 22 (in prose). */\n  size?: 'sm' | 'md';\n  render?: useRender.RenderProp;\n}\n\nexport interface KbdProps extends KbdOwnProps, Omit<React.ComponentProps<'kbd'>, 'className'> {\n  className?: string;\n}\n\n/**\n * A key on the keyboard, set in mono on a hairline. Combine keys by placing several side by side.\n *\n * @example\n * <Kbd>⌘</Kbd><Kbd>K</Kbd>\n */\nexport function Kbd(props: KbdProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { size = 'md', render, className, ...rest } = withDefaults(config, 'Kbd', props);\n  return useRender({\n    render,\n    defaultTagName: 'kbd',\n    props: {\n      ...rest,\n      'data-size': size,\n      className: cls(config, 'Kbd', 'hj-kbd', className) as string | undefined,\n    },\n  });\n}\n"
+    }
+  ]
+}

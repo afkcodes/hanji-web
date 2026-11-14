@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scroll-area",
+  "type": "registry:ui",
+  "title": "ScrollArea",
+  "description": "A native scroll container with a thin overlay scrollbar and edges that fade where content continues.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "surfaces"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/scroll-area/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/scroll-area/index.ts",
+      "content": "export * as ScrollArea from './scroll-area.tsx';\nexport type {\n  BoxOwnProps as ScrollAreaBoxOwnProps,\n  BoxProps as ScrollAreaBoxProps,\n  ViewportOwnProps as ScrollAreaViewportOwnProps,\n  ViewportProps as ScrollAreaViewportProps,\n} from './scroll-area.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/scroll-area/scroll-area.css",
+      "type": "registry:ui",
+      "target": "hanji/components/scroll-area/scroll-area.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-scroll-area-fade (edge fade length, 24px) · --hj-scroll-area-thumb (colour) */\n  .hj-scroll-area {\n    position: relative;\n    min-height: 0;\n    overflow: hidden;\n  }\n  .hj-scroll-area-viewport {\n    height: 100%;\n    max-height: inherit;\n    overscroll-behavior: contain;\n    outline: none;\n  }\n  .hj-scroll-area-viewport:focus-visible {\n    outline: 2px solid var(--hj-focus);\n    outline-offset: -2px;\n  }\n  /* edges fade only where there is more to see */\n  .hj-scroll-area-viewport[data-fade] {\n    --_f: var(--hj-scroll-area-fade, 24px);\n    mask-image:\n      linear-gradient(\n        to bottom,\n        transparent 0,\n        black min(var(--scroll-area-overflow-y-start, 0px), var(--_f)),\n        black calc(100% - min(var(--scroll-area-overflow-y-end, 0px), var(--_f))),\n        transparent 100%\n      ),\n      linear-gradient(\n        to right,\n        transparent 0,\n        black min(var(--scroll-area-overflow-x-start, 0px), var(--_f)),\n        black calc(100% - min(var(--scroll-area-overflow-x-end, 0px), var(--_f))),\n        transparent 100%\n      );\n    mask-composite: intersect;\n  }\n\n  .hj-scroll-area-content {\n    min-width: 100%;\n  }\n\n  /* a thin overlay rail: invisible at rest, there when you reach for it */\n  .hj-scroll-area-scrollbar {\n    display: flex;\n    padding: 2px;\n    opacity: 0;\n    pointer-events: none;\n    touch-action: none;\n    user-select: none;\n    transition: opacity var(--hj-dur-base) var(--hj-ease-out);\n  }\n  .hj-scroll-area-scrollbar[data-orientation='vertical'] {\n    width: 10px;\n    justify-content: center;\n  }\n  .hj-scroll-area-scrollbar[data-orientation='horizontal'] {\n    height: 10px;\n    align-items: center;\n  }\n  .hj-scroll-area-scrollbar[data-hovering],\n  .hj-scroll-area-scrollbar[data-scrolling] {\n    opacity: 1;\n    pointer-events: auto;\n  }\n  .hj-scroll-area-scrollbar[data-scrolling] {\n    transition-duration: 0ms;\n  }\n\n  .hj-scroll-area-thumb {\n    border-radius: var(--hj-radius-pill);\n    background: var(--hj-scroll-area-thumb, color-mix(in srgb, var(--hj-fg) 28%, transparent));\n    transition:\n      background-color var(--hj-dur-fast) var(--hj-ease-out),\n      transform var(--hj-dur-snappy) var(--hj-ease-snappy);\n  }\n  .hj-scroll-area-scrollbar[data-orientation='vertical'] .hj-scroll-area-thumb {\n    width: 6px;\n  }\n  .hj-scroll-area-scrollbar[data-orientation='horizontal'] .hj-scroll-area-thumb {\n    height: 6px;\n  }\n  /* reaching for it: the thumb firms up and widens (by scale, not width) */\n  .hj-scroll-area-scrollbar[data-orientation='vertical']:hover .hj-scroll-area-thumb {\n    background: color-mix(in srgb, var(--hj-fg) 45%, transparent);\n    transform: scaleX(1.34);\n  }\n  .hj-scroll-area-scrollbar[data-orientation='horizontal']:hover .hj-scroll-area-thumb {\n    background: color-mix(in srgb, var(--hj-fg) 45%, transparent);\n    transform: scaleY(1.34);\n  }\n  .hj-scroll-area-corner {\n    background: transparent;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/scroll-area/scroll-area.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/scroll-area/scroll-area.tsx",
+      "content": "'use client';\nimport { ScrollArea as Base } from '@base-ui/react/scroll-area';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { part } from '../../system/part.tsx';\nimport type { HanjiPart } from '../../system/part.tsx';\nimport { cls, flag, withDefaults } from '../../system/slot.ts';\n\nexport const Root: HanjiPart<typeof Base.Root> = part(\n  Base.Root,\n  'ScrollArea.Root',\n  'hj-scroll-area',\n);\nexport const Content: HanjiPart<typeof Base.Content> = part(\n  Base.Content,\n  'ScrollArea.Content',\n  'hj-scroll-area-content',\n);\nexport const Thumb: HanjiPart<typeof Base.Thumb> = part(\n  Base.Thumb,\n  'ScrollArea.Thumb',\n  'hj-scroll-area-thumb',\n);\nexport const Corner: HanjiPart<typeof Base.Corner> = part(\n  Base.Corner,\n  'ScrollArea.Corner',\n  'hj-scroll-area-corner',\n);\n\nexport interface ViewportOwnProps {\n  /** Fade the edges where content continues (uses Base UI's overflow distances). @default true */\n  fade?: boolean;\n}\nexport interface ViewportProps extends ViewportOwnProps, Base.Viewport.Props {}\n\n/** The scrolling element. Focusable when it overflows, so the keyboard can scroll it. */\nexport function Viewport(props: ViewportProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { fade = true, className, ...rest } = withDefaults(config, 'ScrollArea.Viewport', props);\n  return (\n    <Base.Viewport\n      {...rest}\n      data-fade={flag(fade)}\n      className={cls(config, 'ScrollArea.Viewport', 'hj-scroll-area-viewport', className)}\n    />\n  );\n}\n\n/** The thin overlay track. Renders its Thumb when given no children. */\nexport function Scrollbar(props: Base.Scrollbar.Props): React.ReactElement {\n  const config = useHanjiConfig();\n  const { className, children, ...rest } = withDefaults(config, 'ScrollArea.Scrollbar', props);\n  return (\n    <Base.Scrollbar\n      {...rest}\n      className={cls(config, 'ScrollArea.Scrollbar', 'hj-scroll-area-scrollbar', className)}\n    >\n      {children ?? <Thumb />}\n    </Base.Scrollbar>\n  );\n}\n\nexport interface BoxOwnProps {\n  /** Which scrollbars to draw. @default 'vertical' */\n  orientation?: 'vertical' | 'horizontal' | 'both';\n  /** Fade the edges where content continues. @default true */\n  fade?: boolean;\n}\nexport interface BoxProps extends BoxOwnProps, Base.Root.Props {}\n\n/** Shorthand: Root + Viewport + Content + scrollbar(s). Size it like any box. */\nexport function Box({\n  orientation = 'vertical',\n  fade,\n  children,\n  ...root\n}: BoxProps): React.ReactElement {\n  return (\n    <Root {...root}>\n      <Viewport fade={fade}>\n        <Content>{children}</Content>\n      </Viewport>\n      {orientation !== 'horizontal' ? <Scrollbar orientation=\"vertical\" /> : null}\n      {orientation !== 'vertical' ? <Scrollbar orientation=\"horizontal\" /> : null}\n      {orientation === 'both' ? <Corner /> : null}\n    </Root>\n  );\n}\n"
+    }
+  ]
+}

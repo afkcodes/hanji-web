@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toggle-group",
+  "type": "registry:ui",
+  "title": "ToggleGroup",
+  "description": "A row of Toggles in one frame, sharing a value array.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system",
+    "toggle"
+  ],
+  "categories": [
+    "controls"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/toggle-group/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/toggle-group/index.ts",
+      "content": "export { ToggleGroup } from './toggle-group.tsx';\nexport type { ToggleGroupOwnProps, ToggleGroupProps } from './toggle-group.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/toggle-group/toggle-group.css",
+      "type": "registry:ui",
+      "target": "hanji/components/toggle-group/toggle-group.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-toggle-group-pad · --hj-toggle-group-gap */\n  .hj-toggle-group {\n    display: inline-flex;\n    align-items: center;\n    gap: var(--hj-toggle-group-gap, 2px);\n    padding: var(--hj-toggle-group-pad, 4px);\n    border-radius: var(--hj-radius-pill);\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1px var(--hj-line);\n  }\n  .hj-toggle-group[data-size='sm'] {\n    padding: var(--hj-toggle-group-pad, 3px);\n  }\n  .hj-toggle-group[data-orientation='vertical'] {\n    flex-direction: column;\n    border-radius: var(--hj-radius-lg);\n  }\n  .hj-toggle-group[data-disabled] {\n    opacity: 0.6;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/toggle-group/toggle-group.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/toggle-group/toggle-group.tsx",
+      "content": "'use client';\nimport { ToggleGroup as BaseToggleGroup } from '@base-ui/react/toggle-group';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\nimport { ToggleGroupContext } from '../toggle/toggle.tsx';\n\nexport interface ToggleGroupOwnProps {\n  /** md = 40, sm = 32. The toggles inside take this size. */\n  size?: 'sm' | 'md';\n}\nexport interface ToggleGroupProps extends ToggleGroupOwnProps, BaseToggleGroup.Props {}\n\n/**\n * A row of Toggles in one frame — formatting bars, player toolbars. `multiple` lets several be\n * pressed at once (Bold + Italic); without it, pressing one releases the others and pressing\n * the pressed one releases it (use SegmentedControl when one must always be chosen).\n */\nexport function ToggleGroup(props: ToggleGroupProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { size = 'md', className, ...rest } = withDefaults(config, 'ToggleGroup', props);\n  return (\n    <ToggleGroupContext.Provider value={size}>\n      <BaseToggleGroup\n        {...rest}\n        data-size={size}\n        className={cls(config, 'ToggleGroup', 'hj-toggle-group', className)}\n      />\n    </ToggleGroupContext.Provider>\n  );\n}\n"
+    }
+  ]
+}

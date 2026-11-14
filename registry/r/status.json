@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "status",
+  "type": "registry:ui",
+  "title": "Status",
+  "description": "A state in words — word, glyph and tint — with when it happened.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/status/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/status/index.ts",
+      "content": "export { Status } from './status.tsx';\nexport type { StatusOwnProps, StatusProps, StatusTone } from './status.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/status/status.css",
+      "type": "registry:ui",
+      "target": "hanji/components/status/status.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-status-height */\n  .hj-status {\n    --_c: var(--hj-fg-dim);\n    --_bg: color-mix(in srgb, var(--hj-fg) 7%, transparent);\n    display: inline-flex;\n    align-items: center;\n    gap: 6px;\n    height: var(--hj-status-height, 26px);\n    padding: 0 10px 0 8px;\n    border-radius: var(--hj-radius-pill);\n    background: var(--_bg);\n    color: var(--_c);\n    font: 600 12.5px / 1 var(--hj-font-sans);\n    letter-spacing: -0.005em;\n    white-space: nowrap;\n    vertical-align: middle;\n  }\n  .hj-status[data-tone='success'] {\n    --_c: var(--hj-success);\n    --_bg: var(--hj-success-soft);\n  }\n  .hj-status[data-tone='warning'] {\n    --_c: var(--hj-warning);\n    --_bg: var(--hj-warning-soft);\n  }\n  .hj-status[data-tone='danger'] {\n    --_c: var(--hj-danger);\n    --_bg: var(--hj-danger-soft);\n  }\n  .hj-status[data-tone='info'] {\n    --_c: var(--hj-info);\n    --_bg: var(--hj-info-soft);\n  }\n  .hj-status[data-tone='pending'] {\n    --_c: var(--hj-accent);\n    --_bg: var(--hj-accent-soft);\n  }\n  .hj-status[data-variant='plain'] {\n    height: auto;\n    padding: 0;\n    background: none;\n  }\n\n  .hj-status-glyph {\n    display: inline-flex;\n    font-size: 15px;\n    line-height: 0;\n  }\n  .hj-status-glyph > svg {\n    width: 1em;\n    height: 1em;\n  }\n  .hj-status-meta {\n    font-weight: 500;\n    color: var(--hj-fg-mute);\n  }\n  .hj-status-meta::before {\n    content: '·';\n    margin-right: 6px;\n  }\n\n  /* neutral: a still dot · pending: a dot with a ring that breathes outward while work runs */\n  .hj-status-dot {\n    position: relative;\n    width: 7px;\n    height: 7px;\n    margin: 0 2px;\n    border-radius: 50%;\n    background: currentColor;\n  }\n  .hj-status-dot[data-tone='pending']::after {\n    content: '';\n    position: absolute;\n    inset: -3px;\n    border-radius: 50%;\n    border: 1.5px solid currentColor;\n    animation: hj-status-ring 1600ms var(--hj-ease-out) infinite;\n    animation-play-state: var(--hj-ambient);\n  }\n  @keyframes hj-status-ring {\n    from {\n      transform: scale(0.6);\n      opacity: 0.7;\n    }\n    to {\n      transform: scale(1.7);\n      opacity: 0;\n    }\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/status/status.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/status/status.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport type { IconName } from '../../system/icons.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\nexport type StatusTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'pending';\n\n/** Props hanji adds to the status element. */\nexport interface StatusOwnProps {\n  /** What state it names. Each tone has a glyph, so status is never colour alone. */\n  tone?: StatusTone;\n  /** tint = pill on a soft fill (in lists, tables) · plain = glyph + word only (inline in text). */\n  variant?: 'tint' | 'plain';\n  /** A muted qualifier after the word — usually when: “2 min ago”, “since 09:14”. */\n  meta?: React.ReactNode;\n  /** Hide the glyph. Only when the word alone is unmistakable. @default true */\n  icon?: boolean;\n  render?: useRender.RenderProp;\n}\n\nexport interface StatusProps\n  extends StatusOwnProps, Omit<React.ComponentProps<'span'>, 'className'> {\n  className?: string;\n}\n\nconst GLYPH: Readonly<Record<Exclude<StatusTone, 'pending' | 'neutral'>, IconName>> = {\n  success: 'checkCircle',\n  warning: 'alert',\n  danger: 'xCircle',\n  info: 'info',\n};\n\n/**\n * A state in words: word + glyph + tint, and when it happened. Pending carries a live ring that\n * pulses while the work runs (and holds still when motion is reduced).\n *\n * @example\n * <Status tone=\"success\" meta=\"2 min ago\">Synced</Status>\n * <Status tone=\"danger\">Couldn’t sync</Status>\n */\nexport function Status(props: StatusProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    tone = 'neutral',\n    variant = 'tint',\n    meta,\n    icon = true,\n    render,\n    className,\n    children,\n    ...rest\n  } = withDefaults(config, 'Status', props);\n  const styled = !config.unstyled;\n  let glyph: React.ReactNode = null;\n  if (icon) {\n    if (tone === 'pending' || tone === 'neutral') {\n      glyph = (\n        <span\n          className={styled ? 'hj-status-dot' : undefined}\n          aria-hidden=\"true\"\n          data-tone={tone}\n        />\n      );\n    } else {\n      glyph = (\n        <span className={styled ? 'hj-status-glyph' : undefined} aria-hidden=\"true\">\n          {config.icons[GLYPH[tone]]}\n        </span>\n      );\n    }\n  }\n  return useRender({\n    render,\n    defaultTagName: 'span',\n    props: {\n      ...rest,\n      'data-tone': tone,\n      'data-variant': variant,\n      className: cls(config, 'Status', 'hj-status', className) as string | undefined,\n      children: (\n        <>\n          {glyph}\n          <span className={styled ? 'hj-status-word' : undefined}>{children}</span>\n          {meta !== undefined && meta !== null ? (\n            <span className={styled ? 'hj-status-meta' : undefined}>{meta}</span>\n          ) : null}\n        </>\n      ),\n    },\n  });\n}\n"
+    }
+  ]
+}

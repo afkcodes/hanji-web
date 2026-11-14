@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scrim",
+  "type": "registry:ui",
+  "title": "Scrim",
+  "description": "A gradient that darkens imagery just enough for text to sit on it, in one colour fading by opacity.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/scrim/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/scrim/index.ts",
+      "content": "export * as Scrim from './scrim.tsx';\nexport type {\n  ContentOwnProps as ScrimContentOwnProps,\n  ContentProps as ScrimContentProps,\n  LayerOwnProps as ScrimLayerOwnProps,\n  LayerProps as ScrimLayerProps,\n} from './scrim.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/scrim/scrim.css",
+      "type": "registry:ui",
+      "target": "hanji/components/scrim/scrim.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-scrim-radius · --hj-scrim-strength · --hj-scrim-extent · --hj-scrim-color */\n  .hj-scrim {\n    position: relative;\n    display: block;\n    overflow: hidden;\n    isolation: isolate;\n    border-radius: var(--hj-scrim-radius, var(--hj-radius-md));\n  }\n  .hj-scrim > img,\n  .hj-scrim > picture,\n  .hj-scrim > video {\n    display: block;\n    width: 100%;\n    height: 100%;\n    object-fit: cover;\n  }\n\n  /*\n   * One RGB, fading by opacity only (color-mix with transparent keeps the hue; gradients\n   * interpolate premultiplied), along an eased five-stop curve so the scrim has no visible edge.\n   */\n  .hj-scrim-layer {\n    --_c: var(--hj-scrim-color, var(--hj-scrim));\n    --_a: var(--hj-scrim-strength, 72%);\n    --_x: var(--hj-scrim-extent, 64%);\n    position: absolute;\n    inset: 0;\n    z-index: 1;\n    pointer-events: none;\n    background: linear-gradient(\n      to top,\n      color-mix(in srgb, var(--_c) var(--_a), transparent) 0%,\n      color-mix(in srgb, var(--_c) calc(var(--_a) * 0.82), transparent) calc(var(--_x) * 0.25),\n      color-mix(in srgb, var(--_c) calc(var(--_a) * 0.5), transparent) calc(var(--_x) * 0.55),\n      color-mix(in srgb, var(--_c) calc(var(--_a) * 0.18), transparent) calc(var(--_x) * 0.82),\n      color-mix(in srgb, var(--_c) 0%, transparent) var(--_x)\n    );\n  }\n  .hj-scrim-layer[data-edge='top'] {\n    background: linear-gradient(\n      to bottom,\n      color-mix(in srgb, var(--_c) var(--_a), transparent) 0%,\n      color-mix(in srgb, var(--_c) calc(var(--_a) * 0.82), transparent) calc(var(--_x) * 0.25),\n      color-mix(in srgb, var(--_c) calc(var(--_a) * 0.5), transparent) calc(var(--_x) * 0.55),\n      color-mix(in srgb, var(--_c) calc(var(--_a) * 0.18), transparent) calc(var(--_x) * 0.82),\n      color-mix(in srgb, var(--_c) 0%, transparent) var(--_x)\n    );\n  }\n  .hj-scrim-layer[data-edge='full'] {\n    background: color-mix(in srgb, var(--_c) var(--_a), transparent);\n  }\n\n  /* Over imagery ink is always light: re-point the ink tokens at on-scrim inside. */\n  .hj-scrim-content {\n    --hj-fg: var(--hj-on-scrim);\n    --hj-fg-dim: color-mix(in srgb, var(--hj-on-scrim) 80%, transparent);\n    --hj-fg-mute: color-mix(in srgb, var(--hj-on-scrim) 66%, transparent);\n    --hj-line: color-mix(in srgb, var(--hj-on-scrim) 22%, transparent);\n    position: absolute;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 2;\n    padding: var(--hj-space-4) var(--hj-space-5) var(--hj-space-5);\n    color: var(--hj-fg);\n  }\n  .hj-scrim-content[data-edge='top'] {\n    top: 0;\n    bottom: auto;\n    padding: var(--hj-space-4);\n  }\n  .hj-scrim-content[data-edge='center'] {\n    top: 0;\n    display: grid;\n    place-content: center;\n    text-align: center;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/scrim/scrim.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/scrim/scrim.tsx",
+      "content": "'use client';\nimport { useRender } from '@base-ui/react/use-render';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { elementPart } from '../../system/part.tsx';\nimport type { ElementPartProps } from '../../system/part.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\n/** The frame: holds the image, the layer and the content; clips them to its corners. */\nexport const Root: (props: ElementPartProps<'div'>) => React.ReactElement = elementPart(\n  'div',\n  'Scrim.Root',\n  'hj-scrim',\n);\n\n/** Props hanji adds to the gradient layer. */\nexport interface LayerOwnProps {\n  /** Where the dark sits: bottom (titles), top (chrome over a hero), or full (text anywhere). */\n  edge?: 'bottom' | 'top' | 'full';\n  /** Darkness at the edge, 0–1. @default 0.72 */\n  strength?: number;\n  /** How far the fade reaches, as a CSS length or %. @default '64%' */\n  extent?: string;\n  /**\n   * The colour that fades. Default the scrim token (black). Pass the art's own deep colour to\n   * keep the fade in its hue — it only ever changes opacity, so it never greys.\n   */\n  color?: string;\n  render?: useRender.RenderProp;\n}\n\nexport interface LayerProps\n  extends LayerOwnProps, Omit<React.ComponentProps<'span'>, 'className' | 'children'> {\n  className?: string;\n}\n\n/**\n * The gradient. One RGB fading by opacity along an eased curve (five stops), so the edge of the\n * scrim is never visible. Decorative: aria-hidden.\n */\nexport function Layer(props: LayerProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    edge = 'bottom',\n    strength = 0.72,\n    extent,\n    color,\n    render,\n    className,\n    style,\n    ...rest\n  } = withDefaults(config, 'Scrim.Layer', props);\n  const a = Math.min(1, Math.max(0, strength));\n  const vars = {\n    '--hj-scrim-strength': `${Math.round(a * 1000) / 10}%`,\n    ...(extent ? { '--hj-scrim-extent': extent } : null),\n    ...(color ? { '--hj-scrim-color': color } : null),\n    ...style,\n  } as React.CSSProperties;\n  return useRender({\n    render,\n    defaultTagName: 'span',\n    props: {\n      'aria-hidden': true,\n      ...rest,\n      style: vars,\n      'data-edge': edge,\n      className: cls(config, 'Scrim.Layer', 'hj-scrim-layer', className) as string | undefined,\n    },\n  });\n}\n\n/** Props hanji adds to the content block. */\nexport interface ContentOwnProps {\n  /** Where the content sits; match the Layer's edge. @default 'bottom' */\n  edge?: 'bottom' | 'top' | 'center';\n  render?: useRender.RenderProp;\n}\n\nexport interface ContentProps\n  extends ContentOwnProps, Omit<React.ComponentProps<'div'>, 'className'> {\n  className?: string;\n}\n\n/**\n * Content over the image. Ink inside is always light: the fg tokens are re-pointed at on-scrim,\n * so hanji text and controls placed here read correctly on every paper.\n */\nexport function Content(props: ContentProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    edge = 'bottom',\n    render,\n    className,\n    ...rest\n  } = withDefaults(config, 'Scrim.Content', props);\n  return useRender({\n    render,\n    defaultTagName: 'div',\n    props: {\n      ...rest,\n      'data-edge': edge,\n      className: cls(config, 'Scrim.Content', 'hj-scrim-content', className) as string | undefined,\n    },\n  });\n}\n"
+    }
+  ]
+}

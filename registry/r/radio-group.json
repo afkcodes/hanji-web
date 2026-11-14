@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radio-group",
+  "type": "registry:ui",
+  "title": "RadioGroup",
+  "description": "Exactly one of a few options, all visible at once.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "controls"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/radio-group/group.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/radio-group/group.ts",
+      "content": "/** `RadioGroup.Root` / `.Item` / `.Description`. */\nexport { Description, Item, Root } from './radio-group.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/radio-group/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/radio-group/index.ts",
+      "content": "export * as RadioGroup from './group.ts';\nexport * as Radio from './radio.ts';\nexport type {\n  RadioOwnProps,\n  RadioProps,\n  RootOwnProps as RadioGroupRootOwnProps,\n  RootProps as RadioGroupRootProps,\n} from './radio-group.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/radio-group/radio-group.css",
+      "type": "registry:ui",
+      "target": "hanji/components/radio-group/radio-group.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-radio-size · --hj-radio-group-gap */\n  .hj-radio-group {\n    display: flex;\n    flex-direction: column;\n    gap: var(--hj-radio-group-gap, 2px);\n    font-family: var(--hj-font-sans);\n  }\n  .hj-radio-group[data-orientation='horizontal'] {\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: var(--hj-radio-group-gap, var(--hj-space-2) var(--hj-space-6));\n  }\n  .hj-radio-group-item {\n    display: flex;\n    align-items: flex-start;\n    gap: 12px;\n    min-height: var(--hj-touch);\n    padding-block: 11px;\n    font: var(--hj-type-body);\n    letter-spacing: var(--hj-tracking-body);\n    color: var(--hj-fg);\n    cursor: pointer;\n    -webkit-tap-highlight-color: transparent;\n  }\n  .hj-radio-group-item:has([data-disabled]) {\n    color: var(--hj-fg-mute);\n    cursor: not-allowed;\n  }\n  .hj-radio-group-description {\n    display: block;\n    margin-top: 2px;\n    font: var(--hj-type-sub);\n    color: var(--hj-fg-mute);\n  }\n\n  .hj-radio-group-radio {\n    --_s: var(--hj-radio-size, 22px);\n    position: relative;\n    display: inline-grid;\n    flex: none;\n    place-items: center;\n    width: var(--_s);\n    height: var(--_s);\n    margin-top: -1px;\n    border-radius: 50%;\n    background: var(--hj-surface);\n    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg) 26%, transparent);\n    cursor: pointer;\n    -webkit-tap-highlight-color: transparent;\n    transition:\n      box-shadow var(--hj-dur-fast) var(--hj-ease-out),\n      transform var(--hj-dur-snappy) var(--hj-ease-snappy);\n  }\n  .hj-radio-group-radio::before {\n    content: '';\n    position: absolute;\n    inset: calc((var(--_s) - var(--hj-touch)) / 2);\n    border-radius: 50%;\n  }\n  .hj-radio-group-radio[data-size='sm'] {\n    --_s: var(--hj-radio-size, 18px);\n  }\n  .hj-radio-group-radio:hover:not([data-disabled]):not([data-checked]) {\n    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg) 44%, transparent);\n  }\n  .hj-radio-group-radio:active:not([data-disabled]) {\n    transform: scale(0.92);\n    transition-duration: var(--hj-dur-fast), 70ms;\n  }\n  /* hanji: a 2px accent ring around a dot half the diameter */\n  .hj-radio-group-radio[data-checked] {\n    box-shadow: inset 0 0 0 2px var(--hj-accent);\n  }\n  .hj-radio-group-radio[data-invalid]:not([data-checked]) {\n    box-shadow: inset 0 0 0 1.5px var(--hj-danger);\n  }\n  .hj-radio-group-radio[data-disabled] {\n    opacity: 0.4;\n    cursor: not-allowed;\n  }\n\n  .hj-radio-group-indicator {\n    display: block;\n    width: 50%;\n    height: 50%;\n    border-radius: 50%;\n    background: var(--hj-accent);\n    transform: scale(0);\n    /* leaving: fast */\n    transition: transform var(--hj-dur-fast) var(--hj-ease-out);\n  }\n  /* The dot springs in — snappy, unclamped: a 4% overshoot reads as the press landing. */\n  .hj-radio-group-indicator[data-checked] {\n    transform: scale(1);\n    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/radio-group/radio-group.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/radio-group/radio-group.tsx",
+      "content": "'use client';\nimport { Radio as BaseRadio } from '@base-ui/react/radio';\nimport { RadioGroup as BaseGroup } from '@base-ui/react/radio-group';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { elementPart, part } from '../../system/part.tsx';\nimport type { ElementPartProps, HanjiPart } from '../../system/part.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\nexport interface RootOwnProps {\n  /** Stack (default) or lay the options out in a row. */\n  orientation?: 'vertical' | 'horizontal';\n}\nexport interface RootProps extends RootOwnProps, React.ComponentProps<typeof BaseGroup> {}\n\n/** Exactly one of a few options. Arrow keys move and select; Tab leaves the group. */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    orientation = 'vertical',\n    className,\n    ...rest\n  } = withDefaults(config, 'RadioGroup.Root', props);\n  return (\n    <BaseGroup\n      {...rest}\n      data-orientation={orientation}\n      className={cls(config, 'RadioGroup.Root', 'hj-radio-group', className)}\n    />\n  );\n}\n\n/** One option row: a `<label>` with a Radio.Root and its text, so the whole row selects. */\nexport const Item: (props: ElementPartProps<'label'>) => React.ReactElement = elementPart(\n  'label',\n  'RadioGroup.Item',\n  'hj-radio-group-item',\n);\n\n/** A help line under an Item's text. */\nexport const Description: (props: ElementPartProps<'span'>) => React.ReactElement = elementPart(\n  'span',\n  'RadioGroup.Description',\n  'hj-radio-group-description',\n);\n\n/** The dot. Kept mounted so it can scale out as well as in. */\nexport const Indicator: HanjiPart<typeof BaseRadio.Indicator> = part(\n  BaseRadio.Indicator,\n  'Radio.Indicator',\n  'hj-radio-group-indicator',\n);\n\nexport interface RadioOwnProps {\n  /** md = 22 (hanji), sm = 18. */\n  size?: 'sm' | 'md';\n}\nexport interface RadioProps extends RadioOwnProps, BaseRadio.Root.Props {}\n\n/** The 22px ring. Renders its Indicator when childless, so `<Radio.Root value=\"x\" />` is complete. */\nexport function Radio(props: RadioProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const { size = 'md', className, children, ...rest } = withDefaults(config, 'Radio.Root', props);\n  return (\n    <BaseRadio.Root\n      {...rest}\n      data-size={size}\n      className={cls(config, 'Radio.Root', 'hj-radio-group-radio', className)}\n    >\n      {children ?? <Indicator keepMounted />}\n    </BaseRadio.Root>\n  );\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/radio-group/radio.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/radio-group/radio.ts",
+      "content": "/** `Radio.Root` / `Radio.Indicator` — the individual radio, used inside a RadioGroup. */\nexport { Indicator, Radio as Root } from './radio-group.tsx';\n"
+    }
+  ]
+}

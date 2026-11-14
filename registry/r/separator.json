@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "separator",
+  "type": "registry:ui",
+  "title": "Separator",
+  "description": "A hairline between groups — hanji’s way of separating instead of boxing.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "atoms"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/separator/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/separator/index.ts",
+      "content": "export { Separator } from './separator.tsx';\nexport type { SeparatorOwnProps, SeparatorProps } from './separator.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/separator/separator.css",
+      "type": "registry:ui",
+      "target": "hanji/components/separator/separator.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-separator-color · --hj-separator-inset · --hj-separator-space */\n  .hj-separator {\n    flex: none;\n    border: 0;\n    margin: var(--hj-separator-space, 0) 0;\n    background: var(--hj-separator-color, var(--hj-line));\n  }\n  .hj-separator[data-orientation='horizontal'] {\n    width: 100%;\n    height: var(--hj-hairline);\n  }\n  .hj-separator[data-orientation='vertical'] {\n    width: var(--hj-hairline);\n    height: auto;\n    align-self: stretch;\n    margin: 0 var(--hj-separator-space, 0);\n  }\n  .hj-separator[data-variant='inset'][data-orientation='horizontal'] {\n    width: auto;\n    margin-left: var(--hj-separator-inset, 72px);\n  }\n\n  /* Labelled: a word sitting in the rule. The element stays a rule; the line is drawn either side. */\n  .hj-separator[data-label] {\n    display: flex;\n    align-items: center;\n    gap: 12px;\n    height: auto;\n    background: none;\n    color: var(--hj-fg-mute);\n    font: var(--hj-type-eyebrow);\n    letter-spacing: var(--hj-tracking-eyebrow);\n    text-transform: uppercase;\n  }\n  .hj-separator[data-label]::before,\n  .hj-separator[data-label]::after {\n    content: '';\n    flex: 1;\n    height: var(--hj-hairline);\n    background: var(--hj-separator-color, var(--hj-line));\n  }\n  .hj-separator-label {\n    flex: none;\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/separator/separator.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/separator/separator.tsx",
+      "content": "'use client';\nimport { Separator as Base } from '@base-ui/react/separator';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\n\n/** Props hanji adds to Base UI's Separator. */\nexport interface SeparatorOwnProps {\n  /** full = edge to edge · inset = starts where row text starts (72px by default). */\n  variant?: 'full' | 'inset';\n  /** A short word in the middle of the rule, e.g. “or”. Horizontal only. */\n  label?: React.ReactNode;\n}\n\nexport interface SeparatorProps extends SeparatorOwnProps, Base.Props {}\n\n/**\n * A hairline between groups. hanji separates with rules, not boxes — depth is a paper step and a\n * hairline, never a shadow.\n *\n * @example\n * <Separator />\n * <Separator variant=\"inset\" />\n * <Separator label=\"or\" />\n */\nexport function Separator(props: SeparatorProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    variant = 'full',\n    label,\n    className,\n    children,\n    ...rest\n  } = withDefaults(config, 'Separator', props);\n  const hasLabel = label !== undefined && label !== null && label !== false;\n  return (\n    <Base\n      {...rest}\n      data-variant={variant}\n      data-label={hasLabel ? '' : undefined}\n      className={cls(config, 'Separator', 'hj-separator', className)}\n    >\n      {hasLabel ? (\n        <span className={config.unstyled ? undefined : 'hj-separator-label'}>{label}</span>\n      ) : (\n        children\n      )}\n    </Base>\n  );\n}\n"
+    }
+  ]
+}

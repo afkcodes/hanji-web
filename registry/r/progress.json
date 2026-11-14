@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "progress",
+  "type": "registry:ui",
+  "title": "Progress",
+  "description": "How far a task has got: a 4px track with a fill, and an optional label and value.",
+  "dependencies": [
+    "@base-ui/react",
+    "@hanji/tokens"
+  ],
+  "registryDependencies": [
+    "hanji-system"
+  ],
+  "categories": [
+    "data"
+  ],
+  "files": [
+    {
+      "path": "packages/react/src/components/progress/index.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/progress/index.ts",
+      "content": "export * as Progress from './progress.tsx';\nexport type {\n  RootOwnProps as ProgressRootOwnProps,\n  RootProps as ProgressRootProps,\n} from './progress.tsx';\n"
+    },
+    {
+      "path": "packages/react/src/components/progress/progress-math.ts",
+      "type": "registry:ui",
+      "target": "hanji/components/progress/progress-math.ts",
+      "content": "import type * as React from 'react';\n\n/** Fraction of the way from min to max, clamped to 0–1. `null` (indeterminate) stays null. */\nexport function fraction(value: number | null | undefined, min = 0, max = 100): number | null {\n  if (value === null || value === undefined || Number.isNaN(value)) return null;\n  const span = max - min;\n  if (span <= 0) return 1;\n  const f = (value - min) / span;\n  return f < 0 ? 0 : f > 1 ? 1 : f;\n}\n\n/** Base UI's style prop: an object or a function of state. */\nexport type StyleProp<State> =\n  | React.CSSProperties\n  | ((state: State) => React.CSSProperties | undefined)\n  | undefined;\n\n/**\n * Merge declarations (CSS custom properties or overrides) under a Base UI style prop, keeping\n * its function form. The caller's own declarations win.\n */\nexport function withVars<State>(\n  style: StyleProp<State>,\n  vars: React.CSSProperties | Record<`--${string}`, string | number> | undefined,\n): StyleProp<State> {\n  if (!vars) return style;\n  if (typeof style === 'function') {\n    return (state: State): React.CSSProperties => ({\n      ...(vars as React.CSSProperties),\n      ...style(state),\n    });\n  }\n  return { ...(vars as React.CSSProperties), ...style };\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/progress/progress.css",
+      "type": "registry:ui",
+      "target": "hanji/components/progress/progress.css",
+      "content": "@layer hj.components {\n  /* Customise: --hj-progress-height · --hj-progress-radius */\n  .hj-progress {\n    --_tone: var(--hj-accent);\n    display: flex;\n    flex-direction: column;\n    gap: 8px;\n    min-width: 0;\n    width: 100%;\n    font-family: var(--hj-font-sans);\n  }\n  .hj-progress[data-tone='fg'] {\n    --_tone: var(--hj-fg);\n  }\n  .hj-progress[data-tone='danger'] {\n    --_tone: var(--hj-danger);\n  }\n\n  .hj-progress-header {\n    display: flex;\n    align-items: baseline;\n    justify-content: space-between;\n    gap: 12px;\n  }\n  .hj-progress-label {\n    font-size: 13px;\n    font-weight: 600;\n    color: var(--hj-fg);\n  }\n  .hj-progress-value {\n    font: var(--hj-type-mono);\n    letter-spacing: var(--hj-tracking-mono);\n    font-variant-numeric: tabular-nums;\n    color: var(--hj-fg-dim);\n  }\n\n  .hj-progress-track {\n    position: relative;\n    overflow: hidden;\n    height: var(--hj-progress-height, 4px);\n    border-radius: var(--hj-progress-radius, var(--hj-radius-pill));\n    background: color-mix(in srgb, var(--_tone) 22%, transparent);\n  }\n\n  /* Full width, scaled from the left: transform only, on the clamped snappy spring. */\n  .hj-progress-indicator {\n    position: absolute;\n    inset: 0;\n    border-radius: inherit;\n    background: var(--_tone);\n    transform-origin: left center;\n    transform: scaleX(var(--hj-progress-fraction, 0));\n    transition:\n      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),\n      background-color var(--hj-dur-base) var(--hj-ease-out);\n  }\n  .hj-progress-indicator:dir(rtl) {\n    transform-origin: right center;\n  }\n\n  /* Indeterminate: a third of the track sweeps across. Paused (mid-track) under reduced motion. */\n  .hj-progress-indicator[data-indeterminate] {\n    transform: translateX(-34%) scaleX(0.333);\n    animation: hj-progress-sweep 1400ms var(--hj-ease-out) infinite;\n    animation-delay: -560ms;\n    animation-play-state: var(--hj-ambient);\n  }\n  @keyframes hj-progress-sweep {\n    from {\n      transform: translateX(-34%) scaleX(0.333);\n    }\n    to {\n      transform: translateX(100%) scaleX(0.333);\n    }\n  }\n}\n"
+    },
+    {
+      "path": "packages/react/src/components/progress/progress.tsx",
+      "type": "registry:ui",
+      "target": "hanji/components/progress/progress.tsx",
+      "content": "'use client';\nimport { Progress as Base } from '@base-ui/react/progress';\nimport * as React from 'react';\n\nimport { useHanjiConfig } from '../../system/config.tsx';\nimport { elementPart, part } from '../../system/part.tsx';\nimport type { ElementPartProps, HanjiPart } from '../../system/part.tsx';\nimport { cls, withDefaults } from '../../system/slot.ts';\nimport { fraction, withVars } from './progress-math.ts';\n\nexport const Label: HanjiPart<typeof Base.Label> = part(\n  Base.Label,\n  'Progress.Label',\n  'hj-progress-label',\n);\nexport const Value: HanjiPart<typeof Base.Value> = part(\n  Base.Value,\n  'Progress.Value',\n  'hj-progress-value',\n);\nexport const Track: HanjiPart<typeof Base.Track> = part(\n  Base.Track,\n  'Progress.Track',\n  'hj-progress-track',\n);\n/** Label on the left, value on the right, above the track. */\nexport const Header: (props: ElementPartProps<'div'>) => React.ReactElement = elementPart(\n  'div',\n  'Progress.Header',\n  'hj-progress-header',\n);\n\nexport interface RootOwnProps {\n  /** accent = the task in hand · fg = neutral totals · danger = something is running out. */\n  tone?: 'accent' | 'fg' | 'danger';\n}\nexport interface RootProps extends RootOwnProps, Base.Root.Props {}\n\n/**\n * A task's completion. `value={null}` is indeterminate. With no children it renders a bare\n * track and indicator, so `<Progress.Root value={40} aria-label=\"Upload\" />` is complete.\n */\nexport function Root(props: RootProps): React.ReactElement {\n  const config = useHanjiConfig();\n  const {\n    tone = 'accent',\n    className,\n    style,\n    children,\n    ...rest\n  } = withDefaults(config, 'Progress.Root', props);\n  const f = fraction(rest.value, rest.min, rest.max);\n  return (\n    <Base.Root\n      {...rest}\n      data-tone={tone}\n      style={withVars(style, f === null ? undefined : { '--hj-progress-fraction': f })}\n      className={cls(config, 'Progress.Root', 'hj-progress', className)}\n    >\n      {children ?? (\n        <Track>\n          <Indicator />\n        </Track>\n      )}\n    </Base.Root>\n  );\n}\n\n/**\n * The fill. Drawn at full width and scaled from the left (transform only — a width\n * animation drops frames), so it rides the clamped snappy spring between values.\n */\nexport function Indicator(props: Base.Indicator.Props): React.ReactElement {\n  const config = useHanjiConfig();\n  const { className, style, ...rest } = withDefaults(config, 'Progress.Indicator', props);\n  return (\n    <Base.Indicator\n      {...rest}\n      style={withVars(style, FULL_WIDTH)}\n      className={cls(config, 'Progress.Indicator', 'hj-progress-indicator', className)}\n    />\n  );\n}\n\n/** Overrides Base UI's inline width: the fill is a full-width element scaled by --hj-progress-fraction. */\nconst FULL_WIDTH: React.CSSProperties = { width: '100%' };\n"
+    }
+  ]
+}
