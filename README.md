@@ -30,12 +30,13 @@ export function App() {
 
 ## Packages
 
-| Package           | What it is                                                                                                                                                             |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@hanji/tokens`   | Colour maths, 3 papers × 12 accents, spacing/radius/type, springs compiled to CSS `linear()`, `createTheme()` (no deps) and `@hanji/tokens/schema` (zod + JSON Schema) |
-| `@hanji/react`    | The components, `styles.css` (one import) or `css/<component>.css`, plus `manifest.json`, `llms.txt`, `docs/*.md`                                                      |
-| `@hanji/mcp`      | MCP server so agents can search components, read docs, fetch examples, read tokens and validate themes                                                                 |
-| `@hanji/tailwind` | Optional Tailwind v4 preset: `bg-surface`, `text-fg-dim`, `rounded-pill`, `ease-snappy`                                                                                |
+| Package           | What it is                                                                                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@hanji/tokens`   | Colour maths, 3 papers × 12 accents, spacing/radius/type, springs compiled to CSS `linear()`, `createTheme()` (no deps) and `@hanji/tokens/schema` (zod + JSON Schema)         |
+| `@hanji/react`    | The components, `styles.css` (one import) or `css/<component>.css`, plus `manifest.json`, `llms.txt`, `docs/*.md`                                                              |
+| `@hanji/mcp`      | MCP server so agents can search components, read docs, fetch examples, read tokens and validate themes                                                                         |
+| `@hanji/icons`    | 2,200+ icons in outline, solid and wash: one tree-shakable React component per icon, raw SVGs, a searchable catalog and a lazy `DynamicIcon`. Restyled from Tabler Icons (MIT) |
+| `@hanji/tailwind` | Optional Tailwind v4 preset: `bg-surface`, `text-fg-dim`, `rounded-pill`, `ease-snappy`                                                                                        |
 
 ## Customise, from broad to precise
 
@@ -51,7 +52,7 @@ export function App() {
 - **`llms.txt` / `llms-full.txt`** and per-component Markdown in `@hanji/react/docs/*`, generated from typed meta (a prop that isn't documented fails typecheck), embedding the exact Base UI API for the installed version.
 - **`manifest.json`** — every component, part, prop, data-attribute, CSS variable, example (code), accessibility note and motion rule as JSON.
 - **MCP server** — `npx @hanji/mcp` (or `node packages/mcp/dist/bin.js` here; `.mcp.json` registers it for Claude Code):
-  `get_setup`, `list_components`, `search_components`, `get_component`, `get_example`, `get_tokens`, `get_theme_schema`, `validate_theme`.
+  `get_setup`, `list_components`, `search_components`, `get_component`, `get_example`, `get_tokens`, `get_theme_schema`, `validate_theme`, `search_icons`, `get_icon`.
 - **Source registry** — shadcn-compatible items in `registry/` (`hanji-system` + one per component) to install components as editable source.
 - **Typed theming** — `@hanji/tokens/theme.schema.json` with descriptions written for agents; `parseTheme()` returns field-level errors.
 - **`AGENTS.md`** — the rules any agent follows when changing this repo.

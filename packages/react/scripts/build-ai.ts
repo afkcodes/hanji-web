@@ -254,6 +254,13 @@ const llms = [
   '- [Theme schema](./theme.schema.json): JSON Schema for createTheme() — paper, accent, density, motion, radius, fonts, colors, springs.',
   '- [Manifest](./manifest.json): every component as structured JSON.',
   '',
+  '## Icons (@hanji/icons)',
+  '',
+  "- 2,200+ icons, each in `outline` (1.5 line), `solid` (a filled drawing, or a bold line for pure-line glyphs) and `wash` (line over a 16% fill). Restyled from Tabler Icons (MIT) with hanji's continuous corners.",
+  '- `import { IconTrash } from \'@hanji/icons\'` → `<IconTrash variant="solid" size={20} label="Delete" />`. Size defaults to 1em; colour is currentColor; `--hj-icon-stroke` retunes every line.',
+  "- Names chosen at runtime: `import { DynamicIcon } from '@hanji/icons/dynamic'` loads only that icon. Use hanji icons inside components with `<HanjiProvider icons={iconAdapter('outline')}>` from `@hanji/icons/adapter`.",
+  '- Find one: the MCP tools `search_icons` and `get_icon`, or `@hanji/icons/icons.json` (names, tags, categories, drawings).',
+  '',
   ...sections,
 ].join('\n');
 writeFileSync(join(dist, 'llms.txt'), `${llms.trim()}\n`);
