@@ -2470,7 +2470,7 @@
       "name": "swipe-actions",
       "type": "registry:ui",
       "title": "SwipeActions",
-      "description": "A row that slides aside to reveal actions underneath (iOS Mail style), on an interruptible spring — with a full swipe that commits, and a More menu that is the same actions for everyone who doesn’t swipe.",
+      "description": "A row that slides aside to reveal actions underneath (iOS Mail style), on an interruptible spring — by finger, pen, mouse or a two-finger trackpad swipe — with a full swipe that commits, and a More menu that is the same actions for everyone who doesn’t swipe.",
       "dependencies": [
         "@base-ui/react",
         "@hanji/tokens"
