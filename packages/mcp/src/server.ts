@@ -2,7 +2,7 @@ import { checkThemeInput, parseTheme } from '@hanji/tokens/schema';
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { findComponent, iconSvg, searchComponents, searchIcons } from './data.ts';
+import { findComponent, searchComponents, searchIcons } from './data.ts';
 import type { HanjiData } from './data.ts';
 
 const text = (t: string): { content: { type: 'text'; text: string }[] } => ({
@@ -230,7 +230,7 @@ export function createServer(data: HanjiData): McpServer {
     'search_icons',
     {
       title: 'Search icons',
-      description: `Find icons in @hanji/icons (${data.icons.length} icons, each in outline, solid and wash) by name, synonym or meaning, e.g. "delete", "settings", "upload file", "warning".`,
+      description: `Find icons in @hanji/icons (${data.icons.length} icons, each in outline, solid, wash, duotone and duotone-solid) by name, synonym or meaning, e.g. "delete", "settings", "upload file", "warning".`,
       inputSchema: {
         query: z.string().describe('What the icon should show or mean.'),
         limit: z.number().int().min(1).max(60).optional(),
@@ -246,10 +246,10 @@ export function createServer(data: HanjiData): McpServer {
         [
           ...hits.map(
             (i) =>
-              `${i.component} (${i.name}) · ${i.category || 'uncategorised'} · solid: ${i.filled ? 'filled' : 'bold line'}`,
+              `${i.component} (${i.name}${i.aliases.length ? `, also ${i.aliases.join(', ')}` : ''}) · ${i.category || 'uncategorised'}`,
           ),
           '',
-          'Usage: import { IconName } from \'@hanji/icons\'; <IconName variant="outline" | "solid" | "wash" label="…" /> (label only when the icon carries meaning on its own).',
+          'Usage: import { IconName } from \'@hanji/icons\'; <IconName variant="outline" | "solid" | "wash" | "duotone" | "duotone-solid" label="…" /> (label only when the icon carries meaning on its own).',
         ].join('\n'),
       );
     },
@@ -260,18 +260,27 @@ export function createServer(data: HanjiData): McpServer {
     {
       title: 'Get an icon',
       description:
-        'One icon: its import, JSX, tags and the SVG markup for a variant (outline, solid or wash).',
+        'One icon: its import, JSX, tags and the SVG markup for a style (outline, solid, wash, duotone or duotone-solid).',
       inputSchema: {
         name: z
           .string()
           .describe('kebab-case name ("arrow-up") or component name ("IconArrowUp").'),
-        variant: z.enum(['outline', 'solid', 'wash']).optional(),
+        variant: z.enum(['outline', 'solid', 'wash', 'duotone', 'duotone-solid']).optional(),
       },
       annotations: READ_ONLY,
     },
     ({ name, variant }) => {
       const key = name.trim();
-      const icon = data.icons.find((i) => i.name === key || i.component === key);
+      const icon = data.icons.find(
+        (i) =>
+          i.name === key ||
+          i.component === key ||
+          i.aliases.includes(key) ||
+          i.aliases.some(
+            (a) =>
+              `Icon${a.replace(/(^|-)([a-z0-9])/g, (_, __, c: string) => c.toUpperCase())}` === key,
+          ),
+      );
       if (!icon) {
         const near = searchIcons(data.icons, key, 5).map((i) => i.name);
         return {
@@ -287,8 +296,11 @@ export function createServer(data: HanjiData): McpServer {
         jsx: `<${icon.component}${v === 'outline' ? '' : ` variant="${v}"`} />`,
         category: icon.category,
         tags: icon.tags,
-        solid: icon.filled ? 'filled drawing' : 'bold line (no filled drawing exists)',
-        svg: iconSvg(icon, v),
+        aliases: icon.aliases,
+        source: icon.original
+          ? 'drawn for hanji'
+          : 'Solar by 480 Design (CC BY 4.0), reshaped by hanji',
+        svg: icon.svg[v],
       });
     },
   );

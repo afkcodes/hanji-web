@@ -44,11 +44,13 @@ export interface IconEntry {
   component: string;
   category: string;
   tags: string[];
-  /** True when the solid variant is a filled drawing; false when it is the bold line. */
-  filled: boolean;
+  /** Familiar names exported for the same drawing (chevron-down → alt-arrow-down). */
+  aliases: string[];
+  /** Drawn for hanji rather than reshaped from Solar. */
+  original: boolean;
   import: string;
-  outline: string;
-  solid: string[] | null;
+  /** Ready SVG markup per style: outline, solid, wash, duotone, duotone-solid. */
+  svg: Record<string, string>;
 }
 
 export interface HanjiData {
@@ -150,7 +152,7 @@ export function searchComponents(
     .slice(0, limit);
 }
 
-/** Rank icons for a query: exact name ≫ name ≫ exact tag ≫ tag ≫ category. */
+/** Rank icons for a query: exact name or alias ≫ name words ≫ exact tag ≫ tag ≫ category. */
 export function searchIcons(icons: IconEntry[], query: string, limit = 24): IconEntry[] {
   const terms = query
     .toLowerCase()
@@ -160,38 +162,23 @@ export function searchIcons(icons: IconEntry[], query: string, limit = 24): Icon
   const phrase = terms.join('-');
   return icons
     .map((icon) => {
-      const parts = icon.name.split('-');
-      let score = icon.name === phrase ? 40 : 0;
+      const parts = new Set([
+        ...icon.name.split('-'),
+        ...icon.aliases.flatMap((a) => a.split('-')),
+      ]);
+      let score = icon.name === phrase || icon.aliases.includes(phrase) ? 40 : 0;
       for (const t of terms) {
-        if (parts.includes(t)) score += 10;
+        if (parts.has(t)) score += 10;
         else if (icon.name.includes(t)) score += 5;
         if (icon.tags.includes(t)) score += 6;
         else if (icon.tags.some((g) => g.includes(t))) score += 2;
         if (icon.category.toLowerCase() === t) score += 2;
       }
-      // prefer the plain glyph over its decorated variants (home over home-bolt)
-      return { icon, score: score - parts.length * 0.1 };
+      // prefer the plain glyph over its decorated variants (bell over bell-bing)
+      return { icon, score: score - icon.name.split('-').length * 0.1 };
     })
     .filter((r) => r.score > 1)
     .toSorted((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((r) => r.icon);
-}
-
-const svgPaths = (ds: readonly string[]): string => ds.map((d) => `<path d="${d}"/>`).join('');
-
-/** The icon as a standalone SVG string. */
-export function iconSvg(
-  icon: IconEntry,
-  variant: 'outline' | 'solid' | 'wash' = 'outline',
-): string {
-  const head = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"';
-  if (variant === 'solid' && icon.solid)
-    return `${head} fill="currentColor">${svgPaths(icon.solid)}</svg>`;
-  const wash =
-    variant === 'wash' && icon.solid
-      ? `<g fill="currentColor" stroke="none" opacity="0.16">${svgPaths(icon.solid)}</g>`
-      : '';
-  const width = variant === 'solid' ? 2.25 : 1.5;
-  return `${head} fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round">${wash}<path d="${icon.outline}"/></svg>`;
 }
