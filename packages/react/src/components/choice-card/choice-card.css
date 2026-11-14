@@ -1,0 +1,119 @@
+@layer hj.components {
+  /* Customise: --hj-choice-card-min · --hj-choice-card-radius · --hj-choice-card-padding */
+  .hj-choice-card {
+    --_cols: auto-fill;
+    display: grid;
+    grid-template-columns: repeat(var(--_cols), minmax(var(--hj-choice-card-min, 220px), 1fr));
+    gap: var(--hj-space-3);
+    font-family: var(--hj-font-sans);
+  }
+  .hj-choice-card[data-columns='1'] {
+    --_cols: 1;
+  }
+  .hj-choice-card[data-columns='2'] {
+    --_cols: 2;
+  }
+  .hj-choice-card[data-columns='3'] {
+    --_cols: 3;
+  }
+  .hj-choice-card[data-columns='4'] {
+    --_cols: 4;
+  }
+  .hj-choice-card:not([data-columns='auto']) {
+    grid-template-columns: repeat(var(--_cols), minmax(0, 1fr));
+  }
+
+  .hj-choice-card-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 124px;
+    padding: var(--hj-choice-card-padding, var(--hj-space-4));
+    border-radius: var(--hj-choice-card-radius, var(--hj-radius-md));
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg);
+    text-align: start;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      box-shadow var(--hj-dur-fast) var(--hj-ease-out),
+      background-color var(--hj-dur-base) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-choice-card-item[data-indicator] {
+    padding-inline-end: calc(var(--hj-choice-card-padding, var(--hj-space-4)) + 30px);
+  }
+  .hj-choice-card-item:hover:not([data-disabled]):not([data-checked]) {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hj-fg) 24%, transparent);
+  }
+  /* A big surface dips less than a button. */
+  .hj-choice-card-item:active:not([data-disabled]) {
+    transform: scale(0.985);
+    transition-duration: var(--hj-dur-fast), var(--hj-dur-base), 70ms;
+  }
+  .hj-choice-card-item[data-checked] {
+    background: color-mix(in srgb, var(--hj-accent) 5%, var(--hj-surface));
+    box-shadow: inset 0 0 0 1.5px var(--hj-accent);
+  }
+  .hj-choice-card-item[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-choice-card-item:focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: 2px;
+  }
+
+  .hj-choice-card-ring {
+    position: absolute;
+    top: var(--hj-space-4);
+    right: var(--hj-space-4);
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg) 26%, transparent);
+    transition: box-shadow var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-choice-card-item[data-checked] .hj-choice-card-ring {
+    box-shadow: inset 0 0 0 2px var(--hj-accent);
+  }
+  .hj-choice-card-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--hj-accent);
+    transform: scale(0);
+    transition: transform var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-choice-card-dot[data-checked] {
+    transform: scale(1);
+    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+
+  .hj-choice-card-title {
+    display: block;
+    font: var(--hj-type-heading);
+    letter-spacing: var(--hj-tracking-heading);
+  }
+  .hj-choice-card-description {
+    display: block;
+    font: var(--hj-type-sub);
+    color: var(--hj-fg-dim);
+  }
+  .hj-choice-card-consequence {
+    display: block;
+    margin-top: auto;
+    padding-top: var(--hj-space-3);
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg-mute);
+  }
+  .hj-choice-card-item[data-checked] .hj-choice-card-consequence {
+    color: var(--hj-accent);
+  }
+}

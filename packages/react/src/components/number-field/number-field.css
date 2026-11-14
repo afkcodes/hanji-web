@@ -1,0 +1,149 @@
+@layer hj.components {
+  /* Customise: --hj-number-field-height · --hj-number-field-value-width */
+  .hj-number-field {
+    --_h: var(--hj-number-field-height, 44px);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: flex-start;
+    gap: 6px;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-number-field[data-size='sm'] {
+    --_h: var(--hj-number-field-height, 36px);
+  }
+
+  /* − value + in one pill: surface, hairline, the accent ring when focused within */
+  .hj-number-field-group {
+    display: inline-flex;
+    align-items: center;
+    height: var(--_h);
+    padding: 0 2px;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    transition: box-shadow var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-number-field-group:has(input:focus-visible) {
+    box-shadow: inset 0 0 0 1.5px var(--hj-accent);
+  }
+  .hj-number-field[data-invalid] .hj-number-field-group {
+    box-shadow: inset 0 0 0 1.5px var(--hj-danger);
+  }
+  .hj-number-field[data-disabled] .hj-number-field-group {
+    opacity: 0.4;
+  }
+
+  .hj-number-field-step {
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: calc(var(--_h) - 4px);
+    height: calc(var(--_h) - 4px);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--hj-fg);
+    font-size: 18px;
+    line-height: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-number-field-step > svg {
+    width: 18px;
+    height: 18px;
+  }
+  .hj-number-field-step:hover:not([data-disabled]) {
+    background: color-mix(in srgb, var(--hj-fg) 7%, transparent);
+  }
+  /* press dips; holding keeps it down while Base UI repeats and accelerates */
+  .hj-number-field-step:active:not([data-disabled]) {
+    transform: scale(0.9);
+    transition-duration: var(--hj-dur-fast), var(--hj-dur-fast), 70ms;
+  }
+  /* at min / max the end button goes quiet */
+  .hj-number-field-step[data-disabled] {
+    color: var(--hj-fg-mute);
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .hj-number-field-value {
+    position: relative;
+    display: inline-grid;
+    min-width: var(--hj-number-field-value-width, 3.2ch);
+    height: 100%;
+  }
+  .hj-number-field-input {
+    width: 100%;
+    min-width: var(--hj-number-field-value-width, 3.2ch);
+    height: 100%;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    color: var(--hj-fg);
+    font: 600 17px / 1 var(--hj-font-sans);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    outline: none;
+    caret-color: var(--hj-accent);
+    field-sizing: content;
+  }
+  .hj-number-field-value > .hj-number-field-input {
+    grid-area: 1 / 1;
+  }
+  .hj-number-field[data-size='sm'] .hj-number-field-input {
+    font-size: 15px;
+  }
+  /* While not typing, the rolling copy shows and the input's own text hides under it. */
+  .hj-number-field-value:not([data-typing]) > .hj-number-field-input {
+    color: transparent;
+  }
+  .hj-number-field-value:not([data-typing]) > .hj-number-field-input::selection {
+    color: var(--hj-fg);
+  }
+  .hj-number-field-roll {
+    grid-area: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--hj-fg);
+    font: 600 17px / 1 var(--hj-font-sans);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
+    pointer-events: none;
+  }
+  .hj-number-field[data-size='sm'] .hj-number-field-roll {
+    font-size: 15px;
+  }
+  .hj-number-field-value[data-typing] > .hj-number-field-roll {
+    visibility: hidden;
+  }
+
+  .hj-number-field-unit {
+    margin-inline: -2px 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-number-field-scrub {
+    cursor: ew-resize;
+    user-select: none;
+  }
+  .hj-number-field-scrub-cursor {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--hj-accent);
+  }
+}

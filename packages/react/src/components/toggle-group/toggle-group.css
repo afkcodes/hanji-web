@@ -1,0 +1,22 @@
+@layer hj.components {
+  /* Customise: --hj-toggle-group-pad · --hj-toggle-group-gap */
+  .hj-toggle-group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--hj-toggle-group-gap, 2px);
+    padding: var(--hj-toggle-group-pad, 4px);
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+  }
+  .hj-toggle-group[data-size='sm'] {
+    padding: var(--hj-toggle-group-pad, 3px);
+  }
+  .hj-toggle-group[data-orientation='vertical'] {
+    flex-direction: column;
+    border-radius: var(--hj-radius-lg);
+  }
+  .hj-toggle-group[data-disabled] {
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,36 @@
+@layer hj.components {
+  /* Customise: --hj-counter-color */
+  .hj-counter {
+    display: inline-flex;
+    align-items: baseline;
+    color: var(--hj-counter-color, inherit);
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
+  }
+  .hj-counter-roll {
+    display: inline-flex;
+    /* clip the travelling glyphs to the line */
+    overflow: hidden;
+    padding-block: 0.08em;
+    margin-block: -0.08em;
+  }
+  .hj-counter[data-size='hero'] {
+    font: var(--hj-type-hero);
+    letter-spacing: var(--hj-tracking-hero);
+  }
+  .hj-counter[data-size='display'] {
+    font: var(--hj-type-display);
+    letter-spacing: var(--hj-tracking-display);
+  }
+  .hj-counter[data-size='title'] {
+    font: var(--hj-type-title);
+    letter-spacing: var(--hj-tracking-title);
+  }
+  .hj-counter[data-size='body'] {
+    font: var(--hj-type-body);
+    letter-spacing: var(--hj-tracking-body);
+  }
+  .hj-counter:not([data-size='inherit']) {
+    font-variant-numeric: tabular-nums;
+  }
+}

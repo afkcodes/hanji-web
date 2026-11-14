@@ -1,0 +1,48 @@
+@layer hj.components {
+  /* Customise: --hj-checkbox-group-gap · --hj-checkbox-group-indent */
+  .hj-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hj-checkbox-group-gap, 2px);
+    font-family: var(--hj-font-sans);
+  }
+  .hj-checkbox-group[data-orientation='horizontal'] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--hj-checkbox-group-gap, var(--hj-space-2) var(--hj-space-6));
+  }
+  .hj-checkbox-group[data-disabled] {
+    color: var(--hj-fg-mute);
+  }
+  .hj-checkbox-group-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: var(--hj-touch);
+    font: var(--hj-type-body);
+    letter-spacing: var(--hj-tracking-body);
+    color: var(--hj-fg);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hj-checkbox-group-item:has([data-disabled]) {
+    color: var(--hj-fg-mute);
+    cursor: not-allowed;
+  }
+  .hj-checkbox-group-description {
+    margin-left: auto;
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg-mute);
+  }
+  .hj-checkbox-group-children {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hj-checkbox-group-gap, 2px);
+    /* a hairline guide from the parent's box; children line up with the parent's text */
+    margin-inline-start: 10.5px;
+    padding-inline-start: calc(var(--hj-checkbox-group-indent, 34px) - 11px);
+    border-inline-start: 1px solid var(--hj-line);
+  }
+}

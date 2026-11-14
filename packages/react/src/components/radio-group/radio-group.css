@@ -1,0 +1,98 @@
+@layer hj.components {
+  /* Customise: --hj-radio-size · --hj-radio-group-gap */
+  .hj-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hj-radio-group-gap, 2px);
+    font-family: var(--hj-font-sans);
+  }
+  .hj-radio-group[data-orientation='horizontal'] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--hj-radio-group-gap, var(--hj-space-2) var(--hj-space-6));
+  }
+  .hj-radio-group-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: var(--hj-touch);
+    padding-block: 11px;
+    font: var(--hj-type-body);
+    letter-spacing: var(--hj-tracking-body);
+    color: var(--hj-fg);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hj-radio-group-item:has([data-disabled]) {
+    color: var(--hj-fg-mute);
+    cursor: not-allowed;
+  }
+  .hj-radio-group-description {
+    display: block;
+    margin-top: 2px;
+    font: var(--hj-type-sub);
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-radio-group-radio {
+    --_s: var(--hj-radio-size, 22px);
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: var(--_s);
+    height: var(--_s);
+    margin-top: -1px;
+    border-radius: 50%;
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg) 26%, transparent);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      box-shadow var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-radio-group-radio::before {
+    content: '';
+    position: absolute;
+    inset: calc((var(--_s) - var(--hj-touch)) / 2);
+    border-radius: 50%;
+  }
+  .hj-radio-group-radio[data-size='sm'] {
+    --_s: var(--hj-radio-size, 18px);
+  }
+  .hj-radio-group-radio:hover:not([data-disabled]):not([data-checked]) {
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg) 44%, transparent);
+  }
+  .hj-radio-group-radio:active:not([data-disabled]) {
+    transform: scale(0.92);
+    transition-duration: var(--hj-dur-fast), 70ms;
+  }
+  /* hanji: a 2px accent ring around a dot half the diameter */
+  .hj-radio-group-radio[data-checked] {
+    box-shadow: inset 0 0 0 2px var(--hj-accent);
+  }
+  .hj-radio-group-radio[data-invalid]:not([data-checked]) {
+    box-shadow: inset 0 0 0 1.5px var(--hj-danger);
+  }
+  .hj-radio-group-radio[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .hj-radio-group-indicator {
+    display: block;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background: var(--hj-accent);
+    transform: scale(0);
+    /* leaving: fast */
+    transition: transform var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /* The dot springs in — snappy, unclamped: a 4% overshoot reads as the press landing. */
+  .hj-radio-group-indicator[data-checked] {
+    transform: scale(1);
+    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+}

@@ -1,0 +1,105 @@
+@layer hj.components {
+  /* Customise: --hj-rating-star · --hj-rating-color */
+  .hj-rating {
+    --_s: var(--hj-rating-star, 28px);
+    display: inline-flex;
+    gap: 2px;
+  }
+  .hj-rating[data-size='sm'] {
+    --_s: var(--hj-rating-star, 20px);
+  }
+  .hj-rating[data-size='lg'] {
+    --_s: var(--hj-rating-star, 36px);
+  }
+  .hj-rating[data-disabled] {
+    opacity: 0.4;
+  }
+
+  .hj-rating-star {
+    position: relative;
+    display: grid;
+    place-items: center;
+    /* 44px hit area for md and up; the drawing is the star */
+    width: max(var(--_s), 32px);
+    height: max(var(--_s), var(--hj-touch));
+    color: color-mix(in srgb, var(--hj-fg) 16%, transparent);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-rating[data-readonly] .hj-rating-star,
+  .hj-rating[data-disabled] .hj-rating-star {
+    cursor: default;
+  }
+  /* Committing: the stars fill one after another, 24 ms apart. Previewing on hover: at once. */
+  .hj-rating:not([data-preview]) .hj-rating-star[data-lit] {
+    transition-delay: calc(var(--hj-i, 0) * var(--hj-stagger));
+  }
+  .hj-rating-star[data-lit] {
+    color: var(--hj-rating-color, var(--hj-accent));
+  }
+  .hj-rating[data-preview] .hj-rating-star[data-lit] {
+    color: color-mix(in srgb, var(--hj-rating-color, var(--hj-accent)) 70%, transparent);
+  }
+  .hj-rating-star:focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: -2px;
+    border-radius: var(--hj-radius-xs);
+  }
+
+  .hj-rating-glyph {
+    width: var(--_s);
+    height: var(--_s);
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 1;
+    stroke-linejoin: round;
+    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-rating-star:active .hj-rating-glyph {
+    transform: scale(0.88);
+    transition-duration: 70ms;
+  }
+  /* The one celebration here: the chosen star lands on bouncy. */
+  .hj-rating-star[data-checked] .hj-rating-glyph {
+    animation: hj-rating-pop var(--hj-dur-bouncy) var(--hj-ease-bouncy);
+  }
+  @keyframes hj-rating-pop {
+    from {
+      transform: scale(0.72);
+    }
+  }
+
+  .hj-rating-display {
+    --_s: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-rating-display[data-size='sm'] {
+    --_s: 14px;
+  }
+  .hj-rating-display-stars {
+    display: block;
+    height: var(--_s);
+    width: auto;
+    overflow: visible;
+  }
+  .hj-rating-display-on {
+    stop-color: var(--hj-rating-color, var(--hj-accent));
+  }
+  .hj-rating-display-off {
+    stop-color: color-mix(in srgb, var(--hj-fg) 16%, transparent);
+  }
+  .hj-rating-display-text {
+    font-size: 12.5px;
+    line-height: 17px;
+    color: var(--hj-fg-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-rating-display-text b {
+    font-weight: 600;
+    color: var(--hj-fg);
+  }
+}

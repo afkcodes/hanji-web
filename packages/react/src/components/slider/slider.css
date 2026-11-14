@@ -1,0 +1,187 @@
+@layer hj.components {
+  /* Customise: --hj-slider-track · --hj-slider-thumb · --hj-slider-length (vertical) */
+  .hj-slider {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: 12px;
+    width: 100%;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-slider[data-orientation='vertical'] {
+    display: inline-flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+  }
+  .hj-slider[data-disabled] {
+    opacity: 0.4;
+  }
+  .hj-slider-label {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--hj-fg);
+  }
+  .hj-slider-value {
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg-dim);
+    text-align: end;
+  }
+
+  .hj-slider-control {
+    grid-column: 1 / -1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: var(--hj-touch);
+    touch-action: none;
+    user-select: none;
+    cursor: pointer;
+  }
+  .hj-slider-control[data-orientation='vertical'] {
+    width: var(--hj-touch);
+    height: var(--hj-slider-length, 168px);
+    justify-content: center;
+  }
+  .hj-slider-control[data-disabled] {
+    cursor: not-allowed;
+  }
+
+  /* hanji: 4px track at accent 24%, fill at full accent. */
+  .hj-slider-track {
+    position: relative;
+    width: 100%;
+    height: var(--hj-slider-track, 4px);
+    border-radius: var(--hj-radius-pill);
+    background: color-mix(in srgb, var(--hj-accent) 24%, transparent);
+  }
+  .hj-slider-track[data-orientation='vertical'] {
+    width: var(--hj-slider-track, 4px);
+    height: 100%;
+  }
+  .hj-slider-indicator {
+    border-radius: inherit;
+    background: var(--hj-accent);
+  }
+  /* pending-hold: committed here, not yet agreed there */
+  .hj-slider[data-pending] .hj-slider-indicator {
+    opacity: 0.55;
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-slider[data-pending] .hj-slider-thumb::after {
+    background: var(--hj-bg);
+    box-shadow: inset 0 0 0 2px var(--hj-accent);
+  }
+  .hj-slider[data-disabled] .hj-slider-indicator {
+    background: var(--hj-fg-mute);
+  }
+
+  /* The 24px box is the hit area; the 12px dot is drawn by ::after. */
+  .hj-slider-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    outline: none;
+    cursor: grab;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hj-slider-thumb[data-dragging] {
+    cursor: grabbing;
+  }
+  .hj-slider-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: var(--hj-slider-thumb, 12px);
+    height: var(--hj-slider-thumb, 12px);
+    border-radius: 50%;
+    background: var(--hj-accent);
+    transition:
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy),
+      box-shadow var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-slider[data-disabled] .hj-slider-thumb::after {
+    background: var(--hj-fg-mute);
+  }
+  /* Only the thumb being dragged grows — the focused one, in a range. */
+  .hj-slider-thumb:hover::after {
+    transform: scale(1.25);
+  }
+  .hj-slider-thumb[data-dragging]:has(:focus)::after,
+  .hj-slider-thumb:active::after {
+    transform: scale(1.6);
+  }
+  .hj-slider-thumb:has(:focus-visible)::after {
+    box-shadow:
+      0 0 0 3px var(--hj-bg),
+      0 0 0 5px var(--hj-focus);
+  }
+
+  .hj-slider-bubble {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 4px);
+    padding: 4px 8px;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-fg);
+    color: var(--hj-bg);
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-50%) translateY(calc(4px * var(--hj-travel))) scale(0.9);
+    transform-origin: 50% 100%;
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-slider-thumb[data-dragging]:has(:focus) .hj-slider-bubble,
+  .hj-slider-thumb:active .hj-slider-bubble,
+  .hj-slider-thumb:has(:focus-visible) .hj-slider-bubble {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+  }
+  .hj-slider-thumb[data-orientation='vertical'] .hj-slider-bubble {
+    left: calc(100% + 6px);
+    bottom: auto;
+    top: 50%;
+    transform: translateY(-50%) translateX(calc(-4px * var(--hj-travel))) scale(0.9);
+    transform-origin: 0 50%;
+  }
+  .hj-slider-thumb[data-orientation='vertical'][data-dragging]:has(:focus) .hj-slider-bubble,
+  .hj-slider-thumb[data-orientation='vertical']:active .hj-slider-bubble,
+  .hj-slider-thumb[data-orientation='vertical']:has(:focus-visible) .hj-slider-bubble {
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+
+  .hj-slider-marks {
+    grid-column: 1 / -1;
+    height: 24px;
+    margin-top: -12px;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .hj-slider-marks-svg {
+    display: block;
+    overflow: visible;
+  }
+  .hj-slider-mark {
+    stroke: color-mix(in srgb, var(--hj-fg) 22%, transparent);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .hj-slider-mark-label {
+    fill: var(--hj-fg-mute);
+    font: 500 11px var(--hj-font-mono);
+  }
+}

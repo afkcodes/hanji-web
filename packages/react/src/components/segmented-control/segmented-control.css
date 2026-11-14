@@ -1,0 +1,97 @@
+@layer hj.components {
+  /* Customise: --hj-segmented-control-height · --hj-segmented-control-pad */
+  .hj-segmented-control {
+    --_h: var(--hj-segmented-control-height, 40px);
+    --_pad: var(--hj-segmented-control-pad, 4px);
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: stretch;
+    height: var(--_h);
+    padding: var(--_pad);
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    font-family: var(--hj-font-sans);
+    user-select: none;
+  }
+  .hj-segmented-control[data-size='sm'] {
+    --_h: var(--hj-segmented-control-height, 32px);
+    --_pad: var(--hj-segmented-control-pad, 3px);
+  }
+  .hj-segmented-control[data-block] {
+    display: flex;
+    width: 100%;
+  }
+  .hj-segmented-control[data-block] > .hj-segmented-control-item {
+    flex: 1;
+  }
+  .hj-segmented-control[data-disabled] {
+    opacity: 0.6;
+  }
+
+  .hj-segmented-control-indicator {
+    position: absolute;
+    z-index: -1;
+    top: var(--_pad);
+    bottom: var(--_pad);
+    left: 0;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-accent-soft);
+    opacity: 0;
+    transform-origin: center;
+    pointer-events: none;
+  }
+  /* Only after the first placement: the pill never slides in from nowhere on mount. */
+  .hj-segmented-control[data-ready] > .hj-segmented-control-indicator {
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      background-color var(--hj-dur-base) var(--hj-ease-out);
+  }
+
+  .hj-segmented-control-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 14px;
+    border-radius: var(--hj-radius-pill);
+    color: var(--hj-fg-dim);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-segmented-control[data-size='sm'] > .hj-segmented-control-item {
+    padding: 0 11px;
+    font-size: 12px;
+  }
+  .hj-segmented-control-item:hover:not([data-disabled]) {
+    color: var(--hj-fg);
+  }
+  .hj-segmented-control-item[data-checked] {
+    color: var(--hj-accent);
+  }
+  .hj-segmented-control-item:active:not([data-disabled]) {
+    transform: scale(var(--hj-press));
+    transition-duration: var(--hj-dur-fast), 70ms;
+  }
+  .hj-segmented-control-item[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-segmented-control-item:focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: -2px;
+  }
+  .hj-segmented-control-item .hj-icon {
+    font-size: 17px;
+  }
+}
