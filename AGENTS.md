@@ -10,7 +10,7 @@ agent-readability are features, not extras.
 packages/tokens   @hanji/tokens  colour maths, papers, accents, springs → CSS linear(), createTheme(), JSON Schema
 packages/react    @hanji/react   components (src/components/<slug>/), system (src/system/), styles
 packages/mcp      @hanji/mcp     MCP server over the generated manifest
-packages/icons    @hanji/icons   1,500+ icons in five styles, reshaped from Solar (CC BY 4.0) by scripts/generate.ts
+packages/icons    @hanji/icons   1,500+ icons (outline · solid · wash + motion), reshaped from Solar (CC BY 4.0) by scripts/generate.ts
 packages/tailwind @hanji/tailwind  optional Tailwind v4 preset mapping tokens
 apps/playground   Vite app; auto-discovers every component's meta + examples (http://localhost:4420/#/<slug>)
 ```
@@ -44,7 +44,7 @@ need something there, put a local helper in your folder and say so.
 - **A hanji-only layout part:** `elementPart('div', 'Dialog.Actions', 'hj-dialog-actions')` (supports `render`).
 - **Custom non-Base element with state:** use `useRender` from `@base-ui/react/use-render` so `render` works everywhere.
 - **Portals:** wrap Base UI `Portal` children in `<ThemeScope>` (see `dialog.tsx` `Portal`) so popups keep the surrounding `<Theme>`.
-- **Icons:** `config.icons.<name>` (adapter, overridable; `@hanji/icons/adapter` swaps in the full set). Need a glyph that isn't there? Inline a small 24-grid 1.5-stroke SVG in your component and note it — `@hanji/react` stays free of an icons dependency. Apps and examples use `@hanji/icons` (`IconX`, `variant="outline" | "solid" | "wash" | "duotone" | "duotone-solid"`).
+- **Icons:** `config.icons.<name>` (adapter, overridable; `@hanji/icons/adapter` swaps in the full set). Need a glyph that isn't there? Inline a small 24-grid 1.5-stroke SVG in your component and note it — `@hanji/react` stays free of an icons dependency. Apps and examples use `@hanji/icons` (`IconX`, `variant="outline" | "solid" | "wash"`, `active` for toggles, `animate` + `trigger` for motion).
 - **Icon set:** `packages/icons/src/icons/**`, `index.ts`, `names.ts`, `loaders.ts` and `catalog.ts` are generated — never edit them. Change `scripts/corners.ts` (hanji's geometry: fillets, rounder corners), `scripts/hanji.ts` (aliases, search words, glyphs drawn for hanji) or `scripts/generate.ts`, then run `node packages/icons/scripts/generate.ts`. Keep the Solar credit (CC BY 4.0) in LICENSE, README and docs.
 - **Strings:** `config.strings.*` for anything a component renders itself — close, clear, remove, skip, done, back, next, previous, pagination, opensInNewTab, and templates `countOf(n,total)`, `stepOf`, `allStepsDone`, `characterOf`, `ratedOutOf`. Add a key to `HanjiStrings` rather than hard-coding English.
 - **Convenience parts are welcome** when they remove boilerplate (`Dialog.Content` = Portal + Backdrop + Popup; `Switch.Root` renders its Thumb when childless) — but every underlying part stays exported.
