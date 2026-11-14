@@ -2,7 +2,7 @@ import { contrastOn, isHex } from './color.ts';
 import { THEME_ATTRS, springVars } from './css.ts';
 import type { springNames } from './motion.ts';
 import { accentNames, paperNames } from './palette.ts';
-import { DENSITY_MAX, DENSITY_MIN, radius as radiusScale } from './scale.ts';
+import { DENSITY_MAX, DENSITY_MIN, cornerShapeFor, radius as radiusScale } from './scale.ts';
 
 /** A colour: one hex for every paper, or a {light, dark} pair. */
 export type ThemeColor = string | { light: string; dark: string };
@@ -30,6 +30,8 @@ export interface ThemeInput {
   motion?: 'system' | 'full' | 'reduced';
   /** sharp = .5×, soft = 1× (hanji), round = 1.4×, or a number 0–2. Pills stay pills. */
   radius?: 'sharp' | 'soft' | 'round' | number;
+  /** Corner smoothing 0–1: 0 = circular, .72 = hanji's squircle (default), 1 = most continuous. */
+  smoothing?: number;
   fonts?: { sans?: string; mono?: string };
   colors?: Partial<Record<'danger' | 'success' | 'warning' | 'info' | 'seal', ThemeColor>>;
   springs?: Partial<Record<(typeof springNames)[number], ThemeSpring>>;
@@ -41,6 +43,8 @@ export interface ThemeAttributes {
   'data-hj-accent'?: string;
   'data-hj-density'?: string;
   'data-hj-motion'?: string;
+  'data-hj-radius'?: string;
+  'data-hj-smoothing'?: string;
 }
 
 /** A resolved theme: attributes plus the few CSS variables presets can’t express. */
@@ -89,9 +93,15 @@ export function createTheme(input: ThemeInput = {}): HanjiTheme {
 
   if (t.radius !== undefined) {
     const f = typeof t.radius === 'number' ? t.radius : RADIUS_FACTOR[t.radius];
+    attributes[THEME_ATTRS.radius] = 'custom';
     for (const [k, px] of Object.entries(radiusScale)) {
-      if (k !== 'pill') vars[`--hj-radius-${k}`] = `${Math.round(px * f * 10) / 10}px`;
+      if (k !== 'pill') vars[`--hj-r-${k}`] = `${Math.round(px * f * 10) / 10}px`;
     }
+  }
+  if (t.smoothing !== undefined) {
+    attributes[THEME_ATTRS.smoothing] = 'custom';
+    vars['--hj-smoothing'] = String(Math.max(0, Math.min(1, t.smoothing)));
+    vars['--hj-corner-shape'] = cornerShapeFor(t.smoothing);
   }
   if (t.fonts?.sans) vars['--hj-font-sans'] = t.fonts.sans;
   if (t.fonts?.mono) vars['--hj-font-mono'] = t.fonts.mono;
@@ -144,6 +154,8 @@ function checkTheme(t: ThemeInput): ThemeInput {
     fail(`accent must be one of ${accentNames.join(', ')} or {light, dark} — got "${t.accent}"`);
   if (t.accent && typeof t.accent === 'object' && !isRamp(t.accent))
     fail('accent {light, dark} needs two hex colours');
+  if (t.smoothing !== undefined && !(t.smoothing >= 0 && t.smoothing <= 1))
+    fail(`smoothing must be between 0 and 1 — got ${t.smoothing}`);
   if (typeof t.density === 'number' && (t.density < DENSITY_MIN || t.density > DENSITY_MAX))
     fail(`density must be between ${DENSITY_MIN} and ${DENSITY_MAX} — got ${t.density}`);
   if (t.colors)

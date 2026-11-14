@@ -94,6 +94,7 @@
     max-width: var(--hj-message-bubble-max, min(80%, 560px));
     padding: calc(10px * var(--hj-density)) calc(16px * var(--hj-density));
     border-radius: var(--hj-radius-lg) var(--hj-radius-lg) var(--hj-radius-xs) var(--hj-radius-lg);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-message-bubble-bg, var(--hj-surface));
     box-shadow: inset 0 0 0 1px var(--hj-line);
   }
@@ -140,6 +141,7 @@
     gap: calc(6px * var(--hj-density)) calc(10px * var(--hj-density));
     padding: calc(10px * var(--hj-density)) calc(12px * var(--hj-density));
     border-radius: var(--hj-radius-sm);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-danger-soft);
     color: var(--hj-danger);
     font-size: 13.5px;

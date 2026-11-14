@@ -89,6 +89,7 @@
   .hj-tabs-tab:focus-visible {
     outline-offset: -2px;
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-tabs-tab .hj-icon {
     font-size: 18px;
@@ -178,6 +179,7 @@
     outline: 2px solid var(--hj-focus);
     outline-offset: 4px;
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
   }
   @keyframes hj-tabs-panel-in {
     from {

@@ -80,6 +80,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    corner-shape: inherit;
     box-shadow: 0 0 0 1.5px var(--hj-accent);
     opacity: 0;
     animation: hj-timeline-pulse 1600ms var(--hj-ease-out) infinite;

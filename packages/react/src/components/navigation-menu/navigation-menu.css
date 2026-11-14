@@ -112,6 +112,7 @@
     height: var(--popup-height);
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-navigation-menu-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     box-shadow: var(--hj-shadow-lift);
     color: var(--hj-fg);
@@ -139,6 +140,7 @@
     height: 100%;
     overflow: hidden;
     border-radius: inherit;
+    corner-shape: inherit;
   }
 
   .hj-navigation-menu-content {
@@ -171,6 +173,7 @@
     display: block;
     padding: calc(10px * var(--hj-density)) calc(12px * var(--hj-density));
     border-radius: var(--hj-radius-sm);
+    corner-shape: var(--hj-corner-shape, round);
     color: var(--hj-fg);
     text-decoration: none;
     outline-offset: -2px;

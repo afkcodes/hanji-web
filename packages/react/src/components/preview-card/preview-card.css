@@ -26,6 +26,7 @@
     width: min(var(--hj-preview-card-width, 300px), var(--available-width, 100vw));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-preview-card-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     box-shadow: var(--hj-shadow-lift);
     color: var(--hj-fg);
@@ -51,6 +52,7 @@
     position: relative;
     overflow: clip;
     border-radius: inherit;
+    corner-shape: inherit;
   }
 
   .hj-preview-card-media {
@@ -58,6 +60,7 @@
     overflow: hidden;
     border-radius: calc(var(--hj-preview-card-radius, var(--hj-radius-md)) - 1px)
       calc(var(--hj-preview-card-radius, var(--hj-radius-md)) - 1px) 0 0;
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface);
   }
   .hj-preview-card-media > img {

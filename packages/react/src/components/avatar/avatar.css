@@ -54,6 +54,7 @@
     width: 100%;
     height: 100%;
     border-radius: inherit;
+    corner-shape: inherit;
     object-fit: cover;
     transition: opacity var(--hj-dur-base) var(--hj-ease-out);
   }
@@ -67,6 +68,7 @@
     width: 100%;
     height: 100%;
     border-radius: inherit;
+    corner-shape: inherit;
   }
 
   /* Presence: a dot on a paper ring, bottom-right. Never colour alone — the word is in the DOM. */

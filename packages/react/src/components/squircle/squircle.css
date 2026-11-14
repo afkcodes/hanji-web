@@ -1,0 +1,17 @@
+@layer hj.components {
+  /*
+   * A continuous-corner surface. --hj-squircle-radius / -shape / -span come from props.
+   * Where corner-shape exists the radius grows by (1 + smoothing) — the figma curve starts that
+   * far along each edge — and the superellipse is fitted to it. Elsewhere: circular, or the exact
+   * clip-path when the component measures itself.
+   */
+  .hj-squircle {
+    border-radius: var(--hj-squircle-radius, var(--hj-r-md));
+    corner-shape: var(--hj-squircle-shape, var(--hj-corner-shape, round));
+  }
+  @supports (corner-shape: superellipse(2)) {
+    .hj-squircle:not([data-clipped]) {
+      border-radius: calc(var(--hj-squircle-radius, var(--hj-r-md)) * var(--hj-squircle-span, 1));
+    }
+  }
+}

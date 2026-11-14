@@ -38,6 +38,7 @@
     height: var(--_height);
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-md);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     color: var(--hj-fg);
     font-family: var(--hj-font-sans);

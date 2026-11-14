@@ -63,6 +63,14 @@ const schema = z
         'Corner scale. sharp = .5×, soft = 1× (hanji), round = 1.4×, or a number. Pills stay pills.',
       )
       .optional(),
+    smoothing: z
+      .number()
+      .min(0)
+      .max(1)
+      .describe(
+        "Corner smoothing: 0 = circular corners, .72 = hanji's squircle (default), 1 = most continuous. Drawn with CSS corner-shape where supported.",
+      )
+      .optional(),
     fonts: z
       .object({
         sans: z.string().describe('CSS font-family stack for every role except mono.'),

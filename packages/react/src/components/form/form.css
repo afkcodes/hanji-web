@@ -30,6 +30,7 @@
   .hj-form-error-summary {
     padding: calc(16px * var(--hj-density)) calc(18px * var(--hj-density));
     border-radius: var(--hj-radius-md);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-danger-soft);
     box-shadow: inset 3px 0 0 var(--hj-danger);
     color: var(--hj-fg);

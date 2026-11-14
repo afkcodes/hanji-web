@@ -41,6 +41,7 @@
   }
   .hj-collapsible-trigger:focus-visible {
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-collapsible-chevron {
     display: inline-flex;

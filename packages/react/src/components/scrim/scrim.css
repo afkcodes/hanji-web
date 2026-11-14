@@ -6,6 +6,7 @@
     overflow: hidden;
     isolation: isolate;
     border-radius: var(--hj-scrim-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-scrim > img,
   .hj-scrim > picture,

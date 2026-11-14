@@ -33,6 +33,7 @@
     padding: calc(24px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-lg);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     color: var(--hj-fg);
     font-family: var(--hj-font-sans);

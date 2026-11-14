@@ -146,6 +146,7 @@
     max-width: var(--available-width);
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-md);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     background-clip: padding-box;
     box-shadow: var(--hj-shadow-lift);
@@ -185,6 +186,7 @@
     padding: calc(6px * var(--hj-density)) calc(8px * var(--hj-density))
       calc(6px * var(--hj-density)) calc(12px * var(--hj-density));
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
     font-size: 15px;
     line-height: 1.3;
     color: var(--hj-fg);

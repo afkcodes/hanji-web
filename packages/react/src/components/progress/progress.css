@@ -47,6 +47,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    corner-shape: inherit;
     background: var(--_tone);
     transform-origin: left center;
     transform: scaleX(var(--hj-progress-fraction, 0));

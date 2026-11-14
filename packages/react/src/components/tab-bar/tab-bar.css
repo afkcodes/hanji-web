@@ -45,6 +45,7 @@
   .hj-tab-bar-item:focus-visible {
     outline-offset: -4px;
     border-radius: var(--hj-radius-sm);
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-tab-bar-item:disabled,
   .hj-tab-bar-item[aria-disabled='true'] {

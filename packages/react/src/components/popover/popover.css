@@ -22,6 +22,7 @@
     padding: var(--hj-popover-padding, calc(16px * var(--hj-density)));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-popover-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     box-shadow: var(--hj-shadow-lift);
     color: var(--hj-fg);

@@ -45,6 +45,7 @@
     outline: 2px solid var(--hj-focus);
     outline-offset: -2px;
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
   }
 
   .hj-rating-glyph {

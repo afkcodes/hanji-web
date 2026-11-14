@@ -37,6 +37,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    corner-shape: inherit;
     background: var(--hj-accent);
     transform: scaleX(0);
     transform-origin: left center;

@@ -15,6 +15,7 @@
   .hj-toggle-group[data-orientation='vertical'] {
     flex-direction: column;
     border-radius: var(--hj-radius-lg);
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-toggle-group[data-disabled] {
     opacity: 0.6;

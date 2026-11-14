@@ -123,6 +123,7 @@
     padding: 0 calc(6px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
     background: transparent;
     color: inherit;
     font: inherit;

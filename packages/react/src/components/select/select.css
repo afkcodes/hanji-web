@@ -25,6 +25,7 @@
     padding: 0 calc(12px * var(--hj-density)) 0 calc(14px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-select-radius, var(--hj-radius-sm));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface);
     box-shadow: inset 0 0 0 1px var(--_ring);
     color: var(--hj-fg);
@@ -110,6 +111,7 @@
     max-width: var(--available-width);
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-select-popup-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     background-clip: padding-box;
     box-shadow: var(--hj-shadow-lift);
@@ -158,6 +160,7 @@
     padding: calc(6px * var(--hj-density)) calc(14px * var(--hj-density))
       calc(6px * var(--hj-density)) calc(10px * var(--hj-density));
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
     font-size: 14.5px;
     font-weight: 500;
     line-height: 1.3;
@@ -243,10 +246,12 @@
   .hj-select-scroll-arrow[data-direction='up'] {
     top: 0;
     border-radius: var(--hj-radius-md) var(--hj-radius-md) 0 0;
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-select-scroll-arrow[data-direction='down'] {
     bottom: 0;
     border-radius: 0 0 var(--hj-radius-md) var(--hj-radius-md);
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-select-scroll-arrow::before {
     content: '';

@@ -43,6 +43,7 @@
     padding: calc(14px * var(--hj-density)) calc(16px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-md);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     box-shadow: var(--hj-shadow-lift);
     color: var(--hj-fg);
@@ -118,6 +119,7 @@
     gap: calc(8px * var(--hj-density));
     padding: calc(6px * var(--hj-density)) calc(8px * var(--hj-density));
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
     color: var(--hj-fg);
     text-decoration: none;
     font-size: 13px;

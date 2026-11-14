@@ -23,6 +23,21 @@ export const radius: Readonly<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'pill', 
   pill: 999,
 };
 
+/** hanji squircle smoothing (@hanji/core smoothing.squircle). 0 = circular corners. */
+export const SMOOTHING = 0.72;
+
+/**
+ * CSS `corner-shape` that reproduces the figma squircle (hanji's native corner) for a smoothing.
+ * Pair it with border-radius × (1 + smoothing): the figma curve starts that far along each edge.
+ * The exponent makes the 45° point of the superellipse land where the native curve's does.
+ */
+export function cornerShapeFor(smoothing: number): string {
+  if (smoothing <= 0) return 'round';
+  const s = Math.min(1, smoothing);
+  const n = -1 / Math.log2(1 - (1 - Math.SQRT1_2) / (1 + s));
+  return `superellipse(${Math.round(Math.log2(n) * 1000) / 1000})`;
+}
+
 /** Density is a token transform: spacing × factor. Hairlines and touch targets are floors. */
 export const densities: Readonly<Record<'cozy' | 'compact', number>> = { cozy: 1, compact: 0.7 };
 export const DENSITY_MIN = 0.6;

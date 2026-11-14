@@ -48,6 +48,7 @@
   .hj-accordion-trigger:focus-visible {
     outline-offset: -2px;
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
   }
   .hj-accordion-label {
     min-width: 0;

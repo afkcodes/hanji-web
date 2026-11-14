@@ -4,6 +4,7 @@
     margin: 0;
     overflow: hidden;
     border-radius: var(--hj-radius-md);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-code-block-bg, var(--hj-surface));
     box-shadow: inset 0 0 0 1px var(--hj-line);
     color: var(--hj-fg);

@@ -65,6 +65,7 @@
   }
   .hj-slider-indicator {
     border-radius: inherit;
+    corner-shape: inherit;
     background: var(--hj-accent);
   }
   /* pending-hold: committed here, not yet agreed there */

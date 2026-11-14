@@ -7,6 +7,7 @@
     min-width: 0;
     overflow: hidden;
     border-radius: var(--hj-card-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface);
     box-shadow: inset 0 0 0 1px var(--hj-line);
     color: var(--hj-fg);
@@ -58,6 +59,7 @@
     margin: calc(8px * var(--hj-density)) 0 calc(8px * var(--hj-density))
       calc(8px * var(--hj-density));
     border-radius: calc(var(--hj-card-radius, var(--hj-radius-md)) - 6px);
+    corner-shape: var(--hj-corner-shape, round);
   }
 
   .hj-card-body {

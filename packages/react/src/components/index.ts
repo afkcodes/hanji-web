@@ -60,6 +60,7 @@ export * from './sheet/index.ts';
 export * from './skeleton/index.ts';
 export * from './slider/index.ts';
 export * from './spinner/index.ts';
+export * from './squircle/index.ts';
 export * from './stat/index.ts';
 export * from './status/index.ts';
 export * from './steps/index.ts';

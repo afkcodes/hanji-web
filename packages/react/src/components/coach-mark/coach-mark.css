@@ -18,6 +18,7 @@
   .hj-coach-mark-spotlight {
     position: fixed;
     border-radius: var(--hj-coach-mark-radius, var(--hj-radius-sm));
+    corner-shape: var(--hj-corner-shape, round);
     box-shadow:
       0 0 0 2px var(--hj-accent),
       0 0 0 100vmax
@@ -35,6 +36,7 @@
     position: absolute;
     inset: -2px;
     border-radius: inherit;
+    corner-shape: inherit;
     box-shadow: 0 0 0 2px var(--hj-accent);
     opacity: 0;
     animation: hj-coach-mark-beacon 1400ms var(--hj-ease-out) 400ms 2;
@@ -61,6 +63,7 @@
     padding: calc(16px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-md);
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     box-shadow: var(--hj-shadow-lift);
     color: var(--hj-fg);

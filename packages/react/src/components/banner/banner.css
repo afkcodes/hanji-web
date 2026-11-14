@@ -54,6 +54,7 @@
         calc(16px * var(--hj-density))
     );
     border-radius: var(--hj-banner-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--_fill);
     box-shadow: inset 0 0 0 1px var(--_ring);
     color: var(--hj-fg);

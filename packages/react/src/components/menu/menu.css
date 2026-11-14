@@ -17,6 +17,7 @@
     padding: calc(5px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-menu-radius, var(--hj-radius-md));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-surface-2);
     box-shadow: var(--hj-shadow-lift);
     color: var(--hj-fg);
@@ -49,6 +50,7 @@
     min-height: var(--hj-menu-item-height, calc(36px * var(--hj-density-size)));
     padding: 0 calc(10px * var(--hj-density));
     border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
     font-size: 14px;
     font-weight: 500;
     line-height: 1.25;

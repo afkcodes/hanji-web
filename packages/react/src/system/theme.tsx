@@ -36,6 +36,7 @@ export function Theme(props: ThemeProps): React.ReactElement {
     density,
     motion,
     radius,
+    smoothing,
     fonts,
     colors,
     springs,
@@ -45,7 +46,17 @@ export function Theme(props: ThemeProps): React.ReactElement {
     className,
     ...rest
   } = props;
-  const input: ThemeInput = { paper, accent, density, motion, radius, fonts, colors, springs };
+  const input: ThemeInput = {
+    paper,
+    accent,
+    density,
+    motion,
+    radius,
+    smoothing,
+    fonts,
+    colors,
+    springs,
+  };
   const key = JSON.stringify(input);
   // Keyed by the serialised input: inline objects at the call site don't re-resolve the theme.
   // oxlint-disable-next-line react/exhaustive-deps

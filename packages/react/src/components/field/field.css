@@ -35,6 +35,7 @@
     height: var(--_h);
     border: 0;
     border-radius: var(--hj-field-radius, var(--hj-radius-sm));
+    corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-field-bg, var(--hj-surface));
     box-shadow: inset 0 0 0 1px var(--_ring);
     color: var(--hj-fg);

@@ -24,6 +24,8 @@ import {
 } from './palette.ts';
 import type { AccentRamp, PaperColors } from './palette.ts';
 import {
+  SMOOTHING,
+  cornerShapeFor,
   densities,
   fonts,
   metrics,
@@ -44,6 +46,8 @@ export const THEME_ATTRS = {
   accent: 'data-hj-accent',
   density: 'data-hj-density',
   motion: 'data-hj-motion',
+  radius: 'data-hj-radius',
+  smoothing: 'data-hj-smoothing',
 } as const;
 
 const pct = (n: number): string => `${Math.round(n * 1000) / 10}%`;
@@ -137,9 +141,15 @@ function staticVars(): Record<string, string> {
     '--hj-hairline': `${metrics.hairline}px`,
     '--hj-touch': `${metrics.touchTarget}px`,
     '--hj-shadow-art': shadows.art,
+    // hanji draws continuous corners (figma squircle, smoothing .72). Where the browser has
+    // corner-shape, radii scale by (1 + smoothing) and use this shape; elsewhere they stay circular.
+    '--hj-smoothing': String(SMOOTHING),
+    '--hj-corner-shape': cornerShapeFor(SMOOTHING),
     ...motionVars(),
   };
-  for (const [k, px] of Object.entries(radius)) v[`--hj-radius-${k}`] = `${px}px`;
+  // base radii; the --hj-radius-* tokens are derived per element in cornerVars()
+  for (const [k, px] of Object.entries(radius)) if (k !== 'pill') v[`--hj-r-${k}`] = `${px}px`;
+  v['--hj-radius-pill'] = `${radius.pill}px`;
   for (const [k, n] of Object.entries(zIndex)) v[`--hj-z-${k}`] = String(n);
   for (const role of typeRoleNames) {
     const t = typeScale[role];
@@ -147,6 +157,14 @@ function staticVars(): Record<string, string> {
     v[`--hj-type-${role}`] = `${t.weight} ${t.size}px/${t.lineHeight}px ${family}`;
     v[`--hj-tracking-${role}`] = `${t.tracking}px`;
   }
+  return v;
+}
+
+/** Radius tokens, re-derived wherever smoothing or the radius scale changes. */
+function cornerVars(scale: string): Record<string, string> {
+  const v: Record<string, string> = { '--hj-corner-scale': scale };
+  for (const k of Object.keys(radius))
+    if (k !== 'pill') v[`--hj-radius-${k}`] = `calc(var(--hj-r-${k}) * var(--hj-corner-scale))`;
   return v;
 }
 
@@ -211,6 +229,12 @@ export function tokensCss(
     out.push(block(`[${D.accent}="${name}"]`, accentVars(accents[name])));
   // derived — recomputed wherever paper or accent changes
   out.push(block(`:root, [${D.paper}], [${D.accent}]`, derived));
+  // corners — circular everywhere; squircle (scaled radius + superellipse) where supported
+  const cornerSel = `:root, [${D.smoothing}], [${D.radius}]`;
+  out.push(block(cornerSel, cornerVars('1')));
+  out.push(
+    `@supports (corner-shape: superellipse(2)) {\n${block(cornerSel, { '--hj-corner-scale': 'calc(1 + var(--hj-smoothing))' })}\n}`,
+  );
   // density — spacing recomputed wherever density changes
   out.push(block(':root', { '--hj-density': String(densities.cozy) }));
   for (const [name, f] of Object.entries(densities))
