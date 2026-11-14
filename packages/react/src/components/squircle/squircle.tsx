@@ -57,10 +57,14 @@ export function Squircle(props: SquircleProps): React.ReactElement {
       setClip(undefined);
       return undefined;
     }
-    const px = (): number =>
-      typeof radius === 'number'
-        ? radius
-        : Number.parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+    // From the radius token, never the element's border-radius: once clipped, that is 0, and the
+    // ResizeObserver's first call (and every resize) would redraw the clip square.
+    const px = (): number => {
+      if (typeof radius === 'number') return radius;
+      const cs = getComputedStyle(el);
+      const token = Number.parseFloat(cs.getPropertyValue('--hj-squircle-radius'));
+      return Number.isFinite(token) ? token : Number.parseFloat(cs.borderTopLeftRadius) || 0;
+    };
     const measure = (): void => {
       const { width, height } = el.getBoundingClientRect();
       if (width > 0 && height > 0)
