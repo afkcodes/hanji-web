@@ -1,0 +1,69 @@
+/*
+ * @hanji/tailwind — optional. Exposes hanji tokens to Tailwind v4 utilities so app code can
+ * write `bg-surface text-fg-dim rounded-pill ease-snappy` and stay on-theme in every paper.
+ * hanji itself does not depend on Tailwind.
+ *
+ *   @import 'tailwindcss';
+ *   @import '@hanji/react/styles.css';
+ *   @import '@hanji/tailwind';
+ */
+@theme inline {
+  --color-bg: var(--hj-bg);
+  --color-bg-soft: var(--hj-bg-soft);
+  --color-surface: var(--hj-surface);
+  --color-surface-2: var(--hj-surface-2);
+  --color-line: var(--hj-line);
+  --color-fg: var(--hj-fg);
+  --color-fg-dim: var(--hj-fg-dim);
+  --color-fg-mute: var(--hj-fg-mute);
+  --color-accent: var(--hj-accent);
+  --color-on-accent: var(--hj-on-accent);
+  --color-accent-soft: var(--hj-accent-soft);
+  --color-danger: var(--hj-danger);
+  --color-danger-soft: var(--hj-danger-soft);
+  --color-success: var(--hj-success);
+  --color-success-soft: var(--hj-success-soft);
+  --color-warning: var(--hj-warning);
+  --color-warning-soft: var(--hj-warning-soft);
+  --color-info: var(--hj-info);
+  --color-info-soft: var(--hj-info-soft);
+  --color-scrim: var(--hj-scrim);
+  --color-on-scrim: var(--hj-on-scrim);
+  --color-seal: var(--hj-seal);
+  --color-data-1: var(--hj-data-1);
+  --color-data-2: var(--hj-data-2);
+  --color-data-3: var(--hj-data-3);
+  --color-data-4: var(--hj-data-4);
+  --color-data-5: var(--hj-data-5);
+  --color-data-6: var(--hj-data-6);
+
+  --radius-xs: var(--hj-radius-xs);
+  --radius-sm: var(--hj-radius-sm);
+  --radius-md: var(--hj-radius-md);
+  --radius-lg: var(--hj-radius-lg);
+  --radius-xl: var(--hj-radius-xl);
+  --radius-pill: var(--hj-radius-pill);
+
+  --spacing-hj-1: var(--hj-space-1);
+  --spacing-hj-2: var(--hj-space-2);
+  --spacing-hj-3: var(--hj-space-3);
+  --spacing-hj-4: var(--hj-space-4);
+  --spacing-hj-5: var(--hj-space-5);
+  --spacing-hj-6: var(--hj-space-6);
+  --spacing-hj-8: var(--hj-space-8);
+  --spacing-hj-10: var(--hj-space-10);
+  --spacing-hj-12: var(--hj-space-12);
+
+  --font-sans: var(--hj-font-sans);
+  --font-mono: var(--hj-font-mono);
+
+  --ease-snappy: var(--hj-ease-snappy);
+  --ease-snappy-settle: var(--hj-ease-snappy-settle);
+  --ease-gentle: var(--hj-ease-gentle);
+  --ease-gentle-settle: var(--hj-ease-gentle-settle);
+  --ease-bouncy: var(--hj-ease-bouncy);
+  --ease-out: var(--hj-ease-out);
+
+  --shadow-lift: var(--hj-shadow-lift);
+  --shadow-art: var(--hj-shadow-art);
+}

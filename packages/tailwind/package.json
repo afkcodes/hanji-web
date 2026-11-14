@@ -1,0 +1,35 @@
+{
+  "name": "@hanji/tailwind",
+  "version": "0.1.0",
+  "description": "Optional Tailwind v4 preset that maps hanji tokens to utilities (bg-surface, text-fg-dim, rounded-pill, ease-snappy…).",
+  "keywords": [
+    "design-tokens",
+    "hanji",
+    "preset",
+    "tailwindcss"
+  ],
+  "license": "MIT",
+  "files": [
+    "index.css"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "style": "./index.css",
+      "default": "./index.css"
+    },
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "@hanji/react": "workspace:*",
+    "tailwindcss": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": true
+    }
+  }
+}
