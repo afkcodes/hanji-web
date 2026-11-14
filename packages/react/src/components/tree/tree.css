@@ -114,7 +114,11 @@
       opacity var(--hj-dur-fast) var(--hj-ease-out),
       scale var(--hj-dur-snappy) var(--hj-ease-snappy);
   }
-  .hj-tree-group .hj-tree-item[data-selected] > .hj-tree-row::after {
+  /* Single selection only: with many ticked, the checks say it and inked guides would stutter. */
+  .hj-tree:not([data-selection-mode='multiple'])
+    .hj-tree-group
+    .hj-tree-item[data-selected]
+    > .hj-tree-row::after {
     opacity: 1;
     scale: 1;
   }

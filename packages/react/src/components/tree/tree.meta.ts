@@ -176,6 +176,12 @@ export const meta: ComponentMeta = defineMeta({
       description: 'Single selection drives the pane beside it; a disabled item stays findable.',
     },
     {
+      file: 'offline',
+      title: 'Multiple selection',
+      description:
+        'selectionMode="multiple": tick shelves or single items to download; a check marks each, Space toggles, Shift+↑↓ extends and ⌘A ticks everything. The footer totals what will download.',
+    },
+    {
       file: 'lazy',
       title: 'Lazy folders',
       description:
