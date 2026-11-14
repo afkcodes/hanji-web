@@ -12,7 +12,13 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   target: 'es2022',
-  external: [/^react($|\/)/, /^react-dom($|\/)/, /^@base-ui\/react($|\/)/, /^@hanji\/tokens($|\/)/],
+  external: [
+    /^react($|\/)/,
+    /^react-dom($|\/)/,
+    /^@base-ui\/react($|\/)/,
+    /^@hanji\/tokens($|\/)/,
+    /^virtua($|\/)/,
+  ],
   publint: false,
   inputOptions: {
     // Directives are preserved: unbundle keeps one module per file (verified in dist).

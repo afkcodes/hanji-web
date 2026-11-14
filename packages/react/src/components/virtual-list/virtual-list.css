@@ -24,10 +24,8 @@
     padding: 0;
     list-style: none;
   }
+  /* virtua positions each row; the row only needs to measure as its border box */
   .hj-virtual-list-item {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
+    box-sizing: border-box;
   }
 }

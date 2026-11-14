@@ -1,72 +1,79 @@
 'use client';
 import { useRender } from '@base-ui/react/use-render';
 import * as React from 'react';
+import { Virtualizer } from 'virtua';
+import type {
+  CustomContainerComponentProps,
+  CustomItemComponentProps,
+  VirtualizerHandle,
+} from 'virtua';
 
 import { cls } from '../../system/slot.ts';
 import { useSlot } from '../../system/use-slot.ts';
 
-/**
- * Sizes and offsets for every row: estimates until a row is measured, prefix sums rebuilt lazily
- * from the first change, binary search to find the rows on screen. O(log n) per lookup.
+/*
+ * Virtualisation is virtua's (github.com/inokawa/virtua, MIT): measuring, windowing, scroll
+ * correction and prepends. hanji adds the list semantics, the API and the look.
  */
-class Layout {
-  count = 0;
-  gap = 0;
-  sizes: Float64Array = new Float64Array(0);
-  offsets: Float64Array = new Float64Array(1);
-  /** Offsets are valid up to (not including) this index. */
-  valid = 0;
 
-  sync(count: number, estimate: (i: number) => number, gap: number): void {
-    if (count === this.count && gap === this.gap) return;
-    const sizes = new Float64Array(count);
-    const keep = Math.min(count, this.count);
-    sizes.set(this.sizes.subarray(0, keep));
-    for (let i = keep; i < count; i++) sizes[i] = estimate(i);
-    this.sizes = sizes;
-    this.offsets = new Float64Array(count + 1);
-    this.count = count;
-    this.gap = gap;
-    this.valid = 0;
+interface ListContext {
+  count: number;
+  gap: number;
+  label: string | undefined;
+  labelledBy: string | undefined;
+  styled: boolean;
+}
+const Context = React.createContext<ListContext>({
+  count: 0,
+  gap: 0,
+  label: undefined,
+  labelledBy: undefined,
+  styled: true,
+});
+
+/** virtua's container, as hanji's labelled <ul>. */
+function List({ style, children, ref }: CustomContainerComponentProps): React.ReactElement {
+  const c = React.useContext(Context);
+  return (
+    <ul
+      ref={ref as React.Ref<HTMLUListElement>}
+      style={style}
+      aria-label={c.label}
+      aria-labelledby={c.labelledBy}
+      className={c.styled ? 'hj-virtual-list-sizer' : undefined}
+    >
+      {children}
+    </ul>
+  );
+}
+
+const spacers = new Map<number, React.CSSProperties>();
+/** The gap as a block inside the row: virtua measures the content box, so padding wouldn't count. */
+function spacer(gap: number): React.CSSProperties {
+  let s = spacers.get(gap);
+  if (!s) {
+    s = { display: 'block', height: gap };
+    spacers.set(gap, s);
   }
-  private build(upTo: number): void {
-    for (let i = Math.max(1, this.valid); i <= upTo; i++) {
-      this.offsets[i] = (this.offsets[i - 1] ?? 0) + (this.sizes[i - 1] ?? 0) + this.gap;
-    }
-    if (upTo + 1 > this.valid) this.valid = upTo + 1;
-  }
-  /** Top of row i. */
-  offset(i: number): number {
-    if (i >= this.valid) this.build(i);
-    return this.offsets[i] ?? 0;
-  }
-  size(i: number): number {
-    return this.sizes[i] ?? 0;
-  }
-  total(): number {
-    return this.count ? this.offset(this.count) - this.gap : 0;
-  }
-  /** The row at y (the last row whose top is at or above y). */
-  find(y: number): number {
-    if (!this.count) return 0;
-    this.build(this.count);
-    let lo = 0;
-    let hi = this.count - 1;
-    while (lo < hi) {
-      const mid = (lo + hi + 1) >> 1;
-      if ((this.offsets[mid] ?? 0) <= y) lo = mid;
-      else hi = mid - 1;
-    }
-    return lo;
-  }
-  /** Record a measured size; returns how much the row grew. */
-  measure(i: number, size: number): number {
-    const delta = size - (this.sizes[i] ?? 0);
-    if (Math.abs(delta) < 0.5) return 0;
-    this.sizes[i] = size;
-    if (i + 1 < this.valid) this.valid = i + 1;
-    return delta;
-  }
+  return s;
+}
+
+/** virtua's item, as an <li> that knows its place in the whole. */
+function Row({ style, index, children, ref }: CustomItemComponentProps): React.ReactElement {
+  const c = React.useContext(Context);
+  return (
+    <li
+      ref={ref as React.Ref<HTMLLIElement>}
+      style={style}
+      aria-setsize={c.count}
+      aria-posinset={index + 1}
+      data-index={index}
+      className={c.styled ? 'hj-virtual-list-item' : undefined}
+    >
+      {children}
+      {c.gap && index < c.count - 1 ? <span aria-hidden="true" style={spacer(c.gap)} /> : null}
+    </li>
+  );
 }
 
 export interface ScrollToIndexOptions {
@@ -77,6 +84,10 @@ export interface ScrollToIndexOptions {
 /** Imperative actions, through `actionsRef`. */
 export interface VirtualListActions {
   scrollToIndex: (index: number, options?: ScrollToIndexOptions) => void;
+  /** Scroll to an offset in px from the top. */
+  scrollTo: (offset: number) => void;
+  /** Scroll by px. */
+  scrollBy: (delta: number) => void;
 }
 
 /** Props hanji adds to the Root. */
@@ -85,9 +96,9 @@ export interface RootOwnProps {
   count: number;
   /** Draws row `index`. Rows measure themselves, so heights may vary. */
   children: (index: number) => React.ReactNode;
-  /** A row's height before it is measured. @default 56 */
-  estimateSize?: number | ((index: number) => number);
-  /** Rows kept beyond each edge, so fast scrolls don't show gaps. @default 6 */
+  /** A row's height before it is measured. Omit it and virtua estimates from measured rows. */
+  estimateSize?: number;
+  /** Rows' worth of space kept rendered beyond each edge. @default 6 */
   overscan?: number;
   /** Space between rows in px. @default 0 */
   gap?: number;
@@ -95,7 +106,11 @@ export interface RootOwnProps {
   getKey?: (index: number) => React.Key;
   /** The rows on screen changed — load more when `end` nears `count`. */
   onRangeChange?: (range: { start: number; end: number }) => void;
-  /** Receives `scrollToIndex`. */
+  /** Set while rows are being added to the start (older messages), so the view holds still. */
+  shift?: boolean;
+  /** Rows that stay mounted off screen (one being edited, a playing track). */
+  keepMounted?: readonly number[];
+  /** Receives scrollToIndex, scrollTo and scrollBy. */
   actionsRef?: React.Ref<VirtualListActions>;
   render?: useRender.RenderProp;
 }
@@ -105,9 +120,9 @@ export interface RootProps
 }
 
 /**
- * A long list that renders only what is on screen: ten thousand rows cost what thirty do. Rows
- * measure themselves (heights may vary), rows above the viewport that change size never shift
- * what you are reading, and assistive tech still hears “row 4,203 of 10,000”.
+ * A long list that renders only the rows on screen, built on virtua: ten thousand rows cost what
+ * thirty do, rows measure themselves, the reading position holds still as rows above change size
+ * or older rows are prepended, and assistive tech still hears “row 4,203 of 10,000”.
  *
  * @example
  * <VirtualList.Root count={tracks.length} aria-label="All tracks" style={{ height: 480 }}>
@@ -120,161 +135,100 @@ export function Root(props: RootProps): React.ReactElement {
     {
       count,
       children,
-      estimateSize = 56,
+      estimateSize,
       overscan = 6,
       gap = 0,
       getKey,
       onRangeChange,
+      shift,
+      keepMounted,
       actionsRef,
       render,
       className,
-      onScroll,
       'aria-label': label,
       'aria-labelledby': labelledBy,
       ...rest
     },
   ] = useSlot('VirtualList.Root', props);
-  const scroller = React.useRef<HTMLDivElement | null>(null);
-  // the layout and the row observer live for the component's life: one stable store
-  const [store] = React.useState<{ layout: Layout; ro: ResizeObserver | null }>(() => ({
-    layout: new Layout(),
-    ro: null,
-  }));
-  const { layout } = store;
-  const [, setVersion] = React.useState(0);
-  const [scrollTop, setScrollTop] = React.useState(0);
-  const [viewport, setViewport] = React.useState(0);
-  const estimate = React.useMemo(
-    () => (typeof estimateSize === 'function' ? estimateSize : () => estimateSize),
-    [estimateSize],
-  );
-  layout.sync(count, estimate, gap);
-
-  // One observer for every row, made at commit time: measured sizes land in the layout, then one
-  // re-render. A row above what you're reading that grows moves scrollTop with it.
-  React.useEffect(() => () => store.ro?.disconnect(), [store]);
-
-  const measureRef = React.useCallback(
-    (node: HTMLLIElement | null) => {
-      if (!node || typeof ResizeObserver === 'undefined') return;
-      store.ro ??= new ResizeObserver((entries) => {
-        const rows = store.layout;
-        const el = scroller.current;
-        let changed = false;
-        let anchor = 0;
-        const top = el?.scrollTop ?? 0;
-        for (const entry of entries) {
-          const target = entry.target as HTMLElement;
-          const index = Number(target.dataset.index);
-          if (Number.isNaN(index) || index >= rows.count) continue;
-          const size = entry.borderBoxSize?.[0]?.blockSize ?? target.offsetHeight;
-          const delta = rows.measure(index, size);
-          if (!delta) continue;
-          changed = true;
-          if (rows.offset(index) < top) anchor += delta;
-        }
-        if (el && anchor) el.scrollTop += anchor;
-        if (changed) setVersion((v) => v + 1);
-      });
-      const ro = store.ro;
-      ro.observe(node);
-      return () => ro.unobserve(node);
-    },
-    [store],
+  const scrollRef = React.useRef<HTMLDivElement | null>(null);
+  const handle = React.useRef<VirtualizerHandle | null>(null);
+  const data = React.useMemo(() => ({ length: count }), [count]);
+  const ctx = React.useMemo(
+    () => ({ count, gap, label, labelledBy, styled: !config.unstyled }),
+    [count, gap, label, labelledBy, config.unstyled],
   );
 
-  React.useLayoutEffect(() => {
-    const el = scroller.current;
-    if (!el) return;
-    setViewport(el.clientHeight);
-    setScrollTop(el.scrollTop);
-    if (typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(() => setViewport(el.clientHeight));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const first = count ? layout.find(scrollTop) : 0;
-  const last = count ? layout.find(scrollTop + Math.max(viewport, 1)) : -1;
-  const start = Math.max(0, first - overscan);
-  const end = Math.min(count - 1, last + overscan);
-
+  const range = React.useRef({ start: -1, end: -1 });
   const onRangeRef = React.useRef(onRangeChange);
   React.useLayoutEffect(() => {
     onRangeRef.current = onRangeChange;
   });
+  const report = React.useCallback(() => {
+    const h = handle.current;
+    if (!h || !count) return;
+    const start = h.findItemIndex(h.scrollOffset);
+    const end = h.findItemIndex(h.scrollOffset + Math.max(0, h.viewportSize - 1));
+    if (start === range.current.start && end === range.current.end) return;
+    range.current = { start, end };
+    onRangeRef.current?.({ start, end });
+  }, [count]);
   React.useEffect(() => {
-    if (count) onRangeRef.current?.({ start: first, end: last });
-  }, [first, last, count]);
+    report();
+  }, [report]);
 
   React.useImperativeHandle(
     actionsRef,
     () => ({
       scrollToIndex(index, options = {}) {
-        const el = scroller.current;
-        if (!el || !layout.count) return;
-        const i = Math.min(layout.count - 1, Math.max(0, index));
-        const top = layout.offset(i);
-        const size = layout.size(i);
-        const view = el.clientHeight;
-        const align = options.align ?? 'auto';
-        let to = top;
-        if (align === 'center') to = top - (view - size) / 2;
-        else if (align === 'end') to = top - view + size;
-        else if (align === 'auto') {
-          if (top >= el.scrollTop && top + size <= el.scrollTop + view) return;
-          to = top < el.scrollTop ? top : top - view + size;
-        }
-        el.scrollTo({ top: Math.max(0, to), behavior: options.behavior ?? 'auto' });
+        const align = !options.align || options.align === 'auto' ? 'nearest' : options.align;
+        handle.current?.scrollToIndex(Math.min(count - 1, Math.max(0, index)), {
+          align,
+          smooth: options.behavior === 'smooth',
+        });
+      },
+      scrollTo(offset) {
+        handle.current?.scrollTo(offset);
+      },
+      scrollBy(delta) {
+        handle.current?.scrollBy(delta);
       },
     }),
-    [layout],
+    [count],
   );
-
-  const styled = !config.unstyled;
-  const rows: React.ReactNode[] = [];
-  for (let i = start; i <= end; i++) {
-    rows.push(
-      <li
-        key={getKey ? getKey(i) : i}
-        ref={measureRef}
-        aria-setsize={count}
-        aria-posinset={i + 1}
-        data-index={i}
-        className={styled ? 'hj-virtual-list-item' : undefined}
-        // oxlint-disable-next-line react-perf/jsx-no-new-object-as-prop -- each row's position is its own and changes as rows measure
-        style={{ transform: `translateY(${layout.offset(i)}px)` }}
-      >
-        {children(i)}
-      </li>,
-    );
-  }
 
   return useRender({
     render,
-    ref: scroller,
+    ref: scrollRef,
     defaultTagName: 'div',
     props: {
       // a scroll region must be keyboard-reachable (WCAG 2.1.1)
       tabIndex: 0,
       ...rest,
-      onScroll: (e: React.UIEvent<HTMLDivElement>) => {
-        onScroll?.(e);
-        setScrollTop(e.currentTarget.scrollTop);
-      },
       className: cls(config, 'VirtualList.Root', 'hj-virtual-list', className) as
         | string
         | undefined,
       children: (
-        <ul
-          aria-label={label}
-          aria-labelledby={labelledBy}
-          className={styled ? 'hj-virtual-list-sizer' : undefined}
-          // oxlint-disable-next-line react-perf/jsx-no-new-object-as-prop -- the total height changes as rows measure
-          style={{ height: layout.total() }}
-        >
-          {rows}
-        </ul>
+        <Context.Provider value={ctx}>
+          <Virtualizer
+            ref={handle}
+            scrollRef={scrollRef}
+            data={data}
+            itemSize={estimateSize}
+            bufferSize={overscan * (estimateSize ?? 56)}
+            shift={shift}
+            keepMounted={keepMounted}
+            as={List}
+            item={Row}
+            onScroll={report}
+            onResize={report}
+          >
+            {(_: unknown, index: number) => (
+              <React.Fragment key={getKey ? getKey(index) : index}>
+                {children(index)}
+              </React.Fragment>
+            )}
+          </Virtualizer>
+        </Context.Provider>
       ),
     },
   });
