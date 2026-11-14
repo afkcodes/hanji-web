@@ -24,7 +24,7 @@ export const meta: ComponentMeta = defineMeta({
   category: 'data',
   status: 'new',
   description:
-    'A row that slides aside to reveal actions underneath (iOS Mail style), on an interruptible spring — with a full swipe that commits, and a More menu that is the same actions for everyone who doesn’t swipe.',
+    'A row that slides aside to reveal actions underneath (iOS Mail style), on an interruptible spring — by finger, pen, mouse or a two-finger trackpad swipe — with a full swipe that commits, and a More menu that is the same actions for everyone who doesn’t swipe.',
   whenToUse: [
     'Two or three quick verbs on rows of a list people triage: mail, notifications, downloads, a to-do list.',
     'A destructive verb that should be fast but never accidental: put it behind the swipe and offer Undo.',
@@ -227,6 +227,7 @@ export const meta: ComponentMeta = defineMeta({
     'Every action is a real <button> in the DOM, in reading order after the row. While its side is closed it is out of the tab order (tabindex -1) but still in the accessibility tree; focusing it (a screen reader can) opens its side, so it is never hidden behind the row.',
     'The twin: a More button (a Menu) at the end of every row lists the same actions with the same glyphs and runs them the same way — one tab stop per row, named “More actions for {label}”. Swiping is never the only way.',
     'Once a row is open its actions join the tab order. Escape closes it and returns focus to the More button; focus leaving the row closes it.',
+    'Trackpads: a two-finger sideways swipe moves the row exactly like a finger (same rubber band, same point of no return) and settles when the wheel events pause; vertical scrolls and pinch-zoom pass through, and RTL mirrors both.',
     'A full-swipe commit is announced politely (HanjiStrings.swipeActionDone, or `announce`). Group holds the live region, so the announcement survives the row being removed.',
     'When a removing action runs with focus inside the row, focus moves to the next row (or the previous one) once the row is gone.',
     'touch-action: pan-y keeps vertical scrolling native; the gesture only takes over once a move is clearly sideways (8px, more x than y).',

@@ -127,6 +127,42 @@ describe('SwipeActions', () => {
     expect(onOpenChange).toHaveBeenLastCalledWith('trailing', { reason: 'swipe' });
   });
 
+  it('a two-finger trackpad swipe opens a side; a scroll and a pinch do not', () => {
+    vi.useFakeTimers();
+    try {
+      const onOpenChange = vi.fn<(open: Side, d: SwipeActions.OpenChangeDetails) => void>();
+      render(<Row onOpenChange={onOpenChange} />);
+      const content = screen.getByTestId('content-Quarterly numbers');
+      // happy-dom's WheelEvent drops some init fields, so set them on the event itself
+      const wheel = (deltaX: number, deltaY = 0, ctrlKey = false): boolean => {
+        const ev = new WheelEvent('wheel', { bubbles: true, cancelable: true });
+        for (const [k, v] of Object.entries({ deltaX, deltaY, deltaMode: 0, ctrlKey })) {
+          Object.defineProperty(ev, k, { value: v });
+        }
+        return content.dispatchEvent(ev);
+      };
+      // a scroll with a little sideways drift stays the page's
+      for (let i = 0; i < 6; i++) expect(wheel(2, 24)).toBe(true);
+      act(() => vi.advanceTimersByTime(200));
+      // a pinch-zoom is the browser's
+      for (let i = 0; i < 6; i++) wheel(30, 0, true);
+      act(() => vi.advanceTimersByTime(200));
+      expect(onOpenChange).not.toHaveBeenCalled();
+      // fingers left → content left: the sideways travel is taken from the page
+      let reached = true;
+      for (let i = 0; i < 12; i++) reached = wheel(14) && reached;
+      expect(reached).toBe(false);
+      act(() => vi.advanceTimersByTime(200));
+      expect(onOpenChange).toHaveBeenLastCalledWith('trailing', { reason: 'swipe' });
+      // and back the other way closes it
+      for (let i = 0; i < 12; i++) wheel(-14);
+      act(() => vi.advanceTimersByTime(200));
+      expect(onOpenChange).toHaveBeenLastCalledWith(null, { reason: 'swipe' });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('a short swipe snaps back closed', () => {
     const onOpenChange = vi.fn<(open: Side, d: SwipeActions.OpenChangeDetails) => void>();
     render(<Row onOpenChange={onOpenChange} />);

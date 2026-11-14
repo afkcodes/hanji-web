@@ -32,6 +32,8 @@ const HYSTERESIS = 16;
 const NUDGE = 36;
 /** A click this soon after a swipe (or a tap that closed a row) is swallowed. */
 const SWALLOW = 800;
+/** A trackpad swipe has ended once its wheel events (momentum included) pause this long (ms). */
+const WHEEL_IDLE = 120;
 
 const VISUALLY_HIDDEN: React.CSSProperties = {
   position: 'absolute',
@@ -123,6 +125,19 @@ interface Drag {
   consumed: boolean;
   samples: { t: number; x: number }[];
   end: () => void;
+}
+/** A two-finger trackpad swipe, read from wheel events. */
+interface Wheel {
+  /** Travel since the gesture locked sideways, before the rubber band. */
+  raw: number;
+  /** Travel while picking an axis. */
+  ax: number;
+  ay: number;
+  locked: boolean;
+  /** It was a scroll: ignore it until it pauses. */
+  vertical: boolean;
+  samples: { t: number; x: number }[];
+  timer: number;
 }
 interface Latest {
   open: Side | null;
@@ -268,6 +283,8 @@ class RowController {
   reason: OpenChangeReason = 'swipe';
   swallowUntil = 0;
   drag: Drag | null = null;
+  private wheeling: Wheel | null = null;
+  private unlisten: (() => void) | null = null;
   private rest: ((v: number) => void) | null = null;
   private timers: Set<number> = new Set();
   private root: HTMLElement | null = null;
@@ -305,6 +322,17 @@ class RowController {
 
   mount(): void {
     this.alive = true;
+    const root = this.root;
+    if (!root) return;
+    // not React's onWheel: that listener is passive, and a sideways swipe must stop the page
+    const wheel = (e: WheelEvent): void => this.wheel(e);
+    root.addEventListener('wheel', wheel, { passive: false });
+    this.unlisten = () => root.removeEventListener('wheel', wheel);
+  }
+
+  /** A finger or a trackpad is moving the row. */
+  private get gesturing(): boolean {
+    return !!this.drag?.locked || !!this.wheeling?.locked;
   }
 
   dispose(): void {
@@ -313,6 +341,10 @@ class RowController {
     this.a.stop();
     this.drag?.end();
     this.drag = null;
+    this.unlisten?.();
+    this.unlisten = null;
+    if (this.wheeling) window.clearTimeout(this.wheeling.timer);
+    this.wheeling = null;
     for (const t of this.timers) window.clearTimeout(t);
     this.timers.clear();
     this.latest.group?.release(this);
@@ -511,7 +543,7 @@ class RowController {
 
   /** Bring the row to the open side React holds (after a prop change or a refused request). */
   sync(side: Side | null): void {
-    if (this.drag?.locked || this.busy) return;
+    if (this.gesturing || this.busy) return;
     const geo = this.measure();
     const tray = side && geo ? geo[side] : null;
     const target = side && tray && geo ? dirOf(side, geo.rtl) * tray.W : 0;
@@ -538,7 +570,7 @@ class RowController {
   }
 
   reveal(side: Side, reason: OpenChangeReason): void {
-    if (this.busy || this.drag?.locked || this.latest.disabled) return;
+    if (this.busy || this.gesturing || this.latest.disabled) return;
     if (this.latest.open === side && this.goal !== 0) return;
     const geo = this.measure();
     const tray = geo?.[side];
@@ -549,7 +581,7 @@ class RowController {
   }
 
   close(reason: OpenChangeReason, v = 0): void {
-    if (this.busy || this.drag?.locked) return;
+    if (this.busy || this.gesturing) return;
     this.sense();
     this.disarm();
     if (this.goal !== 0 || this.x.x !== 0) this.go(0, v, true);
@@ -644,7 +676,14 @@ class RowController {
     if (!root || !content.contains(e.target as Node)) return;
     const L = this.latest;
     const consumed = L.group?.consumed(e.nativeEvent) ?? false;
-    if (L.disabled || this.busy || this.drag || e.button !== 0 || !e.isPrimary) {
+    if (
+      L.disabled ||
+      this.busy ||
+      this.drag ||
+      this.wheeling?.locked ||
+      e.button !== 0 ||
+      !e.isPrimary
+    ) {
       if (consumed) this.swallowUntil = performance.now() + SWALLOW;
       return;
     }
@@ -762,6 +801,73 @@ class RowController {
     this.request(next, 'swipe');
   }
 
+  /*
+   * Trackpad: a two-finger sideways swipe arrives as wheel events. It moves the row exactly like a
+   * finger — same rubber band, same point of no return — and is released when the events pause.
+   * Momentum after the fingers lift keeps it gliding, the way a native list does. Vertical
+   * scrolls, pinch-zoom (ctrlKey) and anything mid-drag pass through untouched.
+   */
+  private wheel(e: WheelEvent): void {
+    const root = this.root;
+    const L = this.latest;
+    if (!root || L.disabled || this.busy || this.drag || e.ctrlKey) return;
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? root.offsetWidth : 1;
+    const dx = e.deltaX * unit;
+    const dy = e.deltaY * unit;
+    let w = this.wheeling;
+    if (!w) {
+      w = { raw: 0, ax: 0, ay: 0, locked: false, vertical: false, samples: [], timer: 0 };
+      this.wheeling = w;
+    }
+    window.clearTimeout(w.timer);
+    w.timer = window.setTimeout(() => this.wheelEnd(), WHEEL_IDLE);
+    if (w.vertical) return;
+    if (!w.locked) {
+      w.ax += dx;
+      w.ay += dy;
+      const ax = Math.abs(w.ax);
+      const ay = Math.abs(w.ay);
+      if (ay >= SLOP && ay >= ax) {
+        // a scroll: the page has it until the gesture pauses
+        w.vertical = true;
+        return;
+      }
+      if (ax < SLOP || ax < ay * 1.2) {
+        // sideways but undecided: keep it from the page (and its history swipe) meanwhile
+        if (Math.abs(dx) > Math.abs(dy)) e.preventDefault();
+        return;
+      }
+      w.locked = true;
+      this.x.stop();
+      this.rest = null;
+      this.sense();
+      this.measure();
+      // re-anchor, as a finger does: the row starts from where it is, never jumping the slop
+      w.raw = this.unresist(this.x.x);
+      root.setAttribute('data-dragging', '');
+      L.group?.claim(this);
+    }
+    e.preventDefault();
+    // fingers moving left scroll content left (natural scrolling): deltaX is positive
+    w.raw -= dx;
+    const x = this.resist(w.raw);
+    this.goal = x;
+    this.x.set(x);
+    const t = e.timeStamp || performance.now();
+    w.samples.push({ t, x });
+    while (w.samples.length > 2 && t - (w.samples[0]?.t ?? t) > WINDOW) w.samples.shift();
+    this.track(x);
+  }
+
+  private wheelEnd(): void {
+    const w = this.wheeling;
+    this.wheeling = null;
+    if (!w?.locked || !this.alive) return;
+    this.root?.removeAttribute('data-dragging');
+    // the events have paused, so the row has stopped: it settles by where it is
+    this.release(velocity(w.samples, performance.now()), false);
+  }
+
   click(e: React.MouseEvent<HTMLElement>): void {
     if (!e.currentTarget.contains(e.target as Node)) return;
     // keyboard clicks (detail 0) are never swallowed
@@ -785,7 +891,7 @@ class RowController {
       this.close('outside');
     };
     const scroll = (e: Event): void => {
-      if (this.reason === 'focus' || this.drag?.locked || this.busy) return;
+      if (this.reason === 'focus' || this.gesturing || this.busy) return;
       const t = e.target;
       if (t instanceof Node && !t.contains(root)) return;
       this.close('scroll');
