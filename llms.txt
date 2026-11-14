@@ -100,7 +100,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 - [Stat](./packages/react/dist/docs/stat.md): A number that matters: what it counts, the figure with its unit shrunk, how it compares in words, and the recent past as a line.
 - [Table](./packages/react/dist/docs/table.md): Rows of records compared across columns: hairlines, a sticky header, sortable columns, numbers right-aligned in tabular figures.
 - [Timeline](./packages/react/dist/docs/timeline.md): A vertical sequence of steps with their times: what happened, what is happening, what is next, and what failed.
-- [VirtualList](./packages/react/dist/docs/virtual-list.md): A long list that renders only the rows on screen: rows measure themselves, the reading position holds still as rows above change size, and scrollToIndex jumps anywhere.
+- [VirtualList](./packages/react/dist/docs/virtual-list.md): A long list that renders only the rows on screen, built on virtua: rows measure themselves, the reading position holds still as rows above change size or older rows are prepended, and scrollToIndex jumps anywhere.
 
 ## Ai
 
