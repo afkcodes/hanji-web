@@ -2395,7 +2395,7 @@
       "name": "virtual-list",
       "type": "registry:ui",
       "title": "VirtualList",
-      "description": "A long list that renders only the rows on screen, built on virtua: rows measure themselves, the reading position holds still as rows above change size or older rows are prepended, and scrollToIndex jumps anywhere.",
+      "description": "A long list that renders only the rows on screen, built on virtua: rows measure themselves, the reading position holds still as rows above change size or older rows are prepended, scrollToIndex jumps anywhere, and orientation=\"horizontal\" makes it a shelf.",
       "dependencies": [
         "@base-ui/react",
         "@hanji/tokens"
