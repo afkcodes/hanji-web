@@ -40,7 +40,15 @@ export function App() {
 
 ## Customise, from broad to precise
 
-1. **Theme** — `<Theme paper accent density motion radius fonts colors springs>` or `createTheme({...})`. Nests; popups keep their subtree's theme.
+1. **Theme** — `<Theme paper accent density motion radius fonts colors data springs>` or `createTheme({...})`. Nests; popups keep their subtree's theme.
+   - **Your own neutrals:** `paper` takes a preset, a ground `{ bg, fg }` (surfaces, hairline and the dim and mute inks are derived), a `{ light, dark }` pair, or one `{ tint }` to build both — a brand's greys.
+   - **Your own colours:** any accent `{ light, dark }`, status colours including `pending`, and chart series `data: [...]` (up to six).
+   - **Stays readable:** text in a tone uses a `-text` stop measured to 4.5:1 against your grounds; an accent that could pass for danger hands "pending" to info. `createTheme().warnings` (logged by `<Theme>` in development) names anything that still reads poorly — a white ground that flattens cards, chart colours too faint or too alike.
+
+   ```tsx
+   <Theme paper={{ tint: '#1e3a5f' }} accent={{ light: '#0b6bcb', dark: '#5aa9ff' }} data={['#0b6bcb', '#e8743b', '#19a979']}>
+   ```
+
 2. **Variants** — props such as `variant`, `size`, `tone`, exposed as `data-*` attributes.
 3. **Provider** — `<HanjiProvider defaults classNames unstyled icons strings>`: default props per slot, extra classes per slot, drop all hanji classes, swap the icon set, translate strings.
 4. **Per part** — every part takes `className` (string or function of state), `style`, and Base UI's `render` to swap or compose the element.

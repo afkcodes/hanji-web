@@ -62,7 +62,11 @@ Every export needs an explicit type: `export function X(props: XProps): React.Re
 2. **Tokens only** — no raw colours (`black`/`transparent`/`currentColor` keywords are fine in masks).
    Paint: `--hj-bg --hj-bg-soft --hj-surface --hj-surface-2 --hj-line --hj-fg --hj-fg-dim --hj-fg-mute
    --hj-accent --hj-on-accent --hj-accent-soft --hj-danger(-soft) --hj-success(-soft) --hj-warning(-soft)
-   --hj-info(-soft) --hj-scrim --hj-on-scrim --hj-seal --hj-data-1..6 --hj-focus --hj-shadow-lift --hj-shadow-art`.
+   --hj-info(-soft) --hj-pending(-soft) --hj-scrim --hj-on-scrim --hj-seal --hj-data-1..6 --hj-focus --hj-shadow-lift --hj-shadow-art`.
+   **Text in a tone uses its `-text` stop** — `color: var(--hj-accent-text)` (also danger, success, warning,
+   info, pending): the same hue nudged to 4.5:1 on the ground and its own soft tint, so any custom
+   colour stays readable. Fills, rings, bars and glyphs keep the plain token. Work in progress is
+   `pending`, never the accent directly (it becomes info when the accent could pass for danger).
    Tints: `color-mix(in srgb, var(--hj-fg) 8%, transparent)`.
    Space `--hj-space-{1,2,3,4,5,6,8,10,12}` (density-scaled) · radius `--hj-radius-{xs,sm,md,lg,xl,pill}` ·
    type `font: var(--hj-type-<role>); letter-spacing: var(--hj-tracking-<role>)` (roles: hero display title heading subheading body sub label eyebrow mono) ·
