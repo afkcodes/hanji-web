@@ -81,6 +81,13 @@
   .hj-drag-list-item[data-held]::before {
     opacity: 1;
   }
+  /* the drop: into the slot on gentle, and the lift (scale, fill) lets go with it — never a snap */
+  .hj-drag-list-item[data-settling] {
+    transition:
+      transform var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),
+      scale var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),
+      background-color var(--hj-dur-base) var(--hj-ease-out);
+  }
   .hj-drag-list-item:focus-visible {
     box-shadow: inset 0 0 0 2px var(--hj-focus);
   }

@@ -223,7 +223,6 @@ export function Root(props: RootProps): React.ReactElement {
       if (!root) return;
       root.setAttribute('data-resetting', '');
       for (const item of itemsOf(root)) item.style.transform = '';
-      s.el.style.transition = '';
       s.el.removeAttribute('data-settling');
       root.removeAttribute('data-dragging');
       requestAnimationFrame(() => root.removeAttribute('data-resetting'));
@@ -247,9 +246,8 @@ export function Root(props: RootProps): React.ReactElement {
       const { el } = s;
       el.removeAttribute('data-held');
       el.removeAttribute('data-keyed');
+      // [data-settling] eases the slide, the 1.03 scale and the lifted fill out together
       el.setAttribute('data-settling', '');
-      el.style.transition =
-        'transform var(--hj-dur-gentle-settle, 400ms) var(--hj-ease-gentle-settle, ease-out)';
       el.style.transform = `translateY(${offsetFor(s, s.to)}px)`;
       const ms = (parseFloat(getComputedStyle(el).transitionDuration) || 0) * 1000;
       let done = false;
