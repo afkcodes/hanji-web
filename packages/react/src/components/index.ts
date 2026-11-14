@@ -28,6 +28,7 @@ export * from './data-table/index.ts';
 export * from './date-picker/index.ts';
 export * from './dialog/index.ts';
 export * from './drag-list/index.ts';
+export * from './drop-zone/index.ts';
 export * from './empty-state/index.ts';
 export * from './field/index.ts';
 export * from './fieldset/index.ts';
