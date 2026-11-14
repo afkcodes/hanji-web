@@ -1,0 +1,76 @@
+@layer hj.components {
+  .hj-collapsible-root {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--hj-space-2);
+    min-width: 0;
+    font-family: var(--hj-font-sans);
+  }
+
+  .hj-collapsible-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 2px;
+    border: 0;
+    background: none;
+    color: var(--hj-accent);
+    font: 600 14px / 1 var(--hj-font-sans);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  /* 44px hit area around a 32px line of text */
+  .hj-collapsible-trigger::before {
+    content: '';
+    position: absolute;
+    inset: -6px -4px;
+  }
+  .hj-collapsible-trigger:active:not([data-disabled]) {
+    transform: scale(var(--hj-press));
+    transition-duration: var(--hj-dur-fast), 70ms;
+  }
+  .hj-collapsible-trigger[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-collapsible-trigger:focus-visible {
+    border-radius: var(--hj-radius-xs);
+  }
+  .hj-collapsible-chevron {
+    display: inline-flex;
+    font-size: 16px;
+    line-height: 0;
+    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-collapsible-trigger[data-panel-open] .hj-collapsible-chevron {
+    transform: rotate(180deg);
+  }
+
+  /*
+   * The one declared layout transition: height from Base UI's measured
+   * --collapsible-panel-height. Clipped, clamped and short; content fades with it.
+   */
+  .hj-collapsible-panel {
+    align-self: stretch;
+    height: var(--collapsible-panel-height);
+    overflow: hidden;
+    transition:
+      height var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),
+      opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-collapsible-panel[data-starting-style],
+  .hj-collapsible-panel[data-ending-style] {
+    height: 0;
+    opacity: 0;
+  }
+  .hj-collapsible-panel[data-ending-style] {
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+}

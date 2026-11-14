@@ -1,0 +1,139 @@
+@layer hj.components {
+  /* Customise: --hj-toolbar-size (button height) · --hj-toolbar-radius · --hj-toolbar-gap */
+  .hj-toolbar-root {
+    --_s: var(--hj-toolbar-size, 36px);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--hj-toolbar-gap, 2px);
+    max-width: 100%;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-toolbar-root[data-variant='surface'] {
+    padding: 4px;
+    border-radius: var(--hj-toolbar-radius, var(--hj-radius-sm));
+    background: var(--hj-surface-2);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+  }
+  .hj-toolbar-root[data-orientation='vertical'] {
+    flex-direction: column;
+  }
+  .hj-toolbar-root[data-disabled] {
+    opacity: 0.4;
+  }
+
+  .hj-toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: inherit;
+  }
+  .hj-toolbar-root[data-orientation='vertical'] .hj-toolbar-group {
+    flex-direction: column;
+  }
+
+  .hj-toolbar-button,
+  .hj-toolbar-link {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: var(--_s);
+    min-width: var(--_s);
+    padding: 0 10px;
+    border: 0;
+    border-radius: calc(var(--hj-toolbar-radius, var(--hj-radius-sm)) - 4px);
+    background: transparent;
+    color: var(--hj-fg-dim);
+    font: 600 13.5px / 1 var(--hj-font-sans);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  /* 44px hit area around a 36px button */
+  .hj-toolbar-button::before {
+    content: '';
+    position: absolute;
+    inset: -4px -1px;
+  }
+  .hj-toolbar-button[data-icon-only] {
+    width: var(--_s);
+    padding: 0;
+    font-size: 18px;
+  }
+  .hj-toolbar-button .hj-icon {
+    font-size: 18px;
+  }
+  .hj-toolbar-button:hover:not([data-disabled]),
+  .hj-toolbar-link:hover {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-toolbar-button:active:not([data-disabled]) {
+    transform: scale(var(--hj-press));
+    transition-duration: var(--hj-dur-fast), var(--hj-dur-fast), 70ms;
+  }
+  /* Pressed toggles and open menus read as chosen: accent on accent-soft. */
+  .hj-toolbar-button[data-pressed],
+  .hj-toolbar-button[data-popup-open] {
+    background: var(--hj-accent-soft);
+    color: var(--hj-accent);
+  }
+  .hj-toolbar-button[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-toolbar-button:focus-visible,
+  .hj-toolbar-link:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .hj-toolbar-link {
+    color: var(--hj-accent);
+  }
+
+  .hj-toolbar-separator {
+    flex: none;
+    width: 1px;
+    height: 20px;
+    margin: 0 4px;
+    background: var(--hj-line);
+  }
+  .hj-toolbar-root[data-orientation='vertical'] .hj-toolbar-separator {
+    width: 20px;
+    height: 1px;
+    margin: 4px 0;
+  }
+
+  .hj-toolbar-input {
+    height: var(--_s);
+    min-width: 0;
+    width: 160px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: calc(var(--hj-toolbar-radius, var(--hj-radius-sm)) - 4px);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    color: var(--hj-fg);
+    font: 500 13.5px / 1 var(--hj-font-sans);
+    outline: none;
+    caret-color: var(--hj-accent);
+    transition: box-shadow var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-toolbar-input::placeholder {
+    color: var(--hj-fg-mute);
+  }
+  .hj-toolbar-input:focus-visible {
+    box-shadow: inset 0 0 0 1.5px var(--hj-accent);
+    outline: none;
+  }
+  .hj-toolbar-input[data-disabled] {
+    opacity: 0.4;
+  }
+}

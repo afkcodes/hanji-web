@@ -1,0 +1,99 @@
+@layer hj.components {
+  /* Customise: --hj-accordion-row-height · --hj-accordion-gap (panel bottom spacing) */
+  .hj-accordion-root {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-accordion-root[data-variant='lined'] {
+    border-top: 1px solid var(--hj-line);
+  }
+  .hj-accordion-root[data-variant='lined'] .hj-accordion-item {
+    border-bottom: 1px solid var(--hj-line);
+  }
+  .hj-accordion-header {
+    margin: 0;
+    font: inherit;
+  }
+
+  .hj-accordion-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hj-space-4);
+    width: 100%;
+    min-height: var(--hj-accordion-row-height, 56px);
+    padding: var(--hj-space-3) 0;
+    border: 0;
+    background: none;
+    color: var(--hj-fg);
+    font: 600 15px / 1.35 var(--hj-font-sans);
+    letter-spacing: -0.01em;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-accordion-trigger:hover:not([data-disabled]) .hj-accordion-chevron {
+    color: var(--hj-fg);
+  }
+  .hj-accordion-trigger:active:not([data-disabled]) .hj-accordion-label {
+    opacity: var(--hj-press-opacity);
+  }
+  .hj-accordion-trigger[data-disabled] {
+    color: var(--hj-fg-mute);
+    cursor: not-allowed;
+  }
+  .hj-accordion-trigger:focus-visible {
+    outline-offset: -2px;
+    border-radius: var(--hj-radius-xs);
+  }
+  .hj-accordion-label {
+    min-width: 0;
+    transition: opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-accordion-chevron {
+    display: inline-flex;
+    flex: none;
+    color: var(--hj-fg-mute);
+    font-size: 20px;
+    line-height: 0;
+    transition:
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-accordion-trigger[data-panel-open] .hj-accordion-chevron {
+    transform: rotate(180deg);
+  }
+
+  /*
+   * The one declared layout transition: the panel's height, from Base UI's measured
+   * --accordion-panel-height. Clipped, clamped and short; content fades with it.
+   */
+  .hj-accordion-panel {
+    height: var(--accordion-panel-height);
+    overflow: hidden;
+    color: var(--hj-fg-dim);
+    font-size: 14.5px;
+    line-height: 1.6;
+    transition:
+      height var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),
+      opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-accordion-panel > :first-child {
+    margin-top: 0;
+  }
+  .hj-accordion-panel > :last-child {
+    margin-bottom: var(--hj-accordion-gap, var(--hj-space-4));
+  }
+  .hj-accordion-panel[data-starting-style],
+  .hj-accordion-panel[data-ending-style] {
+    height: 0;
+    opacity: 0;
+  }
+  .hj-accordion-panel[data-ending-style] {
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+}

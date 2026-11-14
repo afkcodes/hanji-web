@@ -1,0 +1,228 @@
+@layer hj.components {
+  /*
+   * Customise: --hj-navigation-menu-height (trigger height) · --hj-navigation-menu-radius (popup)
+   *
+   * Declared layout transition: the popup's width/height follow Base UI's measured
+   * --popup-width / --popup-height, and the positioner glides between triggers, so the
+   * surface morphs instead of closing and reopening. Contained (overflow clipped by the
+   * Viewport), clamped, and only while the menu is open.
+   */
+  .hj-navigation-menu-root {
+    font-family: var(--hj-font-sans);
+  }
+  .hj-navigation-menu-list {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hj-navigation-menu-item {
+    position: relative;
+  }
+
+  .hj-navigation-menu-trigger,
+  .hj-navigation-menu-link[data-variant='item'] {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: var(--hj-navigation-menu-height, 36px);
+    padding: 0 12px;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: transparent;
+    color: var(--hj-fg-dim);
+    font: 600 14px / 1 var(--hj-font-sans);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  /* 44px hit area */
+  .hj-navigation-menu-trigger::before,
+  .hj-navigation-menu-link[data-variant='item']::before {
+    content: '';
+    position: absolute;
+    inset: -4px 0;
+  }
+  .hj-navigation-menu-trigger:hover,
+  .hj-navigation-menu-link[data-variant='item']:hover {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-navigation-menu-trigger[data-popup-open] {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-navigation-menu-trigger:active,
+  .hj-navigation-menu-link[data-variant='item']:active {
+    transform: scale(var(--hj-press));
+    transition-duration: var(--hj-dur-fast), var(--hj-dur-fast), 70ms;
+  }
+  .hj-navigation-menu-link[data-variant='item'][data-active] {
+    color: var(--hj-accent);
+  }
+  .hj-navigation-menu-trigger[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .hj-navigation-menu-icon {
+    display: inline-flex;
+    font-size: 15px;
+    line-height: 0;
+    color: var(--hj-fg-mute);
+    transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-navigation-menu-icon[data-popup-open] {
+    transform: rotate(180deg);
+    color: var(--hj-fg-dim);
+  }
+
+  .hj-navigation-menu-positioner {
+    z-index: var(--hj-z-popover);
+    width: var(--positioner-width);
+    height: var(--positioner-height);
+    max-width: var(--available-width);
+    transition-property: top, left, right, bottom;
+    transition-duration: var(--hj-dur-gentle-settle);
+    transition-timing-function: var(--hj-ease-gentle-settle);
+  }
+  /* bridge the gap so the pointer can travel from trigger to popup */
+  .hj-navigation-menu-positioner::before {
+    content: '';
+    position: absolute;
+    inset: -10px 0 auto;
+    height: 10px;
+  }
+  .hj-navigation-menu-positioner[data-instant] {
+    transition: none;
+  }
+
+  .hj-navigation-menu-popup {
+    position: relative;
+    width: var(--popup-width);
+    height: var(--popup-height);
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-navigation-menu-radius, var(--hj-radius-md));
+    background: var(--hj-surface-2);
+    box-shadow: var(--hj-shadow-lift);
+    color: var(--hj-fg);
+    outline: none;
+    transform-origin: var(--transform-origin);
+    transition:
+      opacity var(--hj-dur-base) var(--hj-ease-out),
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      width var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),
+      height var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
+  }
+  .hj-navigation-menu-popup[data-starting-style],
+  .hj-navigation-menu-popup[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  .hj-navigation-menu-popup[data-ending-style] {
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+
+  .hj-navigation-menu-viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  .hj-navigation-menu-content {
+    width: max-content;
+    max-width: min(560px, calc(100vw - 32px));
+    padding: var(--hj-space-2);
+    transition:
+      opacity var(--hj-dur-base) var(--hj-ease-out),
+      transform var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
+  }
+  .hj-navigation-menu-content[data-starting-style],
+  .hj-navigation-menu-content[data-ending-style] {
+    opacity: 0;
+  }
+  /* Content slides a short way in the direction the pointer moved between triggers. */
+  .hj-navigation-menu-content[data-starting-style][data-activation-direction='left'] {
+    transform: translateX(calc(-24px * var(--hj-travel)));
+  }
+  .hj-navigation-menu-content[data-starting-style][data-activation-direction='right'] {
+    transform: translateX(calc(24px * var(--hj-travel)));
+  }
+  .hj-navigation-menu-content[data-ending-style][data-activation-direction='left'] {
+    transform: translateX(calc(24px * var(--hj-travel)));
+  }
+  .hj-navigation-menu-content[data-ending-style][data-activation-direction='right'] {
+    transform: translateX(calc(-24px * var(--hj-travel)));
+  }
+
+  .hj-navigation-menu-link[data-variant='card'] {
+    display: block;
+    padding: 10px 12px;
+    border-radius: var(--hj-radius-sm);
+    color: var(--hj-fg);
+    text-decoration: none;
+    outline-offset: -2px;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-navigation-menu-link[data-variant='card']:hover {
+    background: color-mix(in srgb, var(--hj-fg) 5%, transparent);
+  }
+  .hj-navigation-menu-link[data-variant='card']:active {
+    opacity: var(--hj-press-opacity);
+  }
+  .hj-navigation-menu-link[data-variant='card'][data-active] .hj-navigation-menu-link-title {
+    color: var(--hj-accent);
+  }
+  .hj-navigation-menu-link-title {
+    display: block;
+    font: 600 14.5px / 1.3 var(--hj-font-sans);
+    letter-spacing: -0.01em;
+  }
+  .hj-navigation-menu-link-description {
+    display: block;
+    margin-top: 3px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-navigation-menu-arrow {
+    width: 12px;
+    height: 12px;
+    background: var(--hj-surface-2);
+    border-top: 1px solid var(--hj-line);
+    border-left: 1px solid var(--hj-line);
+    transform: rotate(45deg);
+    transition: left var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
+  }
+  .hj-navigation-menu-arrow[data-side='bottom'] {
+    top: -7px;
+  }
+
+  .hj-navigation-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--hj-z-overlay);
+    background: var(--hj-scrim);
+    opacity: 0.2;
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-navigation-menu-backdrop[data-starting-style],
+  .hj-navigation-menu-backdrop[data-ending-style] {
+    opacity: 0;
+  }
+}

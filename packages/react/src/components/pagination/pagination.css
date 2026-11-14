@@ -1,0 +1,108 @@
+@layer hj.components {
+  /* Customise: --hj-pagination-size (button size) */
+  .hj-pagination-root {
+    --_s: var(--hj-pagination-size, 36px);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hj-pagination-page,
+  .hj-pagination-step {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    min-width: var(--_s);
+    height: var(--_s);
+    padding: 0 6px;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: transparent;
+    color: var(--hj-fg-dim);
+    font: 600 14px / 1 var(--hj-font-sans);
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  /* 44px hit area */
+  .hj-pagination-page::before,
+  .hj-pagination-step::before {
+    content: '';
+    position: absolute;
+    inset: -4px -1px;
+  }
+  .hj-pagination-page:hover:not([data-current]),
+  .hj-pagination-step:hover:not([data-disabled]) {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-pagination-page:active:not([data-current]),
+  .hj-pagination-step:active:not([data-disabled]) {
+    transform: scale(var(--hj-press));
+    transition-duration: var(--hj-dur-fast), var(--hj-dur-fast), 70ms;
+  }
+  /* The current page: accent on accent-soft, the one place the accent is spent. */
+  .hj-pagination-page[data-current] {
+    background: var(--hj-accent-soft);
+    color: var(--hj-accent);
+    cursor: default;
+  }
+
+  .hj-pagination-step {
+    width: var(--_s);
+    padding: 0;
+    font-size: 18px;
+    line-height: 0;
+  }
+  .hj-pagination-step:has(> :not(svg)),
+  .hj-pagination-step:not(:has(svg)) {
+    width: auto;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+  .hj-pagination-step[data-disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .hj-pagination-step > svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  .hj-pagination-ellipsis {
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    height: var(--_s);
+    color: var(--hj-fg-mute);
+    font-size: 14px;
+    user-select: none;
+  }
+
+  .hj-pagination-summary {
+    min-width: 7ch;
+    padding: 0 8px;
+    color: var(--hj-fg-dim);
+    font: 500 13.5px / 1 var(--hj-font-sans);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  .hj-pagination-root[data-variant='compact'] {
+    gap: 2px;
+  }
+}
