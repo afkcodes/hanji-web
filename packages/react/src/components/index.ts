@@ -24,6 +24,7 @@ export * from './command/index.ts';
 export * from './context-menu/index.ts';
 export * from './conversation/index.ts';
 export * from './counter/index.ts';
+export * from './data-table/index.ts';
 export * from './date-picker/index.ts';
 export * from './dialog/index.ts';
 export * from './drag-list/index.ts';

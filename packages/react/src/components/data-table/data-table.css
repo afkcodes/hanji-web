@@ -1,0 +1,228 @@
+@layer hj.components {
+  /*
+   * Customise: --hj-data-table-height · --hj-data-table-max-height (480px) ·
+   * --hj-data-table-row-height (48 / 40) · --hj-data-table-header-bg (bg)
+   */
+  .hj-data-table {
+    --_row: var(--hj-data-table-row-height, 48px);
+    --_pad: calc(12px * var(--hj-density));
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: var(--hj-data-table-height, auto);
+    /* as tall as its rows, up to a cap; a height you set lifts the cap */
+    max-height: var(--hj-data-table-max-height, var(--hj-data-table-height, 480px));
+    font-family: var(--hj-font-sans);
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--hj-fg);
+  }
+  .hj-data-table[data-size='sm'] {
+    --_row: var(--hj-data-table-row-height, 40px);
+    --_pad: calc(10px * var(--hj-density));
+  }
+
+  /* The scroller is the grid. Rows scroll under the header; wide tables scroll sideways. */
+  .hj-data-table-viewport {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    container-type: scroll-state;
+    scrollbar-color: color-mix(in srgb, var(--hj-fg) 22%, transparent) transparent;
+    scrollbar-width: thin;
+  }
+  .hj-data-table-canvas {
+    position: relative;
+    min-width: var(--_min, 100%);
+  }
+
+  /* Every row lays its cells on the same template, so columns line up without a <table>. */
+  .hj-data-table-head-row,
+  .hj-data-table-row {
+    display: grid;
+    grid-template-columns: var(--_cols);
+  }
+
+  /* ——— header ——— */
+  .hj-data-table-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /*
+   * The header paints a ground only once rows have scrolled under it, so at rest it sits on
+   * whatever surface the table is on. Without scroll-state queries it always paints.
+   */
+  @container scroll-state(scrollable: top) {
+    .hj-data-table-head {
+      background: var(--hj-data-table-header-bg, var(--hj-bg));
+    }
+  }
+  @supports not (container-type: scroll-state) {
+    .hj-data-table-head {
+      background: var(--hj-data-table-header-bg, var(--hj-bg));
+    }
+  }
+  .hj-data-table-head-row {
+    height: calc(40px * var(--hj-density-size));
+    box-shadow: inset 0 -1px 0 var(--hj-line);
+  }
+  .hj-data-table-column-header {
+    min-width: 0;
+    align-content: center;
+    padding: 0 var(--_pad);
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--hj-fg-mute);
+    text-align: start;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .hj-data-table-column-header[data-align='end'] {
+    text-align: end;
+  }
+  .hj-data-table-column-header[data-align='center'] {
+    text-align: center;
+  }
+
+  /* Sort: the label is a button; the glyph says which way and turns when the order flips. */
+  .hj-data-table-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(4px * var(--hj-density));
+    max-width: 100%;
+    height: 28px;
+    margin: 0 calc(-6px * var(--hj-density));
+    padding: 0 calc(6px * var(--hj-density));
+    border: 0;
+    border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    vertical-align: middle;
+    cursor: pointer;
+    outline-offset: -2px;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-data-table-column-header[data-align='end'] .hj-data-table-sort {
+    flex-direction: row-reverse;
+  }
+  .hj-data-table-sort:hover {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-data-table-column-header:not([data-sort='none']) .hj-data-table-sort {
+    color: var(--hj-fg);
+  }
+  .hj-data-table-sort-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hj-data-table-sort-glyph {
+    display: inline-flex;
+    flex: none;
+    font-size: 13px;
+    line-height: 0;
+    opacity: 0.4;
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-data-table-sort-glyph > svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-data-table-sort:hover .hj-data-table-sort-glyph {
+    opacity: 0.7;
+  }
+  .hj-data-table-column-header:not([data-sort='none']) .hj-data-table-sort-glyph {
+    opacity: 1;
+    color: var(--hj-accent);
+  }
+  .hj-data-table-column-header[data-sort='descending'] .hj-data-table-sort-glyph {
+    transform: rotate(180deg);
+  }
+
+  /* ——— rows ——— */
+  /* the hairline is a shadow, not a border: virtua measures the content box */
+  .hj-data-table-row {
+    height: var(--_row);
+    box-shadow: inset 0 -1px 0 var(--hj-line);
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-data-table[data-row-height='auto'] .hj-data-table-row {
+    height: auto;
+    min-height: var(--_row);
+  }
+  .hj-data-table-row:not([data-loading]):hover {
+    background: color-mix(in srgb, var(--hj-fg) 3%, transparent);
+  }
+  .hj-data-table-row[data-selected],
+  .hj-data-table-row[data-selected]:hover {
+    background: var(--hj-accent-soft);
+  }
+  .hj-data-table[data-actionable] .hj-data-table-row:not([data-loading]) {
+    cursor: pointer;
+  }
+  .hj-data-table[data-actionable] .hj-data-table-row:not([data-loading]):active {
+    opacity: var(--hj-press-opacity);
+    transition-duration: 70ms;
+  }
+
+  .hj-data-table-cell {
+    min-width: 0;
+    align-content: center;
+    padding: 0 var(--_pad);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: start;
+    border-radius: var(--hj-radius-xs);
+    corner-shape: var(--hj-corner-shape, round);
+    outline-offset: -2px;
+  }
+  .hj-data-table[data-row-height='auto'] .hj-data-table-cell {
+    padding-block: calc(10px * var(--hj-density));
+    white-space: normal;
+  }
+  .hj-data-table-cell[data-align='end'] {
+    text-align: end;
+  }
+  .hj-data-table-cell[data-align='center'] {
+    text-align: center;
+  }
+  .hj-data-table-cell[data-numeric] {
+    font: var(--hj-type-mono);
+    font-size: 13px;
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  /* the checkbox column: the box centred, its hit area the whole cell */
+  .hj-data-table-cell[data-select],
+  .hj-data-table-column-header[data-select] {
+    padding: 0;
+    text-align: center;
+    overflow: visible;
+  }
+
+  /* ——— states ——— */
+  .hj-data-table-empty-row {
+    display: block;
+  }
+  .hj-data-table-empty {
+    padding: calc(32px * var(--hj-density)) var(--_pad);
+    text-align: center;
+    color: var(--hj-fg-dim);
+    box-shadow: inset 0 -1px 0 var(--hj-line);
+  }
+}
