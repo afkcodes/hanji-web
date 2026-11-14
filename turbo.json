@@ -1,0 +1,21 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "generated/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "ai": {
+      "dependsOn": ["build"],
+      "outputs": ["generated/**", "../../registry/**", "../../llms*.txt"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
