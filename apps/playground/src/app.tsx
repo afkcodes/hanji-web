@@ -6,6 +6,7 @@ import { IconsPage } from './icons-page.tsx';
 import { Landing } from './landing.tsx';
 import { categories, entries } from './registry.ts';
 import type { Entry } from './registry.ts';
+import { ThemePage } from './theme-page.tsx';
 
 type Settings = { paper: string; accent: string; density: string; motion: string };
 const KEY = 'hanji.playground';
@@ -387,6 +388,10 @@ export function App(): React.JSX.Element {
             Icons
             <i>new</i>
           </a>
+          <a href="#/theme" aria-current={route === 'theme' ? 'page' : undefined}>
+            Theme
+            <i>new</i>
+          </a>
         </div>
         {categories.map((c) => (
           <div key={c.id}>
@@ -395,7 +400,9 @@ export function App(): React.JSX.Element {
               <a
                 key={e.meta.slug}
                 href={`#/${e.meta.slug}`}
-                aria-current={route !== 'icons' && e === entry ? 'page' : undefined}
+                aria-current={
+                  route !== 'icons' && route !== 'theme' && e === entry ? 'page' : undefined
+                }
               >
                 {e.meta.name}
                 {e.meta.status === 'new' ? <i>new</i> : null}
@@ -407,6 +414,8 @@ export function App(): React.JSX.Element {
       <main className="pg-main">
         {route === 'icons' ? (
           <IconsPage />
+        ) : route === 'theme' ? (
+          <ThemePage />
         ) : entry ? (
           <Page key={entry.meta.slug} entry={entry} />
         ) : (
