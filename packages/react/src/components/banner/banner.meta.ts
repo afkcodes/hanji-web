@@ -33,7 +33,10 @@ export const meta: ComponentMeta = defineMeta({
           description: 'Glyph, tint and ring.',
         },
         icon: { type: 'boolean', default: 'true', description: 'Lead with the tone glyph.' },
-        open: { type: 'boolean', description: 'Controlled visibility.' },
+        open: {
+          type: 'boolean',
+          description: 'Controlled visibility. Showing and hiding animate either way.',
+        },
         defaultOpen: {
           type: 'boolean',
           default: 'true',
@@ -41,13 +44,18 @@ export const meta: ComponentMeta = defineMeta({
         },
         onOpenChange: {
           type: '(open: boolean) => void',
-          description: 'Called after a dismissal finishes.',
+          description: 'Called as soon as Dismiss is pressed; the exit then plays.',
+        },
+        onOpenChangeComplete: {
+          type: '(open: boolean) => void',
+          description: 'Called once opening or closing has finished.',
         },
       }),
       dataAttributes: {
         'data-tone': 'neutral | info | success | warning | danger',
-        'data-ending-style': 'Fading out after Dismiss.',
-        'data-collapsing': 'Closing the space it held.',
+        'data-starting-style': 'The frame before it opens (space closed, content below and clear).',
+        'data-ending-style': 'Closing: content fades and lifts, then the space closes.',
+        'data-animating': 'The space is opening or closing (content is clipped meanwhile).',
       },
       cssVars: {
         '--hj-banner-radius': 'Corner radius. Default radius-md.',
@@ -95,7 +103,8 @@ export const meta: ComponentMeta = defineMeta({
     {
       file: 'resolve',
       title: 'With an action',
-      description: 'Offline, with Retry; dismissing closes the space.',
+      description:
+        'Offline, with Retry. Dismiss it or flip the toggle: the space and the gap below open and close in one motion.',
     },
   ],
   accessibility: [
@@ -104,7 +113,7 @@ export const meta: ComponentMeta = defineMeta({
     'The dismiss button has a 44px hit area.',
   ],
   motion:
-    'Dismiss fades and lifts 4 px in 180 ms, then the space closes over 260 ms — the one layout transition, declared because the rows below must follow.',
+    'Show: the space opens on the gentle spring (≈320 ms) while the notice fades in a beat later and rises 6 px. Hide: the notice fades and lifts 4 px on the fast clock (180 ms) while the space closes from 60 ms over 260 ms. A parent row gap opens and closes with it (the neighbour’s margin is animated with Web Animations and released at rest). grid-template-rows is the one declared layout transition, because the rows below must follow. Reduced motion: fade, then the space snaps. Re-opening mid-exit reverses from where it is.',
   tokens: ['info-soft', 'success-soft', 'warning-soft', 'danger-soft', 'line', 'radius-md'],
   related: ['toast', 'alert-dialog', 'field'],
 });

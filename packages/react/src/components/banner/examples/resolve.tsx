@@ -1,4 +1,4 @@
-import { Banner, Button } from '@hanji/react';
+import { Banner, Button, Toggle } from '@hanji/react';
 import * as React from 'react';
 
 export function Example(): React.JSX.Element {
@@ -30,18 +30,20 @@ export function Example(): React.JSX.Element {
       </Banner.Root>
       <div
         style={{
-          padding: '14px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          padding: '8px 8px 8px 16px',
           borderRadius: 12,
           boxShadow: 'inset 0 0 0 1px var(--hj-line)',
         }}
       >
-        Library · 1,284 songs
+        <span>Library · 1,284 songs</span>
+        <Toggle size="sm" variant="outline" pressed={open} onPressedChange={setOpen}>
+          Offline notice
+        </Toggle>
       </div>
-      {open ? null : (
-        <Button size="sm" variant="quiet" onClick={() => setOpen(true)}>
-          Show the notice again
-        </Button>
-      )}
     </div>
   );
 }

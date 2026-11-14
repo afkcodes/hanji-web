@@ -7,12 +7,22 @@
     display: grid;
     grid-template-rows: 1fr;
     font-family: var(--hj-font-sans);
-    /* the dismissal: fade first (fast), then the rows close up — the one layout transition */
-    transition:
-      opacity var(--hj-dur-fast) var(--hj-ease-out),
-      transform var(--hj-dur-fast) var(--hj-ease-out),
-      grid-template-rows var(--hj-dur-base) var(--hj-ease-out),
-      margin var(--hj-dur-base) var(--hj-ease-out);
+    /*
+     * The one declared layout transition: the space a banner holds opens and closes with
+     * grid-template-rows (0fr ↔ 1fr), so the rows below follow. Opening settles on the gentle
+     * spring; reduced motion snaps the space (travel 0) and keeps the fade.
+     */
+    transition: grid-template-rows calc(var(--hj-dur-gentle-settle) * var(--hj-travel))
+      var(--hj-ease-gentle-settle);
+  }
+  .hj-banner[data-starting-style],
+  .hj-banner[data-ending-style] {
+    grid-template-rows: 0fr;
+  }
+  /* Closing starts a beat after the fade (2.5 stagger steps), or once it ends under reduced motion. */
+  .hj-banner[data-ending-style] {
+    transition: grid-template-rows calc(var(--hj-dur-base) * var(--hj-travel)) var(--hj-ease-out)
+      calc(var(--hj-stagger) * 2.5 + (1 - var(--hj-travel)) * var(--hj-dur-fast));
   }
   .hj-banner[data-tone='info'] {
     --_fill: var(--hj-info-soft);
@@ -34,12 +44,14 @@
     --_ink: var(--hj-danger);
     --_ring: color-mix(in srgb, var(--hj-danger) 22%, transparent);
   }
-  .hj-banner[data-ending-style] {
-    opacity: 0;
-    transform: translateY(calc(-4px * var(--hj-travel)));
+
+  /* The grid item: it can shrink to nothing because the padding lives on the inner box. Clipped
+     only while the space moves, so focus rings and the dismiss hit area are free at rest. */
+  .hj-banner-clip {
+    min-height: 0;
   }
-  .hj-banner[data-collapsing] {
-    grid-template-rows: 0fr;
+  .hj-banner[data-animating] > .hj-banner-clip {
+    overflow: hidden;
   }
 
   .hj-banner-inner {
@@ -58,9 +70,22 @@
     background: var(--_fill);
     box-shadow: inset 0 0 0 1px var(--_ring);
     color: var(--hj-fg);
+    /* arriving: rises into the opening space a beat after it starts */
+    transition:
+      opacity var(--hj-dur-base) var(--hj-ease-out) calc(var(--hj-stagger) * 2.5),
+      transform var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle);
   }
-  .hj-banner[data-collapsing] .hj-banner-inner {
-    padding-block: 0;
+  .hj-banner[data-starting-style] .hj-banner-inner {
+    opacity: 0;
+    transform: translateY(calc(6px * var(--hj-travel)));
+  }
+  /* leaving: fades and lifts at once, on the fast exit clock */
+  .hj-banner[data-ending-style] .hj-banner-inner {
+    opacity: 0;
+    transform: translateY(calc(-4px * var(--hj-travel)));
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-fast) var(--hj-ease-out);
   }
   .hj-banner-glyph {
     display: inline-flex;
