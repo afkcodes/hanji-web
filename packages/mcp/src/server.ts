@@ -2,7 +2,7 @@ import { checkThemeInput, parseTheme } from '@hanji/tokens/schema';
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { findComponent, searchComponents } from './data.ts';
+import { findComponent, iconSvg, searchComponents, searchIcons } from './data.ts';
 import type { HanjiData } from './data.ts';
 
 const text = (t: string): { content: { type: 'text'; text: string }[] } => ({
@@ -22,7 +22,7 @@ export function createServer(data: HanjiData): McpServer {
     { name: 'hanji', version: manifest.version },
     {
       instructions:
-        'hanji is a React component library on Base UI. Before writing UI with it: get_setup once, search_components or list_components to pick parts, get_component for the exact API, get_example for idiomatic code. Use variants, tokens, slot classes and --hj-* variables instead of restyling internals. Validate any theme with validate_theme.',
+        'hanji is a React component library on Base UI. Before writing UI with it: get_setup once, search_components or list_components to pick parts, get_component for the exact API, get_example for idiomatic code. Use variants, tokens, slot classes and --hj-* variables instead of restyling internals. Validate any theme with validate_theme. For icons, search_icons then get_icon (import the component from @hanji/icons; never hand-draw SVG).',
     },
   );
 
@@ -222,6 +222,73 @@ export function createServer(data: HanjiData): McpServer {
         cssVariables: t.vars,
         jsx: `<Theme ${props}>…</Theme>`,
         css: t.toCss(),
+      });
+    },
+  );
+
+  server.registerTool(
+    'search_icons',
+    {
+      title: 'Search icons',
+      description: `Find icons in @hanji/icons (${data.icons.length} icons, each in outline, solid and wash) by name, synonym or meaning, e.g. "delete", "settings", "upload file", "warning".`,
+      inputSchema: {
+        query: z.string().describe('What the icon should show or mean.'),
+        limit: z.number().int().min(1).max(60).optional(),
+      },
+      annotations: READ_ONLY,
+    },
+    ({ query, limit }) => {
+      if (!data.icons.length)
+        return { ...text('@hanji/icons is not installed or not built.'), isError: true };
+      const hits = searchIcons(data.icons, query, limit ?? 24);
+      if (!hits.length) return text(`No icon matches "${query}". Try a synonym.`);
+      return text(
+        [
+          ...hits.map(
+            (i) =>
+              `${i.component} (${i.name}) · ${i.category || 'uncategorised'} · solid: ${i.filled ? 'filled' : 'bold line'}`,
+          ),
+          '',
+          'Usage: import { IconName } from \'@hanji/icons\'; <IconName variant="outline" | "solid" | "wash" label="…" /> (label only when the icon carries meaning on its own).',
+        ].join('\n'),
+      );
+    },
+  );
+
+  server.registerTool(
+    'get_icon',
+    {
+      title: 'Get an icon',
+      description:
+        'One icon: its import, JSX, tags and the SVG markup for a variant (outline, solid or wash).',
+      inputSchema: {
+        name: z
+          .string()
+          .describe('kebab-case name ("arrow-up") or component name ("IconArrowUp").'),
+        variant: z.enum(['outline', 'solid', 'wash']).optional(),
+      },
+      annotations: READ_ONLY,
+    },
+    ({ name, variant }) => {
+      const key = name.trim();
+      const icon = data.icons.find((i) => i.name === key || i.component === key);
+      if (!icon) {
+        const near = searchIcons(data.icons, key, 5).map((i) => i.name);
+        return {
+          ...text(`No icon "${key}".${near.length ? ` Did you mean: ${near.join(', ')}?` : ''}`),
+          isError: true,
+        };
+      }
+      const v = variant ?? 'outline';
+      return json({
+        name: icon.name,
+        component: icon.component,
+        import: icon.import,
+        jsx: `<${icon.component}${v === 'outline' ? '' : ` variant="${v}"`} />`,
+        category: icon.category,
+        tags: icon.tags,
+        solid: icon.filled ? 'filled drawing' : 'bold line (no filled drawing exists)',
+        svg: iconSvg(icon, v),
       });
     },
   );

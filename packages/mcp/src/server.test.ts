@@ -26,12 +26,26 @@ describe('hanji MCP', () => {
         'get_setup',
         'get_theme_schema',
         'get_tokens',
+        'get_icon',
         'list_components',
+        'search_icons',
         'search_components',
         'validate_theme',
       ].toSorted(),
     );
     expect(tools.every((t) => t.annotations?.readOnlyHint)).toBe(true);
+  });
+
+  it('finds icons by meaning and returns their SVG', async () => {
+    const found = await client.callTool({ name: 'search_icons', arguments: { query: 'delete' } });
+    expect(textOf(found)).toMatch(/IconTrash/);
+    const one = await client.callTool({
+      name: 'get_icon',
+      arguments: { name: 'IconHome', variant: 'solid' },
+    });
+    const icon = JSON.parse(textOf(one)) as { import: string; svg: string };
+    expect(icon.import).toBe("import { IconHome } from '@hanji/icons';");
+    expect(icon.svg).toContain('fill="currentColor"');
   });
 
   it('reads a component doc by name, slug or part', async () => {

@@ -38,8 +38,23 @@ export interface Manifest {
   components: ManifestComponent[];
 }
 
+/** One icon from @hanji/icons/icons.json. */
+export interface IconEntry {
+  name: string;
+  component: string;
+  category: string;
+  tags: string[];
+  /** True when the solid variant is a filled drawing; false when it is the bold line. */
+  filled: boolean;
+  import: string;
+  outline: string;
+  solid: string[] | null;
+}
+
 export interface HanjiData {
   manifest: Manifest;
+  /** Empty when @hanji/icons isn't installed or built. */
+  icons: IconEntry[];
   llms: string;
   tokens: Record<string, unknown>;
   schema: Record<string, unknown>;
@@ -50,8 +65,20 @@ export interface HanjiData {
  * Load the generated artefacts from the installed packages (or a directory, for tests).
  * Throws a clear message when @hanji/react hasn't been built.
  */
-export function loadData(reactDist?: string): HanjiData {
+export function loadData(reactDist?: string, iconsFile?: string): HanjiData {
   const require = createRequire(import.meta.url);
+  let iconsPath = iconsFile;
+  if (iconsPath === undefined) {
+    try {
+      iconsPath = require.resolve('@hanji/icons/icons.json');
+    } catch {
+      iconsPath = undefined;
+    }
+  }
+  const icons =
+    iconsPath && existsSync(iconsPath)
+      ? (JSON.parse(readFileSync(iconsPath, 'utf8')) as { icons: IconEntry[] }).icons
+      : [];
   const dist = reactDist ?? dirname(require.resolve('@hanji/react/manifest.json'));
   const manifestFile = join(dist, 'manifest.json');
   if (!existsSync(manifestFile)) {
@@ -62,6 +89,7 @@ export function loadData(reactDist?: string): HanjiData {
   const read = (f: string): string => readFileSync(join(dist, f), 'utf8');
   return {
     manifest: JSON.parse(read('manifest.json')) as Manifest,
+    icons,
     llms: read('llms.txt'),
     tokens: JSON.parse(read('tokens.json')) as Record<string, unknown>,
     schema: JSON.parse(read('theme.schema.json')) as Record<string, unknown>,
@@ -120,4 +148,50 @@ export function searchComponents(
     .filter((r) => r.score > 0)
     .toSorted((a, b) => b.score - a.score)
     .slice(0, limit);
+}
+
+/** Rank icons for a query: exact name ≫ name ≫ exact tag ≫ tag ≫ category. */
+export function searchIcons(icons: IconEntry[], query: string, limit = 24): IconEntry[] {
+  const terms = query
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+  if (!terms.length) return [];
+  const phrase = terms.join('-');
+  return icons
+    .map((icon) => {
+      const parts = icon.name.split('-');
+      let score = icon.name === phrase ? 40 : 0;
+      for (const t of terms) {
+        if (parts.includes(t)) score += 10;
+        else if (icon.name.includes(t)) score += 5;
+        if (icon.tags.includes(t)) score += 6;
+        else if (icon.tags.some((g) => g.includes(t))) score += 2;
+        if (icon.category.toLowerCase() === t) score += 2;
+      }
+      // prefer the plain glyph over its decorated variants (home over home-bolt)
+      return { icon, score: score - parts.length * 0.1 };
+    })
+    .filter((r) => r.score > 1)
+    .toSorted((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((r) => r.icon);
+}
+
+const svgPaths = (ds: readonly string[]): string => ds.map((d) => `<path d="${d}"/>`).join('');
+
+/** The icon as a standalone SVG string. */
+export function iconSvg(
+  icon: IconEntry,
+  variant: 'outline' | 'solid' | 'wash' = 'outline',
+): string {
+  const head = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"';
+  if (variant === 'solid' && icon.solid)
+    return `${head} fill="currentColor">${svgPaths(icon.solid)}</svg>`;
+  const wash =
+    variant === 'wash' && icon.solid
+      ? `<g fill="currentColor" stroke="none" opacity="0.16">${svgPaths(icon.solid)}</g>`
+      : '';
+  const width = variant === 'solid' ? 2.25 : 1.5;
+  return `${head} fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round">${wash}<path d="${icon.outline}"/></svg>`;
 }

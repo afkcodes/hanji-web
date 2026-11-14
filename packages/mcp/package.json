@@ -1,7 +1,7 @@
 {
   "name": "@hanji/mcp",
   "version": "0.1.0",
-  "description": "MCP server for hanji: lets coding agents list, search and read hanji components, fetch examples, read tokens and validate themes.",
+  "description": "MCP server for hanji: lets coding agents list, search and read hanji components, fetch examples, read tokens, validate themes, and search and fetch icons.",
   "keywords": [
     "ai",
     "design-system",
@@ -30,6 +30,7 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
+    "@hanji/icons": "workspace:*",
     "@hanji/react": "workspace:*",
     "@hanji/tokens": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
