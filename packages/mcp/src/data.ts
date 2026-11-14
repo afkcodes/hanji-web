@@ -49,7 +49,7 @@ export interface IconEntry {
   /** Drawn for hanji rather than reshaped from Solar. */
   original: boolean;
   import: string;
-  /** Ready SVG markup per style: outline, solid, wash, duotone, duotone-solid. */
+  /** Ready SVG markup per style: outline, solid, wash. */
   svg: Record<string, string>;
 }
 

@@ -230,7 +230,7 @@ export function createServer(data: HanjiData): McpServer {
     'search_icons',
     {
       title: 'Search icons',
-      description: `Find icons in @hanji/icons (${data.icons.length} icons, each in outline, solid, wash, duotone and duotone-solid) by name, synonym or meaning, e.g. "delete", "settings", "upload file", "warning".`,
+      description: `Find icons in @hanji/icons (${data.icons.length} icons, each in outline, solid and wash, with motion) by name, synonym or meaning, e.g. "delete", "settings", "upload file", "warning".`,
       inputSchema: {
         query: z.string().describe('What the icon should show or mean.'),
         limit: z.number().int().min(1).max(60).optional(),
@@ -249,7 +249,7 @@ export function createServer(data: HanjiData): McpServer {
               `${i.component} (${i.name}${i.aliases.length ? `, also ${i.aliases.join(', ')}` : ''}) · ${i.category || 'uncategorised'}`,
           ),
           '',
-          'Usage: import { IconName } from \'@hanji/icons\'; <IconName variant="outline" | "solid" | "wash" | "duotone" | "duotone-solid" label="…" /> (label only when the icon carries meaning on its own).',
+          'Usage: import { IconName } from \'@hanji/icons\'; <IconName variant="outline" | "solid" | "wash" label="…" />; toggles: active={on}; motion: animate="draw" | "pop" | "ring" | "shake" | "spin" (replays when trigger changes) (label only when the icon carries meaning on its own).',
         ].join('\n'),
       );
     },
@@ -260,12 +260,12 @@ export function createServer(data: HanjiData): McpServer {
     {
       title: 'Get an icon',
       description:
-        'One icon: its import, JSX, tags and the SVG markup for a style (outline, solid, wash, duotone or duotone-solid).',
+        'One icon: its import, JSX, tags and the SVG markup for a style (outline, solid or wash).',
       inputSchema: {
         name: z
           .string()
           .describe('kebab-case name ("arrow-up") or component name ("IconArrowUp").'),
-        variant: z.enum(['outline', 'solid', 'wash', 'duotone', 'duotone-solid']).optional(),
+        variant: z.enum(['outline', 'solid', 'wash']).optional(),
       },
       annotations: READ_ONLY,
     },
