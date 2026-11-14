@@ -1,0 +1,197 @@
+import { defineMeta, props } from '../../system/meta.ts';
+import type { ComponentMeta } from '../../system/meta.ts';
+import type { CloseOwnProps, ContentOwnProps } from './popover.tsx';
+
+export const meta: ComponentMeta = defineMeta({
+  name: 'Popover',
+  slug: 'popover',
+  category: 'surfaces',
+  status: 'stable',
+  description:
+    'A small anchored surface for detail or a quick task that belongs to the thing that opened it.',
+  whenToUse: [
+    'A short form tied to one control: rename, add a note, pick a date range.',
+    'Extra detail the user asked for by pressing something.',
+  ],
+  whenNotToUse: [
+    'A label on hover — use Tooltip.',
+    'A list of commands — use Menu.',
+    'A decision that must block the page — use Dialog or AlertDialog.',
+  ],
+  import: "import { Popover } from '@hanji/react';",
+  parts: [
+    {
+      name: 'Root',
+      element: '(none)',
+      base: 'Popover.Root',
+      slot: 'Popover.Root',
+      className: '',
+      description: 'State owner: open, onOpenChange, modal, openOnHover.',
+    },
+    {
+      name: 'Trigger',
+      element: 'button',
+      base: 'Popover.Trigger',
+      slot: 'Popover.Trigger',
+      className: 'hj-popover-trigger',
+      description: 'Opens the popover. Compose with Button via render.',
+      dataAttributes: { 'data-popup-open': 'The popover is open (Base UI).' },
+    },
+    {
+      name: 'Portal',
+      element: '(portal)',
+      base: 'Popover.Portal',
+      slot: 'Popover.Portal',
+      className: '',
+      description: 'Portals to body and re-applies the nearest Theme.',
+    },
+    {
+      name: 'Positioner',
+      element: 'div',
+      base: 'Popover.Positioner',
+      slot: 'Popover.Positioner',
+      className: 'hj-popover-positioner',
+      description: 'Places the popup: side, align, sideOffset, collisionPadding.',
+    },
+    {
+      name: 'Popup',
+      element: 'div',
+      base: 'Popover.Popup',
+      slot: 'Popover.Popup',
+      className: 'hj-popover-popup',
+      description: 'The surface: surface-2, hairline, the declared lift shadow.',
+      dataAttributes: {
+        'data-side': 'top | bottom | left | right (Base UI).',
+        'data-starting-style': 'Entering.',
+        'data-ending-style': 'Leaving.',
+      },
+      cssVars: {
+        '--hj-popover-width': 'Max width. Default 320px.',
+        '--hj-popover-padding': 'Inner padding. Default 16px.',
+        '--hj-popover-radius': 'Corner radius. Default radius-md.',
+        '--transform-origin': 'Anchor point for the grow animation (Base UI, read-only).',
+      },
+    },
+    {
+      name: 'Content',
+      element: '(portal)',
+      slot: 'Popover.Content',
+      className: 'hj-popover-popup',
+      description: 'Shorthand: Portal + Positioner + Popup (+ Arrow). Takes Popup props.',
+      props: props<ContentOwnProps>({
+        side: {
+          type: "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
+          default: "'bottom'",
+          description: 'Side of the anchor.',
+        },
+        align: {
+          type: "'start' | 'center' | 'end'",
+          default: "'center'",
+          description: 'Alignment along the side.',
+        },
+        sideOffset: {
+          type: 'number | OffsetFunction',
+          default: '6',
+          description: 'Gap from the anchor (10 with an arrow).',
+        },
+        alignOffset: { type: 'number | OffsetFunction', description: 'Shift along the side.' },
+        collisionPadding: {
+          type: 'number | Padding',
+          default: '8',
+          description: 'Distance kept from the viewport edge.',
+        },
+        arrow: { type: 'boolean', default: 'false', description: 'Draw an arrow at the anchor.' },
+        container: { type: 'HTMLElement | ShadowRoot | RefObject', description: 'Portal target.' },
+        keepMounted: {
+          type: 'boolean',
+          default: 'false',
+          description: 'Keep in the DOM while closed.',
+        },
+      }),
+    },
+    {
+      name: 'Arrow',
+      element: 'div',
+      base: 'Popover.Arrow',
+      slot: 'Popover.Arrow',
+      className: 'hj-popover-arrow',
+      description: 'A clipped rotated square in the popup’s paint.',
+    },
+    {
+      name: 'Title',
+      element: 'h2',
+      base: 'Popover.Title',
+      slot: 'Popover.Title',
+      className: 'hj-popover-title',
+      description: 'Labels the popup.',
+    },
+    {
+      name: 'Description',
+      element: 'p',
+      base: 'Popover.Description',
+      slot: 'Popover.Description',
+      className: 'hj-popover-description',
+      description: 'Describes the popup.',
+    },
+    {
+      name: 'Actions',
+      element: 'div',
+      slot: 'Popover.Actions',
+      className: 'hj-popover-actions',
+      description: 'Right-aligned footer row.',
+    },
+    {
+      name: 'Close',
+      element: 'button',
+      base: 'Popover.Close',
+      slot: 'Popover.Close',
+      className: 'hj-popover-close',
+      description: 'Closes. With no children it renders the corner ✕.',
+      props: props<CloseOwnProps>({
+        icon: {
+          type: 'boolean',
+          default: 'children === undefined',
+          description: 'Render as the corner icon button.',
+        },
+      }),
+    },
+    {
+      name: 'Backdrop',
+      element: 'div',
+      base: 'Popover.Backdrop',
+      slot: 'Popover.Backdrop',
+      className: 'hj-popover-backdrop',
+      description: 'Optional click-catcher behind a modal popover (unpainted).',
+    },
+    {
+      name: 'Viewport',
+      element: 'div',
+      base: 'Popover.Viewport',
+      slot: 'Popover.Viewport',
+      className: 'hj-popover-viewport',
+      description: 'Animates content when one popup is shared by several triggers.',
+    },
+  ],
+  examples: [
+    {
+      file: 'rename',
+      title: 'A quick task',
+      description: 'Rename a playlist without leaving the list.',
+    },
+    {
+      file: 'detail',
+      title: 'Detail with an arrow',
+      description: 'What “Lossless” costs, from an info button.',
+    },
+  ],
+  accessibility: [
+    'Trigger gets aria-expanded/aria-controls; focus moves into the popup and returns on close.',
+    'Escape and an outside press close it.',
+    'Title/Description label the popup.',
+  ],
+  motion:
+    'Grows from the anchor (transform-origin) on snappy: scale .92 → 1 with a 260 ms fade. Leaves in 180 ms.',
+  tokens: ['surface-2', 'line', 'shadow-lift', 'radius-md', 'ease-snappy', 'dur-fast'],
+  related: ['tooltip', 'menu', 'preview-card', 'dialog'],
+  baseUi: 'popover',
+});

@@ -1,0 +1,252 @@
+@layer hj.components {
+  /*
+   * Customise: --hj-sheet-inset (edge gap, 8px) · --hj-sheet-width · --hj-sheet-radius · --hj-sheet-scrim
+   * Base UI drives: --drawer-swipe-movement-x/y, --drawer-swipe-progress, --drawer-swipe-strength,
+   * --drawer-snap-point-offset.
+   */
+  .hj-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--hj-z-overlay);
+    min-height: 100dvh;
+    background: var(--hj-scrim);
+    /*
+     * The scrim follows the sheet: full (.55) when the sheet is fully up, lighter at a lower
+     * detent (Base UI reports progress 1 there), thinning while it is swiped away.
+     */
+    opacity: calc(var(--hj-sheet-scrim, 0.55) * (1 - var(--drawer-swipe-progress, 0) * 0.6));
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-sheet-backdrop[data-starting-style],
+  .hj-sheet-backdrop[data-ending-style] {
+    opacity: 0;
+  }
+  .hj-sheet-backdrop[data-swiping] {
+    transition-duration: 0ms;
+  }
+  .hj-sheet-backdrop[data-ending-style] {
+    transition-duration: calc(var(--drawer-swipe-strength, 1) * var(--hj-dur-base));
+  }
+
+  .hj-sheet-viewport {
+    position: fixed;
+    inset: 0;
+    z-index: var(--hj-z-overlay);
+    display: flex;
+    padding: var(--hj-sheet-inset, 8px);
+    padding-bottom: max(var(--hj-sheet-inset, 8px), env(safe-area-inset-bottom, 0px));
+    touch-action: none;
+  }
+  .hj-sheet-viewport[data-side='bottom'] {
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .hj-sheet-viewport[data-side='top'] {
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .hj-sheet-viewport[data-side='right'] {
+    justify-content: flex-end;
+  }
+  .hj-sheet-viewport[data-side='left'] {
+    justify-content: flex-start;
+  }
+
+  .hj-sheet-popup {
+    --_inset: var(--hj-sheet-inset, 8px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - var(--_inset) * 2);
+    overflow: hidden;
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-sheet-radius, var(--hj-radius-xl));
+    background: var(--hj-surface-2);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    outline: none;
+    touch-action: none;
+    will-change: transform;
+    /* arrivals settle on gentle; the finger owns it while swiping */
+    transition:
+      transform var(--hj-dur-gentle-settle) var(--hj-ease-gentle-settle),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-sheet-popup[data-swiping] {
+    transition-duration: 0ms;
+  }
+  .hj-sheet-popup[data-ending-style] {
+    transition-duration: calc(var(--drawer-swipe-strength, 1) * var(--hj-dur-base));
+    transition-timing-function: var(--hj-ease-out);
+  }
+  /* reduced motion: --hj-travel is 0, so the slide collapses and only the fade remains */
+  .hj-sheet-popup[data-starting-style],
+  .hj-sheet-popup[data-ending-style] {
+    opacity: var(--hj-travel);
+  }
+
+  .hj-sheet-popup[data-side='bottom'],
+  .hj-sheet-popup[data-side='top'] {
+    width: 100%;
+    max-width: var(--hj-sheet-width, 560px);
+  }
+  .hj-sheet-popup[data-side='bottom'][data-size='sm'],
+  .hj-sheet-popup[data-side='top'][data-size='sm'] {
+    max-width: var(--hj-sheet-width, 420px);
+  }
+  .hj-sheet-popup[data-side='bottom'][data-size='lg'],
+  .hj-sheet-popup[data-side='top'][data-size='lg'] {
+    max-width: var(--hj-sheet-width, 720px);
+  }
+  .hj-sheet-popup[data-side='bottom'] {
+    transform: translateY(
+      calc(var(--drawer-snap-point-offset, 0px) + var(--drawer-swipe-movement-y, 0px))
+    );
+  }
+  .hj-sheet-popup[data-side='bottom'][data-starting-style],
+  .hj-sheet-popup[data-side='bottom'][data-ending-style] {
+    transform: translateY(calc((100% + var(--_inset) + 2px) * var(--hj-travel)));
+  }
+  .hj-sheet-popup[data-side='top'] {
+    transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  }
+  .hj-sheet-popup[data-side='top'][data-starting-style],
+  .hj-sheet-popup[data-side='top'][data-ending-style] {
+    transform: translateY(calc((-100% - var(--_inset) - 2px) * var(--hj-travel)));
+  }
+
+  .hj-sheet-popup[data-side='right'],
+  .hj-sheet-popup[data-side='left'] {
+    width: min(var(--hj-sheet-width, 400px), 100%);
+    height: 100%;
+    max-height: none;
+    transform: translateX(var(--drawer-swipe-movement-x, 0px));
+  }
+  .hj-sheet-popup[data-side='right'][data-size='sm'],
+  .hj-sheet-popup[data-side='left'][data-size='sm'] {
+    width: min(var(--hj-sheet-width, 320px), 100%);
+  }
+  .hj-sheet-popup[data-side='right'][data-size='lg'],
+  .hj-sheet-popup[data-side='left'][data-size='lg'] {
+    width: min(var(--hj-sheet-width, 520px), 100%);
+  }
+  .hj-sheet-popup[data-side='right'][data-starting-style],
+  .hj-sheet-popup[data-side='right'][data-ending-style] {
+    transform: translateX(calc((100% + var(--_inset) + 2px) * var(--hj-travel)));
+  }
+  .hj-sheet-popup[data-side='left'][data-starting-style],
+  .hj-sheet-popup[data-side='left'][data-ending-style] {
+    transform: translateX(calc((-100% - var(--_inset) - 2px) * var(--hj-travel)));
+  }
+
+  .hj-sheet-handle {
+    flex: none;
+    width: 36px;
+    height: 4px;
+    margin: 8px auto 2px;
+    border-radius: var(--hj-radius-pill);
+    background: color-mix(in srgb, var(--hj-fg) 20%, transparent);
+  }
+
+  .hj-sheet-header {
+    position: relative;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 56px 8px 20px;
+  }
+  .hj-sheet-title {
+    margin: 0;
+    font: var(--hj-type-title);
+    letter-spacing: var(--hj-tracking-title);
+  }
+  .hj-sheet-description {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--hj-fg-dim);
+  }
+
+  .hj-sheet-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    padding: 4px 20px 20px;
+  }
+  .hj-sheet-body[data-pending] {
+    overflow: hidden;
+  }
+  .hj-sheet-placeholder {
+    display: block;
+    padding-top: 8px;
+  }
+  .hj-sheet-placeholder > i {
+    display: block;
+    height: 12px;
+    margin: 0 0 14px;
+    border-radius: var(--hj-radius-pill);
+    background: color-mix(in srgb, var(--hj-fg) 7%, transparent);
+  }
+  .hj-sheet-placeholder > i:nth-child(2) {
+    width: 72%;
+  }
+  .hj-sheet-placeholder > i:nth-child(3) {
+    width: 48%;
+  }
+
+  .hj-sheet-footer {
+    flex: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--hj-line);
+  }
+
+  .hj-sheet-close[data-icon] {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg-dim);
+    line-height: 0;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-sheet-close[data-icon]::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+  }
+  .hj-sheet-close[data-icon]:hover {
+    background: color-mix(in srgb, var(--hj-fg) 10%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-sheet-close[data-icon]:active {
+    transform: scale(0.92);
+    transition-duration: 70ms;
+  }
+  .hj-sheet-close[data-icon] svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .hj-sheet-swipe-area {
+    position: fixed;
+    z-index: var(--hj-z-sticky);
+  }
+}

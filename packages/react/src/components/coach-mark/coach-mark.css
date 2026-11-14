@@ -1,0 +1,147 @@
+@layer hj.components {
+  /* Customise: --hj-coach-mark-scrim · --hj-coach-mark-radius (spotlight) · --hj-coach-mark-width */
+  .hj-coach-mark-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--hj-z-overlay);
+    animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* no target found: the whole screen dims and the bubble sits centred */
+  .hj-coach-mark-overlay:not([data-anchored]) {
+    background: color-mix(
+      in srgb,
+      var(--hj-scrim) calc(var(--hj-coach-mark-scrim, 0.55) * 100%),
+      transparent
+    );
+  }
+  /* a hole in the scrim around the real control */
+  .hj-coach-mark-spotlight {
+    position: fixed;
+    border-radius: var(--hj-coach-mark-radius, var(--hj-radius-sm));
+    box-shadow:
+      0 0 0 2px var(--hj-accent),
+      0 0 0 100vmax
+        color-mix(
+          in srgb,
+          var(--hj-scrim) calc(var(--hj-coach-mark-scrim, 0.55) * 100%),
+          transparent
+        );
+    pointer-events: none;
+    animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* one soft beacon, twice — decoration, so it stops under reduced motion */
+  .hj-coach-mark-spotlight::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    box-shadow: 0 0 0 2px var(--hj-accent);
+    opacity: 0;
+    animation: hj-coach-mark-beacon 1400ms var(--hj-ease-out) 400ms 2;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-coach-mark-beacon {
+    from {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.18);
+    }
+  }
+
+  .hj-coach-mark-positioner {
+    z-index: var(--hj-z-popover);
+  }
+  .hj-coach-mark-popup {
+    position: relative;
+    z-index: var(--hj-z-popover);
+    width: min(var(--hj-coach-mark-width, 300px), calc(100vw - 24px));
+    padding: 16px;
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-radius-md);
+    background: var(--hj-surface-2);
+    box-shadow: var(--hj-shadow-lift);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    outline: none;
+    transform-origin: var(--transform-origin);
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-coach-mark-popup[data-starting-style],
+  .hj-coach-mark-popup[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  .hj-coach-mark-popup[data-centered] {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out);
+  }
+
+  .hj-coach-mark-title {
+    margin: 0 0 4px;
+    font: var(--hj-type-heading);
+    letter-spacing: var(--hj-tracking-heading);
+  }
+  .hj-coach-mark-description {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--hj-fg-dim);
+  }
+  .hj-coach-mark-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .hj-coach-mark-progress {
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    color: var(--hj-fg-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-coach-mark-spacer {
+    flex: 1;
+  }
+
+  .hj-coach-mark-arrow {
+    position: relative;
+    display: block;
+    width: 14px;
+    height: 7px;
+    overflow: clip;
+  }
+  .hj-coach-mark-arrow[data-side='top'] {
+    bottom: -7px;
+    rotate: 180deg;
+  }
+  .hj-coach-mark-arrow[data-side='bottom'] {
+    top: -7px;
+  }
+  .hj-coach-mark-arrow[data-side='left'] {
+    right: -10px;
+    rotate: 90deg;
+  }
+  .hj-coach-mark-arrow[data-side='right'] {
+    left: -10px;
+    rotate: -90deg;
+  }
+  .hj-coach-mark-arrow::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--hj-line);
+    background: var(--hj-surface-2);
+    transform: translate(-50%, 50%) rotate(45deg);
+  }
+}

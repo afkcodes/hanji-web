@@ -1,0 +1,15 @@
+@layer hj.components {
+  /* Rows and popup are Menu's (hj-menu-*). This file styles only the trigger area and positioner. */
+  .hj-context-menu-trigger {
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+  .hj-context-menu-trigger[data-popup-open] {
+    outline: 1.5px solid color-mix(in srgb, var(--hj-accent) 45%, transparent);
+    outline-offset: 2px;
+  }
+  .hj-context-menu-positioner {
+    z-index: var(--hj-z-popover);
+    outline: none;
+  }
+}

@@ -1,0 +1,44 @@
+@layer hj.components {
+  /* Rows and popups are Menu's (hj-menu-*). This file styles the bar and its triggers. */
+  .hj-menubar {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border-radius: var(--hj-radius-sm);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+    font-family: var(--hj-font-sans);
+  }
+  .hj-menubar[data-orientation='vertical'] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hj-menubar-trigger {
+    position: relative;
+    height: var(--hj-menubar-trigger-height, 32px);
+    padding: 0 12px;
+    border: 0;
+    border-radius: var(--hj-radius-xs);
+    background: transparent;
+    color: var(--hj-fg-dim);
+    font: 500 13.5px / 1 var(--hj-font-sans);
+    cursor: default;
+    user-select: none;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-menubar-trigger:hover:not([data-disabled]),
+  .hj-menubar-trigger[data-popup-open] {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-menubar-trigger[data-disabled] {
+    opacity: 0.4;
+  }
+  .hj-menubar-trigger:focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: -2px;
+  }
+}

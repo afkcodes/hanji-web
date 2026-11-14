@@ -1,0 +1,129 @@
+@layer hj.components {
+  /* Customise: --hj-banner-radius · --hj-banner-padding */
+  .hj-banner {
+    --_fill: color-mix(in srgb, var(--hj-fg) 5%, var(--hj-surface));
+    --_ink: var(--hj-fg-dim);
+    --_ring: var(--hj-line);
+    display: grid;
+    grid-template-rows: 1fr;
+    font-family: var(--hj-font-sans);
+    /* the dismissal: fade first (fast), then the rows close up — the one layout transition */
+    transition:
+      opacity var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-fast) var(--hj-ease-out),
+      grid-template-rows var(--hj-dur-base) var(--hj-ease-out),
+      margin var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-banner[data-tone='info'] {
+    --_fill: var(--hj-info-soft);
+    --_ink: var(--hj-info);
+    --_ring: color-mix(in srgb, var(--hj-info) 22%, transparent);
+  }
+  .hj-banner[data-tone='success'] {
+    --_fill: var(--hj-success-soft);
+    --_ink: var(--hj-success);
+    --_ring: color-mix(in srgb, var(--hj-success) 22%, transparent);
+  }
+  .hj-banner[data-tone='warning'] {
+    --_fill: var(--hj-warning-soft);
+    --_ink: var(--hj-warning);
+    --_ring: color-mix(in srgb, var(--hj-warning) 26%, transparent);
+  }
+  .hj-banner[data-tone='danger'] {
+    --_fill: var(--hj-danger-soft);
+    --_ink: var(--hj-danger);
+    --_ring: color-mix(in srgb, var(--hj-danger) 22%, transparent);
+  }
+  .hj-banner[data-ending-style] {
+    opacity: 0;
+    transform: translateY(calc(-4px * var(--hj-travel)));
+  }
+  .hj-banner[data-collapsing] {
+    grid-template-rows: 0fr;
+  }
+
+  .hj-banner-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+    padding: var(--hj-banner-padding, 14px 14px 14px 16px);
+    border-radius: var(--hj-banner-radius, var(--hj-radius-md));
+    background: var(--_fill);
+    box-shadow: inset 0 0 0 1px var(--_ring);
+    color: var(--hj-fg);
+  }
+  .hj-banner[data-collapsing] .hj-banner-inner {
+    padding-block: 0;
+  }
+  .hj-banner-glyph {
+    display: inline-flex;
+    flex: none;
+    margin-top: 1px;
+    color: var(--_ink);
+    line-height: 0;
+  }
+  .hj-banner-glyph > svg {
+    width: 20px;
+    height: 20px;
+  }
+  .hj-banner-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .hj-banner-title {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .hj-banner-description {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--hj-fg-dim);
+  }
+  .hj-banner-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .hj-banner-dismiss {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin: -4px -4px 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--hj-radius-pill);
+    background: transparent;
+    color: var(--hj-fg-mute);
+    line-height: 0;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-banner-dismiss::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
+  .hj-banner-dismiss:hover {
+    background: color-mix(in srgb, var(--hj-fg) 8%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-banner-dismiss > svg {
+    width: 14px;
+    height: 14px;
+  }
+}

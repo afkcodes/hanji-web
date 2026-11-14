@@ -1,0 +1,160 @@
+import { defineMeta, props } from '../../system/meta.ts';
+import type { ComponentMeta } from '../../system/meta.ts';
+import type { ContentOwnProps } from './preview-card.tsx';
+
+export const meta: ComponentMeta = defineMeta({
+  name: 'PreviewCard',
+  slug: 'preview-card',
+  category: 'surfaces',
+  status: 'stable',
+  description:
+    'A card that previews where a link goes when the pointer rests on it or it gets focus.',
+  whenToUse: [
+    'Links to people, artists, playlists or documents where a glance saves a click.',
+    'Citations in AI answers (source title, site, excerpt).',
+  ],
+  whenNotToUse: ['Anything the user must act on — use Popover.', 'A one-word label — use Tooltip.'],
+  import: "import { PreviewCard } from '@hanji/react';",
+  parts: [
+    {
+      name: 'Root',
+      element: '(none)',
+      base: 'PreviewCard.Root',
+      slot: 'PreviewCard.Root',
+      className: '',
+      description: 'State owner: open, onOpenChange.',
+    },
+    {
+      name: 'Trigger',
+      element: 'a',
+      base: 'PreviewCard.Trigger',
+      slot: 'PreviewCard.Trigger',
+      className: 'hj-preview-card-trigger',
+      description: 'The link. Hover delay 600 ms, close delay 300 ms (Base UI).',
+      dataAttributes: { 'data-popup-open': 'Preview is showing.' },
+    },
+    {
+      name: 'Portal',
+      element: '(portal)',
+      base: 'PreviewCard.Portal',
+      slot: 'PreviewCard.Portal',
+      className: '',
+      description: 'Portals and re-applies the nearest Theme.',
+    },
+    {
+      name: 'Positioner',
+      element: 'div',
+      base: 'PreviewCard.Positioner',
+      slot: 'PreviewCard.Positioner',
+      className: 'hj-preview-card-positioner',
+      description: 'Places the card.',
+    },
+    {
+      name: 'Popup',
+      element: 'div',
+      base: 'PreviewCard.Popup',
+      slot: 'PreviewCard.Popup',
+      className: 'hj-preview-card-popup',
+      description: 'The card: surface-2, hairline, lift.',
+      cssVars: {
+        '--hj-preview-card-width': 'Width. Default 300px.',
+        '--hj-preview-card-radius': 'Corner radius. Default radius-md.',
+      },
+    },
+    {
+      name: 'Media',
+      element: 'div',
+      slot: 'PreviewCard.Media',
+      className: 'hj-preview-card-media',
+      description: '16:9 image or art, full bleed.',
+    },
+    {
+      name: 'Body',
+      element: 'div',
+      slot: 'PreviewCard.Body',
+      className: 'hj-preview-card-body',
+      description: 'Padded text area.',
+    },
+    {
+      name: 'Title',
+      element: 'p',
+      slot: 'PreviewCard.Title',
+      className: 'hj-preview-card-title',
+      description: 'Heading role type.',
+    },
+    {
+      name: 'Description',
+      element: 'p',
+      slot: 'PreviewCard.Description',
+      className: 'hj-preview-card-description',
+      description: '13px dim excerpt.',
+    },
+    {
+      name: 'Arrow',
+      element: 'div',
+      base: 'PreviewCard.Arrow',
+      slot: 'PreviewCard.Arrow',
+      className: 'hj-preview-card-arrow',
+      description: 'Optional arrow.',
+    },
+    {
+      name: 'Backdrop',
+      element: 'div',
+      base: 'PreviewCard.Backdrop',
+      slot: 'PreviewCard.Backdrop',
+      className: 'hj-preview-card-backdrop',
+      description: 'Unpainted catcher.',
+    },
+    {
+      name: 'Viewport',
+      element: 'div',
+      base: 'PreviewCard.Viewport',
+      slot: 'PreviewCard.Viewport',
+      className: 'hj-preview-card-viewport',
+      description: 'Animates content shared by several links.',
+    },
+    {
+      name: 'Content',
+      element: '(portal)',
+      slot: 'PreviewCard.Content',
+      className: 'hj-preview-card-popup',
+      description: 'Shorthand: Portal + Positioner + Popup (+ Arrow).',
+      props: props<ContentOwnProps>({
+        side: {
+          type: "'top' | 'bottom' | 'left' | 'right'",
+          default: "'bottom'",
+          description: 'Side of the link.',
+        },
+        align: {
+          type: "'start' | 'center' | 'end'",
+          default: "'center'",
+          description: 'Alignment.',
+        },
+        sideOffset: { type: 'number', default: '8', description: 'Gap from the link.' },
+        arrow: { type: 'boolean', default: 'false', description: 'Draw the arrow.' },
+        container: { type: 'HTMLElement | ShadowRoot | RefObject', description: 'Portal target.' },
+      }),
+    },
+  ],
+  examples: [
+    {
+      file: 'artist',
+      title: 'People and places',
+      description: 'An artist link in a sentence previews the artist.',
+    },
+    {
+      file: 'unavailable',
+      title: 'Gone',
+      description: 'A removed playlist says so instead of failing silently.',
+    },
+  ],
+  accessibility: [
+    'The trigger is a real link — it works without the preview.',
+    'Opens on keyboard focus too; the preview is supplementary, never required.',
+  ],
+  motion:
+    'Grows from the link on snappy (.94 → 1) with a fade; neighbours open instantly once one is open.',
+  tokens: ['surface-2', 'line', 'shadow-lift', 'radius-md', 'accent'],
+  related: ['popover', 'tooltip', 'card'],
+  baseUi: 'preview-card',
+});

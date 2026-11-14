@@ -1,0 +1,93 @@
+@layer hj.components {
+  /* Same surface as Dialog. Customise: --hj-alert-dialog-width · --hj-alert-dialog-scrim */
+  .hj-alert-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--hj-z-overlay);
+    min-height: 100dvh;
+    background: var(--hj-scrim);
+    opacity: var(--hj-alert-dialog-scrim, 0.55);
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-alert-dialog-backdrop[data-starting-style],
+  .hj-alert-dialog-backdrop[data-ending-style] {
+    opacity: 0;
+  }
+  .hj-alert-dialog-backdrop[data-ending-style] {
+    transition-duration: var(--hj-dur-fast);
+  }
+
+  .hj-alert-dialog-popup {
+    --_w: var(--hj-alert-dialog-width, 380px);
+    position: fixed;
+    inset: 0;
+    z-index: var(--hj-z-overlay);
+    margin: auto;
+    width: min(var(--_w), calc(100vw - 32px));
+    height: fit-content;
+    max-height: calc(100dvh - 48px);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px;
+    border: 1px solid var(--hj-line);
+    border-radius: var(--hj-radius-lg);
+    background: var(--hj-surface-2);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+    outline: none;
+    transform: translateY(calc(-10px * var(--nested-dialogs, 0)))
+      scale(calc(1 - 0.05 * var(--nested-dialogs, 0)));
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-alert-dialog-popup[data-size='md'] {
+    --_w: var(--hj-alert-dialog-width, 480px);
+  }
+  .hj-alert-dialog-popup[data-starting-style] {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  .hj-alert-dialog-popup[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.97);
+    transition-duration: var(--hj-dur-fast);
+    transition-timing-function: var(--hj-ease-out);
+  }
+
+  .hj-alert-dialog-glyph {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 6px;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-danger-soft);
+    color: var(--hj-danger);
+    line-height: 0;
+  }
+  .hj-alert-dialog-glyph > svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .hj-alert-dialog-title {
+    margin: 0;
+    font: var(--hj-type-title);
+    letter-spacing: var(--hj-tracking-title);
+  }
+  .hj-alert-dialog-description {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--hj-fg-dim);
+  }
+  .hj-alert-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}

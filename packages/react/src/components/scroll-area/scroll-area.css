@@ -1,0 +1,95 @@
+@layer hj.components {
+  /* Customise: --hj-scroll-area-fade (edge fade length, 24px) · --hj-scroll-area-thumb (colour) */
+  .hj-scroll-area {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .hj-scroll-area-viewport {
+    height: 100%;
+    max-height: inherit;
+    overscroll-behavior: contain;
+    outline: none;
+  }
+  .hj-scroll-area-viewport:focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: -2px;
+  }
+  /* edges fade only where there is more to see */
+  .hj-scroll-area-viewport[data-fade] {
+    --_f: var(--hj-scroll-area-fade, 24px);
+    mask-image:
+      linear-gradient(
+        to bottom,
+        transparent 0,
+        black min(var(--scroll-area-overflow-y-start, 0px), var(--_f)),
+        black calc(100% - min(var(--scroll-area-overflow-y-end, 0px), var(--_f))),
+        transparent 100%
+      ),
+      linear-gradient(
+        to right,
+        transparent 0,
+        black min(var(--scroll-area-overflow-x-start, 0px), var(--_f)),
+        black calc(100% - min(var(--scroll-area-overflow-x-end, 0px), var(--_f))),
+        transparent 100%
+      );
+    mask-composite: intersect;
+  }
+
+  .hj-scroll-area-content {
+    min-width: 100%;
+  }
+
+  /* a thin overlay rail: invisible at rest, there when you reach for it */
+  .hj-scroll-area-scrollbar {
+    display: flex;
+    padding: 2px;
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    user-select: none;
+    transition: opacity var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-scroll-area-scrollbar[data-orientation='vertical'] {
+    width: 10px;
+    justify-content: center;
+  }
+  .hj-scroll-area-scrollbar[data-orientation='horizontal'] {
+    height: 10px;
+    align-items: center;
+  }
+  .hj-scroll-area-scrollbar[data-hovering],
+  .hj-scroll-area-scrollbar[data-scrolling] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .hj-scroll-area-scrollbar[data-scrolling] {
+    transition-duration: 0ms;
+  }
+
+  .hj-scroll-area-thumb {
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-scroll-area-thumb, color-mix(in srgb, var(--hj-fg) 28%, transparent));
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      transform var(--hj-dur-snappy) var(--hj-ease-snappy);
+  }
+  .hj-scroll-area-scrollbar[data-orientation='vertical'] .hj-scroll-area-thumb {
+    width: 6px;
+  }
+  .hj-scroll-area-scrollbar[data-orientation='horizontal'] .hj-scroll-area-thumb {
+    height: 6px;
+  }
+  /* reaching for it: the thumb firms up and widens (by scale, not width) */
+  .hj-scroll-area-scrollbar[data-orientation='vertical']:hover .hj-scroll-area-thumb {
+    background: color-mix(in srgb, var(--hj-fg) 45%, transparent);
+    transform: scaleX(1.34);
+  }
+  .hj-scroll-area-scrollbar[data-orientation='horizontal']:hover .hj-scroll-area-thumb {
+    background: color-mix(in srgb, var(--hj-fg) 45%, transparent);
+    transform: scaleY(1.34);
+  }
+  .hj-scroll-area-corner {
+    background: transparent;
+  }
+}
