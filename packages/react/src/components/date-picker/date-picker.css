@@ -81,7 +81,7 @@
     transition: color var(--hj-dur-fast) var(--hj-ease-out);
   }
   .hj-date-picker-trigger[data-popup-open] .hj-date-picker-icon {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
 
   .hj-date-picker-positioner {

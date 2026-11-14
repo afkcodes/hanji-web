@@ -114,7 +114,7 @@
     padding: 0;
     border: 0;
     background: none;
-    color: var(--_t);
+    color: var(--_tt, var(--_t));
     font: inherit;
     cursor: pointer;
     outline: none;
@@ -127,18 +127,23 @@
   }
   .hj-swipe-actions-action[data-tone='accent'] {
     --_t: var(--hj-accent);
+    --_tt: var(--hj-accent-text);
   }
   .hj-swipe-actions-action[data-tone='info'] {
     --_t: var(--hj-info);
+    --_tt: var(--hj-info-text);
   }
   .hj-swipe-actions-action[data-tone='success'] {
     --_t: var(--hj-success);
+    --_tt: var(--hj-success-text);
   }
   .hj-swipe-actions-action[data-tone='warning'] {
     --_t: var(--hj-warning);
+    --_tt: var(--hj-warning-text);
   }
   .hj-swipe-actions-action[data-tone='danger'] {
     --_t: var(--hj-danger);
+    --_tt: var(--hj-danger-text);
   }
   .hj-swipe-actions-action:disabled {
     --_t: var(--hj-fg-mute);

@@ -16,7 +16,7 @@
     padding: 0 2px;
     border: 0;
     background: none;
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     font: 600 14px / 1 var(--hj-font-sans);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;

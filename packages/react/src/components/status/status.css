@@ -17,24 +17,25 @@
     vertical-align: middle;
   }
   .hj-status[data-tone='success'] {
-    --_c: var(--hj-success);
+    --_c: var(--hj-success-text);
     --_bg: var(--hj-success-soft);
   }
   .hj-status[data-tone='warning'] {
-    --_c: var(--hj-warning);
+    --_c: var(--hj-warning-text);
     --_bg: var(--hj-warning-soft);
   }
   .hj-status[data-tone='danger'] {
-    --_c: var(--hj-danger);
+    --_c: var(--hj-danger-text);
     --_bg: var(--hj-danger-soft);
   }
   .hj-status[data-tone='info'] {
-    --_c: var(--hj-info);
+    --_c: var(--hj-info-text);
     --_bg: var(--hj-info-soft);
   }
+  /* work in progress: the accent, or info when the accent could pass for danger */
   .hj-status[data-tone='pending'] {
-    --_c: var(--hj-accent);
-    --_bg: var(--hj-accent-soft);
+    --_c: var(--hj-pending-text);
+    --_bg: var(--hj-pending-soft);
   }
   .hj-status[data-variant='plain'] {
     height: auto;

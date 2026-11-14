@@ -106,7 +106,7 @@
   .hj-otp-field[data-status='success'] .hj-otp-field-input {
     --_ring: color-mix(in srgb, var(--hj-success) 55%, transparent);
     background: var(--hj-success-soft);
-    color: var(--hj-success);
+    color: var(--hj-success-text);
   }
 
   .hj-otp-field-separator {

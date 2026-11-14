@@ -103,7 +103,7 @@
   .hj-list-leading[data-variant='avatar'] {
     border-radius: var(--hj-radius-pill);
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     font-size: 14px;
     font-weight: 600;
     line-height: 1;
@@ -150,7 +150,7 @@
     transition: color var(--hj-dur-base) var(--hj-ease-out);
   }
   .hj-list-item[data-selected] .hj-list-title {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-list-description {
     display: flex;

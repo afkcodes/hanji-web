@@ -55,7 +55,7 @@
     margin: 0 0 calc(6px * var(--hj-density));
     font-size: 15px;
     font-weight: 600;
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
   .hj-form-error-summary-title svg {
     flex: none;

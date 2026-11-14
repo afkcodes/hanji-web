@@ -158,7 +158,7 @@
   }
   .hj-table-head:not([data-sort='none']) .hj-table-sort-glyph {
     opacity: 1;
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-table-head[data-sort='descending'] .hj-table-sort-glyph {
     transform: rotate(180deg);

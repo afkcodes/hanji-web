@@ -85,7 +85,7 @@
   .hj-toolbar-button[data-pressed],
   .hj-toolbar-button[data-popup-open] {
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-toolbar-button[data-disabled] {
     opacity: 0.4;
@@ -97,7 +97,7 @@
   }
 
   .hj-toolbar-link {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
 
   .hj-toolbar-separator {

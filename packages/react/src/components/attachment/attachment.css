@@ -78,7 +78,7 @@
   }
   .hj-attachment[data-status='error'] .hj-attachment-icon {
     background: transparent;
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
 
   .hj-attachment-name {
@@ -103,7 +103,7 @@
     font-variant-numeric: tabular-nums;
   }
   .hj-attachment[data-status='error'] .hj-attachment-meta {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
 
   .hj-attachment-remove {

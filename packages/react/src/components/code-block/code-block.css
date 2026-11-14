@@ -82,14 +82,14 @@
   }
   .hj-code-block-button[data-pressed] {
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-code-block-button > svg {
     width: 15px;
     height: 15px;
   }
   .hj-code-block-button[data-copied] {
-    color: var(--hj-success);
+    color: var(--hj-success-text);
   }
   .hj-code-block-glyphs {
     display: inline-grid;

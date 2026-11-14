@@ -184,7 +184,7 @@
     display: inline-flex;
     font-size: 17px;
     line-height: 0;
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     animation: hj-fade-in var(--hj-dur-fast) var(--hj-ease-out);
   }
   .hj-select-item-indicator svg {

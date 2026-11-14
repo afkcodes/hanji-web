@@ -143,7 +143,7 @@
     border-radius: var(--hj-radius-sm);
     corner-shape: var(--hj-corner-shape, round);
     background: var(--hj-danger-soft);
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
     font-size: 13.5px;
     line-height: 1.45;
   }

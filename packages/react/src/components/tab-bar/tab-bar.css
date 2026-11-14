@@ -40,7 +40,7 @@
     color: var(--hj-fg);
   }
   .hj-tab-bar-item[data-active] {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-tab-bar-item:focus-visible {
     outline-offset: -4px;

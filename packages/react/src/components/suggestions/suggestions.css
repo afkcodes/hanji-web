@@ -71,7 +71,7 @@
   .hj-suggestions-item:hover:not([data-disabled]) {
     background: var(--hj-accent-soft);
     box-shadow: inset 0 0 0 1px transparent;
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-suggestions-item:active:not([data-disabled]) {
     transform: scale(var(--hj-press));

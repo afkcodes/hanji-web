@@ -59,7 +59,7 @@
   /* The current page: accent on accent-soft, the one place the accent is spent. */
   .hj-pagination-page[data-current] {
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     cursor: default;
   }
 

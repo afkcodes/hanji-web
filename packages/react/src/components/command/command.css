@@ -36,7 +36,7 @@
     transition: color var(--hj-dur-fast) var(--hj-ease-out);
   }
   .hj-command-field:focus-within .hj-command-field-icon {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-command-field-icon svg {
     width: 1em;
@@ -79,7 +79,7 @@
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     font: 600 12.5px / 1 var(--hj-font-sans);
     letter-spacing: 0.005em;
     white-space: nowrap;

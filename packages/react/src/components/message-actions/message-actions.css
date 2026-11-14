@@ -52,7 +52,7 @@
     cursor: not-allowed;
   }
   .hj-message-actions-button[data-pressed] {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-message-actions-button[data-pressed] svg path {
     fill: color-mix(in srgb, currentColor 18%, transparent);
@@ -90,7 +90,7 @@
     transform: scale(0.7);
   }
   .hj-message-actions-button[data-copied] {
-    color: var(--hj-success);
+    color: var(--hj-success-text);
   }
   .hj-message-actions-check {
     stroke-dasharray: 1;

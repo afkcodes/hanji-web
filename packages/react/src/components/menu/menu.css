@@ -77,7 +77,7 @@
   }
   .hj-menu-item[data-tone='danger'],
   .hj-menu-item[data-tone='danger'] > .hj-icon {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
   .hj-menu-item[data-tone='danger'][data-highlighted] {
     background: var(--hj-danger-soft);
@@ -111,7 +111,7 @@
     width: 16px;
     height: 16px;
     margin-left: -2px;
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     line-height: 0;
   }
   .hj-menu-indicator > svg {

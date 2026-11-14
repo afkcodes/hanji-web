@@ -134,7 +134,7 @@
     margin: 0;
     font-size: 12.5px;
     line-height: 17px;
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
     animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out);
   }
   /* The glyph is drawn here, not passed as a child, so a bare <Field.Error /> still shows Base UI's

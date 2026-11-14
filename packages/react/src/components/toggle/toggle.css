@@ -59,7 +59,7 @@
   }
   .hj-toggle[data-pressed] {
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     box-shadow: inset 0 0 0 1px transparent;
   }
   .hj-toggle:active:not([data-disabled]) {

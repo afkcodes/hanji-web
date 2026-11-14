@@ -82,7 +82,7 @@
     transition: color var(--hj-dur-fast) var(--hj-ease-out);
   }
   .hj-autocomplete-group:focus-within .hj-autocomplete-icon {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-autocomplete-icon svg,
   .hj-autocomplete-clear svg,

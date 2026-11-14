@@ -1,7 +1,7 @@
 @layer hj.components {
   /* Customise: --hj-link-color · --hj-link-underline-offset */
   .hj-link {
-    --_c: var(--hj-link-color, var(--hj-accent));
+    --_c: var(--hj-link-color, var(--hj-accent-text));
     color: var(--_c);
     font-weight: 500;
     text-decoration-line: underline;

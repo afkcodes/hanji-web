@@ -62,7 +62,7 @@
     color: var(--hj-fg-mute);
   }
   .hj-tone-accent {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-tabular {
     font-variant-numeric: tabular-nums;

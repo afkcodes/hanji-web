@@ -115,6 +115,6 @@
     color: var(--hj-fg-mute);
   }
   .hj-choice-card-item[data-checked] .hj-choice-card-consequence {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
 }

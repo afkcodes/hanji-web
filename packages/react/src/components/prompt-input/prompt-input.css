@@ -76,7 +76,7 @@
     font-variant-numeric: tabular-nums;
   }
   .hj-prompt-input-count[data-over] {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
 
   .hj-prompt-input-attach {
@@ -195,7 +195,7 @@
     padding: 2px 0 2px;
     font-size: 12.5px;
     line-height: 17px;
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
     animation: hj-fade-in var(--hj-dur-base) var(--hj-ease-out);
   }
   .hj-prompt-input-error > svg {

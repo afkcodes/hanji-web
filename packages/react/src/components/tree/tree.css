@@ -90,7 +90,7 @@
     transition-duration: 70ms;
   }
   .hj-tree-item[data-selected] > .hj-tree-row {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-tree-item[data-selected] > .hj-tree-row::before,
   .hj-tree-item[data-selected] > .hj-tree-row:hover::before {
@@ -226,7 +226,7 @@
     width: 16px;
     height: 16px;
     margin-inline-start: auto;
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     line-height: 0;
   }
   .hj-tree-meta + .hj-tree-check {
@@ -309,7 +309,7 @@
    * verb in ink), tinted only under the pointer — at rest it must not read as a selection.
    */
   .hj-tree-item[data-status='error'] > .hj-tree-row {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
     cursor: pointer;
   }
   @media (hover: hover) {
@@ -318,7 +318,7 @@
     }
   }
   .hj-tree-item[data-status='error'] > .hj-tree-row > .hj-tree-icon {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
     font-size: 16px;
   }
   .hj-tree-retry {

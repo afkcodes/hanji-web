@@ -150,7 +150,7 @@
     inset: -6px 0;
   }
   .hj-tabs-list[data-variant='pill'] .hj-tabs-tab[data-active] {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-tabs-list[data-variant='pill'] .hj-tabs-indicator {
     inset: 0;

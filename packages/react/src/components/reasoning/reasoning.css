@@ -43,7 +43,7 @@
     height: 1em;
   }
   .hj-reasoning-glyph {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-reasoning-chevron {
     color: var(--hj-fg-mute);

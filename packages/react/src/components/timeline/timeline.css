@@ -62,7 +62,7 @@
   .hj-timeline-item[data-status='failed'] .hj-timeline-marker {
     background: var(--hj-danger-soft);
     box-shadow: inset 0 0 0 1.5px var(--hj-danger);
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
   /* Current: an accent ring with a dot, and a pulse that stops when motion is reduced. */
   .hj-timeline-item[data-status='current'] .hj-timeline-marker {
@@ -112,7 +112,7 @@
     color: var(--hj-fg-dim);
   }
   .hj-timeline-item[data-status='failed'] .hj-timeline-title {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
   .hj-timeline-time {
     font: var(--hj-type-mono);

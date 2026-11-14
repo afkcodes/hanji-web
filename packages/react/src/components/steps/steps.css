@@ -16,7 +16,7 @@
     font-variant-numeric: tabular-nums;
   }
   .hj-steps-root[data-complete] .hj-steps-count {
-    color: var(--hj-success);
+    color: var(--hj-success-text);
   }
 
   .hj-steps-track {
@@ -89,7 +89,7 @@
   }
   .hj-steps-item[data-state='current'] .hj-steps-marker {
     box-shadow: inset 0 0 0 2px var(--hj-accent);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-steps-item[data-state='complete'] .hj-steps-marker {
     background: var(--hj-accent);

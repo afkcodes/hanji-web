@@ -132,7 +132,7 @@
     letter-spacing: -0.01em;
   }
   .hj-model-picker-item[data-selected] .hj-model-picker-item-name {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-model-picker-item-provider {
     font-size: 12px;
@@ -162,7 +162,7 @@
     display: inline-flex;
     font-size: 16px;
     line-height: 0;
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-model-picker-item-indicator svg {
     width: 1em;

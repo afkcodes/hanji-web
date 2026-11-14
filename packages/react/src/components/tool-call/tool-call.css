@@ -86,19 +86,19 @@
   }
   .hj-tool-call-status[data-status='done'] {
     background: var(--hj-success-soft);
-    color: var(--hj-success);
+    color: var(--hj-success-text);
   }
   .hj-tool-call-status[data-status='failed'] {
     background: var(--hj-danger-soft);
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
   .hj-tool-call-status[data-status='needs-approval'] {
     background: var(--hj-warning-soft);
-    color: var(--hj-warning);
+    color: var(--hj-warning-text);
   }
   .hj-tool-call-status[data-status='running'] {
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-tool-call-status-glyph {
     display: inline-grid;
@@ -189,7 +189,7 @@
     tab-size: 2;
   }
   .hj-tool-call[data-status='failed'] .hj-tool-call-section:last-child .hj-tool-call-code {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
 
   .hj-tool-call-approval {

@@ -58,13 +58,13 @@
     color: var(--hj-text-color, var(--hj-fg-mute));
   }
   .hj-text[data-tone='accent'] {
-    color: var(--hj-text-color, var(--hj-accent));
+    color: var(--hj-text-color, var(--hj-accent-text));
   }
   .hj-text[data-tone='danger'] {
-    color: var(--hj-text-color, var(--hj-danger));
+    color: var(--hj-text-color, var(--hj-danger-text));
   }
   .hj-text[data-tone='success'] {
-    color: var(--hj-text-color, var(--hj-success));
+    color: var(--hj-text-color, var(--hj-success-text));
   }
 
   .hj-text[data-truncate] {

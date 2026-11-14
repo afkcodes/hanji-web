@@ -75,7 +75,7 @@
     color: var(--hj-fg);
   }
   .hj-segmented-control-item[data-checked] {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-segmented-control-item:active:not([data-disabled]) {
     transform: scale(var(--hj-press));

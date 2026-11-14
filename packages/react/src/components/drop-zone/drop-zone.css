@@ -117,7 +117,7 @@
   }
   .hj-drop-zone-area[data-dragging]:not([data-reject]) .hj-drop-zone-icon {
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     transform: translateY(calc(-2px * var(--hj-travel))) scale(calc(1 + 0.06 * var(--hj-travel)));
   }
   .hj-drop-zone-area[data-dragging]:not([data-reject]) .hj-drop-zone-arrow {
@@ -125,7 +125,7 @@
   }
   .hj-drop-zone-area[data-reject] .hj-drop-zone-icon {
     background: color-mix(in srgb, var(--hj-danger) 12%, transparent);
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
 
   .hj-drop-zone-content {
@@ -151,7 +151,7 @@
     line-height: 19px;
   }
   .hj-drop-zone-prompt[data-reject] {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
   .hj-drop-zone-hint {
     margin: 0;
@@ -232,7 +232,7 @@
   }
   .hj-drop-zone-file[data-status='error'] .hj-drop-zone-file-thumb {
     background: var(--hj-danger-soft);
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
 
   .hj-drop-zone-file-name {
@@ -286,13 +286,13 @@
   }
   .hj-drop-zone-file-error {
     min-width: 0;
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
   .hj-drop-zone-file-done {
     display: inline-flex;
     align-items: center;
     gap: calc(4px * var(--hj-density));
-    color: var(--hj-success);
+    color: var(--hj-success-text);
   }
   .hj-drop-zone-file-done svg {
     width: 13px;

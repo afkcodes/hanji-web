@@ -128,10 +128,10 @@
     height: 20px;
   }
   .hj-toast[data-tone='success'] .hj-toast-glyph {
-    color: var(--hj-success);
+    color: var(--hj-success-text);
   }
   .hj-toast[data-tone='danger'] .hj-toast-glyph {
-    color: var(--hj-danger);
+    color: var(--hj-danger-text);
   }
 
   .hj-toast-text {
@@ -165,7 +165,7 @@
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: var(--hj-accent-soft);
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
     font: 600 13px / 1 var(--hj-font-sans);
     cursor: pointer;
     transition: transform var(--hj-dur-snappy) var(--hj-ease-snappy);

@@ -11,6 +11,12 @@ interface ThemeScopeValue {
 
 const ThemeScopeContext = React.createContext<ThemeScopeValue | null>(null);
 
+// bundlers replace process.env.NODE_ENV; without one the check is simply skipped
+declare const process: { env: { NODE_ENV?: string } };
+const isProduction = (): boolean =>
+  typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
+const warned = new Set<string>();
+
 export interface ThemeProps extends ThemeInput, Omit<React.ComponentProps<'div'>, 'style'> {
   /** A theme from `createTheme()`. Individual fields (paper, accent…) override it. */
   theme?: HanjiTheme;
@@ -39,6 +45,7 @@ export function Theme(props: ThemeProps): React.ReactElement {
     smoothing,
     fonts,
     colors,
+    data,
     springs,
     surface,
     style,
@@ -55,6 +62,7 @@ export function Theme(props: ThemeProps): React.ReactElement {
     smoothing,
     fonts,
     colors,
+    data,
     springs,
   };
   const key = JSON.stringify(input);
@@ -68,10 +76,21 @@ export function Theme(props: ThemeProps): React.ReactElement {
             ...theme,
             attributes: { ...theme.attributes, ...own.attributes },
             vars: { ...theme.vars, ...own.vars },
+            warnings: [...theme.warnings, ...own.warnings],
           }
         : own,
     [theme, own],
   );
+
+  // colours that work but read poorly: said once per message, in development only
+  React.useEffect(() => {
+    if (isProduction()) return;
+    for (const w of resolved.warnings) {
+      if (warned.has(w.message)) continue;
+      warned.add(w.message);
+      console.warn(`[hanji] Theme (${w.code}): ${w.message}`);
+    }
+  }, [resolved]);
 
   const vars = resolved.vars as React.CSSProperties;
   const hasVars = Object.keys(vars).length > 0;

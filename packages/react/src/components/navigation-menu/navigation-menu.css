@@ -67,7 +67,7 @@
     transition-duration: var(--hj-dur-fast), var(--hj-dur-fast), 70ms;
   }
   .hj-navigation-menu-link[data-variant='item'][data-active] {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-navigation-menu-trigger[data-disabled] {
     opacity: 0.4;
@@ -188,7 +188,7 @@
     opacity: var(--hj-press-opacity);
   }
   .hj-navigation-menu-link[data-variant='card'][data-active] .hj-navigation-menu-link-title {
-    color: var(--hj-accent);
+    color: var(--hj-accent-text);
   }
   .hj-navigation-menu-link-title {
     display: block;
