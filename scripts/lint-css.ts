@@ -3,7 +3,9 @@
  *  1. every component stylesheet is wrapped in `@layer hj.components`;
  *  2. every class it defines is prefixed `hj-<slug>` (its own namespace);
  *  3. no class is defined by two components;
- *  4. no raw hex colours outside the tokens package (use --hj-* tokens).
+ *  4. no raw hex colours outside the tokens package (use --hj-* tokens);
+ *  5. spacing (padding, gap, margin) in px scales with density: calc(Npx * var(--hj-density)) or --hj-space-*;
+ *  6. every non-pill token radius also sets corner-shape, so hanji's continuous corner shows.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -42,6 +44,30 @@ for (const d of readdirSync(comps, { withFileTypes: true })) {
       const prev = owner.get(cls);
       if (prev && prev !== slug) errors.push(`${rel}: .${cls} is also defined by ${prev}`);
       owner.set(cls, slug);
+    }
+  }
+  for (const [, body] of css.matchAll(/\{([^{}]*)\}/g)) {
+    const decls = (body ?? '').split(';').map((x) => x.trim());
+    for (const decl of decls) {
+      const m =
+        /^(padding(?:-[a-z-]+)?|gap|row-gap|column-gap|margin(?:-[a-z-]+)?)\s*:\s*(.+)$/.exec(decl);
+      if (!m) continue;
+      const value = m[2] ?? '';
+      const big = [...value.matchAll(/(?<![\w.-])(-?\d+(?:\.\d+)?)px/g)].some(
+        (n) => Math.abs(Number(n[1])) >= 3,
+      );
+      if (big && !/--hj-density|--hj-space-/.test(value))
+        errors.push(
+          `${rel}: "${d}" ignores density — use calc(Npx * var(--hj-density)) or --hj-space-*`,
+        );
+    }
+    if (
+      /border-radius\s*:[^;]*--hj-radius-(xs|sm|md|lg|xl)\b/.test(body ?? '') &&
+      !/corner-shape\s*:/.test(body ?? '')
+    ) {
+      errors.push(
+        `${rel}: a token radius without corner-shape — add corner-shape: var(--hj-corner-shape, round)`,
+      );
     }
   }
   const hex = css.match(/#[0-9a-fA-F]{3,8}\b/g);

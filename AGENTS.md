@@ -77,8 +77,10 @@ Every export needs an explicit type: `export function X(props: XProps): React.Re
    - spinners: `animation: var(--hj-anim-spin)` (turns; pulses under reduced motion); ambient loops: `animation-play-state: var(--hj-ambient)`
    - shared keyframes in base: `hj-spin`, `hj-pulse`, `hj-fade-in`; stagger with `.hj-stagger` + `--hj-i`
    - JS-driven gestures: `useSpring` from `src/system/motion.ts` (DOM-direct, interruptible, policy-aware)
-6. Touch targets ≥ 44px (grow the hit area with a `::before` inset if the drawing is smaller).
-7. Depth = paper steps + hairline (`box-shadow: inset 0 0 0 1px var(--hj-line)` or a 1px border). Only anchored popovers use `--hj-shadow-lift`; only imagery uses `--hj-shadow-art`.
+6. **Density** — spacing scales: `calc(Npx * var(--hj-density))` (or `--hj-space-*`) for every padding/gap/margin ≥ 3px; control heights scale gently: `--_h: var(--hj-x-height, calc(44px * var(--hj-density-size)))` (compact ≈ .87). Fixed drawings (switch, checkbox, radio, icons) don't scale. Enforced by lint:css.
+7. **Squircle** — every non-pill radius also sets `corner-shape: var(--hj-corner-shape, round)` (hanji smoothing .72 → `superellipse(1.72)`; `createTheme({ smoothing })`); `border-radius: inherit` pairs with `corner-shape: inherit`. For art that must be exact everywhere use `<Squircle>`. Enforced by lint:css.
+8. Touch targets ≥ 44px (grow the hit area with a `::before` inset if the drawing is smaller).
+9. Depth = paper steps + hairline (`box-shadow: inset 0 0 0 1px var(--hj-line)` or a 1px border). Only anchored popovers use `--hj-shadow-lift`; only imagery uses `--hj-shadow-art`.
 
 ## hanji paint & geometry (match these)
 
