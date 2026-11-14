@@ -1,8 +1,17 @@
 import * as icons from '@hanji/icons';
-import type { HanjiIcon, IconVariant } from '@hanji/icons';
+import type { HanjiIcon, IconAnimation, IconVariant } from '@hanji/icons';
 import { catalog } from '@hanji/icons/catalog';
 import type { CatalogEntry } from '@hanji/icons/catalog';
-import { Button, CodeBlock, Field, Icon, SegmentedControl, Select, Slider } from '@hanji/react';
+import {
+  Button,
+  CodeBlock,
+  Field,
+  Icon,
+  SegmentedControl,
+  Select,
+  Slider,
+  Toggle,
+} from '@hanji/react';
 import * as React from 'react';
 
 const byName = new Map<string, HanjiIcon>(
@@ -17,14 +26,13 @@ const categoryItems = [
   ...categories.map((c) => ({ value: c, label: c })),
 ];
 const aliasCount = catalog.reduce((n, c) => n + c.aliases.length, 0);
-const STYLES: readonly IconVariant[] = ['outline', 'solid', 'wash', 'duotone', 'duotone-solid'];
+const STYLES: readonly IconVariant[] = ['outline', 'solid', 'wash'];
 const styleLabel: Record<IconVariant, string> = {
   outline: 'Outline',
   solid: 'Solid',
   wash: 'Wash',
-  duotone: 'Duotone',
-  'duotone-solid': 'Duo solid',
 };
+const EFFECTS: readonly IconAnimation[] = ['draw', 'pop', 'ring', 'shake', 'spin'];
 
 function matches(c: CatalogEntry, terms: string[]): boolean {
   return terms.every(
@@ -43,7 +51,21 @@ function Detail({
   variant: IconVariant;
 }): React.JSX.Element {
   const Glyph = byName.get(entry.name) as HanjiIcon;
-  const jsx = `<${entry.component}${variant === 'outline' ? '' : ` variant="${variant}"`} />`;
+  const [on, setOn] = React.useState(false);
+  const [effect, setEffect] = React.useState<IconAnimation | undefined>(undefined);
+  const [plays, setPlays] = React.useState(0);
+  const play = (e: IconAnimation): void => {
+    // spin loops: a second press stops it
+    if (e === 'spin' && effect === 'spin') {
+      setEffect(undefined);
+      return;
+    }
+    setEffect(e);
+    setPlays((n) => n + 1);
+  };
+  const jsx = effect
+    ? `<${entry.component}${variant === 'outline' ? '' : ` variant="${variant}"`} animate="${effect}" trigger={count} />`
+    : `<${entry.component}${variant === 'outline' ? '' : ` variant="${variant}"`} />`;
   return (
     <aside className="pg-icon-detail" aria-label={`${entry.name} icon`}>
       <div className="pg-icon-stage">
@@ -53,6 +75,36 @@ function Detail({
             <figcaption>{styleLabel[v]}</figcaption>
           </figure>
         ))}
+      </div>
+      <div className="pg-icon-motion">
+        <div className="pg-icon-motion-stage">
+          <Glyph variant={variant} size={56} animate={effect} trigger={plays} />
+        </div>
+        <div className="pg-icon-motion-tools">
+          <span className="pg-icon-motion-label">Motion</span>
+          <div className="pg-icon-effects">
+            {EFFECTS.map((e) => (
+              <Button
+                key={e}
+                size="sm"
+                variant={effect === e ? 'primary' : 'secondary'}
+                onClick={() => play(e)}
+              >
+                {e === 'spin' && effect === 'spin' ? 'stop' : e}
+              </Button>
+            ))}
+          </div>
+          <span className="pg-icon-motion-label">Ink fill</span>
+          <Toggle
+            variant="outline"
+            pressed={on}
+            onPressedChange={setOn}
+            aria-label={`Toggle ${entry.name}`}
+          >
+            <Glyph active={on} size={20} />
+            {on ? 'Active' : 'Inactive'}
+          </Toggle>
+        </div>
       </div>
       <h3>{entry.name}</h3>
       <p className="pg-icon-meta">
@@ -86,7 +138,6 @@ export function IconsPage(): React.JSX.Element {
   const [variant, setVariant] = React.useState<IconVariant>('outline');
   const [category, setCategory] = React.useState('all');
   const [stroke, setStroke] = React.useState(1.5);
-  const [ink, setInk] = React.useState<'tint' | 'accent'>('tint');
   const [selected, setSelected] = React.useState('home');
   const deferred = React.useDeferredValue(query);
   const terms = deferred.toLowerCase().split(/\s+/).filter(Boolean);
@@ -101,10 +152,10 @@ export function IconsPage(): React.JSX.Element {
       </div>
       <h1>Icons</h1>
       <p className="pg-lede">
-        {catalog.length.toLocaleString()} icons, each in five styles: outline, solid, wash, duotone
-        and duotone solid, with {aliasCount} familiar aliases. Reshaped from Solar with hanji’s
-        softened joins and rounder corners; the second ink takes your accent when you ask. One
-        module per icon.
+        {catalog.length.toLocaleString()} icons in outline, solid and wash, with {aliasCount}{' '}
+        familiar aliases and hanji motion: toggles that flood with ink on a spring, and icons that
+        draw, pop, ring, shake or spin. Reshaped from Solar with softened joins and rounder corners.
+        One module per icon.
       </p>
       <p className="pg-icon-credit">
         Drawings adapted from{' '}
@@ -144,15 +195,6 @@ export function IconsPage(): React.JSX.Element {
               {styleLabel[v]}
             </SegmentedControl.Item>
           ))}
-        </SegmentedControl.Root>
-        <SegmentedControl.Root
-          size="sm"
-          aria-label="Second ink"
-          value={ink}
-          onValueChange={(v) => setInk(v as 'tint' | 'accent')}
-        >
-          <SegmentedControl.Item value="tint">Tint</SegmentedControl.Item>
-          <SegmentedControl.Item value="accent">Accent</SegmentedControl.Item>
         </SegmentedControl.Root>
         <Select.Root
           items={categoryItems}
@@ -201,7 +243,6 @@ export function IconsPage(): React.JSX.Element {
           className="pg-icon-grid"
           style={{
             ['--hj-icon-stroke' as string]: stroke,
-            ['--hj-icon-second' as string]: ink === 'accent' ? 'var(--hj-accent)' : undefined,
           }}
         >
           {shown.map((c) => {
@@ -230,11 +271,7 @@ export function IconsPage(): React.JSX.Element {
           ) : null}
         </div>
         {current ? (
-          <div
-            style={{
-              ['--hj-icon-second' as string]: ink === 'accent' ? 'var(--hj-accent)' : undefined,
-            }}
-          >
+          <div style={{}}>
             <Detail entry={current} variant={variant} />
           </div>
         ) : null}
