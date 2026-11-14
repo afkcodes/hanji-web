@@ -2385,7 +2385,7 @@
       "name": "code-block",
       "type": "registry:ui",
       "title": "CodeBlock",
-      "description": "Code inside a reply or doc: language and filename, copy, soft-wrap, optional line numbers. No highlighter bundled.",
+      "description": "Code inside a reply or doc: syntax-highlighted from the theme (TS/JS/JSX, CSS, JSON, shell, HTML built in; Shiki or Prism pluggable), language and filename, copy (button, floating button or ⌘C), soft-wrap, line numbers. Snippet is the one-line, copy-first form for install commands and imports.",
       "dependencies": [
         "@base-ui/react",
         "@hanji/tokens"
@@ -2398,6 +2398,11 @@
       ],
       "files": [
         {
+          "path": "packages/react/src/components/code-block/clipboard.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/code-block/clipboard.ts"
+        },
+        {
           "path": "packages/react/src/components/code-block/code-block.css",
           "type": "registry:ui",
           "target": "hanji/components/code-block/code-block.css"
@@ -2406,6 +2411,11 @@
           "path": "packages/react/src/components/code-block/code-block.tsx",
           "type": "registry:ui",
           "target": "hanji/components/code-block/code-block.tsx"
+        },
+        {
+          "path": "packages/react/src/components/code-block/highlight.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/code-block/highlight.ts"
         },
         {
           "path": "packages/react/src/components/code-block/index.ts",

@@ -95,7 +95,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 
 - [Attachment](./packages/react/dist/docs/attachment.md): A file attached to a prompt or message: type glyph, name, size or error, remove, and an upload bar.
 - [Citation](./packages/react/dist/docs/citation.md): An inline numbered source in a reply, with a preview card of the source on hover or focus.
-- [CodeBlock](./packages/react/dist/docs/code-block.md): Code inside a reply or doc: language and filename, copy, soft-wrap, optional line numbers. No highlighter bundled.
+- [CodeBlock](./packages/react/dist/docs/code-block.md): Code inside a reply or doc: syntax-highlighted from the theme (TS/JS/JSX, CSS, JSON, shell, HTML built in; Shiki or Prism pluggable), language and filename, copy (button, floating button or ⌘C), soft-wrap, line numbers. Snippet is the one-line, copy-first form for install commands and imports.
 - [Conversation](./packages/react/dist/docs/conversation.md): A scrolling log of turns that keeps the newest reply in view while it streams — until the person scrolls up to read.
 - [Message](./packages/react/dist/docs/message.md): One turn in a conversation: the person’s bubble, the assistant’s reply, or a system note.
 - [MessageActions](./packages/react/dist/docs/message-actions.md): The small icon actions under an assistant reply: copy, regenerate, rate, more.
