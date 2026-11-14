@@ -11,10 +11,10 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 
 ## Icons (@hanji/icons)
 
-- 2,200+ icons, each in `outline` (1.5 line), `solid` (a filled drawing, or a bold line for pure-line glyphs) and `wash` (line over a 16% fill). Restyled from Tabler Icons (MIT) with hanji's continuous corners.
-- `import { IconTrash } from '@hanji/icons'` → `<IconTrash variant="solid" size={20} label="Delete" />`. Size defaults to 1em; colour is currentColor; `--hj-icon-stroke` retunes every line.
-- Names chosen at runtime: `import { DynamicIcon } from '@hanji/icons/dynamic'` loads only that icon. Use hanji icons inside components with `<HanjiProvider icons={iconAdapter('outline')}>` from `@hanji/icons/adapter`.
-- Find one: the MCP tools `search_icons` and `get_icon`, or `@hanji/icons/icons.json` (names, tags, categories, drawings).
+- 1,500+ icons, each in `outline` (1.5 line), `solid`, `wash` (line over a 16% fill), `duotone` and `duotone-solid` (secondary marks in a 40% tint, or `--hj-icon-second`, e.g. `var(--hj-accent)`). Reshaped from Solar by 480 Design (CC BY 4.0): softened joins, rounder corners, hanji names and aliases (chevron-down, trash, more, x, plus…).
+- `import { IconTrashBinTrash } from '@hanji/icons'` (or its alias `IconTrash`) → `<IconTrash variant="solid" size={20} label="Delete" />`. Size defaults to 1em; colour is currentColor; `--hj-icon-stroke` retunes every line.
+- Names chosen at runtime: `import { DynamicIcon } from '@hanji/icons/dynamic'` loads only that icon (names and aliases). Use hanji icons inside components with `<HanjiProvider icons={iconAdapter('outline')}>` from `@hanji/icons/adapter`.
+- Find one: the MCP tools `search_icons` and `get_icon`, or `@hanji/icons/icons.json` (names, aliases, tags, categories, SVG for every style).
 
 ## Atoms
 

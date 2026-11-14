@@ -30,13 +30,13 @@ export function App() {
 
 ## Packages
 
-| Package           | What it is                                                                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@hanji/tokens`   | Colour maths, 3 papers × 12 accents, spacing/radius/type, springs compiled to CSS `linear()`, `createTheme()` (no deps) and `@hanji/tokens/schema` (zod + JSON Schema)         |
-| `@hanji/react`    | The components, `styles.css` (one import) or `css/<component>.css`, plus `manifest.json`, `llms.txt`, `docs/*.md`                                                              |
-| `@hanji/mcp`      | MCP server so agents can search components, read docs, fetch examples, read tokens and validate themes                                                                         |
-| `@hanji/icons`    | 2,200+ icons in outline, solid and wash: one tree-shakable React component per icon, raw SVGs, a searchable catalog and a lazy `DynamicIcon`. Restyled from Tabler Icons (MIT) |
-| `@hanji/tailwind` | Optional Tailwind v4 preset: `bg-surface`, `text-fg-dim`, `rounded-pill`, `ease-snappy`                                                                                        |
+| Package           | What it is                                                                                                                                                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@hanji/tokens`   | Colour maths, 3 papers × 12 accents, spacing/radius/type, springs compiled to CSS `linear()`, `createTheme()` (no deps) and `@hanji/tokens/schema` (zod + JSON Schema)                                                         |
+| `@hanji/react`    | The components, `styles.css` (one import) or `css/<component>.css`, plus `manifest.json`, `llms.txt`, `docs/*.md`                                                                                                              |
+| `@hanji/mcp`      | MCP server so agents can search components, read docs, fetch examples, read tokens and validate themes                                                                                                                         |
+| `@hanji/icons`    | 1,500+ icons in five styles (outline, solid, wash, duotone, duotone solid): one tree-shakable React component per icon, raw SVGs, a searchable catalog and a lazy `DynamicIcon`. Reshaped from Solar by 480 Design (CC BY 4.0) |
+| `@hanji/tailwind` | Optional Tailwind v4 preset: `bg-surface`, `text-fg-dim`, `rounded-pill`, `ease-snappy`                                                                                                                                        |
 
 ## Customise, from broad to precise
 
