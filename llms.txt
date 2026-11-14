@@ -43,6 +43,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 - [ChoiceCard](./packages/react/dist/docs/choice-card.md): A radio group drawn as cards, each stating what choosing it will cost.
 - [Combobox](./packages/react/dist/docs/combobox.md): Type to filter a list and pick one value, or several shown as chips in the field.
 - [DatePicker](./packages/react/dist/docs/date-picker.md): A field-like trigger that opens a Calendar in a popover, for a day or a range.
+- [DropZone](./packages/react/dist/docs/drop-zone.md): Takes files for a form — by drag and drop, the native picker or paste — checks type, size and count, and lists them with upload progress, errors and retry.
 - [Field](./packages/react/dist/docs/field.md): A labelled text input with its help line and its error, wired for validation and screen readers.
 - [Fieldset](./packages/react/dist/docs/fieldset.md): Groups related fields under a legend; consecutive groups are divided by a hairline, never boxed.
 - [Form](./packages/react/dist/docs/form.md): A form that validates its Fields together, takes server errors by field name, and sums them up after a failed submit.
@@ -80,16 +81,19 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 - [Accordion](./packages/react/dist/docs/accordion.md): A stack of headings that each reveal their own section.
 - [Breadcrumbs](./packages/react/dist/docs/breadcrumbs.md): Where this page sits in a hierarchy, with a way back up each level.
 - [Collapsible](./packages/react/dist/docs/collapsible.md): One region the user can show or hide: “Show 6 more”, “Advanced options”.
+- [Command](./packages/react/dist/docs/command.md): A command palette: a search field over grouped commands, ranked as you type, inline or as a ⌘K dialog.
 - [NavigationMenu](./packages/react/dist/docs/navigation-menu.md): A site’s top navigation: links and triggers that open rich link panels in one shared, morphing surface.
 - [Pagination](./packages/react/dist/docs/pagination.md): Moves through numbered pages of a long list or table.
 - [Steps](./packages/react/dist/docs/steps.md): Shows progress through a short ordered task: where you are, what’s done, what’s left.
 - [TabBar](./packages/react/dist/docs/tab-bar.md): The mobile-web bottom bar: three to five top-level destinations, icon over label.
 - [Tabs](./packages/react/dist/docs/tabs.md): Switches between views of the same subject without leaving the page.
 - [Toolbar](./packages/react/dist/docs/toolbar.md): A group of controls that acts as one tab stop; arrow keys move inside it.
+- [Tree](./packages/react/dist/docs/tree.md): A tree view: nested items that open and close, with roving focus, the full APG keyboard, single or multiple selection and children that can load on first open.
 
 ## Data
 
 - [Counter](./packages/react/dist/docs/counter.md): A number whose changed digits roll into place, so a change is seen without re-reading the whole figure.
+- [DataTable](./packages/react/dist/docs/data-table.md): A data grid for thousands of rows: columns as data, sorting, a checkbox column with select-all and Shift-click ranges, a sticky header, and only the rows on screen in the DOM (virtua). The keyboard works like a spreadsheet.
 - [DragList](./packages/react/dist/docs/drag-list.md): A list you reorder by picking a row up: the handle lifts at once, a long press lifts from anywhere else, and every drag has a keyboard twin.
 - [EmptyState](./packages/react/dist/docs/empty-state.md): What fills a region when there is nothing to show: a glyph, a title, one sentence and the way out.
 - [List](./packages/react/dist/docs/list.md): Rows of 56px: artwork or an icon, a title and a line under it, and a value or chevron on the right.
@@ -98,6 +102,7 @@ Compound React components on Base UI. Plain CSS in cascade layers, themed by --h
 - [Progress](./packages/react/dist/docs/progress.md): How far a task has got: a 4px track with a fill, and an optional label and value.
 - [ProgressRing](./packages/react/dist/docs/progress-ring.md): Progress as a ring: a 40px status beside a row, or a 96px summary with the value inside.
 - [Stat](./packages/react/dist/docs/stat.md): A number that matters: what it counts, the figure with its unit shrunk, how it compares in words, and the recent past as a line.
+- [SwipeActions](./packages/react/dist/docs/swipe-actions.md): A row that slides aside to reveal actions underneath (iOS Mail style), on an interruptible spring — with a full swipe that commits, and a More menu that is the same actions for everyone who doesn’t swipe.
 - [Table](./packages/react/dist/docs/table.md): Rows of records compared across columns: hairlines, a sticky header, sortable columns, numbers right-aligned in tabular figures.
 - [Timeline](./packages/react/dist/docs/timeline.md): A vertical sequence of steps with their times: what happened, what is happening, what is next, and what failed.
 - [VirtualList](./packages/react/dist/docs/virtual-list.md): A long list that renders only the rows on screen, built on virtua: rows measure themselves, the reading position holds still as rows above change size or older rows are prepended, scrollToIndex jumps anywhere, and orientation="horizontal" makes it a shelf.

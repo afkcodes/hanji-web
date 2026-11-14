@@ -785,6 +785,42 @@
       ]
     },
     {
+      "name": "drop-zone",
+      "type": "registry:ui",
+      "title": "DropZone",
+      "description": "Takes files for a form — by drag and drop, the native picker or paste — checks type, size and count, and lists them with upload progress, errors and retry.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "attachment",
+        "button",
+        "progress"
+      ],
+      "categories": [
+        "controls"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/drop-zone/drop-zone.css",
+          "type": "registry:ui",
+          "target": "hanji/components/drop-zone/drop-zone.css"
+        },
+        {
+          "path": "packages/react/src/components/drop-zone/drop-zone.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/drop-zone/drop-zone.tsx"
+        },
+        {
+          "path": "packages/react/src/components/drop-zone/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/drop-zone/index.ts"
+        }
+      ]
+    },
+    {
       "name": "field",
       "type": "registry:ui",
       "title": "Field",
@@ -1824,6 +1860,42 @@
       ]
     },
     {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "A command palette: a search field over grouped commands, ranked as you type, inline or as a ⌘K dialog.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "dialog",
+        "kbd",
+        "spinner"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/command/command.css",
+          "type": "registry:ui",
+          "target": "hanji/components/command/command.css"
+        },
+        {
+          "path": "packages/react/src/components/command/command.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/command/command.tsx"
+        },
+        {
+          "path": "packages/react/src/components/command/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/command/index.ts"
+        }
+      ]
+    },
+    {
       "name": "navigation-menu",
       "type": "registry:ui",
       "title": "NavigationMenu",
@@ -2022,6 +2094,40 @@
       ]
     },
     {
+      "name": "tree",
+      "type": "registry:ui",
+      "title": "Tree",
+      "description": "A tree view: nested items that open and close, with roving focus, the full APG keyboard, single or multiple selection and children that can load on first open.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "spinner"
+      ],
+      "categories": [
+        "navigation"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/tree/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/tree/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/tree/tree.css",
+          "type": "registry:ui",
+          "target": "hanji/components/tree/tree.css"
+        },
+        {
+          "path": "packages/react/src/components/tree/tree.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/tree/tree.tsx"
+        }
+      ]
+    },
+    {
       "name": "counter",
       "type": "registry:ui",
       "title": "Counter",
@@ -2051,6 +2157,41 @@
           "path": "packages/react/src/components/counter/index.ts",
           "type": "registry:ui",
           "target": "hanji/components/counter/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "DataTable",
+      "description": "A data grid for thousands of rows: columns as data, sorting, a checkbox column with select-all and Shift-click ranges, a sticky header, and only the rows on screen in the DOM (virtua). The keyboard works like a spreadsheet.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "checkbox",
+        "skeleton"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/data-table/data-table.css",
+          "type": "registry:ui",
+          "target": "hanji/components/data-table/data-table.css"
+        },
+        {
+          "path": "packages/react/src/components/data-table/data-table.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/data-table/data-table.tsx"
+        },
+        {
+          "path": "packages/react/src/components/data-table/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/data-table/index.ts"
         }
       ]
     },
@@ -2322,6 +2463,40 @@
           "path": "packages/react/src/components/stat/stat.tsx",
           "type": "registry:ui",
           "target": "hanji/components/stat/stat.tsx"
+        }
+      ]
+    },
+    {
+      "name": "swipe-actions",
+      "type": "registry:ui",
+      "title": "SwipeActions",
+      "description": "A row that slides aside to reveal actions underneath (iOS Mail style), on an interruptible spring — with a full swipe that commits, and a More menu that is the same actions for everyone who doesn’t swipe.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hanji/tokens"
+      ],
+      "registryDependencies": [
+        "hanji-system",
+        "menu"
+      ],
+      "categories": [
+        "data"
+      ],
+      "files": [
+        {
+          "path": "packages/react/src/components/swipe-actions/index.ts",
+          "type": "registry:ui",
+          "target": "hanji/components/swipe-actions/index.ts"
+        },
+        {
+          "path": "packages/react/src/components/swipe-actions/swipe-actions.css",
+          "type": "registry:ui",
+          "target": "hanji/components/swipe-actions/swipe-actions.css"
+        },
+        {
+          "path": "packages/react/src/components/swipe-actions/swipe-actions.tsx",
+          "type": "registry:ui",
+          "target": "hanji/components/swipe-actions/swipe-actions.tsx"
         }
       ]
     },
