@@ -1,4 +1,4 @@
-import { SegmentedControl, Select } from '@hanji/react';
+import { CodeBlock, SegmentedControl, Select, Toggle } from '@hanji/react';
 import { accentNames, accents } from '@hanji/tokens';
 import * as React from 'react';
 
@@ -126,7 +126,7 @@ function AccentPicker({
   );
 }
 
-function Example({ ex }: { ex: Entry['examples'][number] }): React.JSX.Element {
+function Example({ ex, slug }: { ex: Entry['examples'][number]; slug: string }): React.JSX.Element {
   const [code, setCode] = React.useState(false);
   return (
     <section className="pg-example" id={`ex-${ex.file}`}>
@@ -135,19 +135,39 @@ function Example({ ex }: { ex: Entry['examples'][number] }): React.JSX.Element {
           <h3>{ex.title}</h3>
           <p>{ex.description}</p>
         </div>
-        <button
-          type="button"
-          className="pg-chip"
-          aria-pressed={code}
-          onClick={() => setCode((c) => !c)}
-        >
-          {code ? 'Hide code' : 'Code'}
-        </button>
+        <Toggle size="sm" variant="outline" pressed={code} onPressedChange={setCode}>
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m8 7-5 5 5 5M16 7l5 5-5 5" />
+          </svg>
+          Code
+        </Toggle>
       </header>
       <div className="pg-plate" data-testid={`plate-${ex.file}`}>
         <ex.Example />
       </div>
-      {code ? <pre className="pg-code">{ex.source}</pre> : null}
+      {code ? (
+        <CodeBlock.Root language="tsx" lineNumbers className="pg-code">
+          <CodeBlock.Header>
+            <CodeBlock.Language />
+            <CodeBlock.Filename>{`${slug}/examples/${ex.file}.tsx`}</CodeBlock.Filename>
+            <CodeBlock.Actions>
+              <CodeBlock.WrapToggle />
+              <CodeBlock.Copy />
+            </CodeBlock.Actions>
+          </CodeBlock.Header>
+          <CodeBlock.Code code={ex.source} />
+        </CodeBlock.Root>
+      ) : null}
     </section>
   );
 }
@@ -161,7 +181,7 @@ function Page({ entry }: { entry: Entry }): React.JSX.Element {
       </div>
       <h1>{m.name}</h1>
       <p className="pg-lede">{m.description}</p>
-      <code className="pg-import">{m.import}</code>
+      <CodeBlock.Snippet language="tsx" code={m.import} className="pg-import" />
       <div className="pg-use">
         <div>
           <h4>Use it for</h4>
@@ -181,7 +201,7 @@ function Page({ entry }: { entry: Entry }): React.JSX.Element {
         </div>
       </div>
       {entry.examples.map((ex) => (
-        <Example key={ex.file} ex={ex} />
+        <Example key={ex.file} ex={ex} slug={m.slug} />
       ))}
       <h2>Anatomy</h2>
       <div className="pg-parts">
