@@ -103,16 +103,66 @@
     white-space: nowrap;
   }
 
-  /* Group: each face overlaps the last by 8px, separated by a 2px paper ring. */
+  /*
+   * Group: each face tucks under the last by a quarter of its size (8px at 32), separated by a
+   * 2px ring in the colour of the surface behind (--hj-avatar-ring). On hover the group fans
+   * open: every overlap eases 6px, one stagger step after the one before, on the clamped snappy
+   * spring, so the stack widens and whatever sits beside it moves aside rather than being
+   * covered. A declared layout transition (margin on a few small boxes), like Accordion's height.
+   * Leaving, the overlaps close together on the fast clock.
+   */
   .hj-avatar-group {
     display: inline-flex;
     align-items: center;
-    padding-left: calc(8px * var(--hj-density));
   }
   .hj-avatar-group > .hj-avatar,
   .hj-avatar-group > .hj-avatar-more {
-    margin-left: calc(-8px * var(--hj-density));
+    --_i: 0;
+    position: relative;
     box-shadow: 0 0 0 2px var(--hj-avatar-ring, var(--hj-bg));
+    transition:
+      margin-left var(--hj-dur-fast) var(--hj-ease-out),
+      translate var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-avatar-group > * + .hj-avatar,
+  .hj-avatar-group > * + .hj-avatar-more {
+    margin-left: calc(var(--_s) * -0.25);
+  }
+  .hj-avatar-group > :nth-child(2) {
+    --_i: 1;
+  }
+  .hj-avatar-group > :nth-child(3) {
+    --_i: 2;
+  }
+  .hj-avatar-group > :nth-child(4) {
+    --_i: 3;
+  }
+  .hj-avatar-group > :nth-child(5) {
+    --_i: 4;
+  }
+  .hj-avatar-group > :nth-child(6) {
+    --_i: 5;
+  }
+  .hj-avatar-group > :nth-child(7) {
+    --_i: 6;
+  }
+  .hj-avatar-group > :nth-child(n + 8) {
+    --_i: 7;
+  }
+  @media (hover: hover) {
+    .hj-avatar-group:hover > * + .hj-avatar,
+    .hj-avatar-group:hover > * + .hj-avatar-more {
+      margin-left: calc(var(--_s) * -0.25 + 6px * var(--hj-density) * var(--hj-travel));
+      transition:
+        margin-left var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle)
+          calc((var(--_i) - 1) * var(--hj-stagger)),
+        translate var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle);
+    }
+    /* the face under the pointer comes to the front and lifts 2px */
+    .hj-avatar-group:hover > .hj-avatar:hover {
+      z-index: 1;
+      translate: 0 calc(-2px * var(--hj-travel));
+    }
   }
   .hj-avatar-more {
     --_s: var(--hj-avatar-size, 32px);

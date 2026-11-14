@@ -79,7 +79,7 @@ export const meta: ComponentMeta = defineMeta({
       slot: 'Avatar.Group',
       className: 'hj-avatar-group',
       description:
-        'Overlapping faces (−8px, 2px paper ring) with +N for the rest. Avatars inherit its size.',
+        'Overlapping faces (each tucks a quarter of its size under the next; 2px ring in --hj-avatar-ring) with +N for the rest. Avatars inherit its size. Fans open on hover.',
       props: props<GroupOwnProps>({
         max: { type: 'number', description: 'Show this many, then “+N”.' },
         size: {
@@ -96,6 +96,10 @@ export const meta: ComponentMeta = defineMeta({
           description: 'Replace the element.',
         },
       }),
+      cssVars: {
+        '--hj-avatar-ring':
+          'Ring between faces: set it to the surface the group sits on. Default bg.',
+      },
     },
   ],
   examples: [
@@ -112,7 +116,7 @@ export const meta: ComponentMeta = defineMeta({
     'Group is role="group"; give it a label summarising who is in it.',
   ],
   motion:
-    'The picture fades in over 260 ms once loaded; initials wait 600 ms before showing so a fast image never flashes letters.',
+    'The picture fades in over 260 ms once loaded; initials wait 600 ms before showing so a fast image never flashes letters. A group fans open on hover (pointer devices only): every overlap eases 6 px, one stagger step (24 ms) after the one before, on snappy, clamped, so the stack widens and text beside it moves aside instead of being covered — a declared layout transition (margin) on a few small boxes. The face under the pointer comes forward and lifts 2 px. Leaving, the overlaps close together on the fast clock. Reduced motion: no travel.',
   tokens: ['data-1…6', 'surface', 'surface-2', 'bg', 'success', 'warning', 'danger', 'fg-mute'],
   related: ['badge', 'list'],
   baseUi: 'avatar',
