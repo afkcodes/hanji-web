@@ -615,7 +615,7 @@ export function Landing(props: LandingProps): React.JSX.Element {
             <dd>{aiCount}</dd>
           </div>
           <div>
-            <dt>icons in outline, solid and wash</dt>
+            <dt>icons in five styles</dt>
             <dd>{iconCatalog.length.toLocaleString('en-GB')}</dd>
           </div>
           <div>

@@ -16,10 +16,23 @@ const categoryItems = [
   { value: 'all', label: 'All categories' },
   ...categories.map((c) => ({ value: c, label: c })),
 ];
-const filledCount = catalog.filter((c) => c.filled).length;
+const aliasCount = catalog.reduce((n, c) => n + c.aliases.length, 0);
+const STYLES: readonly IconVariant[] = ['outline', 'solid', 'wash', 'duotone', 'duotone-solid'];
+const styleLabel: Record<IconVariant, string> = {
+  outline: 'Outline',
+  solid: 'Solid',
+  wash: 'Wash',
+  duotone: 'Duotone',
+  'duotone-solid': 'Duo solid',
+};
 
 function matches(c: CatalogEntry, terms: string[]): boolean {
-  return terms.every((t) => c.name.includes(t) || c.tags.some((g) => g.includes(t)));
+  return terms.every(
+    (t) =>
+      c.name.includes(t) ||
+      c.aliases.some((a) => a.includes(t)) ||
+      c.tags.some((g) => g.includes(t)),
+  );
 }
 
 function Detail({
@@ -34,17 +47,18 @@ function Detail({
   return (
     <aside className="pg-icon-detail" aria-label={`${entry.name} icon`}>
       <div className="pg-icon-stage">
-        {(['outline', 'solid', 'wash'] as const).map((v) => (
+        {STYLES.map((v) => (
           <figure key={v} data-current={v === variant ? '' : undefined}>
-            <Glyph variant={v} size={44} />
-            <figcaption>{v}</figcaption>
+            <Glyph variant={v} size={36} />
+            <figcaption>{styleLabel[v]}</figcaption>
           </figure>
         ))}
       </div>
       <h3>{entry.name}</h3>
       <p className="pg-icon-meta">
         {entry.category || 'Uncategorised'} ·{' '}
-        {entry.filled ? 'solid is a filled drawing' : 'solid is the bold line'}
+        {entry.original ? 'drawn for hanji' : 'from Solar, reshaped by hanji'}
+        {entry.aliases.length ? ` · also ${entry.aliases.join(', ')}` : ''}
       </p>
       <CodeBlock.Snippet
         language="tsx"
@@ -72,6 +86,7 @@ export function IconsPage(): React.JSX.Element {
   const [variant, setVariant] = React.useState<IconVariant>('outline');
   const [category, setCategory] = React.useState('all');
   const [stroke, setStroke] = React.useState(1.5);
+  const [ink, setInk] = React.useState<'tint' | 'accent'>('tint');
   const [selected, setSelected] = React.useState('home');
   const deferred = React.useDeferredValue(query);
   const terms = deferred.toLowerCase().split(/\s+/).filter(Boolean);
@@ -86,10 +101,21 @@ export function IconsPage(): React.JSX.Element {
       </div>
       <h1>Icons</h1>
       <p className="pg-lede">
-        {catalog.length.toLocaleString()} icons, each in three styles: a 1.5 line, a solid and a
-        wash. {filledCount.toLocaleString()} solids are filled drawings; the rest are pure-line
-        glyphs whose solid is a bolder line. Restyled from Tabler Icons with hanji’s continuous
-        corners, one module per icon.
+        {catalog.length.toLocaleString()} icons, each in five styles: outline, solid, wash, duotone
+        and duotone solid, with {aliasCount} familiar aliases. Reshaped from Solar with hanji’s
+        softened joins and rounder corners; the second ink takes your accent when you ask. One
+        module per icon.
+      </p>
+      <p className="pg-icon-credit">
+        Drawings adapted from{' '}
+        <a
+          href="https://www.figma.com/community/file/1166831539721848736"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Solar by 480 Design
+        </a>{' '}
+        under CC BY 4.0; search and wrench are drawn for hanji.
       </p>
       <CodeBlock.Snippet code="pnpm add @hanji/icons" className="pg-import" />
 
@@ -102,7 +128,7 @@ export function IconsPage(): React.JSX.Element {
             </Field.Adornment>
             <Field.Control
               type="search"
-              placeholder="Search 2,000+ icons: trash, upload, weather…"
+              placeholder="Search 1,500+ icons: delete, upload, weather…"
               value={query}
               onChange={(e) => setQuery(e.currentTarget.value)}
             />
@@ -113,9 +139,20 @@ export function IconsPage(): React.JSX.Element {
           value={variant}
           onValueChange={(v) => setVariant(v as IconVariant)}
         >
-          <SegmentedControl.Item value="outline">Outline</SegmentedControl.Item>
-          <SegmentedControl.Item value="solid">Solid</SegmentedControl.Item>
-          <SegmentedControl.Item value="wash">Wash</SegmentedControl.Item>
+          {STYLES.map((v) => (
+            <SegmentedControl.Item key={v} value={v}>
+              {styleLabel[v]}
+            </SegmentedControl.Item>
+          ))}
+        </SegmentedControl.Root>
+        <SegmentedControl.Root
+          size="sm"
+          aria-label="Second ink"
+          value={ink}
+          onValueChange={(v) => setInk(v as 'tint' | 'accent')}
+        >
+          <SegmentedControl.Item value="tint">Tint</SegmentedControl.Item>
+          <SegmentedControl.Item value="accent">Accent</SegmentedControl.Item>
         </SegmentedControl.Root>
         <Select.Root
           items={categoryItems}
@@ -164,7 +201,7 @@ export function IconsPage(): React.JSX.Element {
           className="pg-icon-grid"
           style={{
             ['--hj-icon-stroke' as string]: stroke,
-            ['--hj-icon-stroke-bold' as string]: stroke * 1.5,
+            ['--hj-icon-second' as string]: ink === 'accent' ? 'var(--hj-accent)' : undefined,
           }}
         >
           {shown.map((c) => {
@@ -192,7 +229,15 @@ export function IconsPage(): React.JSX.Element {
             </div>
           ) : null}
         </div>
-        {current ? <Detail entry={current} variant={variant} /> : null}
+        {current ? (
+          <div
+            style={{
+              ['--hj-icon-second' as string]: ink === 'accent' ? 'var(--hj-accent)' : undefined,
+            }}
+          >
+            <Detail entry={current} variant={variant} />
+          </div>
+        ) : null}
       </div>
     </article>
   );

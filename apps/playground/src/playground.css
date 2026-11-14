@@ -286,6 +286,14 @@ body {
 .pg-icons {
   max-width: 1180px;
 }
+.pg-icon-credit {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--hj-fg-mute);
+}
+.pg-icon-credit a {
+  color: inherit;
+}
 .pg-icon-tools {
   position: sticky;
   top: 60px;
@@ -300,7 +308,7 @@ body {
   border-bottom: 1px solid var(--hj-line);
 }
 .pg-icon-search {
-  flex: 1 1 280px;
+  flex: 1 1 100%;
 }
 .pg-icon-category {
   flex: none;
@@ -384,7 +392,7 @@ body {
 }
 .pg-icon-stage {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   border-radius: var(--hj-radius-md);
   corner-shape: var(--hj-corner-shape, round);
   background: var(--hj-bg-soft);
@@ -401,7 +409,7 @@ body {
   color: var(--hj-accent);
 }
 .pg-icon-stage figcaption {
-  font: 500 10.5px var(--hj-font-mono);
+  font: 500 9px var(--hj-font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--hj-fg-mute);
