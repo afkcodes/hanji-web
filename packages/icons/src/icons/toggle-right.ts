@@ -1,12 +1,21 @@
 import { icon } from '../create-icon.tsx';
 import type { HanjiIcon } from '../create-icon.tsx';
 
-/** `toggle-right` — outline, solid (filled) and wash. Also: toggle, switch, on, on-off, checkbox, setting, control, enabled. */
-export const IconToggleRight: HanjiIcon = /* @__PURE__ */ icon(
-  'toggle-right',
-  'M14 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M2 12a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6a6 6 0 0 1 -6 6h-8a6 6 0 0 1 -6-6',
-  [
-    'M16 9a3 3 0 1 1 -3 3l.005-.176a3 3 0 0 1 2.995-2.824',
-    'M16 5a7 7 0 0 1 0 14h-8a7 7 0 0 1 0-14zm0 2h-8a5 5 0 1 0 0 10h8a5 5 0 0 0 0-10',
+/** `toggle-right`. From Solar by 480 Design (CC BY 4.0), reshaped by hanji. */
+export const IconToggleRight: HanjiIcon = /* @__PURE__ */ icon('toggle-right', {
+  line: [
+    ['s', 'M8 6h8c3.31 0 6 2.69 6 6c0 3.31-2.69 6-6 6h-8c-3.31 0-6-2.69-6-6c0-3.31 2.69-6 6-6z'],
+    ['s', 'M19 12c0 1.66-1.34 3-3 3c-1.66 0-3-1.34-3-3c0-1.66 1.34-3 3-3c1.66 0 3 1.34 3 3z'],
   ],
-);
+  solid: [
+    [
+      'e',
+      'M16 6c3.31 0 6 2.69 6 6c0 3.31-2.69 6-6 6h-8c-3.31 0-6-2.69-6-6c0-3.31 2.69-6 6-6h8zm0 3c-1.66 0-3 1.34-3 3c0 1.66 1.34 3 3 3c1.66 0 3-1.34 3-3c0-1.66-1.34-3-3-3z',
+    ],
+  ],
+  duo: [0],
+  duoSolid: [
+    ['~f', 'M8 6h8c3.31 0 6 2.69 6 6c0 3.31-2.69 6-6 6h-8c-3.31 0-6-2.69-6-6c0-3.31 2.69-6 6-6z'],
+    ['f', 'M19 12c0 1.66-1.34 3-3 3c-1.66 0-3-1.34-3-3c0-1.66 1.34-3 3-3c1.66 0 3 1.34 3 3z'],
+  ],
+});

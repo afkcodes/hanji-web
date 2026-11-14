@@ -1,53 +1,53 @@
 import type * as React from 'react';
 
 import type { HanjiIcon, IconVariant } from './create-icon.tsx';
-import { IconAlertTriangle } from './icons/alert-triangle.ts';
+import { IconAdd } from './icons/add.ts';
+import { IconAltArrowDown } from './icons/alt-arrow-down.ts';
+import { IconAltArrowLeft } from './icons/alt-arrow-left.ts';
+import { IconAltArrowRight } from './icons/alt-arrow-right.ts';
+import { IconAltArrowUp } from './icons/alt-arrow-up.ts';
 import { IconArrowUp } from './icons/arrow-up.ts';
+import { IconCheckCircle } from './icons/check-circle.ts';
 import { IconCheck } from './icons/check.ts';
-import { IconChevronDown } from './icons/chevron-down.ts';
-import { IconChevronLeft } from './icons/chevron-left.ts';
-import { IconChevronRight } from './icons/chevron-right.ts';
-import { IconChevronUp } from './icons/chevron-up.ts';
-import { IconCircleCheck } from './icons/circle-check.ts';
-import { IconCircleX } from './icons/circle-x.ts';
+import { IconCloseCircle } from './icons/close-circle.ts';
+import { IconClose } from './icons/close.ts';
 import { IconCopy } from './icons/copy.ts';
-import { IconDots } from './icons/dots.ts';
-import { IconEyeOff } from './icons/eye-off.ts';
+import { IconDangerTriangle } from './icons/danger-triangle.ts';
+import { IconEyeClosed } from './icons/eye-closed.ts';
 import { IconEye } from './icons/eye.ts';
 import { IconInfoCircle } from './icons/info-circle.ts';
+import { IconMenuDots } from './icons/menu-dots.ts';
 import { IconMinus } from './icons/minus.ts';
 import { IconPaperclip } from './icons/paperclip.ts';
-import { IconPlayerStop } from './icons/player-stop.ts';
-import { IconPlus } from './icons/plus.ts';
 import { IconSearch } from './icons/search.ts';
-import { IconSparkles } from './icons/sparkles.ts';
-import { IconTool } from './icons/tool.ts';
-import { IconX } from './icons/x.ts';
+import { IconStars } from './icons/stars.ts';
+import { IconStop } from './icons/stop.ts';
+import { IconWrench } from './icons/wrench.ts';
 
 /** hanji's built-in glyph names, mapped to icons from this set. */
 export const adapterIcons: Readonly<Record<string, HanjiIcon>> = {
   check: IconCheck,
   minus: IconMinus,
-  plus: IconPlus,
-  x: IconX,
-  chevronDown: IconChevronDown,
-  chevronUp: IconChevronUp,
-  chevronLeft: IconChevronLeft,
-  chevronRight: IconChevronRight,
+  plus: IconAdd,
+  x: IconClose,
+  chevronDown: IconAltArrowDown,
+  chevronUp: IconAltArrowUp,
+  chevronLeft: IconAltArrowLeft,
+  chevronRight: IconAltArrowRight,
   search: IconSearch,
   eye: IconEye,
-  eyeOff: IconEyeOff,
+  eyeOff: IconEyeClosed,
   info: IconInfoCircle,
-  alert: IconAlertTriangle,
-  checkCircle: IconCircleCheck,
-  xCircle: IconCircleX,
+  alert: IconDangerTriangle,
+  checkCircle: IconCheckCircle,
+  xCircle: IconCloseCircle,
   arrowUp: IconArrowUp,
-  stop: IconPlayerStop,
+  stop: IconStop,
   copy: IconCopy,
-  more: IconDots,
+  more: IconMenuDots,
   paperclip: IconPaperclip,
-  sparkle: IconSparkles,
-  tool: IconTool,
+  sparkle: IconStars,
+  tool: IconWrench,
 };
 
 /**

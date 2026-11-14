@@ -1,14 +1,14 @@
 {
   "name": "@hanji/icons",
   "version": "0.1.0",
-  "description": "hanji icons: outline, solid and wash, restyled from Tabler with hanji's 1.5 stroke and continuous corners. Tree-shakable React components, raw SVGs and a searchable manifest.",
+  "description": "hanji icons: 1,500+ icons in five styles (outline, solid, wash, duotone, duotone solid), reshaped from Solar by 480 Design with hanji's softened joins and rounder corners. Tree-shakable React components, raw SVGs and a searchable catalog.",
   "keywords": [
     "hanji",
     "icons",
     "react",
     "svg"
   ],
-  "license": "MIT",
+  "license": "MIT AND CC-BY-4.0",
   "files": [
     "dist",
     "LICENSE"
@@ -45,7 +45,7 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "devDependencies": {
-    "@tabler/icons": "3.51.0",
+    "@iconify-json/solar": "1.2.15",
     "@testing-library/react": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

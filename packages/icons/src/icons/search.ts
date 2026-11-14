@@ -1,11 +1,16 @@
 import { icon } from '../create-icon.tsx';
 import type { HanjiIcon } from '../create-icon.tsx';
 
-/** `search` — outline, solid (filled) and wash. Also: find, magnifier, magnifying-glass, lookup, zoom, explore, query, browse. */
-export const IconSearch: HanjiIcon = /* @__PURE__ */ icon(
-  'search',
-  'M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0M21 21l-6-6',
-  [
-    'M14 3.072a8 8 0 0 1 2.32 11.834l5.387 5.387a1 1 0 0 1 -1.414 1.414l-5.388-5.387a8 8 0 1 1 -.905-13.249',
+/** `search`. Drawn for hanji. */
+export const IconSearch: HanjiIcon = /* @__PURE__ */ icon('search', {
+  line: [
+    ['s', 'M11 2.75a8.25 8.25 0 1 1 0 16.5a8.25 8.25 0 0 1 0-16.5z'],
+    ['s', 'M17.25 17.25l3.75 3.75'],
   ],
-);
+  solid: [
+    ['f', 'M11 2.75a8.25 8.25 0 1 1 0 16.5a8.25 8.25 0 0 1 0-16.5z'],
+    ['s', 'M17.25 17.25l3.75 3.75'],
+  ],
+  duo: [1],
+  duoSolid: [0],
+});

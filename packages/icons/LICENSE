@@ -1,15 +1,22 @@
-@hanji/icons is derived from Tabler Icons (https://tabler.io/icons) and redistributed under the
-MIT License below. hanji's changes — the 1.5 stroke default, continuous corners on every rounded
-corner, the wash variant, the bold-line solids and the React components — are released under the
-same MIT License.
+@hanji/icons
 
---------------------------------------------------------------------------------
-Tabler Icons
---------------------------------------------------------------------------------
+The icon drawings are adapted from the Solar icon set by 480 Design
+(https://www.figma.com/community/file/1166831539721848736), used under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0,
+https://creativecommons.org/licenses/by/4.0/).
+
+Changes made by hanji: every sharp straight-to-straight vertex is filleted and
+every join and cap is round; rounded corners are redrawn as larger continuous
+corners; coordinates are re-quantised; secondary marks are re-inked for the
+two-ink styles; the wash style is new; icons are renamed, aliased and tagged;
+`search` and `wrench` are drawn for hanji. Solar's drawings are otherwise kept.
+
+The React components, the generator and the hanji-drawn icons are released
+under the MIT License:
 
 MIT License
 
-Copyright (c) 2020-2026 Paweł Kuna
+Copyright (c) 2026 hanji contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

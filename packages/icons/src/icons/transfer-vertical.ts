@@ -1,9 +1,31 @@
 import { icon } from '../create-icon.tsx';
 import type { HanjiIcon } from '../create-icon.tsx';
 
-/** `transfer-vertical` — outline, solid (bold line) and wash. Also: transfer, swap, exchange, arrows, up-down, sort, vertical, transaction. */
-export const IconTransferVertical: HanjiIcon = /* @__PURE__ */ icon(
-  'transfer-vertical',
-  'M10 4v16l-6-5.5M14 20v-16l6 5.5',
-  null,
-);
+/** `transfer-vertical`. From Solar by 480 Design (CC BY 4.0), reshaped by hanji. */
+export const IconTransferVertical: HanjiIcon = /* @__PURE__ */ icon('transfer-vertical', {
+  line: [
+    ['s', 'M10 4v13.27c0 1.05-1.24 1.59-2.01.89l-3.99-3.66'],
+    ['s', 'M14 20v-13.27c0-1.05 1.24-1.59 2.01-.89l3.99 3.66'],
+  ],
+  solid: [
+    [
+      'f',
+      'M4 13.75c-.31 0-.59.19-.7.48c-.11.29-.03.61.19.82l6 5.5c.22.2.54.26.81.14c.27-.12.45-.39.45-.69v-16c0-.41-.34-.75-.75-.75c-.41 0-.75.34-.75.75v9.15c0 .33-.27.6-.6.6h-4.65z',
+    ],
+    [
+      'f',
+      'M20 10.25h-4.65c-.33 0-.6.27-.6.6v9.15c0 .41-.34.75-.75.75c-.41 0-.75-.34-.75-.75v-16c0-.3.18-.57.45-.69c.27-.12.59-.06.81.14l6 5.5c.22.21.3.53.19.82c-.11.29-.39.48-.7.48z',
+    ],
+  ],
+  duo: [1],
+  duoSolid: [
+    [
+      'f',
+      'M20 10.25c.31 0 .59-.19.7-.48c.11-.29.03-.61-.19-.82l-6-5.5c-.22-.2-.54-.26-.81-.14c-.27.12-.45.39-.45.69v16c0 .41.34.75.75.75c.41 0 .75-.34.75-.75v-9.15c0-.33.27-.6.6-.6h4.65z',
+    ],
+    [
+      '~f',
+      'M4 13.75h4.65c.33 0 .6-.27.6-.6v-9.15c0-.41.34-.75.75-.75c.41 0 .75.34.75.75v16c0 .3-.18.57-.45.69c-.27.12-.59.06-.81-.14l-6-5.5c-.22-.21-.3-.53-.19-.82c.11-.29.39-.48.7-.48z',
+    ],
+  ],
+});

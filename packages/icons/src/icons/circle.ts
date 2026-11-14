@@ -1,9 +1,38 @@
 import { icon } from '../create-icon.tsx';
 import type { HanjiIcon } from '../create-icon.tsx';
 
-/** `circle` — outline, solid (filled) and wash. Also: round, dot, shape, geometry, ellipse, ring, radio, record. */
-export const IconCircle: HanjiIcon = /* @__PURE__ */ icon(
-  'circle',
-  'M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0',
-  ['M7 3.34a10 10 0 1 1 -4.995 8.984l-.005-.324l.005-.324a10 10 0 0 1 4.995-8.336z'],
-);
+/** `circle`. From Solar by 480 Design (CC BY 4.0), reshaped by hanji. */
+export const IconCircle: HanjiIcon = /* @__PURE__ */ icon('circle', {
+  line: [
+    [
+      's',
+      'M22 12c0 5.52-4.48 10-10 10c-5.52 0-10-4.48-10-10c0-5.52 4.48-10 10-10c5.52 0 10 4.48 10 10z',
+    ],
+  ],
+  solid: [
+    [
+      'e',
+      'M22 12c0 5.52-4.48 10-10 10c-5.52 0-10-4.48-10-10c0-5.52 4.48-10 10-10c5.52 0 10 4.48 10 10z',
+    ],
+  ],
+  duo: [
+    [
+      '~s',
+      'M22 12c0 5.52-4.48 10-10 10c-5.52 0-10-4.48-10-10c0-5.52 4.48-10 10-10c5.52 0 10 4.48 10 10z',
+    ],
+    [
+      's',
+      'M19.07 4.93c-1.81-1.81-4.31-2.93-7.07-2.93c-5.52 0-10 4.48-10 10c0 2.76 1.12 5.26 2.93 7.07',
+    ],
+  ],
+  duoSolid: [
+    [
+      '~f',
+      'M19.07 4.93c1.81 1.81 2.93 4.31 2.93 7.07c0 5.52-4.48 10-10 10c-2.76 0-5.26-1.12-7.07-2.93l14.14-14.14z',
+    ],
+    [
+      'f',
+      'M2 12c0-5.52 4.48-10 10-10c2.76 0 5.26 1.12 7.07 2.93l-7.07 7.07l-7.07 7.07c-1.81-1.81-2.93-4.31-2.93-7.07z',
+    ],
+  ],
+});

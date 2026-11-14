@@ -1,11 +1,24 @@
 import { icon } from '../create-icon.tsx';
 import type { HanjiIcon } from '../create-icon.tsx';
 
-/** `circle-dot` — outline, solid (filled) and wash. Also: radio, radio-button, selected, record, target, bullseye, dot, point. */
-export const IconCircleDot: HanjiIcon = /* @__PURE__ */ icon(
-  'circle-dot',
-  'M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0',
-  [
-    'M17 3.34a10 10 0 1 1 -14.995 8.984l-.005-.324l.005-.324a10 10 0 0 1 14.995-8.336zm-5 6.66a2 2 0 0 0 -1.977 1.697l-.018.154l-.005.149l.005.15a2 2 0 1 0 1.995-2.15z',
+/** `circle-dot`. From Solar by 480 Design (CC BY 4.0), reshaped by hanji. */
+export const IconCircleDot: HanjiIcon = /* @__PURE__ */ icon('circle-dot', {
+  line: [
+    ['s', 'M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0z'],
+    ['s', 'M12 12h0'],
   ],
-);
+  solid: [
+    [
+      'e',
+      'M12 2c5.52 0 10 4.48 10 10c0 5.52-4.48 10-10 10c-5.52 0-10-4.48-10-10c0-5.52 4.48-10 10-10zm0 9.25c-.41 0-.75.34-.75.75c0 .41.34.75.75.75c.41 0 .75-.34.75-.75c0-.41-.34-.75-.75-.75z',
+    ],
+  ],
+  duo: [0],
+  duoSolid: [
+    ['~f', 'M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0z'],
+    [
+      'f',
+      'M12 11.25c.41 0 .75.34.75.75c0 .41-.34.75-.75.75c-.41 0-.75-.34-.75-.75c0-.41.34-.75.75-.75z',
+    ],
+  ],
+});

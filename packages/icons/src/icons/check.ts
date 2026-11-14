@@ -1,7 +1,27 @@
 import { icon } from '../create-icon.tsx';
 import type { HanjiIcon } from '../create-icon.tsx';
 
-/** `check` — outline, solid (filled) and wash. Also: check, checkmark, tick, done, yes, ok, confirm, success. */
-export const IconCheck: HanjiIcon = /* @__PURE__ */ icon('check', 'M5 12l5 5l10-10', [
-  'M20.707 6.293a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1 -1.414 0l-5-5a1 1 0 0 1 1.414-1.414l4.293 4.293l9.293-9.293a1 1 0 0 1 1.414 0',
-]);
+/** `check`. From Solar by 480 Design (CC BY 4.0), reshaped by hanji. */
+export const IconCheck: HanjiIcon = /* @__PURE__ */ icon('check', {
+  line: [['s', 'M5 13l3.15 3.15c.47.47 1.23.47 1.7 0l9.15-9.15']],
+  solid: [
+    [
+      'f',
+      'M18.47 6.47c.29-.29.77-.29 1.06 0c.29.29.29.77 0 1.06l-9.84 9.84c-.51.51-.87.51-1.38 0l-3.84-3.84c-.29-.29-.29-.77 0-1.06c.29-.29.77-.29 1.06 0l3.05 3.05c.23.23.61.23.84 0l9.05-9.05z',
+    ],
+  ],
+  duo: [
+    ['~s', 'M9 17l10-10'],
+    ['s', 'M5 13l4 4'],
+  ],
+  duoSolid: [
+    [
+      '~f',
+      'M18.47 6.47c.29-.29.77-.29 1.06 0c.29.29.29.77 0 1.06l-10 10c-.29.29-.77.29-1.06 0c-.29-.29-.29-.77 0-1.06l10-10z',
+    ],
+    [
+      'f',
+      'M4.47 12.47c.29-.29.77-.29 1.06 0l4 4c.29.29.29.77 0 1.06c-.29.29-.77.29-1.06 0l-4-4c-.29-.29-.29-.77 0-1.06z',
+    ],
+  ],
+});
