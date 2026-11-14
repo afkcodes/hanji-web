@@ -1,0 +1,77 @@
+@layer hj.components {
+  /* Customise: --hj-meter-height · --hj-meter-gap (segment gap) */
+  .hj-meter {
+    --_tone: var(--hj-accent);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-meter[data-tone='fg'] {
+    --_tone: var(--hj-fg);
+  }
+  .hj-meter[data-zone='optimum'] {
+    --_tone: var(--hj-success);
+  }
+  .hj-meter[data-zone='suboptimum'] {
+    --_tone: var(--hj-warning);
+  }
+  .hj-meter[data-zone='critical'] {
+    --_tone: var(--hj-danger);
+  }
+
+  .hj-meter-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hj-meter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hj-fg);
+  }
+  .hj-meter-value {
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg-dim);
+  }
+
+  .hj-meter-track {
+    position: relative;
+    overflow: hidden;
+    height: var(--hj-meter-height, 6px);
+    border-radius: var(--hj-radius-pill);
+    background: color-mix(in srgb, var(--_tone) 18%, transparent);
+    transition: background-color var(--hj-dur-base) var(--hj-ease-out);
+  }
+  /* Segments: a mask on the track, so the gaps stay put while the fill scales underneath. */
+  .hj-meter[data-segmented] .hj-meter-track {
+    --_gap: var(--hj-meter-gap, 3px);
+    --_period: calc((100% + var(--_gap)) / var(--hj-meter-segments, 5));
+    height: var(--hj-meter-height, 8px);
+    border-radius: 2px;
+    mask: repeating-linear-gradient(
+      to right,
+      black 0 calc(var(--_period) - var(--_gap)),
+      transparent 0 var(--_period)
+    );
+  }
+
+  .hj-meter-indicator {
+    position: absolute;
+    inset: 0;
+    background: var(--_tone);
+    transform-origin: left center;
+    transform: scaleX(var(--hj-meter-fraction, 0));
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      background-color var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-meter-indicator:dir(rtl) {
+    transform-origin: right center;
+  }
+}

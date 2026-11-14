@@ -1,0 +1,96 @@
+@layer hj.components {
+  /* Customise: --hj-progress-ring-size is set by size; colour follows tone. */
+  .hj-progress-ring {
+    --_tone: var(--hj-accent);
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: var(--hj-progress-ring-size, 40px);
+    height: var(--hj-progress-ring-size, 40px);
+    color: var(--hj-fg);
+    font-family: var(--hj-font-sans);
+  }
+  .hj-progress-ring[data-tone='fg'] {
+    --_tone: var(--hj-fg);
+  }
+  .hj-progress-ring[data-tone='danger'] {
+    --_tone: var(--hj-danger);
+  }
+
+  .hj-progress-ring-svg {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .hj-progress-ring-track {
+    fill: none;
+    stroke: color-mix(in srgb, var(--_tone) 22%, transparent);
+  }
+  .hj-progress-ring-arc {
+    fill: none;
+    stroke: var(--_tone);
+    stroke-linecap: round;
+    stroke-dasharray: 100 100;
+    stroke-dashoffset: calc(100 - var(--hj-progress-ring-fraction, 0) * 100);
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+    transition:
+      stroke-dashoffset var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      stroke var(--hj-dur-base) var(--hj-ease-out),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /* A round cap would draw a dot at 0%. */
+  .hj-progress-ring[data-empty] .hj-progress-ring-arc {
+    opacity: 0;
+  }
+
+  /* Indeterminate: a quarter arc on a constant turn (a pulse under reduced motion). */
+  .hj-progress-ring[data-indeterminate] .hj-progress-ring-arc {
+    stroke-dasharray: 25 100;
+    stroke-dashoffset: 0;
+  }
+  .hj-progress-ring[data-indeterminate] .hj-progress-ring-svg {
+    animation: var(--hj-anim-spin);
+  }
+
+  .hj-progress-ring-center {
+    grid-area: 1 / 1;
+    display: grid;
+    place-items: center;
+    max-width: 80%;
+    line-height: 1;
+    text-align: center;
+    font-size: 12px;
+    color: var(--hj-fg-dim);
+  }
+  .hj-progress-ring-center > .hj-icon {
+    font-size: calc(var(--hj-progress-ring-size, 40px) * 0.4);
+    color: var(--_tone);
+  }
+  .hj-progress-ring-value {
+    font-weight: 700;
+    font-size: calc(var(--hj-progress-ring-size, 40px) * 0.26);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg);
+  }
+  .hj-progress-ring-value small {
+    font-size: 0.5em;
+    font-weight: 600;
+    color: var(--hj-fg-mute);
+    margin-left: 1px;
+    letter-spacing: 0;
+  }
+  .hj-progress-ring[data-size='sm'] .hj-progress-ring-value,
+  .hj-progress-ring[data-size='md'] .hj-progress-ring-value {
+    font-size: 10.5px;
+    letter-spacing: 0;
+  }
+  .hj-progress-ring-label {
+    font-size: 12px;
+    color: var(--hj-fg-mute);
+  }
+}

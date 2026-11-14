@@ -1,0 +1,137 @@
+@layer hj.components {
+  /* Customise: --hj-timeline-marker (20px) · --hj-timeline-gap (between steps) */
+  .hj-timeline {
+    --_m: var(--hj-timeline-marker, 20px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--hj-font-sans);
+    color: var(--hj-fg);
+  }
+
+  .hj-timeline-item {
+    --_t: var(--hj-fg-mute);
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--_m) minmax(0, 1fr);
+    gap: 14px;
+    padding-bottom: var(--hj-timeline-gap, 22px);
+  }
+  .hj-timeline-item:last-child {
+    padding-bottom: 0;
+  }
+  /* The rail: from under this marker to the next one. */
+  .hj-timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--_m) + 4px);
+    bottom: 4px;
+    left: calc(var(--_m) / 2 - 0.75px);
+    width: 1.5px;
+    border-radius: 1px;
+    background: var(--hj-line);
+  }
+  .hj-timeline-item[data-status='done']:not(:last-child)::before {
+    background: color-mix(in srgb, var(--hj-accent) 45%, transparent);
+  }
+
+  .hj-timeline-marker {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--_m);
+    height: var(--_m);
+    margin-top: 1px;
+    border-radius: var(--hj-radius-pill);
+    /* Hollow, but visible on true black: a hairline alone vanishes on ink. */
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hj-fg-mute) 55%, transparent);
+    background: var(--hj-bg);
+    font-size: 12px;
+    line-height: 0;
+  }
+  .hj-timeline-marker > svg {
+    width: 1em;
+    height: 1em;
+    stroke-width: 2.25;
+  }
+  .hj-timeline-item[data-status='done'] .hj-timeline-marker {
+    background: var(--hj-accent);
+    box-shadow: none;
+    color: var(--hj-on-accent);
+  }
+  .hj-timeline-item[data-status='failed'] .hj-timeline-marker {
+    background: var(--hj-danger-soft);
+    box-shadow: inset 0 0 0 1.5px var(--hj-danger);
+    color: var(--hj-danger);
+  }
+  /* Current: an accent ring with a dot, and a pulse that stops when motion is reduced. */
+  .hj-timeline-item[data-status='current'] .hj-timeline-marker {
+    box-shadow: inset 0 0 0 1.5px var(--hj-accent);
+  }
+  .hj-timeline-item[data-status='current'] .hj-timeline-marker::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-accent);
+  }
+  .hj-timeline-item[data-status='current'] .hj-timeline-marker::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 1.5px var(--hj-accent);
+    opacity: 0;
+    animation: hj-timeline-pulse 1600ms var(--hj-ease-out) infinite;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-timeline-pulse {
+    from {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.8);
+    }
+  }
+
+  .hj-timeline-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .hj-timeline-title {
+    font: var(--hj-type-body);
+    letter-spacing: var(--hj-tracking-body);
+    color: var(--hj-fg);
+  }
+  .hj-timeline-item[data-status='pending'] .hj-timeline-title {
+    color: var(--hj-fg-dim);
+  }
+  .hj-timeline-item[data-status='failed'] .hj-timeline-title {
+    color: var(--hj-danger);
+  }
+  .hj-timeline-time {
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg-mute);
+  }
+  .hj-timeline-relative {
+    font-family: var(--hj-font-sans);
+    letter-spacing: 0;
+  }
+  .hj-timeline-description {
+    margin: 2px 0 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--hj-fg-dim);
+  }
+  .hj-timeline-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}

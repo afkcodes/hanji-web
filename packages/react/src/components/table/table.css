@@ -1,0 +1,183 @@
+@layer hj.components {
+  /* Customise: --hj-table-row-height (48 / 40) · --hj-table-max-height · --hj-table-header-bg */
+  .hj-table {
+    --_row: var(--hj-table-row-height, 48px);
+    position: relative;
+    width: 100%;
+    max-height: var(--hj-table-max-height, none);
+    overflow: auto;
+    font-family: var(--hj-font-sans);
+    color: var(--hj-fg);
+    overscroll-behavior: contain;
+  }
+  .hj-table[data-size='sm'] {
+    --_row: var(--hj-table-row-height, 40px);
+  }
+  .hj-table-element {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .hj-table-caption {
+    caption-side: top;
+    padding: 0 0 10px;
+    text-align: start;
+    font-size: 12.5px;
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-table-head {
+    height: 36px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--hj-line);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--hj-fg-mute);
+    text-align: start;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .hj-table[data-sticky] .hj-table-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  /*
+   * The sticky header paints a ground only once rows have scrolled under it, so at rest it
+   * sits on whatever surface the table is on. Without scroll-state queries it always paints.
+   */
+  .hj-table[data-sticky] {
+    container-type: scroll-state;
+  }
+  @container scroll-state(scrollable: top) {
+    .hj-table-head {
+      background: var(--hj-table-header-bg, var(--hj-bg));
+    }
+  }
+  @supports not (container-type: scroll-state) {
+    .hj-table[data-sticky] .hj-table-head {
+      background: var(--hj-table-header-bg, var(--hj-bg));
+    }
+  }
+  .hj-table-cell {
+    height: var(--_row);
+    padding: 0 12px;
+    border-bottom: 1px solid var(--hj-line);
+    vertical-align: middle;
+    text-align: start;
+  }
+  .hj-table-head:first-child,
+  .hj-table-cell:first-child {
+    padding-inline-start: 0;
+  }
+  .hj-table-head:last-child,
+  .hj-table-cell:last-child {
+    padding-inline-end: 0;
+  }
+  .hj-table-head[data-align='end'],
+  .hj-table-cell[data-align='end'] {
+    text-align: end;
+  }
+  .hj-table-head[data-align='center'],
+  .hj-table-cell[data-align='center'] {
+    text-align: center;
+  }
+  .hj-table-cell[data-numeric] {
+    font: var(--hj-type-mono);
+    font-size: 13px;
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg-dim);
+  }
+
+  .hj-table-row {
+    transition: background-color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-table-body > .hj-table-row:hover {
+    background: color-mix(in srgb, var(--hj-fg) 3%, transparent);
+  }
+  .hj-table-row[data-selected] {
+    background: var(--hj-accent-soft);
+  }
+  .hj-table-body > .hj-table-row[data-selected]:hover {
+    background: var(--hj-accent-soft);
+  }
+  .hj-table-footer .hj-table-cell {
+    border-bottom: 0;
+    font-weight: 600;
+    color: var(--hj-fg);
+  }
+
+  /* Sort: the header label is a button; the glyph says which way. */
+  .hj-table-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 28px;
+    margin: 0 -6px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: var(--hj-radius-xs);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      color var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-table-head[data-align='end'] .hj-table-sort {
+    flex-direction: row-reverse;
+  }
+  .hj-table-sort:hover {
+    background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
+    color: var(--hj-fg);
+  }
+  .hj-table-head:not([data-sort='none']) .hj-table-sort {
+    color: var(--hj-fg);
+  }
+  .hj-table-sort-glyph {
+    display: inline-flex;
+    font-size: 13px;
+    line-height: 0;
+    opacity: 0.5;
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-table-sort-glyph > svg {
+    width: 1em;
+    height: 1em;
+  }
+  .hj-table-head:not([data-sort='none']) .hj-table-sort-glyph {
+    opacity: 1;
+    color: var(--hj-accent);
+  }
+  .hj-table-head[data-sort='descending'] .hj-table-sort-glyph {
+    transform: rotate(180deg);
+  }
+
+  .hj-table-empty {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--hj-line);
+    text-align: center;
+    font-size: 14px;
+    color: var(--hj-fg-dim);
+  }
+
+  .hj-table-loading-bar {
+    display: inline-block;
+    height: 10px;
+    border-radius: var(--hj-radius-pill);
+    background: color-mix(in srgb, var(--hj-fg) 8%, transparent);
+    vertical-align: middle;
+    animation: hj-pulse 1100ms ease-in-out infinite alternate;
+    animation-play-state: var(--hj-ambient);
+  }
+}

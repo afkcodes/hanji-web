@@ -1,0 +1,110 @@
+@layer hj.components {
+  /* Customise: --hj-stat-value-size (number size; defaults 28 / 44) */
+  .hj-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    font-family: var(--hj-font-sans);
+    color: var(--hj-fg);
+  }
+  .hj-stat-label {
+    font: var(--hj-type-eyebrow);
+    letter-spacing: var(--hj-tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--hj-fg-mute);
+  }
+  .hj-stat-value {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 2px;
+    font-weight: 700;
+    font-size: var(--hj-stat-value-size, 28px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hj-stat[data-size='lg'] .hj-stat-value {
+    font: var(--hj-type-hero);
+    font-size: var(--hj-stat-value-size, 44px);
+    letter-spacing: var(--hj-tracking-hero);
+    font-variant-numeric: tabular-nums;
+  }
+  /* The unit at half size and muted: the digits carry the weight. */
+  .hj-stat-unit {
+    font-size: 0.5em;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-stat-delta {
+    --_s: var(--hj-fg-mute);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 17px;
+    font-variant-numeric: tabular-nums;
+    color: var(--_s);
+  }
+  .hj-stat-delta[data-sentiment='positive'] {
+    --_s: var(--hj-success);
+  }
+  .hj-stat-delta[data-sentiment='negative'] {
+    --_s: var(--hj-danger);
+  }
+  .hj-stat-delta-glyph {
+    display: inline-flex;
+    font-size: 13px;
+    line-height: 0;
+  }
+  .hj-stat-delta-glyph > svg {
+    width: 1em;
+    height: 1em;
+    stroke-width: 2;
+  }
+  .hj-stat-delta[data-trend='down'] .hj-stat-delta-glyph {
+    transform: rotate(180deg);
+  }
+  .hj-stat-description {
+    margin: 0;
+    font: var(--hj-type-sub);
+    letter-spacing: var(--hj-tracking-sub);
+    color: var(--hj-fg-mute);
+  }
+
+  .hj-stat-sparkline {
+    --_t: var(--hj-accent);
+    display: block;
+    flex: none;
+    overflow: visible;
+  }
+  .hj-stat-sparkline[data-tone='fg'] {
+    --_t: var(--hj-fg-dim);
+  }
+  .hj-stat-sparkline[data-tone='success'] {
+    --_t: var(--hj-success);
+  }
+  .hj-stat-sparkline[data-tone='danger'] {
+    --_t: var(--hj-danger);
+  }
+  .hj-stat-sparkline-line {
+    fill: none;
+    stroke: var(--_t);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .hj-stat-sparkline-area {
+    fill: color-mix(in srgb, var(--_t) 10%, transparent);
+  }
+  .hj-stat-sparkline-dot {
+    fill: var(--_t);
+    stroke: var(--hj-bg);
+    stroke-width: 1.5;
+  }
+}

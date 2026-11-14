@@ -1,0 +1,192 @@
+@layer hj.components {
+  /*
+   * Customise: --hj-list-row-height (56) · --hj-list-padding (row inline padding) ·
+   * --hj-list-leading-size (40) · --hj-list-gap (12)
+   */
+  .hj-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--hj-font-sans);
+    color: var(--hj-fg);
+  }
+
+  .hj-list-item {
+    --_pad: var(--hj-list-padding, 0px);
+    --_gap: var(--hj-list-gap, 12px);
+    --_lead: 0px;
+    position: relative;
+    display: block;
+  }
+  .hj-list-item:has(.hj-list-leading) {
+    --_lead: calc(var(--hj-list-leading-size, 40px) + var(--_gap));
+  }
+  /* One interactive row puts every row on the same inset, so mixed lists stay aligned. */
+  .hj-list-item[data-interactive],
+  .hj-list:has(> [data-interactive]) > .hj-list-item {
+    --_pad: var(--hj-list-padding, 12px);
+  }
+  /* Hairline between rows, starting where the text starts. */
+  .hj-list[data-divided] > .hj-list-item + .hj-list-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: calc(var(--_pad) + var(--_lead));
+    height: 1px;
+    background: var(--hj-line);
+    pointer-events: none;
+  }
+
+  .hj-list-row {
+    display: flex;
+    align-items: center;
+    gap: var(--_gap);
+    width: 100%;
+    min-height: var(--hj-list-row-height, 56px);
+    padding: 8px var(--_pad);
+    border: 0;
+    border-radius: var(--hj-radius-sm);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+  }
+  .hj-list-item[data-interactive] > .hj-list-row {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--hj-dur-fast) var(--hj-ease-out),
+      opacity var(--hj-dur-fast) var(--hj-ease-out);
+  }
+  .hj-list-item[data-interactive]:not([data-disabled]) > .hj-list-row:hover {
+    background: color-mix(in srgb, var(--hj-fg) 4%, transparent);
+  }
+  /* Rows answer a press with opacity, not scale — a list must not wobble. */
+  .hj-list-item[data-interactive]:not([data-disabled]) > .hj-list-row:active {
+    opacity: var(--hj-press-opacity);
+    transition-duration: 70ms;
+  }
+  .hj-list-item[data-interactive] > .hj-list-row:focus-visible {
+    outline: 2px solid var(--hj-focus);
+    outline-offset: -2px;
+  }
+  .hj-list-item[data-disabled] > .hj-list-row {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .hj-list-leading {
+    display: grid;
+    place-items: center;
+    flex: none;
+    min-width: 0;
+    color: var(--hj-fg-dim);
+    font-size: 20px;
+    line-height: 0;
+  }
+  .hj-list-leading[data-variant='art'],
+  .hj-list-leading[data-variant='icon'],
+  .hj-list-leading[data-variant='avatar'] {
+    width: var(--hj-list-leading-size, 40px);
+    height: var(--hj-list-leading-size, 40px);
+    overflow: hidden;
+  }
+  .hj-list-leading[data-variant='art'] {
+    border-radius: var(--hj-radius-xs);
+    background: var(--hj-surface);
+    box-shadow: inset 0 0 0 1px var(--hj-line);
+  }
+  .hj-list-leading[data-variant='avatar'] {
+    border-radius: var(--hj-radius-pill);
+    background: var(--hj-accent-soft);
+    color: var(--hj-accent);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .hj-list-leading[data-variant='art'] > :is(img, svg, video),
+  .hj-list-leading[data-variant='avatar'] > :is(img, svg) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hj-list-leading[data-variant='icon'] {
+    --_t: var(--hj-fg);
+    border-radius: var(--hj-radius-xs);
+    background: color-mix(in srgb, var(--_t) 10%, transparent);
+    color: var(--_t);
+  }
+  .hj-list-leading[data-tone='accent'] {
+    --_t: var(--hj-accent);
+  }
+  .hj-list-leading[data-tone='success'] {
+    --_t: var(--hj-success);
+  }
+  .hj-list-leading[data-tone='warning'] {
+    --_t: var(--hj-warning);
+  }
+  .hj-list-leading[data-tone='danger'] {
+    --_t: var(--hj-danger);
+  }
+
+  .hj-list-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+  .hj-list-title {
+    overflow: hidden;
+    font: var(--hj-type-body);
+    letter-spacing: var(--hj-tracking-body);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--hj-fg);
+    transition: color var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-list-item[data-selected] .hj-list-title {
+    color: var(--hj-accent);
+  }
+  .hj-list-description {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow: hidden;
+    font: var(--hj-type-sub);
+    letter-spacing: var(--hj-tracking-sub);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--hj-fg-mute);
+  }
+  .hj-list-description > .hj-icon {
+    font-size: 14px;
+  }
+
+  .hj-list-trailing {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    margin-inline-start: auto;
+    color: var(--hj-fg-mute);
+  }
+  .hj-list-value {
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    color: var(--hj-fg-dim);
+  }
+  .hj-list-chevron {
+    display: inline-flex;
+    font-size: 18px;
+    line-height: 0;
+    color: var(--hj-fg-mute);
+  }
+  .hj-list-chevron > svg {
+    width: 1em;
+    height: 1em;
+  }
+}

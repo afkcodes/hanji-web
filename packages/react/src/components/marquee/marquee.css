@@ -1,0 +1,49 @@
+@layer hj.components {
+  /* Customise: --hj-marquee-fade (edge fade width, 14px). Speed, gap and dwell are props. */
+  .hj-marquee {
+    position: relative;
+    display: block;
+    /*
+     * Its width comes from the layout, never from the text — otherwise a long title widens a
+     * grid track or a flex row instead of overflowing. In a flex row it fills the free space.
+     */
+    contain: inline-size;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .hj-marquee-track {
+    display: inline-flex;
+    gap: var(--hj-marquee-gap, 40px);
+    max-width: 100%;
+    will-change: auto;
+  }
+  .hj-marquee[data-running] .hj-marquee-track {
+    max-width: none;
+    will-change: transform;
+  }
+  .hj-marquee-text {
+    display: block;
+    flex: none;
+  }
+  /* At rest (fits, or reduced motion): a plain line with an ellipsis. */
+  .hj-marquee:not([data-running]) .hj-marquee-text {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Moving: the far edge fades, so the text slides out of view instead of being cut. */
+  .hj-marquee[data-running] {
+    --_f: var(--hj-marquee-fade, 14px);
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black calc(var(--_f) * 0.5),
+      black calc(100% - var(--_f)),
+      transparent 100%
+    );
+  }
+}

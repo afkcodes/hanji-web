@@ -1,0 +1,76 @@
+@layer hj.components {
+  /* Customise: --hj-progress-height · --hj-progress-radius */
+  .hj-progress {
+    --_tone: var(--hj-accent);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+    font-family: var(--hj-font-sans);
+  }
+  .hj-progress[data-tone='fg'] {
+    --_tone: var(--hj-fg);
+  }
+  .hj-progress[data-tone='danger'] {
+    --_tone: var(--hj-danger);
+  }
+
+  .hj-progress-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hj-progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hj-fg);
+  }
+  .hj-progress-value {
+    font: var(--hj-type-mono);
+    letter-spacing: var(--hj-tracking-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--hj-fg-dim);
+  }
+
+  .hj-progress-track {
+    position: relative;
+    overflow: hidden;
+    height: var(--hj-progress-height, 4px);
+    border-radius: var(--hj-progress-radius, var(--hj-radius-pill));
+    background: color-mix(in srgb, var(--_tone) 22%, transparent);
+  }
+
+  /* Full width, scaled from the left: transform only, on the clamped snappy spring. */
+  .hj-progress-indicator {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--_tone);
+    transform-origin: left center;
+    transform: scaleX(var(--hj-progress-fraction, 0));
+    transition:
+      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      background-color var(--hj-dur-base) var(--hj-ease-out);
+  }
+  .hj-progress-indicator:dir(rtl) {
+    transform-origin: right center;
+  }
+
+  /* Indeterminate: a third of the track sweeps across. Paused (mid-track) under reduced motion. */
+  .hj-progress-indicator[data-indeterminate] {
+    transform: translateX(-34%) scaleX(0.333);
+    animation: hj-progress-sweep 1400ms var(--hj-ease-out) infinite;
+    animation-delay: -560ms;
+    animation-play-state: var(--hj-ambient);
+  }
+  @keyframes hj-progress-sweep {
+    from {
+      transform: translateX(-34%) scaleX(0.333);
+    }
+    to {
+      transform: translateX(100%) scaleX(0.333);
+    }
+  }
+}
