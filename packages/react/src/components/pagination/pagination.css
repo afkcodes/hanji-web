@@ -4,7 +4,7 @@
     --_s: var(--hj-pagination-size, 36px);
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: calc(4px * var(--hj-density));
     font-family: var(--hj-font-sans);
   }
   .hj-pagination-pages {
@@ -23,7 +23,7 @@
     place-items: center;
     min-width: var(--_s);
     height: var(--_s);
-    padding: 0 6px;
+    padding: 0 calc(6px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: transparent;
@@ -72,7 +72,7 @@
   .hj-pagination-step:has(> :not(svg)),
   .hj-pagination-step:not(:has(svg)) {
     width: auto;
-    padding: 0 12px;
+    padding: 0 calc(12px * var(--hj-density));
     font-size: 14px;
   }
   .hj-pagination-step[data-disabled] {
@@ -96,7 +96,7 @@
 
   .hj-pagination-summary {
     min-width: 7ch;
-    padding: 0 8px;
+    padding: 0 calc(8px * var(--hj-density));
     color: var(--hj-fg-dim);
     font: 500 13.5px / 1 var(--hj-font-sans);
     font-variant-numeric: tabular-nums;

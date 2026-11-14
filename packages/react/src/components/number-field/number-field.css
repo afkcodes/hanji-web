@@ -1,16 +1,16 @@
 @layer hj.components {
   /* Customise: --hj-number-field-height · --hj-number-field-value-width */
   .hj-number-field {
-    --_h: var(--hj-number-field-height, 44px);
+    --_h: var(--hj-number-field-height, calc(44px * var(--hj-density-size)));
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
     align-self: flex-start;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     font-family: var(--hj-font-sans);
   }
   .hj-number-field[data-size='sm'] {
-    --_h: var(--hj-number-field-height, 36px);
+    --_h: var(--hj-number-field-height, calc(36px * var(--hj-density-size)));
   }
 
   /* − value + in one pill: surface, hairline, the accent ring when focused within */
@@ -130,7 +130,7 @@
   }
 
   .hj-number-field-unit {
-    margin-inline: -2px 4px;
+    margin-inline: -2px calc(4px * var(--hj-density));
     font-size: 13px;
     font-weight: 500;
     color: var(--hj-fg-mute);

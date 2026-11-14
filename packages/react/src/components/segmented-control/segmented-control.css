@@ -1,7 +1,7 @@
 @layer hj.components {
   /* Customise: --hj-segmented-control-height · --hj-segmented-control-pad */
   .hj-segmented-control {
-    --_h: var(--hj-segmented-control-height, 40px);
+    --_h: var(--hj-segmented-control-height, calc(40px * var(--hj-density-size)));
     --_pad: var(--hj-segmented-control-pad, 4px);
     position: relative;
     isolation: isolate;
@@ -16,7 +16,7 @@
     user-select: none;
   }
   .hj-segmented-control[data-size='sm'] {
-    --_h: var(--hj-segmented-control-height, 32px);
+    --_h: var(--hj-segmented-control-height, calc(32px * var(--hj-density-size)));
     --_pad: var(--hj-segmented-control-pad, 3px);
   }
   .hj-segmented-control[data-block] {
@@ -55,8 +55,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 0 14px;
+    gap: calc(6px * var(--hj-density));
+    padding: 0 calc(14px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     color: var(--hj-fg-dim);
     font-weight: 600;
@@ -70,7 +70,7 @@
       transform var(--hj-dur-snappy) var(--hj-ease-snappy);
   }
   .hj-segmented-control[data-size='sm'] > .hj-segmented-control-item {
-    padding: 0 11px;
+    padding: 0 calc(11px * var(--hj-density));
     font-size: 12px;
   }
   .hj-segmented-control-item:hover:not([data-disabled]) {

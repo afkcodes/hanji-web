@@ -1,14 +1,14 @@
 @layer hj.components {
   /* Customise: --hj-chip-height · --hj-chip-padding · --hj-chip-gap (between chips) */
   .hj-chip {
-    --_h: var(--hj-chip-height, 32px);
+    --_h: var(--hj-chip-height, calc(32px * var(--hj-density-size)));
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     flex: none;
     height: var(--_h);
-    padding: 0 var(--hj-chip-padding, 13px);
+    padding: 0 var(--hj-chip-padding, calc(13px * var(--hj-density)));
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: var(--hj-surface);
@@ -34,8 +34,8 @@
     inset: calc((var(--_h) - var(--hj-touch)) / 2) -2px;
   }
   .hj-chip[data-size='sm'] {
-    --_h: var(--hj-chip-height, 28px);
-    padding: 0 var(--hj-chip-padding, 11px);
+    --_h: var(--hj-chip-height, calc(28px * var(--hj-density-size)));
+    padding: 0 var(--hj-chip-padding, calc(11px * var(--hj-density)));
     font-size: 12.5px;
   }
   .hj-chip:hover:not([data-disabled]) {
@@ -62,7 +62,7 @@
 
   .hj-chip-check {
     display: none;
-    margin-left: -3px;
+    margin-left: calc(-3px * var(--hj-density));
     font-size: 14px;
     line-height: 0;
   }
@@ -96,7 +96,7 @@
 
   /* input: a value with a ✕ — it is not pressable itself, only its ✕ is */
   .hj-chip[data-kind='input'] {
-    padding-right: 4px;
+    padding-right: calc(4px * var(--hj-density));
     color: var(--hj-fg);
     cursor: default;
   }
@@ -151,6 +151,6 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--hj-chip-gap, 8px);
+    gap: var(--hj-chip-gap, calc(8px * var(--hj-density)));
   }
 }

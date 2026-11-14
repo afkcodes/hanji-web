@@ -29,8 +29,8 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: var(--hj-dialog-padding, 24px);
+    gap: calc(8px * var(--hj-density));
+    padding: var(--hj-dialog-padding, calc(24px * var(--hj-density)));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-dialog-radius, var(--hj-radius-lg));
     background: var(--hj-surface-2);
@@ -72,7 +72,7 @@
 
   .hj-dialog-title {
     margin: 0;
-    padding-right: 36px;
+    padding-right: calc(36px * var(--hj-density));
     font: var(--hj-type-title);
     letter-spacing: var(--hj-tracking-title);
   }
@@ -85,8 +85,8 @@
   .hj-dialog-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
-    margin-top: 16px;
+    gap: calc(8px * var(--hj-density));
+    margin-top: calc(16px * var(--hj-density));
   }
 
   .hj-dialog-close[data-icon] {
@@ -96,7 +96,7 @@
     display: grid;
     place-items: center;
     width: 32px;
-    height: 32px;
+    height: calc(32px * var(--hj-density-size));
     padding: 0;
     border: 0;
     border-radius: var(--hj-radius-pill);

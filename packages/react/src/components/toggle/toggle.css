@@ -1,16 +1,16 @@
 @layer hj.components {
   /* Customise: --hj-toggle-height · --hj-toggle-radius */
   .hj-toggle {
-    --_h: var(--hj-toggle-height, 40px);
+    --_h: var(--hj-toggle-height, calc(40px * var(--hj-density-size)));
     position: relative;
     display: inline-flex;
     flex: none;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     height: var(--_h);
     min-width: var(--_h);
-    padding: 0 14px;
+    padding: 0 calc(14px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-toggle-radius, var(--hj-radius-pill));
     background: transparent;
@@ -26,8 +26,8 @@
       transform var(--hj-dur-snappy) var(--hj-ease-snappy);
   }
   .hj-toggle[data-size='sm'] {
-    --_h: var(--hj-toggle-height, 32px);
-    padding: 0 10px;
+    --_h: var(--hj-toggle-height, calc(32px * var(--hj-density-size)));
+    padding: 0 calc(10px * var(--hj-density));
     font-size: 12.5px;
   }
   .hj-toggle[data-icon-only] {
@@ -72,9 +72,9 @@
   }
   /* inside a ToggleGroup: flush, the group draws the frame */
   .hj-toggle[data-variant='grouped'] {
-    --_h: calc(var(--hj-toggle-height, 40px) - 8px);
+    --_h: calc(var(--hj-toggle-height, calc(40px * var(--hj-density-size))) - 8px);
   }
   .hj-toggle[data-variant='grouped'][data-size='sm'] {
-    --_h: calc(var(--hj-toggle-height, 32px) - 6px);
+    --_h: calc(var(--hj-toggle-height, calc(32px * var(--hj-density-size))) - 6px);
   }
 }

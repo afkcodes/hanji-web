@@ -32,9 +32,9 @@
     z-index: var(--hj-z-sticky);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    height: 34px;
-    padding: 0 14px 0 12px;
+    gap: calc(6px * var(--hj-density));
+    height: calc(34px * var(--hj-density-size));
+    padding: 0 calc(14px * var(--hj-density)) 0 calc(12px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-pill);
     background: var(--hj-surface-2);

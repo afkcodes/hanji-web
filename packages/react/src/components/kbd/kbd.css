@@ -7,7 +7,7 @@
     justify-content: center;
     min-width: var(--_h);
     height: var(--_h);
-    padding: 0 6px;
+    padding: 0 calc(6px * var(--hj-density));
     border-radius: 6px;
     background: var(--hj-kbd-bg, var(--hj-surface-2));
     box-shadow:
@@ -22,11 +22,11 @@
   }
   .hj-kbd[data-size='sm'] {
     --_h: var(--hj-kbd-height, 18px);
-    padding: 0 4px;
+    padding: 0 calc(4px * var(--hj-density));
     border-radius: 5px;
     font-size: 10.5px;
   }
   .hj-kbd + .hj-kbd {
-    margin-left: 3px;
+    margin-left: calc(3px * var(--hj-density));
   }
 }

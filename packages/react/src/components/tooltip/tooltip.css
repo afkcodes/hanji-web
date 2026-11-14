@@ -9,7 +9,7 @@
   .hj-tooltip-popup {
     position: relative;
     max-width: var(--hj-tooltip-width, 240px);
-    padding: 6px 10px;
+    padding: calc(6px * var(--hj-density)) calc(10px * var(--hj-density));
     border-radius: var(--hj-tooltip-radius, var(--hj-radius-xs));
     background: var(--hj-fg);
     color: var(--hj-bg);

@@ -5,9 +5,9 @@
     --_bg: color-mix(in srgb, var(--hj-fg) 7%, transparent);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     height: var(--hj-status-height, 26px);
-    padding: 0 10px 0 8px;
+    padding: 0 calc(10px * var(--hj-density)) 0 calc(8px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: var(--_bg);
     color: var(--_c);
@@ -57,7 +57,7 @@
   }
   .hj-status-meta::before {
     content: '·';
-    margin-right: 6px;
+    margin-right: calc(6px * var(--hj-density));
   }
 
   /* neutral: a still dot · pending: a dot with a ring that breathes outward while work runs */

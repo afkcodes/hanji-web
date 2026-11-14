@@ -13,7 +13,7 @@
   }
   .hj-skeleton[data-shape='circle'] {
     width: 40px;
-    height: 40px;
+    height: calc(40px * var(--hj-density-size));
     border-radius: 50%;
   }
   .hj-skeleton[data-shape='text'] {

@@ -2,14 +2,14 @@
   /* Customise: --hj-otp-field-cell-width · --hj-otp-field-cell-height · --hj-otp-field-gap */
   .hj-otp-field {
     --_w: var(--hj-otp-field-cell-width, 48px);
-    --_h: var(--hj-otp-field-cell-height, 56px);
+    --_h: var(--hj-otp-field-cell-height, calc(56px * var(--hj-density-size)));
     display: inline-flex;
     align-items: center;
-    gap: var(--hj-otp-field-gap, 8px);
+    gap: var(--hj-otp-field-gap, calc(8px * var(--hj-density)));
   }
   .hj-otp-field[data-size='sm'] {
     --_w: var(--hj-otp-field-cell-width, 40px);
-    --_h: var(--hj-otp-field-cell-height, 48px);
+    --_h: var(--hj-otp-field-cell-height, calc(48px * var(--hj-density-size)));
   }
 
   .hj-otp-field-input {

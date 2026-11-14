@@ -29,8 +29,8 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 24px;
+    gap: calc(8px * var(--hj-density));
+    padding: calc(24px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-lg);
     background: var(--hj-surface-2);
@@ -61,8 +61,8 @@
     display: grid;
     place-items: center;
     width: 40px;
-    height: 40px;
-    margin-bottom: 6px;
+    height: calc(40px * var(--hj-density-size));
+    margin-bottom: calc(6px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: var(--hj-danger-soft);
     color: var(--hj-danger);
@@ -87,7 +87,7 @@
   .hj-alert-dialog-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
-    margin-top: 16px;
+    gap: calc(8px * var(--hj-density));
+    margin-top: calc(16px * var(--hj-density));
   }
 }

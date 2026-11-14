@@ -3,14 +3,14 @@
   .hj-field {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     min-width: 0;
     font-family: var(--hj-font-sans);
   }
   .hj-field-label {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
     font-size: 13px;
     font-weight: 600;
     line-height: 1.3;
@@ -28,7 +28,7 @@
   /* The box: a standalone control, or a shell holding a control and its adornments. */
   .hj-field-control,
   .hj-field-shell {
-    --_h: var(--hj-field-height, 48px);
+    --_h: var(--hj-field-height, calc(48px * var(--hj-density-size)));
     --_ring: var(--hj-line);
     width: 100%;
     min-width: 0;
@@ -44,17 +44,17 @@
       background-color var(--hj-dur-base) var(--hj-ease-out);
   }
   .hj-field-control {
-    padding: 0 14px;
+    padding: 0 calc(14px * var(--hj-density));
     outline: none;
     caret-color: var(--hj-accent);
   }
   .hj-field-control[data-size='sm'] {
-    --_h: var(--hj-field-height, 40px);
+    --_h: var(--hj-field-height, calc(40px * var(--hj-density-size)));
     font-size: 14px;
-    padding: 0 12px;
+    padding: 0 calc(12px * var(--hj-density));
   }
   .hj-field-control[data-size='lg'] {
-    --_h: var(--hj-field-height, 56px);
+    --_h: var(--hj-field-height, calc(56px * var(--hj-density-size)));
     font-size: 16px;
   }
   .hj-field-control::placeholder {
@@ -92,8 +92,8 @@
   .hj-field-shell {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 8px 0 14px;
+    gap: calc(10px * var(--hj-density));
+    padding: 0 calc(8px * var(--hj-density)) 0 calc(14px * var(--hj-density));
     cursor: text;
   }
   .hj-field-shell > .hj-field-control {
@@ -108,7 +108,7 @@
     display: inline-flex;
     flex: none;
     align-items: center;
-    gap: 4px;
+    gap: calc(4px * var(--hj-density));
     color: var(--hj-fg-mute);
     font-size: 18px;
     line-height: 0;
@@ -129,7 +129,7 @@
   .hj-field-error {
     display: flex;
     align-items: flex-start;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     margin: 0;
     font-size: 12.5px;
     line-height: 17px;

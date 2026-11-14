@@ -2,7 +2,7 @@
   /* Customise: --hj-date-picker-height · --hj-date-picker-radius */
   .hj-date-picker-label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: calc(6px * var(--hj-density));
     font-size: 13px;
     font-weight: 600;
     line-height: 1.3;
@@ -14,16 +14,16 @@
 
   /* Closed: drawn like a text field, so it sits in a form row without explanation. */
   .hj-date-picker-trigger {
-    --_h: var(--hj-date-picker-height, 48px);
+    --_h: var(--hj-date-picker-height, calc(48px * var(--hj-density-size)));
     --_ring: var(--hj-line);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: calc(10px * var(--hj-density));
     width: 100%;
     min-width: 220px;
     height: var(--_h);
-    padding: 0 12px 0 14px;
+    padding: 0 calc(12px * var(--hj-density)) 0 calc(14px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-date-picker-radius, var(--hj-radius-sm));
     background: var(--hj-surface);
@@ -40,11 +40,11 @@
       background-color var(--hj-dur-base) var(--hj-ease-out);
   }
   .hj-date-picker-trigger[data-size='sm'] {
-    --_h: var(--hj-date-picker-height, 40px);
+    --_h: var(--hj-date-picker-height, calc(40px * var(--hj-density-size)));
     font-size: 14px;
   }
   .hj-date-picker-trigger[data-size='lg'] {
-    --_h: var(--hj-date-picker-height, 56px);
+    --_h: var(--hj-date-picker-height, calc(56px * var(--hj-density-size)));
     font-size: 16px;
   }
   .hj-date-picker-trigger:hover:not([data-disabled]):not(:focus-visible):not([data-popup-open]) {
@@ -88,7 +88,8 @@
     outline: none;
   }
   .hj-date-picker-popup {
-    padding: 14px 14px 12px;
+    padding: calc(14px * var(--hj-density)) calc(14px * var(--hj-density))
+      calc(12px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-lg);
     background: var(--hj-surface-2);
@@ -114,9 +115,9 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-    padding-top: 10px;
+    gap: calc(6px * var(--hj-density));
+    margin-top: calc(10px * var(--hj-density));
+    padding-top: calc(10px * var(--hj-density));
     border-top: 1px solid var(--hj-line);
   }
 }

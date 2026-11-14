@@ -4,7 +4,7 @@
     display: inline-flex;
     align-items: center;
     gap: 2px;
-    padding: 3px;
+    padding: calc(3px * var(--hj-density));
     border-radius: var(--hj-radius-sm);
     background: var(--hj-surface);
     box-shadow: inset 0 0 0 1px var(--hj-line);
@@ -16,8 +16,8 @@
   }
   .hj-menubar-trigger {
     position: relative;
-    height: var(--hj-menubar-trigger-height, 32px);
-    padding: 0 12px;
+    height: var(--hj-menubar-trigger-height, calc(32px * var(--hj-density-size)));
+    padding: 0 calc(12px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-xs);
     background: transparent;

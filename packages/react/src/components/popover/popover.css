@@ -14,12 +14,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     width: max-content;
     max-width: min(var(--hj-popover-width, 320px), var(--available-width, 100vw));
     max-height: var(--available-height, 80vh);
     overflow: auto;
-    padding: var(--hj-popover-padding, 16px);
+    padding: var(--hj-popover-padding, calc(16px * var(--hj-density)));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-popover-radius, var(--hj-radius-md));
     background: var(--hj-surface-2);
@@ -52,7 +52,7 @@
 
   .hj-popover-title {
     margin: 0;
-    padding-right: 28px;
+    padding-right: calc(28px * var(--hj-density));
     font: var(--hj-type-heading);
     letter-spacing: var(--hj-tracking-heading);
   }
@@ -65,8 +65,8 @@
   .hj-popover-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
-    margin-top: 10px;
+    gap: calc(8px * var(--hj-density));
+    margin-top: calc(10px * var(--hj-density));
   }
 
   .hj-popover-close[data-icon] {

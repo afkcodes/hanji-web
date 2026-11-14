@@ -4,16 +4,16 @@
    * --hj-button-height · --hj-button-padding · --hj-button-radius · --hj-button-font-size
    */
   .hj-button {
-    --_h: var(--hj-button-height, 44px);
+    --_h: var(--hj-button-height, calc(44px * var(--hj-density-size)));
     --_bg: var(--hj-accent);
     --_fg: var(--hj-on-accent);
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
     height: var(--_h);
-    padding: 0 var(--hj-button-padding, 20px);
+    padding: 0 var(--hj-button-padding, calc(20px * var(--hj-density)));
     border: 0;
     border-radius: var(--hj-button-radius, var(--hj-radius-pill));
     background: var(--_bg);
@@ -71,14 +71,14 @@
   }
 
   .hj-button[data-size='sm'] {
-    --_h: var(--hj-button-height, 34px);
-    padding: 0 var(--hj-button-padding, 14px);
-    gap: 6px;
+    --_h: var(--hj-button-height, calc(34px * var(--hj-density-size)));
+    padding: 0 var(--hj-button-padding, calc(14px * var(--hj-density)));
+    gap: calc(6px * var(--hj-density));
     font-size: var(--hj-button-font-size, 13.5px);
   }
   .hj-button[data-size='lg'] {
-    --_h: var(--hj-button-height, 52px);
-    padding: 0 var(--hj-button-padding, 26px);
+    --_h: var(--hj-button-height, calc(52px * var(--hj-density-size)));
+    padding: 0 var(--hj-button-padding, calc(26px * var(--hj-density)));
     font-size: var(--hj-button-font-size, 16px);
   }
   .hj-button[data-icon-only] {

@@ -27,8 +27,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    min-height: 124px;
+    gap: calc(4px * var(--hj-density));
+    min-height: calc(124px * var(--hj-density-size));
     padding: var(--hj-choice-card-padding, var(--hj-space-4));
     border-radius: var(--hj-choice-card-radius, var(--hj-radius-md));
     background: var(--hj-surface);

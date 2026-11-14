@@ -10,7 +10,7 @@
   /* The field box: a lone input, or a group holding chips, input, clear and trigger. */
   .hj-combobox-input,
   .hj-combobox-group {
-    --_h: var(--hj-combobox-height, 48px);
+    --_h: var(--hj-combobox-height, calc(48px * var(--hj-density-size)));
     --_ring: var(--hj-line);
     width: 100%;
     min-width: 0;
@@ -27,16 +27,16 @@
   }
   .hj-combobox-input {
     height: var(--_h);
-    padding: 0 14px;
+    padding: 0 calc(14px * var(--hj-density));
     outline: none;
     caret-color: var(--hj-accent);
   }
   .hj-combobox-input[data-size='sm'] {
-    --_h: var(--hj-combobox-height, 40px);
+    --_h: var(--hj-combobox-height, calc(40px * var(--hj-density-size)));
     font-size: 14px;
   }
   .hj-combobox-input[data-size='lg'] {
-    --_h: var(--hj-combobox-height, 56px);
+    --_h: var(--hj-combobox-height, calc(56px * var(--hj-density-size)));
     font-size: 16px;
   }
   .hj-combobox-input::placeholder {
@@ -48,19 +48,20 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
-    padding: 6px 6px 6px 14px;
+    gap: calc(6px * var(--hj-density));
+    padding: calc(6px * var(--hj-density)) calc(6px * var(--hj-density))
+      calc(6px * var(--hj-density)) calc(14px * var(--hj-density));
     cursor: text;
   }
   .hj-combobox-group:has(.hj-combobox-chip) {
-    padding-left: 6px;
+    padding-left: calc(6px * var(--hj-density));
   }
   .hj-combobox-group .hj-combobox-input {
     flex: 1;
     min-width: 96px;
-    height: 34px;
+    height: calc(34px * var(--hj-density-size));
     min-height: 0;
-    padding: 0 4px;
+    padding: 0 calc(4px * var(--hj-density));
     border-radius: 0;
     background: transparent;
     box-shadow: none;
@@ -100,8 +101,8 @@
     display: inline-flex;
     align-items: center;
     gap: 2px;
-    height: 32px;
-    padding: 0 4px 0 12px;
+    height: calc(32px * var(--hj-density-size));
+    padding: 0 calc(4px * var(--hj-density)) 0 calc(12px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: var(--hj-surface-2);
     box-shadow: inset 0 0 0 1px var(--hj-line);
@@ -168,7 +169,7 @@
     place-items: center;
     flex: none;
     width: 32px;
-    height: 32px;
+    height: calc(32px * var(--hj-density-size));
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -244,7 +245,7 @@
   .hj-combobox-list {
     box-sizing: border-box;
     max-height: min(var(--hj-combobox-list-height, 320px), var(--available-height));
-    padding: 6px;
+    padding: calc(6px * var(--hj-density));
     overflow-y: auto;
     overscroll-behavior: contain;
     scroll-padding-block: 6px;
@@ -256,10 +257,11 @@
   .hj-combobox-item {
     display: grid;
     grid-template-columns: 18px minmax(0, 1fr);
-    column-gap: 10px;
+    column-gap: calc(10px * var(--hj-density));
     align-items: center;
-    min-height: 40px;
-    padding: 6px 14px 6px 10px;
+    min-height: calc(40px * var(--hj-density-size));
+    padding: calc(6px * var(--hj-density)) calc(14px * var(--hj-density))
+      calc(6px * var(--hj-density)) calc(10px * var(--hj-density));
     border-radius: var(--hj-radius-xs);
     font-size: 14.5px;
     font-weight: 500;
@@ -306,19 +308,20 @@
     color: var(--hj-fg-mute);
   }
   .hj-combobox-empty:not(:empty) {
-    padding: 18px 16px;
+    padding: calc(18px * var(--hj-density)) calc(16px * var(--hj-density));
     font-size: 13.5px;
     line-height: 1.5;
     color: var(--hj-fg-mute);
     text-align: center;
   }
   .hj-combobox-status:not(:empty) {
-    padding: 10px 16px 0;
+    padding: calc(10px * var(--hj-density)) calc(16px * var(--hj-density)) 0;
     font-size: 12.5px;
     color: var(--hj-fg-mute);
   }
   .hj-combobox-group-label {
-    padding: 10px 10px 4px 38px;
+    padding: calc(10px * var(--hj-density)) calc(10px * var(--hj-density))
+      calc(4px * var(--hj-density)) calc(38px * var(--hj-density));
     font: var(--hj-type-eyebrow);
     letter-spacing: var(--hj-tracking-eyebrow);
     text-transform: uppercase;
@@ -326,12 +329,12 @@
   }
   .hj-combobox-separator {
     height: 1px;
-    margin: 6px 4px;
+    margin: calc(6px * var(--hj-density)) calc(4px * var(--hj-density));
     background: var(--hj-line);
   }
   .hj-combobox-row {
     display: flex;
-    gap: 4px;
+    gap: calc(4px * var(--hj-density));
   }
   .hj-combobox-arrow {
     width: 12px;

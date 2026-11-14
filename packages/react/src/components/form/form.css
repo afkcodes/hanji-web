@@ -23,12 +23,12 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
     margin-top: var(--hj-space-2);
   }
 
   .hj-form-error-summary {
-    padding: 16px 18px;
+    padding: calc(16px * var(--hj-density)) calc(18px * var(--hj-density));
     border-radius: var(--hj-radius-md);
     background: var(--hj-danger-soft);
     box-shadow: inset 3px 0 0 var(--hj-danger);
@@ -50,8 +50,8 @@
   .hj-form-error-summary-title {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0 0 6px;
+    gap: calc(8px * var(--hj-density));
+    margin: 0 0 calc(6px * var(--hj-density));
     font-size: 15px;
     font-weight: 600;
     color: var(--hj-danger);
@@ -63,7 +63,7 @@
   }
   .hj-form-error-summary-list {
     margin: 0;
-    padding: 0 0 0 26px;
+    padding: 0 0 0 calc(26px * var(--hj-density));
     font-size: 14px;
     line-height: 1.55;
   }

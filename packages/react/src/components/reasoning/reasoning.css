@@ -8,10 +8,10 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     height: 30px;
-    margin-left: -6px;
-    padding: 0 8px 0 6px;
+    margin-left: calc(-6px * var(--hj-density));
+    padding: 0 calc(8px * var(--hj-density)) 0 calc(6px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: transparent;
@@ -98,8 +98,9 @@
   .hj-reasoning-body {
     max-height: var(--hj-reasoning-max-height, 280px);
     overflow-y: auto;
-    margin: 6px 0 4px 7px;
-    padding: 2px 0 2px 16px;
+    margin: calc(6px * var(--hj-density)) 0 calc(4px * var(--hj-density))
+      calc(7px * var(--hj-density));
+    padding: 2px 0 2px calc(16px * var(--hj-density));
     border-left: 1px solid var(--hj-line);
     color: var(--hj-fg-mute);
     font-size: 13.5px;

@@ -55,7 +55,8 @@
   }
   .hj-card[data-orientation='horizontal'] > .hj-card-media {
     width: var(--hj-card-media-size, 88px);
-    margin: 8px 0 8px 8px;
+    margin: calc(8px * var(--hj-density)) 0 calc(8px * var(--hj-density))
+      calc(8px * var(--hj-density));
     border-radius: calc(var(--hj-card-radius, var(--hj-radius-md)) - 6px);
   }
 
@@ -63,9 +64,12 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 4px;
+    gap: calc(4px * var(--hj-density));
     min-width: 0;
-    padding: var(--hj-card-padding, 14px 16px 16px);
+    padding: var(
+      --hj-card-padding,
+      calc(14px * var(--hj-density)) calc(16px * var(--hj-density)) calc(16px * var(--hj-density))
+    );
   }
   .hj-card-eyebrow {
     margin: 0 0 2px;
@@ -90,13 +94,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    padding: 0 16px 14px;
+    gap: calc(8px * var(--hj-density));
+    padding: 0 calc(16px * var(--hj-density)) calc(14px * var(--hj-density));
     font-size: 12.5px;
     color: var(--hj-fg-mute);
     font-variant-numeric: tabular-nums;
   }
   .hj-card[data-orientation='horizontal'] .hj-card-footer {
-    padding: 0 16px 0 0;
+    padding: 0 calc(16px * var(--hj-density)) 0 0;
   }
 }

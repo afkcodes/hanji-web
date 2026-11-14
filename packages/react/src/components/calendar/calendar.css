@@ -4,7 +4,7 @@
     --_cell: var(--hj-calendar-cell, 40px);
     display: inline-flex;
     flex-direction: column;
-    gap: var(--hj-calendar-gap, 10px);
+    gap: var(--hj-calendar-gap, calc(10px * var(--hj-density)));
     width: max-content;
     color: var(--hj-fg);
     font-family: var(--hj-font-sans);
@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
     padding: 0 2px;
   }
   .hj-calendar-title {
@@ -29,7 +29,7 @@
     display: grid;
     place-items: center;
     width: 32px;
-    height: 32px;
+    height: calc(32px * var(--hj-density-size));
     padding: 0;
     border: 0;
     border-radius: 50%;

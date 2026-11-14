@@ -14,9 +14,9 @@
   .hj-radio-group-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: calc(12px * var(--hj-density));
     min-height: var(--hj-touch);
-    padding-block: 11px;
+    padding-block: calc(11px * var(--hj-density));
     font: var(--hj-type-body);
     letter-spacing: var(--hj-tracking-body);
     color: var(--hj-fg);

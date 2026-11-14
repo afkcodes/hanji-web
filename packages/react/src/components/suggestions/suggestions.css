@@ -3,17 +3,17 @@
   .hj-suggestions {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
   }
   .hj-suggestions-item {
     --_i: 10;
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: calc(7px * var(--hj-density));
     max-width: 100%;
-    height: var(--hj-suggestions-height, 36px);
-    padding: 0 14px;
+    height: var(--hj-suggestions-height, calc(36px * var(--hj-density-size)));
+    padding: 0 calc(14px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: var(--hj-surface);

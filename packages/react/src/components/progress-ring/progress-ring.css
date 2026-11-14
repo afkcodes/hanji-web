@@ -7,7 +7,7 @@
     place-items: center;
     flex: none;
     width: var(--hj-progress-ring-size, 40px);
-    height: var(--hj-progress-ring-size, 40px);
+    height: var(--hj-progress-ring-size, calc(40px * var(--hj-density-size)));
     color: var(--hj-fg);
     font-family: var(--hj-font-sans);
   }

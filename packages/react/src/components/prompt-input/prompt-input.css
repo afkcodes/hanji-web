@@ -7,8 +7,9 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 12px 12px 10px 16px;
+    gap: calc(6px * var(--hj-density));
+    padding: calc(12px * var(--hj-density)) calc(12px * var(--hj-density))
+      calc(10px * var(--hj-density)) calc(16px * var(--hj-density));
     border-radius: var(--hj-prompt-input-radius, var(--hj-radius-xl));
     background: var(--hj-prompt-input-bg, var(--hj-surface-2));
     box-shadow: inset 0 0 0 1px var(--_ring);
@@ -35,7 +36,7 @@
     min-height: 26px;
     max-height: var(--hj-prompt-input-max-height, 240px);
     margin: 0;
-    padding: 4px 0 0;
+    padding: calc(4px * var(--hj-density)) 0 0;
     border: 0;
     outline: none;
     resize: none;
@@ -62,8 +63,8 @@
   .hj-prompt-input-toolbar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    min-height: 36px;
+    gap: calc(6px * var(--hj-density));
+    min-height: calc(36px * var(--hj-density-size));
   }
   .hj-prompt-input-hint,
   .hj-prompt-input-count {
@@ -82,7 +83,7 @@
     display: grid;
     place-items: center;
     width: 34px;
-    height: 34px;
+    height: calc(34px * var(--hj-density-size));
     padding: 0;
     border: 0;
     border-radius: var(--hj-radius-pill);
@@ -125,7 +126,7 @@
     place-items: center;
     flex: none;
     width: 36px;
-    height: 36px;
+    height: calc(36px * var(--hj-density-size));
     margin-left: auto;
     padding: 0;
     border: 0;
@@ -189,7 +190,7 @@
   .hj-prompt-input-error {
     display: flex;
     align-items: flex-start;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     padding: 2px 0 2px;
     font-size: 12.5px;
     line-height: 17px;

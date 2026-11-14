@@ -4,10 +4,10 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: calc(4px * var(--hj-density));
     max-width: 220px;
-    height: 32px;
-    padding: 0 8px 0 12px;
+    height: calc(32px * var(--hj-density-size));
+    padding: 0 calc(8px * var(--hj-density)) 0 calc(12px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: transparent;
@@ -65,7 +65,7 @@
   .hj-model-picker-popup {
     width: max(var(--anchor-width), var(--hj-model-picker-width, 320px));
     max-height: var(--available-height);
-    padding: 6px;
+    padding: calc(6px * var(--hj-density));
     overflow-y: auto;
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-md);
@@ -99,9 +99,10 @@
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 16px;
-    column-gap: 10px;
+    column-gap: calc(10px * var(--hj-density));
     row-gap: 2px;
-    padding: 9px 10px 9px 12px;
+    padding: calc(9px * var(--hj-density)) calc(10px * var(--hj-density))
+      calc(9px * var(--hj-density)) calc(12px * var(--hj-density));
     border-radius: var(--hj-radius-sm);
     outline: 0;
     cursor: default;
@@ -120,7 +121,7 @@
   .hj-model-picker-item-head {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     min-width: 0;
   }
   .hj-model-picker-item-name {
@@ -139,7 +140,7 @@
     display: inline-flex;
     align-items: center;
     height: 17px;
-    padding: 0 6px;
+    padding: 0 calc(6px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: color-mix(in srgb, var(--hj-fg) 7%, transparent);
     color: var(--hj-fg-dim);
@@ -167,7 +168,8 @@
   }
 
   .hj-model-picker-group-label {
-    padding: 8px 12px 4px;
+    padding: calc(8px * var(--hj-density)) calc(12px * var(--hj-density))
+      calc(4px * var(--hj-density));
     font: var(--hj-type-eyebrow);
     letter-spacing: var(--hj-tracking-eyebrow);
     text-transform: uppercase;
@@ -175,7 +177,7 @@
   }
   .hj-model-picker-separator {
     height: 1px;
-    margin: 4px 8px;
+    margin: calc(4px * var(--hj-density)) calc(8px * var(--hj-density));
     background: var(--hj-line);
   }
 }

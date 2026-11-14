@@ -58,7 +58,7 @@
     position: relative;
     z-index: var(--hj-z-popover);
     width: min(var(--hj-coach-mark-width, 300px), calc(100vw - 24px));
-    padding: 16px;
+    padding: calc(16px * var(--hj-density));
     border: 1px solid var(--hj-line);
     border-radius: var(--hj-radius-md);
     background: var(--hj-surface-2);
@@ -85,7 +85,7 @@
   }
 
   .hj-coach-mark-title {
-    margin: 0 0 4px;
+    margin: 0 0 calc(4px * var(--hj-density));
     font: var(--hj-type-heading);
     letter-spacing: var(--hj-tracking-heading);
   }
@@ -98,8 +98,8 @@
   .hj-coach-mark-footer {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 14px;
+    gap: calc(6px * var(--hj-density));
+    margin-top: calc(14px * var(--hj-density));
   }
   .hj-coach-mark-progress {
     font: var(--hj-type-mono);

@@ -33,8 +33,11 @@
     inset: 0;
     z-index: var(--hj-z-overlay);
     display: flex;
-    padding: var(--hj-sheet-inset, 8px);
-    padding-bottom: max(var(--hj-sheet-inset, 8px), env(safe-area-inset-bottom, 0px));
+    padding: var(--hj-sheet-inset, calc(8px * var(--hj-density)));
+    padding-bottom: max(
+      var(--hj-sheet-inset, calc(8px * var(--hj-density))),
+      env(safe-area-inset-bottom, 0px)
+    );
     touch-action: none;
   }
   .hj-sheet-viewport[data-side='bottom'] {
@@ -143,7 +146,7 @@
     flex: none;
     width: 36px;
     height: 4px;
-    margin: 8px auto 2px;
+    margin: calc(8px * var(--hj-density)) auto 2px;
     border-radius: var(--hj-radius-pill);
     background: color-mix(in srgb, var(--hj-fg) 20%, transparent);
   }
@@ -153,8 +156,9 @@
     flex: none;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 14px 56px 8px 20px;
+    gap: calc(4px * var(--hj-density));
+    padding: calc(14px * var(--hj-density)) calc(56px * var(--hj-density))
+      calc(8px * var(--hj-density)) calc(20px * var(--hj-density));
   }
   .hj-sheet-title {
     margin: 0;
@@ -174,19 +178,20 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     touch-action: pan-y;
-    padding: 4px 20px 20px;
+    padding: calc(4px * var(--hj-density)) calc(20px * var(--hj-density))
+      calc(20px * var(--hj-density));
   }
   .hj-sheet-body[data-pending] {
     overflow: hidden;
   }
   .hj-sheet-placeholder {
     display: block;
-    padding-top: 8px;
+    padding-top: calc(8px * var(--hj-density));
   }
   .hj-sheet-placeholder > i {
     display: block;
     height: 12px;
-    margin: 0 0 14px;
+    margin: 0 0 calc(14px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: color-mix(in srgb, var(--hj-fg) 7%, transparent);
   }
@@ -202,8 +207,9 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 8px;
-    padding: 12px 20px 16px;
+    gap: calc(8px * var(--hj-density));
+    padding: calc(12px * var(--hj-density)) calc(20px * var(--hj-density))
+      calc(16px * var(--hj-density));
     border-top: 1px solid var(--hj-line);
   }
 
@@ -214,7 +220,7 @@
     display: grid;
     place-items: center;
     width: 32px;
-    height: 32px;
+    height: calc(32px * var(--hj-density-size));
     padding: 0;
     border: 0;
     border-radius: var(--hj-radius-pill);

@@ -3,7 +3,7 @@
   .hj-attachment-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
   }
   .hj-attachment {
     --_p: 0;
@@ -11,11 +11,12 @@
     display: inline-grid;
     grid-template-columns: 32px minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
-    column-gap: 10px;
+    column-gap: calc(10px * var(--hj-density));
     align-items: center;
     max-width: var(--hj-attachment-max-width, 260px);
-    min-height: 48px;
-    padding: 7px 6px 7px 8px;
+    min-height: calc(48px * var(--hj-density-size));
+    padding: calc(7px * var(--hj-density)) calc(6px * var(--hj-density))
+      calc(7px * var(--hj-density)) calc(8px * var(--hj-density));
     overflow: hidden;
     border-radius: var(--hj-radius-sm);
     background: var(--hj-surface);
@@ -40,7 +41,7 @@
     display: grid;
     place-items: center;
     width: 32px;
-    height: 32px;
+    height: calc(32px * var(--hj-density-size));
     border-radius: var(--hj-radius-xs);
     background: color-mix(in srgb, var(--hj-fg) 6%, transparent);
     color: var(--hj-fg-dim);

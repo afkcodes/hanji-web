@@ -74,7 +74,7 @@
     --_s: 18px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
     font-family: var(--hj-font-sans);
   }
   .hj-rating-display[data-size='sm'] {

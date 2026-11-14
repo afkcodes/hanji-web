@@ -154,6 +154,9 @@ function spacingVars(): Record<string, string> {
   const v: Record<string, string> = {};
   for (const [k, px] of Object.entries(spacing))
     v[`--hj-space-${k}`] = `calc(${px}px * var(--hj-density))`;
+  // Control heights follow density more gently than spacing: compact .7 → ~.87, so a 44px button
+  // draws at 38. Hit areas stay 44 (components grow them with ::before).
+  v['--hj-density-size'] = 'calc(1 - (1 - var(--hj-density)) * 0.42)';
   v['--hj-gutter'] = 'var(--hj-space-5)';
   v['--hj-section-gap'] = 'var(--hj-space-10)';
   return v;

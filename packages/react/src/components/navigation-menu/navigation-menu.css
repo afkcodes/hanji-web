@@ -27,9 +27,9 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    height: var(--hj-navigation-menu-height, 36px);
-    padding: 0 12px;
+    gap: calc(6px * var(--hj-density));
+    height: var(--hj-navigation-menu-height, calc(36px * var(--hj-density-size)));
+    padding: 0 calc(12px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: transparent;
@@ -169,7 +169,7 @@
 
   .hj-navigation-menu-link[data-variant='card'] {
     display: block;
-    padding: 10px 12px;
+    padding: calc(10px * var(--hj-density)) calc(12px * var(--hj-density));
     border-radius: var(--hj-radius-sm);
     color: var(--hj-fg);
     text-decoration: none;
@@ -194,7 +194,7 @@
   }
   .hj-navigation-menu-link-description {
     display: block;
-    margin-top: 3px;
+    margin-top: calc(3px * var(--hj-density));
     font-size: 13px;
     line-height: 1.45;
     color: var(--hj-fg-mute);

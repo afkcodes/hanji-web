@@ -23,7 +23,7 @@
     justify-content: space-between;
     gap: var(--hj-space-4);
     width: 100%;
-    min-height: var(--hj-accordion-row-height, 56px);
+    min-height: var(--hj-accordion-row-height, calc(56px * var(--hj-density-size)));
     padding: var(--hj-space-3) 0;
     border: 0;
     background: none;

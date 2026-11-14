@@ -4,7 +4,7 @@
     --_tone: var(--hj-accent);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
     min-width: 0;
     width: 100%;
     font-family: var(--hj-font-sans);
@@ -20,7 +20,7 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
+    gap: calc(12px * var(--hj-density));
   }
   .hj-progress-label {
     font-size: 13px;

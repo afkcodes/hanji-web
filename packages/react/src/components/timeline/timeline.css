@@ -14,8 +14,8 @@
     position: relative;
     display: grid;
     grid-template-columns: var(--_m) minmax(0, 1fr);
-    gap: 14px;
-    padding-bottom: var(--hj-timeline-gap, 22px);
+    gap: calc(14px * var(--hj-density));
+    padding-bottom: var(--hj-timeline-gap, calc(22px * var(--hj-density)));
   }
   .hj-timeline-item:last-child {
     padding-bottom: 0;
@@ -131,7 +131,7 @@
   }
   .hj-timeline-actions {
     display: flex;
-    gap: 8px;
-    margin-top: 8px;
+    gap: calc(8px * var(--hj-density));
+    margin-top: calc(8px * var(--hj-density));
   }
 }

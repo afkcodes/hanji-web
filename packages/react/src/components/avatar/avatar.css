@@ -105,11 +105,11 @@
   .hj-avatar-group {
     display: inline-flex;
     align-items: center;
-    padding-left: 8px;
+    padding-left: calc(8px * var(--hj-density));
   }
   .hj-avatar-group > .hj-avatar,
   .hj-avatar-group > .hj-avatar-more {
-    margin-left: -8px;
+    margin-left: calc(-8px * var(--hj-density));
     box-shadow: 0 0 0 2px var(--hj-avatar-ring, var(--hj-bg));
   }
   .hj-avatar-more {
@@ -120,7 +120,7 @@
     flex: none;
     min-width: var(--_s);
     height: var(--_s);
-    padding: 0 6px;
+    padding: 0 calc(6px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: var(--hj-surface-2);
     color: var(--hj-fg-dim);

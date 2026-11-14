@@ -5,7 +5,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: calc(6px * var(--hj-density));
     padding: var(--hj-space-8) var(--hj-space-4);
     text-align: center;
     font-family: var(--hj-font-sans);
@@ -32,8 +32,8 @@
     display: grid;
     place-items: center;
     width: var(--hj-empty-state-glyph, 56px);
-    height: var(--hj-empty-state-glyph, 56px);
-    margin-bottom: 10px;
+    height: var(--hj-empty-state-glyph, calc(56px * var(--hj-density-size)));
+    margin-bottom: calc(10px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: color-mix(in srgb, var(--_t) 8%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--_t) 12%, transparent);
@@ -65,8 +65,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
-    margin-top: 14px;
+    gap: calc(8px * var(--hj-density));
+    margin-top: calc(14px * var(--hj-density));
   }
   .hj-empty-state[data-align='start'] .hj-empty-state-actions {
     justify-content: flex-start;

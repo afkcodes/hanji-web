@@ -16,7 +16,7 @@
   }
 
   .hj-tabs-list {
-    --_h: var(--hj-tabs-height, 44px);
+    --_h: var(--hj-tabs-height, calc(44px * var(--hj-density-size)));
     position: relative;
     z-index: 0;
     display: flex;
@@ -31,7 +31,7 @@
     display: none;
   }
   .hj-tabs-list[data-size='sm'] {
-    --_h: var(--hj-tabs-height, 36px);
+    --_h: var(--hj-tabs-height, calc(36px * var(--hj-density-size)));
     gap: var(--hj-tabs-gap, var(--hj-space-5));
   }
   .hj-tabs-list[data-orientation='vertical'] {
@@ -46,7 +46,7 @@
     flex: none;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: calc(8px * var(--hj-density));
     height: var(--_h);
     padding: 0 2px;
     border: 0;
@@ -70,7 +70,7 @@
   }
   .hj-tabs-list[data-orientation='vertical'] .hj-tabs-tab {
     justify-content: flex-start;
-    padding: 0 16px 0 2px;
+    padding: 0 calc(16px * var(--hj-density)) 0 2px;
   }
   .hj-tabs-tab:hover:not([data-disabled]) {
     color: var(--hj-fg);
@@ -118,28 +118,28 @@
 
   /* Pill: a track with an accent-soft pill under the active tab. */
   .hj-tabs-list[data-variant='pill'] {
-    --_h: var(--hj-tabs-height, 32px);
+    --_h: var(--hj-tabs-height, calc(32px * var(--hj-density-size)));
     align-self: flex-start;
     gap: 0;
-    padding: 4px;
+    padding: calc(4px * var(--hj-density));
     border-radius: var(--hj-tabs-radius, var(--hj-radius-pill));
     background: var(--hj-surface);
     box-shadow: inset 0 0 0 1px var(--hj-line);
   }
   .hj-tabs-list[data-variant='pill'][data-size='sm'] {
-    --_h: var(--hj-tabs-height, 26px);
-    padding: 3px;
+    --_h: var(--hj-tabs-height, calc(26px * var(--hj-density-size)));
+    padding: calc(3px * var(--hj-density));
   }
   .hj-tabs-list[data-variant='pill'][data-fill] {
     align-self: stretch;
   }
   .hj-tabs-list[data-variant='pill'] .hj-tabs-tab {
-    padding: 0 14px;
+    padding: 0 calc(14px * var(--hj-density));
     border-radius: var(--hj-tabs-radius, var(--hj-radius-pill));
     font-size: 13.5px;
   }
   .hj-tabs-list[data-variant='pill'][data-size='sm'] .hj-tabs-tab {
-    padding: 0 11px;
+    padding: 0 calc(11px * var(--hj-density));
     font-size: 12.5px;
   }
   /* 44px hit area around a 32px pill */

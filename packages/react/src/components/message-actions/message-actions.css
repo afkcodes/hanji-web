@@ -4,7 +4,7 @@
     display: inline-flex;
     align-items: center;
     gap: 2px;
-    margin-left: -6px;
+    margin-left: calc(-6px * var(--hj-density));
     transition: opacity var(--hj-dur-base) var(--hj-ease-out);
   }
   /* Revealed by the message being hovered or focused — on devices that can hover. */
@@ -20,7 +20,7 @@
     display: inline-grid;
     place-items: center;
     width: var(--hj-message-actions-size, 32px);
-    height: var(--hj-message-actions-size, 32px);
+    height: var(--hj-message-actions-size, calc(32px * var(--hj-density-size)));
     padding: 0;
     border: 0;
     border-radius: var(--hj-radius-pill);
@@ -122,7 +122,7 @@
     align-self: center;
     width: 1px;
     height: 16px;
-    margin: 0 4px;
+    margin: 0 calc(4px * var(--hj-density));
     border: 0;
     background: var(--hj-line);
   }

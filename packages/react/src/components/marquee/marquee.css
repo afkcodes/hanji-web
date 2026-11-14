@@ -16,7 +16,7 @@
   }
   .hj-marquee-track {
     display: inline-flex;
-    gap: var(--hj-marquee-gap, 40px);
+    gap: var(--hj-marquee-gap, calc(40px * var(--hj-density)));
     max-width: 100%;
     will-change: auto;
   }

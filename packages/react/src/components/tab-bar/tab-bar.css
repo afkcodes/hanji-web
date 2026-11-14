@@ -5,7 +5,7 @@
     grid-auto-columns: minmax(0, 1fr);
     grid-auto-flow: column;
     align-items: stretch;
-    min-height: var(--hj-tab-bar-height, 56px);
+    min-height: var(--hj-tab-bar-height, calc(56px * var(--hj-density-size)));
     padding-bottom: env(safe-area-inset-bottom, 0px);
     background: var(--hj-tab-bar-bg, var(--hj-bg));
     box-shadow: inset 0 1px 0 var(--hj-line);
@@ -23,10 +23,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: calc(3px * var(--hj-density));
     min-width: 0;
-    min-height: var(--hj-tab-bar-height, 56px);
-    padding: 6px 2px 4px;
+    min-height: var(--hj-tab-bar-height, calc(56px * var(--hj-density-size)));
+    padding: calc(6px * var(--hj-density)) 2px calc(4px * var(--hj-density));
     border: 0;
     background: none;
     color: var(--hj-fg-dim);
@@ -98,7 +98,7 @@
     place-items: center;
     min-width: 18px;
     height: 18px;
-    padding: 0 5px;
+    padding: 0 calc(5px * var(--hj-density));
     border-radius: var(--hj-radius-pill);
     background: var(--hj-accent);
     box-shadow: 0 0 0 2px var(--hj-tab-bar-bg, var(--hj-bg));

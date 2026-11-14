@@ -18,14 +18,14 @@
   }
   .hj-separator[data-variant='inset'][data-orientation='horizontal'] {
     width: auto;
-    margin-left: var(--hj-separator-inset, 72px);
+    margin-left: var(--hj-separator-inset, calc(72px * var(--hj-density)));
   }
 
   /* Labelled: a word sitting in the rule. The element stays a rule; the line is drawn either side. */
   .hj-separator[data-label] {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: calc(12px * var(--hj-density));
     height: auto;
     background: none;
     color: var(--hj-fg-mute);

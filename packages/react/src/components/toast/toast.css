@@ -102,10 +102,11 @@
   .hj-toast-content {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: calc(12px * var(--hj-density));
     height: 100%;
-    min-height: 56px;
-    padding: 10px 8px 10px 14px;
+    min-height: calc(56px * var(--hj-density-size));
+    padding: calc(10px * var(--hj-density)) calc(8px * var(--hj-density))
+      calc(10px * var(--hj-density)) calc(14px * var(--hj-density));
     overflow: hidden;
     transition: opacity var(--hj-dur-base) var(--hj-ease-out);
   }
@@ -158,8 +159,8 @@
 
   .hj-toast-action {
     flex: none;
-    height: 32px;
-    padding: 0 12px;
+    height: calc(32px * var(--hj-density-size));
+    padding: 0 calc(12px * var(--hj-density));
     border: 0;
     border-radius: var(--hj-radius-pill);
     background: var(--hj-accent-soft);

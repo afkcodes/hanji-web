@@ -12,8 +12,8 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    height: 32px;
+    gap: calc(6px * var(--hj-density));
+    height: calc(32px * var(--hj-density-size));
     padding: 0 2px;
     border: 0;
     background: none;
