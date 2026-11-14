@@ -30,22 +30,20 @@
     opacity: 0.6;
   }
 
+  /* Spans the track; the clip-path inset (set by the component) cuts out the active pill. */
   .hj-segmented-control-indicator {
     position: absolute;
     z-index: -1;
-    top: var(--_pad);
-    bottom: var(--_pad);
-    left: 0;
-    border-radius: var(--hj-radius-pill);
+    inset: var(--_pad);
     background: var(--hj-accent-soft);
     opacity: 0;
-    transform-origin: center;
     pointer-events: none;
+    will-change: clip-path;
   }
   /* Only after the first placement: the pill never slides in from nowhere on mount. */
   .hj-segmented-control[data-ready] > .hj-segmented-control-indicator {
     transition:
-      transform var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
+      clip-path var(--hj-dur-snappy-settle) var(--hj-ease-snappy-settle),
       opacity var(--hj-dur-fast) var(--hj-ease-out),
       background-color var(--hj-dur-base) var(--hj-ease-out);
   }

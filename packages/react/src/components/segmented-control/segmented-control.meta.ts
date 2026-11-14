@@ -27,7 +27,7 @@ export const meta: ComponentMeta = defineMeta({
       slot: 'SegmentedControl.Root',
       className: 'hj-segmented-control',
       description:
-        'The pill and its indicator. Radio-group semantics (value, defaultValue, onValueChange, disabled). The indicator is one element moved by translateX and squeezed by scaleX — drawn at the widest segment, so it never animates width.',
+        'The pill and its indicator. Radio-group semantics (value, defaultValue, onValueChange, disabled). The indicator is one element spanning the track, revealed by an animated clip-path inset with round ends, so the active highlight is a true pill at any width and width is never animated.',
       props: props<RootOwnProps>({
         size: {
           type: "'sm' | 'md'",
@@ -69,7 +69,8 @@ export const meta: ComponentMeta = defineMeta({
     {
       file: 'range',
       title: 'Unequal segments',
-      description: 'Day / Week / Month / Year — watch the pill squeeze between widths.',
+      description:
+        'Day / Week / Month / Year — the pill stretches between widths and stays fully round.',
     },
     {
       file: 'icons',
@@ -82,7 +83,7 @@ export const meta: ComponentMeta = defineMeta({
     'Name it with aria-label or aria-labelledby; label icon-only segments.',
   ],
   motion:
-    'The indicator slides and squeezes on snappy, clamped (translateX + scaleX, one element). The first placement is instant; label colour cross-fades in 180 ms; segments dip to .97 on press.',
+    'The indicator slides and stretches on snappy, clamped (an animated clip-path inset with round ends, one element). The first placement is instant; label colour cross-fades in 180 ms; segments dip to .97 on press.',
   tokens: [
     'surface',
     'line',

@@ -7,9 +7,9 @@ import { useHanjiConfig } from '../../system/config.tsx';
 import { cls, flag, withDefaults } from '../../system/slot.ts';
 
 /**
- * hanji segmented-track: the indicator is ONE element of a fixed drawn width (the widest
- * segment), moved by translateX and squeezed by scaleX ≤ 1 — never a box whose width and left
- * are animated (PRINCIPLES §1).
+ * The indicator is ONE element spanning the whole track, revealed by a clip-path inset with round
+ * ends. Animating the inset keeps the active highlight a true pill at every width — a scaleX squeeze
+ * would flatten its ends into ovals — and never animates width or left.
  */
 function place(root: HTMLElement, indicator: HTMLElement): boolean {
   const items = Array.from(root.querySelectorAll<HTMLElement>(':scope > [data-hj-segment]'));
@@ -18,12 +18,11 @@ function place(root: HTMLElement, indicator: HTMLElement): boolean {
     indicator.style.opacity = '0';
     return false;
   }
-  const widest = Math.max(...items.map((i) => i.offsetWidth));
-  if (widest === 0) return false;
-  const w = chosen.offsetWidth;
-  const x = chosen.offsetLeft + w / 2 - widest / 2;
-  indicator.style.width = `${widest}px`;
-  indicator.style.transform = `translateX(${x}px) scaleX(${w / widest})`;
+  const track = indicator.offsetWidth;
+  if (track === 0) return false;
+  const left = chosen.offsetLeft - indicator.offsetLeft;
+  const right = Math.max(0, track - left - chosen.offsetWidth);
+  indicator.style.clipPath = `inset(0 ${right}px 0 ${Math.max(0, left)}px round 999px)`;
   indicator.style.opacity = '1';
   return true;
 }
