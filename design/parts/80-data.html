@@ -1,0 +1,1297 @@
+<style>
+/* ==========================================================================
+   07 · DATA & LISTS — List row, Progress bar, Progress ring, Stat, Timeline,
+   Empty state, Marquee, Drag list, Cascade, Morph stage.
+   Tokens only. Transforms and opacity for anything running; dash offsets and
+   clip insets are paint-only and are named in the spec where used.
+   ========================================================================== */
+.p80-two{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:36px; width:100% }
+.p80-gh{ font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); padding:0 16px 10px; display:flex; justify-content:space-between; gap:12px }
+.p80-gh span + span{ letter-spacing:.2px; text-transform:none; font:500 11px/12px var(--mono) }
+
+/* ---------- List row ---------- */
+.hj-list{ list-style:none; margin:0; padding:0 }
+.hj-row{
+  --lead:40px; position:relative; display:flex; align-items:center; gap:12px; width:100%;
+  min-height:56px; padding:8px 16px; text-align:left; color:var(--fg); cursor:pointer;
+  transition:opacity var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.hj-row:focus-visible{ outline-offset:-2px; border-radius:var(--r-sm) }
+.hj-row::after{ content:""; position:absolute; left:calc(28px + var(--lead)); right:0; bottom:0; height:1px; background:var(--line); pointer-events:none }
+.hj-list > li:last-child > .hj-row::after{ display:none }
+.hj-row.no-lead{ --lead:-12px }
+@media (hover:hover){ .hj-row:not([aria-disabled="true"]):hover{ background:rgba(var(--fg-rgb),.03) } }
+.hj-row-lead{ width:40px; height:40px; flex:none; border-radius:var(--r-xs); overflow:hidden; display:grid; place-items:center }
+.hj-row-lead svg:not(.ic){ width:100%; height:100% }
+.hj-row-lead.tint{ background:var(--accent-soft); color:var(--accent) }
+.hj-row-lead.plain{ background:var(--surface-2); color:var(--fg-dim); box-shadow:inset 0 0 0 1px var(--line) }
+.hj-row-lead.av{ border-radius:50%; font-weight:600; font-size:14px; letter-spacing:.02em; color:var(--av); background:color-mix(in srgb, var(--av) 16%, var(--bg)) }
+.hj-row-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px }
+.hj-row-title{ font-weight:500; font-size:15px; line-height:20px; letter-spacing:-.005em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color var(--dur-base) var(--ease-out) }
+.hj-row-sub{ font-size:12.5px; line-height:17px; color:var(--fg-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.hj-row-trail{ flex:none; display:flex; align-items:center; gap:6px; color:var(--fg-mute) }
+.hj-row-val{ font:500 12.5px/17px var(--mono); color:var(--fg-dim); font-variant-numeric:tabular-nums; letter-spacing:.2px; text-align:right }
+.hj-row[aria-checked="true"] .hj-row-title{ color:var(--accent) }
+.hj-row-check{ color:var(--accent); opacity:0; transform:scale(.5); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-bouncy-settle) var(--ease-snappy) }
+.hj-row[aria-checked="true"] .hj-row-check{ opacity:1; transform:none }
+.hj-row[aria-disabled="true"]{ opacity:.4; cursor:not-allowed }
+.hj-row.hj-press.row-press[aria-disabled="true"]:active{ opacity:.4 }
+.hj-row-lock{ font-weight:600; font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--fg-dim); border:1px solid var(--line); border-radius:4px; padding:3px 5px 2px }
+
+/* ---------- Progress bar ---------- */
+.p80-prog{ width:100%; max-width:460px; display:flex; flex-direction:column; gap:30px }
+.p80-pi{ display:flex; flex-direction:column; gap:9px }
+.p80-pi-top{ display:flex; justify-content:space-between; align-items:center; gap:12px; font-weight:600; font-size:14px; line-height:20px; letter-spacing:-.005em }
+.p80-pi-top .lbl{ display:flex; align-items:center; gap:7px }
+.p80-pi-top .v{ font:500 12.5px/1 var(--mono); color:var(--fg-dim); font-variant-numeric:tabular-nums; display:flex; align-items:center; gap:6px }
+.p80-pi-sub{ font-size:12.5px; line-height:18px; color:var(--fg-dim); display:flex; justify-content:space-between; gap:12px; align-items:center; min-height:20px }
+.p80-pi.is-danger .lbl{ color:var(--danger) }
+.p80-pi.is-done .lbl .ic{ color:var(--success) }
+.hj-pbar{
+  --tone:var(--accent); --p:0; position:relative; height:4px; border-radius:var(--r-pill); overflow:hidden;
+  background:color-mix(in srgb, var(--tone) 22%, transparent); transition:background-color var(--dur-base) var(--ease-out);
+}
+.hj-pbar > i{
+  position:absolute; inset:0; border-radius:inherit; background:var(--tone);
+  transform:translateX(calc((var(--p) - 1) * 100%));
+  transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle), background-color var(--dur-base) var(--ease-out);
+}
+.hj-pbar.fg{ --tone:var(--fg) } .hj-pbar.danger{ --tone:var(--danger) }
+.hj-pbar.indet > i{ right:auto; width:33.333%; transform:translateX(-100%); animation:p80-sweep 1400ms cubic-bezier(.45,0,.25,1) infinite }
+@keyframes p80-sweep{ to{ transform:translateX(300%) } }
+html[data-motion="reduced"] .hj-pbar.indet > i{ animation:none; transform:translateX(100%) }
+
+/* ---------- Progress ring ---------- */
+.p80-rings{ display:grid; grid-template-columns:auto 1px auto; gap:0 48px; align-items:center }
+.p80-rings-sep{ width:1px; align-self:stretch; background:var(--line) }
+.p80-small{ display:flex; flex-direction:column; gap:22px }
+.p80-ri{ display:flex; align-items:center; gap:14px }
+.p80-ri b{ display:block; font-weight:600; font-size:14px; line-height:19px; letter-spacing:-.005em }
+.p80-ri small{ display:block; font-size:12.5px; line-height:17px; color:var(--fg-dim) }
+.hj-ring{ --tone:var(--accent); position:relative; display:inline-grid; place-items:center; flex:none }
+.hj-ring svg{ display:block }
+.hj-ring .trk{ fill:none; stroke:color-mix(in srgb, var(--tone) 22%, transparent) }
+.hj-ring .val{ fill:none; stroke:var(--tone); stroke-linecap:round; transition:stroke-dashoffset var(--dur-slow) var(--ease-out), opacity var(--dur-fast) var(--ease-out) }
+.hj-ring .num{ position:absolute; inset:0; display:grid; place-items:center; font:600 11px/1 var(--font); font-variant-numeric:tabular-nums; letter-spacing:-.02em }
+.hj-ring .num .ic{ color:var(--tone) }
+.hj-ring.spin svg{ animation:p80-spin 900ms linear infinite }
+@keyframes p80-spin{ to{ transform:rotate(360deg) } }
+html[data-motion="reduced"] .hj-ring.spin svg{ animation:none }
+.hj-ring.lg .seg{ fill:none; stroke-linecap:butt; transition:stroke-dasharray var(--dur-slow) var(--ease-out) }
+.hj-ring.lg .num{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px }
+.hj-ring.lg .big{ font-weight:700; font-size:26px; line-height:1; letter-spacing:-.04em; display:flex; align-items:baseline }
+.hj-ring.lg .big .u{ font-size:13px; font-weight:600; color:var(--fg-dim); margin-left:1px; letter-spacing:0 }
+.hj-ring.lg .cap{ font-weight:600; font-size:9px; letter-spacing:1.4px; text-transform:uppercase; color:var(--fg-mute) }
+.p80-store{ display:flex; align-items:center; gap:28px }
+.p80-legend{ display:flex; flex-direction:column; min-width:220px }
+.p80-legend-h{ font-weight:600; font-size:14px; letter-spacing:-.005em; margin-bottom:6px }
+.p80-legend-h small{ display:block; font-weight:400; font-size:12.5px; color:var(--fg-dim); margin-top:2px }
+.p80-leg{ display:grid; grid-template-columns:10px 1fr auto auto; gap:10px; align-items:center; padding:7px 0; border-bottom:1px solid var(--line); font-size:13px }
+.p80-leg:last-child{ border-bottom:0 }
+.p80-leg i{ width:8px; height:8px; border-radius:50% }
+.p80-leg .mono{ font:500 12px/1 var(--mono); color:var(--fg-dim); text-align:right; font-variant-numeric:tabular-nums }
+.p80-leg .pc{ font:400 11.5px/1 var(--mono); color:var(--fg-mute); min-width:30px; text-align:right }
+
+/* ---------- Stat ---------- */
+.p80-stats{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; max-width:720px }
+.hj-stat{ padding:24px 28px 26px; display:flex; flex-direction:column; gap:10px; min-width:0 }
+.p80-stats > .hj-stat:nth-child(odd){ border-right:1px solid var(--line) }
+.p80-stats > .hj-stat:nth-child(-n+2){ border-bottom:1px solid var(--line) }
+.hj-stat-label{ font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.hj-stat-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px }
+.hj-stat-num{ font-weight:700; font-size:40px; line-height:1; letter-spacing:-.035em; font-variant-numeric:tabular-nums; display:flex; align-items:baseline; white-space:nowrap }
+.hj-stat-num .u{ font-size:17px; font-weight:600; color:var(--fg-dim); letter-spacing:-.01em; margin:0 7px 0 2px }
+.hj-stat-num .u:last-child{ margin-right:0 }
+.hj-stat-num .u.w{ margin-left:7px }
+.hj-stat-cmp{ display:flex; align-items:center; gap:7px; font-size:12.5px; line-height:18px; color:var(--fg-dim) }
+.hj-stat-cmp .g{ width:18px; height:18px; flex:none; border-radius:50%; display:grid; place-items:center; background:rgba(var(--fg-rgb),.07); color:var(--fg) }
+.hj-stat-cmp .g .ic{ width:12px; height:12px; stroke-width:2 }
+.hj-stat-cmp b{ font-weight:600; color:var(--fg) }
+.hj-stat-cmp.good .g{ background:var(--success-soft); color:var(--success) }
+.hj-stat-cmp.good b{ color:var(--success) }
+.hj-spark{ width:112px; height:24px; flex:none; overflow:visible; margin-bottom:6px }
+.hj-spark path{ fill:none; stroke:var(--fg-dim); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round }
+.hj-spark path.drawn{ transition:stroke-dashoffset 900ms var(--ease-out) }
+.hj-spark circle{ fill:var(--accent); stroke:var(--bg-soft); stroke-width:2; opacity:0; transition:opacity var(--dur-base) var(--ease-out) 600ms }
+.hj-spark.in circle{ opacity:1 }
+.hj-spark .base{ stroke:rgba(var(--fg-rgb),.22); stroke-dasharray:2 3 }
+.hj-stat.wait .hj-stat-num{ color:var(--fg-mute) }
+.p80-days{ display:flex; gap:4px; margin-bottom:8px }
+.p80-days i{ width:10px; height:10px; border-radius:3px; background:rgba(var(--fg-rgb),.1) }
+.p80-days i.on{ background:var(--fg-dim) }
+
+/* ---------- Timeline ---------- */
+.hj-tl{ list-style:none; margin:0; padding:0 }
+.hj-tl > li{ position:relative; display:grid; grid-template-columns:18px minmax(0,1fr) auto; column-gap:14px; padding-bottom:22px }
+.hj-tl > li:last-child{ padding-bottom:0 }
+.hj-tl > li::before{ content:""; position:absolute; left:8px; top:24px; bottom:3px; border-left:2px solid rgba(var(--fg-rgb),.28) }
+.hj-tl > li:last-child::before{ display:none }
+.hj-tl > li.current::before, .hj-tl > li.pending::before{ border-left-style:dashed; border-left-color:rgba(var(--fg-rgb),.2) }
+.hj-tl-node{ width:18px; height:18px; border-radius:50%; margin-top:1px; display:grid; place-items:center; position:relative; transition:background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out) }
+.hj-tl-node .ic{ width:12px; height:12px; stroke-width:2.2 }
+.hj-tl .done .hj-tl-node{ background:var(--fg); color:var(--bg) }
+.hj-tl .current .hj-tl-node{ background:var(--bg-soft); box-shadow:inset 0 0 0 2px var(--accent) }
+.hj-tl .current .hj-tl-node::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--accent) }
+.hj-tl .current .hj-tl-node::after{ content:""; position:absolute; inset:0; border-radius:50%; box-shadow:inset 0 0 0 2px var(--accent); animation:p80-pulse 1600ms var(--ease-out) infinite }
+@keyframes p80-pulse{ 0%{ transform:scale(1); opacity:.6 } 100%{ transform:scale(2.2); opacity:0 } }
+html[data-motion="reduced"] .hj-tl .current .hj-tl-node::after{ animation:none; opacity:0 }
+.hj-tl .pending .hj-tl-node{ background:var(--bg-soft); box-shadow:inset 0 0 0 1.5px rgba(var(--fg-rgb),.28) }
+.hj-tl .failed .hj-tl-node{ background:var(--danger-soft); color:var(--danger) }
+.hj-tl-title{ font-weight:600; font-size:14.5px; line-height:20px; letter-spacing:-.005em }
+.hj-tl .pending .hj-tl-title{ color:var(--fg-dim); font-weight:500 }
+.hj-tl .failed .hj-tl-title{ color:var(--danger) }
+.hj-tl-meta{ font-size:12.5px; line-height:18px; color:var(--fg-dim); margin-top:1px }
+.hj-tl-time{ font:500 12px/20px var(--mono); color:var(--fg-dim); text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums }
+.hj-tl-time small{ display:block; font:400 11.5px/16px var(--font); color:var(--fg-mute) }
+.hj-tl-extra{ grid-column:2 / span 2; margin-top:10px; display:flex; align-items:center; gap:12px }
+.hj-tl-extra .hj-pbar{ flex:1 }
+.hj-tl-extra .mono{ font:500 11.5px/1 var(--mono); color:var(--fg-dim) }
+.p80-tl-wrap{ width:100%; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:48px }
+.p80-tl-wrap .p80-gh{ padding-left:0; padding-bottom:16px }
+
+/* ---------- Empty state ---------- */
+.p80-empties{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100% }
+.p80-empties > .hj-empty:nth-child(odd){ border-right:1px solid var(--line) }
+.p80-empties > .hj-empty:nth-child(-n+2){ border-bottom:1px solid var(--line) }
+.hj-empty{ display:flex; flex-direction:column; align-items:center; text-align:center; padding:34px 28px 32px; min-height:262px; justify-content:center }
+.hj-empty-med{ width:56px; height:56px; border-radius:50%; display:grid; place-items:center; background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line); color:var(--fg-dim); margin-bottom:16px; transition:background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out) }
+.hj-empty-med .ic{ width:24px; height:24px }
+.hj-empty-med.danger{ background:var(--danger-soft); box-shadow:none; color:var(--danger) }
+.hj-empty-med.ok{ background:var(--success-soft); box-shadow:none; color:var(--success) }
+.hj-empty h4{ margin:0 0 6px; font-weight:600; font-size:17px; line-height:22px; letter-spacing:-.015em }
+.hj-empty p{ margin:0 0 18px; max-width:290px; font-size:13.5px; line-height:1.5; color:var(--fg-dim) }
+.hj-empty .q{ color:var(--fg); font-weight:500 }
+.p80-spin{ width:14px; height:14px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:p80-spin 700ms linear infinite }
+html[data-motion="reduced"] .p80-spin{ animation:none; border-right-color:currentColor; opacity:.5 }
+
+/* ---------- Marquee ---------- */
+.p80-mq{ display:flex; flex-direction:column; gap:18px; align-items:flex-start }
+.p80-mini{ width:340px; display:flex; align-items:center; gap:12px; padding:8px 8px 8px 8px; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md) }
+.p80-mini .art{ width:40px; height:40px; border-radius:var(--r-xs); overflow:hidden; flex:none }
+.p80-mini .txt{ flex:1; min-width:0; display:block }
+.p80-mini .sub{ display:block; font-size:12.5px; line-height:17px; color:var(--fg-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p80-mini .btn{ width:40px; height:40px; border-radius:50%; display:grid; place-items:center; color:var(--fg); flex:none }
+.hj-marquee{
+  display:block; overflow:hidden; white-space:nowrap; position:relative; font-weight:600; font-size:14.5px; line-height:20px; letter-spacing:-.005em;
+  -webkit-mask-image:linear-gradient(90deg, black calc(100% - 20px), transparent); mask-image:linear-gradient(90deg, black calc(100% - 20px), transparent);
+}
+.hj-marquee.fits{ -webkit-mask-image:none; mask-image:none }
+.hj-marquee.moving{ -webkit-mask-image:linear-gradient(90deg, transparent, black 14px, black calc(100% - 20px), transparent); mask-image:linear-gradient(90deg, transparent, black 14px, black calc(100% - 20px), transparent) }
+.hj-marquee-track{ display:inline-flex; gap:40px; will-change:transform; vertical-align:top }
+.hj-marquee-track > span{ flex:none }
+.hj-marquee.static{ -webkit-mask-image:none; mask-image:none }
+.hj-marquee.static .hj-marquee-track{ display:block; overflow:hidden; text-overflow:ellipsis; transform:none!important }
+.hj-marquee.static .clone{ display:none }
+.p80-readout{ font:400 11.5px/1.6 var(--mono); color:var(--fg-mute); padding-left:2px }
+.p80-readout b{ font-weight:500; color:var(--fg-dim) }
+.p80-mq.measure .hj-marquee-track > span:first-child{ outline:1px dashed var(--accent); outline-offset:2px }
+.p80-mq.measure .hj-marquee{ overflow:visible; -webkit-mask-image:none; mask-image:none; box-shadow:0 0 0 1px rgba(var(--fg-rgb),.35) }
+
+/* ---------- Drag list ---------- */
+.p80-queue-wrap{ width:440px }
+.hj-drag{ list-style:none; margin:0; padding:0; position:relative; user-select:none; -webkit-user-select:none }
+.hj-drag-row{ position:relative; height:56px; z-index:0; transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle); outline:none; touch-action:pan-y }
+.hj-drag-row.held, .hj-drag-row.settling{ z-index:5 }
+.hj-drag-row.held{ transition:none }
+.hj-drag-row.held.keyed{ transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle) }
+.hj-drag-row::after{ content:""; position:absolute; left:68px; right:0; bottom:0; height:1px; background:var(--line); transition:opacity var(--dur-fast) var(--ease-out) }
+.hj-drag-row:last-child::after, .hj-drag-row.held::after, .hj-drag-row.settling::after{ opacity:0 }
+.hj-drag-inner{
+  height:100%; display:flex; align-items:center; gap:12px; padding:0 4px 0 16px; border-radius:var(--r-sm); position:relative;
+  transition:transform var(--dur-snappy) var(--ease-snappy), background-color var(--dur-fast) var(--ease-out);
+}
+.hj-drag-inner::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; z-index:-1; opacity:0; pointer-events:none;
+  box-shadow:0 16px 32px -14px rgba(0,0,0,.34), 0 2px 6px -2px rgba(0,0,0,.12); transition:opacity var(--dur-base) var(--ease-out);
+}
+.held .hj-drag-inner{ transform:scale(1.03); background:var(--surface-2) }
+.held .hj-drag-inner::before{ opacity:1 }
+.hj-drag-row:focus-visible .hj-drag-inner{ box-shadow:inset 0 0 0 2px var(--accent) }
+.hj-drag-row .art{ width:40px; height:40px; border-radius:var(--r-xs); overflow:hidden; flex:none }
+.hj-drag-grip{ width:40px; height:44px; display:grid; place-items:center; color:var(--fg-mute); cursor:grab; touch-action:none; flex:none }
+.held .hj-drag-grip{ cursor:grabbing; color:var(--fg) }
+.hj-drag-row .now{ display:inline-flex; gap:2px; align-items:flex-end; height:10px; margin-right:6px }
+.hj-drag-row .now i{ width:2px; border-radius:1px; background:var(--accent) }
+
+/* ---------- Cascade ---------- */
+.p80-casc{ display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:44px; width:100%; align-items:start }
+.p80-gantt{ position:relative; font:500 11px/1 var(--mono); color:var(--fg-mute); padding-top:4px }
+.p80-g-row{ display:grid; grid-template-columns:44px 1fr; align-items:center; height:17px }
+.p80-g-row .lab{ font-variant-numeric:tabular-nums }
+.p80-g-row.gap .lab{ letter-spacing:2px }
+.p80-g-trk{ position:relative; height:100% }
+.p80-g-bar{ position:absolute; top:5px; height:7px; border-radius:4px; background:rgba(var(--fg-rgb),.2) }
+.p80-g-row.cap .p80-g-bar{ background:var(--accent) }
+.p80-g-row.cap .lab{ color:var(--accent) }
+.p80-g-axis{ display:grid; grid-template-columns:44px 1fr; margin-top:8px }
+.p80-g-ticks{ position:relative; height:14px; border-top:1px solid var(--line) }
+.p80-g-ticks span{ position:absolute; top:5px; transform:translateX(-50%) }
+.p80-g-capline{ position:absolute; top:0; bottom:22px; width:0; border-left:1px dashed var(--accent); opacity:.6 }
+.p80-g-head{ position:absolute; top:0; bottom:22px; left:44px; width:1px; background:var(--fg); opacity:0 }
+.p80-g-note{ margin:14px 0 0 44px; font:400 12.5px/1.5 var(--font); color:var(--fg-dim); max-width:420px }
+.p80-g-note b{ color:var(--fg); font-weight:600 }
+
+/* ---------- Morph stage ---------- */
+.p80-morph{ display:flex; gap:36px; align-items:center; justify-content:center; width:100%; flex-wrap:wrap }
+.p80-phone{ user-select:none; -webkit-user-select:none }
+.p80-lib{ flex:1; min-height:0; overflow:hidden }
+.p80-lib-h{ margin:6px 20px 8px; font-weight:700; font-size:34px; line-height:38px; letter-spacing:-.5px }
+.p80-lib .hj-row{ cursor:default }
+.p80-lib .hj-row:hover{ background:none }
+.p80-minibar{
+  position:absolute; left:8px; right:8px; bottom:64px; height:56px; z-index:5; border-radius:var(--r-md);
+  background:var(--surface-2); border:1px solid var(--line); display:flex; align-items:center; gap:12px; padding:0 6px 0 7px; cursor:pointer;
+  transition:opacity var(--dur-fast) var(--ease-out);
+}
+.p80-minibar:has(.p80-mini-open:active){ opacity:var(--press-opacity) }
+.p80-mini-open{ position:absolute; inset:0; border-radius:inherit; z-index:0 }
+.p80-mini-open:focus-visible{ outline-offset:-2px; border-radius:var(--r-md) }
+.p80-minibar > :not(.p80-mini-open){ position:relative; z-index:1; pointer-events:none }
+.p80-minibar > .btn{ pointer-events:auto }
+.p80-minibar > .line{ position:absolute }
+.p80-minibar.morphing{ background:transparent; border-color:transparent }
+.p80-minibar .art{ width:40px; height:40px; border-radius:var(--r-xs); overflow:hidden; flex:none }
+.p80-minibar .txt{ flex:1; min-width:0 }
+.p80-minibar .txt > span{ display:block }
+.p80-minibar .t{ font-weight:600; font-size:14px; line-height:19px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p80-minibar .s{ font-size:12px; line-height:16px; color:var(--fg-dim) }
+.p80-minibar .btn{ width:44px; height:44px; border-radius:50%; display:grid; place-items:center; flex:none }
+.p80-minibar .line{ position:absolute; left:14px; right:14px; bottom:-1px; height:2px; border-radius:2px; overflow:hidden; background:rgba(var(--fg-rgb),.12) }
+.p80-minibar .line i{ position:absolute; inset:0; background:var(--accent); transform:translateX(-66.3%) }
+.p80-tabs{ position:absolute; left:0; right:0; bottom:0; height:56px; border-top:1px solid var(--line); background:var(--bg); display:grid; grid-template-columns:repeat(5,1fr); z-index:1 }
+.p80-tabs span{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:10px; font-weight:600; letter-spacing:.1px; color:var(--fg-dim) }
+.p80-tabs span.on{ color:var(--accent) }
+.p80-scrim{ position:absolute; inset:0; background:var(--scrim); opacity:0; pointer-events:none; z-index:3 }
+.p80-full{ position:absolute; inset:0; z-index:4; background:var(--surface-2); visibility:hidden; display:flex; flex-direction:column; touch-action:none; cursor:grab }
+.p80-full.live{ visibility:visible }
+.p80-full-top{ display:flex; align-items:center; justify-content:space-between; padding:44px 10px 0 }
+.p80-full-top .from{ text-align:center; font-size:11px; line-height:14px; color:var(--fg-dim) }
+.p80-full-top .from b{ display:block; font-weight:600; font-size:12.5px; color:var(--fg); letter-spacing:-.005em }
+.p80-ib{ width:44px; height:44px; border-radius:50%; display:grid; place-items:center; color:var(--fg); flex:none }
+.p80-ib.dim{ color:var(--fg-dim) }
+.p80-full-art{ width:272px; height:272px; margin:14px auto 0; border-radius:16px; overflow:hidden; transform-origin:0 0; will-change:transform; flex:none; box-shadow:0 12px 24px -12px rgba(0,0,0,.45) }
+.p80-full-title{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:24px 32px 0 }
+.p80-full-title b{ display:block; font-weight:700; font-size:22px; line-height:26px; letter-spacing:-.3px }
+.p80-full-title span{ display:block; font-size:15px; line-height:20px; color:var(--fg-dim); margin-top:2px }
+.p80-full-title .p80-ib{ color:var(--accent); margin-right:-10px }
+.p80-scrub{ margin:18px 32px 0 }
+.p80-scrub-trk{ position:relative; height:4px; border-radius:2px; background:rgba(var(--accent-rgb),.24) }
+.p80-scrub-trk i{ position:absolute; left:0; top:0; bottom:0; width:33.7%; border-radius:2px; background:var(--accent) }
+.p80-scrub-trk b{ position:absolute; left:33.7%; top:50%; width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%; background:var(--accent) }
+.p80-scrub-t{ display:flex; justify-content:space-between; margin-top:9px; font:500 11.5px/1 var(--mono); color:var(--fg-dim); font-variant-numeric:tabular-nums }
+.p80-ctl{ display:flex; align-items:center; justify-content:space-between; margin:14px 22px 0 }
+.p80-play{ width:64px; height:64px; border-radius:50%; background:var(--fg); color:var(--bg); display:grid; place-items:center }
+.p80-play .ic{ width:28px; height:28px }
+.p80-phase{ width:256px; display:flex; flex-direction:column; gap:14px }
+.p80-phase-p{ display:flex; flex-direction:column; gap:6px; margin-bottom:6px }
+.p80-phase-p .val{ font-weight:700; font-size:44px; line-height:1; letter-spacing:-.04em; font-variant-numeric:tabular-nums }
+.p80-ph{ position:relative; display:flex; flex-direction:column; gap:12px }
+.p80-ph-row{ display:flex; flex-direction:column; gap:6px }
+.p80-ph-row .l{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--fg-dim) }
+.p80-ph-row .l .mono{ font:500 11px/1.4 var(--mono); color:var(--fg-mute) }
+.p80-ph-trk{ position:relative; height:6px; border-radius:3px; background:rgba(var(--fg-rgb),.08) }
+.p80-ph-trk i{ position:absolute; top:0; bottom:0; border-radius:3px; background:rgba(var(--fg-rgb),.3) }
+.p80-ph-trk i.a{ background:var(--accent) }
+.p80-ph-trk b{ position:absolute; top:-3px; left:0; width:2px; height:12px; margin-left:-1px; border-radius:1px; background:var(--fg); will-change:transform }
+.p80-phase-note{ font-size:12.5px; line-height:1.55; color:var(--fg-dim); margin:6px 0 0 }
+
+@media (max-width: 1100px){
+  .p80-two, .p80-tl-wrap, .p80-casc{ grid-template-columns:1fr }
+  .p80-rings{ grid-template-columns:1fr; gap:32px } .p80-rings-sep{ display:none }
+  .p80-stats, .p80-empties{ grid-template-columns:1fr }
+  .p80-stats > .hj-stat, .p80-empties > .hj-empty{ border-right:0!important; border-bottom:1px solid var(--line) }
+}
+@media (max-width: 720px){
+  .p80-queue-wrap, .p80-mini{ width:100% }
+  .p80-store{ flex-direction:column; align-items:flex-start }
+}
+</style>
+
+<section class="chapter" id="data" data-num="07" data-title="Data &amp; lists">
+  <header class="chapter-head">
+    <div class="chapter-line"><h2 class="chapter-title">Data &amp; lists</h2><span class="chapter-rule"></span><span class="chapter-num">07</span></div>
+    <div class="chapter-body">
+      <p class="chapter-lede">Lists are where an app spends its frames. In hanji every row is memoized and bound a viewport ahead, content mounts only after its surface has landed, and everything that moves on a list runs off one clock. <b>A thousand rows should cost what one row costs.</b></p>
+      <ol class="chapter-index" data-auto></ol>
+    </div>
+  </header>
+
+  <!-- 07.01 List row -->
+  <article class="entry" id="list-row">
+    <div class="entry-meta">
+      <div class="entry-num">07.01</div>
+      <h3 class="entry-title">List row</h3>
+      <p class="entry-desc">One thing per row, read left to right: what it is, what it says, what you can do. <b>A row is one focus stop and one tap target — never a card per item.</b></p>
+      <dl class="spec">
+        <div><dt>Height</dt><dd><b>56</b> min · padding 0 16</dd></div>
+        <div><dt>Leading</dt><dd>40 · art r-xs · icon in tint · avatar</dd></div>
+        <div><dt>Trailing</dt><dd>value (mono, right) · chevron · toggle · check</dd></div>
+        <div><dt>Hairline</dt><dd>inset to the text: 16 + 40 + 12</dd></div>
+        <div><dt>Press</dt><dd>opacity <b>.75</b> · no scale</dd></div>
+        <div><dt>States</dt><dd>default · selected · disabled (.4)</dd></div>
+        <div><dt>A11y</dt><dd>one stop per row · radio rows: arrows</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="bouncy-settle"></span><span>Rows never shrink under the finger — a column of dipping rows reads as a wobble. The selected check is the only thing that springs.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p80-two">
+        <div>
+          <div class="p80-gh"><span>Library</span></div>
+          <ul class="hj-list">
+            <li><button class="hj-row hj-press row-press"><span class="hj-row-lead" data-art="2"></span><span class="hj-row-text"><span class="hj-row-title">Night Drives</span><span class="hj-row-sub">Playlist · Jun-seo Park · 41 tracks</span></span><span class="hj-row-trail"><svg class="ic s18" aria-hidden="true"><use href="#i-chev-r"/></svg></span></button></li>
+            <li><button class="hj-row hj-press row-press"><span class="hj-row-lead tint"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hj-row-text"><span class="hj-row-title">Downloads</span><span class="hj-row-sub">48 items · updated 14:02</span></span><span class="hj-row-trail"><span class="hj-row-val">731 MB</span><svg class="ic s18" aria-hidden="true"><use href="#i-chev-r"/></svg></span></button></li>
+            <li><button class="hj-row hj-press row-press"><span class="hj-row-lead av" style="--av:var(--data-3)">MO</span><span class="hj-row-text"><span class="hj-row-title">Mira Okafor</span><span class="hj-row-sub">Shared 2 playlists with you</span></span><span class="hj-row-trail"><span class="hj-row-val">Today</span></span></button></li>
+            <li><div class="hj-row hj-press row-press" id="p80-cell-row"><span class="hj-row-lead plain"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hj-row-text"><span class="hj-row-title" id="p80-cell-t">Download on mobile data</span><span class="hj-row-sub">About 1.2 GB a month for you</span></span><span class="hj-row-trail"><button class="hj-toggle" id="p80-cell" aria-labelledby="p80-cell-t"></button></span></div></li>
+          </ul>
+        </div>
+        <div>
+          <div class="p80-gh"><span>Streaming quality</span><span>per hour</span></div>
+          <ul class="hj-list" role="radiogroup" aria-label="Streaming quality" id="p80-quality">
+            <li><div class="hj-row hj-press row-press no-lead" role="radio" aria-checked="false"><span class="hj-row-text"><span class="hj-row-title">Automatic</span><span class="hj-row-sub">Follows your connection</span></span><span class="hj-row-trail"><span class="hj-row-val">varies</span><svg class="ic s18 hj-row-check" aria-hidden="true"><use href="#i-check"/></svg></span></div></li>
+            <li><div class="hj-row hj-press row-press no-lead" role="radio" aria-checked="false"><span class="hj-row-text"><span class="hj-row-title">Normal</span><span class="hj-row-sub">96 kbps</span></span><span class="hj-row-trail"><span class="hj-row-val">43 MB</span><svg class="ic s18 hj-row-check" aria-hidden="true"><use href="#i-check"/></svg></span></div></li>
+            <li><div class="hj-row hj-press row-press no-lead" role="radio" aria-checked="true"><span class="hj-row-text"><span class="hj-row-title">High</span><span class="hj-row-sub">320 kbps</span></span><span class="hj-row-trail"><span class="hj-row-val">144 MB</span><svg class="ic s18 hj-row-check" aria-hidden="true"><use href="#i-check"/></svg></span></div></li>
+            <li><div class="hj-row hj-press row-press no-lead" role="radio" aria-checked="false" aria-disabled="true"><span class="hj-row-text"><span class="hj-row-title">Lossless</span><span class="hj-row-sub">1,411 kbps · needs Premium</span></span><span class="hj-row-trail"><span class="hj-row-val">635 MB</span><svg class="ic s16" aria-hidden="true"><use href="#i-lock"/></svg></span></div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap a row · arrows move the choice</span></div>
+    </div>
+  </article>
+
+  <!-- 07.02 Progress bar -->
+  <article class="entry" id="progress-bar">
+    <div class="entry-meta">
+      <div class="entry-num">07.02</div>
+      <h3 class="entry-title">Progress bar</h3>
+      <p class="entry-desc">How far, and how much is left — in words beside the bar, never the bar alone. <b>If you can't say how far, say what's happening and use the indeterminate sweep.</b></p>
+      <dl class="spec">
+        <div><dt>Track</dt><dd><b>4</b> · pill · tone at <b>.22</b></dd></div>
+        <div><dt>Fill</dt><dd>full-width, translated inside the clip</dd></div>
+        <div><dt>Spring</dt><dd>snappy · clamped</dd></div>
+        <div><dt>Unknown</dt><dd>span <b>1/3</b> · sweep 1.4 s</dd></div>
+        <div><dt>Tones</dt><dd>accent · fg · danger</dd></div>
+        <div><dt>Reduced</dt><dd>sweep parks mid-track</dd></div>
+        <div><dt>A11y</dt><dd>role=progressbar · valuenow</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>The fill is drawn at full width and slid, never resized — a width animation misses frames in release builds (PRINCIPLES §1), and the rounded cap keeps its shape.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p80-prog-replay"><svg class="ic s14" aria-hidden="true"><use href="#i-refresh"/></svg>Replay</button></div>
+      <div class="p80-prog">
+        <div class="p80-pi" id="p80-dl">
+          <div class="p80-pi-top"><span class="lbl"><span class="t">Downloading 34 of 48</span></span><span class="v"><span class="pc">71%</span></span></div>
+          <div class="hj-pbar" role="progressbar" aria-label="Download" aria-valuemin="0" aria-valuemax="100" aria-valuenow="71" style="--p:.708"><i></i></div>
+          <div class="p80-pi-sub"><span class="s">212 MB left · about a minute on Wi-Fi</span></div>
+        </div>
+        <div class="p80-pi">
+          <div class="p80-pi-top"><span class="lbl">Preparing offline library</span><span class="v">—</span></div>
+          <div class="hj-pbar indet" role="progressbar" aria-label="Preparing offline library" aria-valuetext="Working"><i></i></div>
+          <div class="p80-pi-sub"><span>Checking 1,284 tracks against your downloads</span></div>
+        </div>
+        <div class="p80-pi">
+          <div class="p80-pi-top"><span class="lbl">Storage</span><span class="v">52.4 of 64 GB</span></div>
+          <div class="hj-pbar fg" role="progressbar" aria-label="Storage used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="82" style="--p:.819"><i></i></div>
+          <div class="p80-pi-sub"><span>11.6 GB free on this phone</span></div>
+        </div>
+        <div class="p80-pi is-danger" id="p80-up">
+          <div class="p80-pi-top"><span class="lbl"><svg class="ic s16" aria-hidden="true"><use href="#i-alert"/></svg><span class="t">Upload failed at 61%</span></span><span class="v"><span class="pc">18 of 30</span></span></div>
+          <div class="hj-pbar danger" role="progressbar" aria-label="Upload" aria-valuemin="0" aria-valuemax="100" aria-valuenow="61" style="--p:.61"><i></i></div>
+          <div class="p80-pi-sub"><span class="s">Connection lost · 12 files waiting</span><button class="hj-btn sm secondary" id="p80-up-retry">Retry</button></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Retry the failed upload</span></div>
+    </div>
+  </article>
+
+  <!-- 07.03 Progress ring -->
+  <article class="entry" id="progress-ring">
+    <div class="entry-meta">
+      <div class="entry-num">07.03</div>
+      <h3 class="entry-title">Progress ring</h3>
+      <p class="entry-desc">The bar's compact twin, for a tile, a row's trailing slot or a button that is busy. <b>The 96 summary splits one total into at most three parts, labelled with amounts.</b></p>
+      <dl class="spec">
+        <div><dt>Size</dt><dd><b>40</b> · stroke <b>4</b> · round caps</dd></div>
+        <div><dt>Summary</dt><dd>96 · stroke 8 · butt-cap segments, 2.5 gap</dd></div>
+        <div><dt>Arc</dt><dd>dash offset · slow 400 · ease-out</dd></div>
+        <div><dt>Unknown</dt><dd>25% arc · one turn per 0.9 s</dd></div>
+        <div><dt>Value</dt><dd>tabular · centred · rolls in</dd></div>
+        <div><dt>Reduced</dt><dd>spin stops · arc stays</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>A ring reports a reading, so it eases rather than springs: a reading that overshoots says 104%.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p80-ring-replay"><svg class="ic s14" aria-hidden="true"><use href="#i-refresh"/></svg>Replay</button></div>
+      <div class="p80-rings">
+        <div class="p80-small">
+          <div class="p80-ri">
+            <span class="hj-ring" id="p80-r1" role="progressbar" aria-label="Syncing" aria-valuemin="0" aria-valuemax="100" aria-valuenow="72">
+              <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><circle class="trk" cx="20" cy="20" r="18" stroke-width="4"/><circle class="val" cx="20" cy="20" r="18" stroke-width="4" transform="rotate(-90 20 20)"/></svg>
+              <span class="num"><span class="n">72</span></span>
+            </span>
+            <span><b>Syncing</b><small>924 of 1,284 tracks</small></span>
+          </div>
+          <div class="p80-ri">
+            <span class="hj-ring spin" role="progressbar" aria-label="Checking" aria-valuetext="Working">
+              <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><circle class="trk" cx="20" cy="20" r="18" stroke-width="4"/><circle class="val" cx="20" cy="20" r="18" stroke-width="4" transform="rotate(-90 20 20)" style="stroke-dasharray:28.27 113.1"/></svg>
+            </span>
+            <span><b>Checking for updates</b><small>Started 14:38</small></span>
+          </div>
+          <div class="p80-ri">
+            <span class="hj-ring" id="p80-r3" role="img" aria-label="Backup complete">
+              <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><circle class="trk" cx="20" cy="20" r="18" stroke-width="4"/><circle class="val" cx="20" cy="20" r="18" stroke-width="4" transform="rotate(-90 20 20)"/></svg>
+              <span class="num"><svg class="ic s16" aria-hidden="true"><use href="#i-check"/></svg></span>
+            </span>
+            <span><b>Backed up</b><small>Fri 13 Nov · 09:12</small></span>
+          </div>
+        </div>
+        <span class="p80-rings-sep" aria-hidden="true"></span>
+        <div class="p80-store">
+          <span class="hj-ring lg" id="p80-r96" role="img" aria-label="Storage: 82% used, 52.4 of 64 gigabytes">
+            <svg viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
+              <circle class="trk" cx="48" cy="48" r="44" stroke-width="8" style="stroke:rgba(var(--fg-rgb),.08)"/>
+              <circle class="seg" cx="48" cy="48" r="44" stroke-width="8" transform="rotate(-90 48 48)" style="stroke:var(--accent)"/>
+              <circle class="seg" cx="48" cy="48" r="44" stroke-width="8" transform="rotate(-90 48 48)" style="stroke:var(--fg-dim)"/>
+              <circle class="seg" cx="48" cy="48" r="44" stroke-width="8" transform="rotate(-90 48 48)" style="stroke:rgba(var(--fg-rgb),.3)"/>
+            </svg>
+            <span class="num"><span class="big"><span class="n">82</span><span class="u">%</span></span><span class="cap">used</span></span>
+          </span>
+          <div class="p80-legend">
+            <div class="p80-legend-h">52.4 of 64 GB<small>11.6 GB free on this phone</small></div>
+            <div class="p80-leg"><i style="background:var(--accent)"></i><span>Downloads</span><span class="mono">31.2 GB</span><span class="pc">49%</span></div>
+            <div class="p80-leg"><i style="background:var(--fg-dim)"></i><span>Cache</span><span class="mono">4.8 GB</span><span class="pc">8%</span></div>
+            <div class="p80-leg"><i style="background:rgba(var(--fg-rgb),.3)"></i><span>Other apps</span><span class="mono">16.4 GB</span><span class="pc">26%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Arcs draw when they arrive</span></div>
+    </div>
+  </article>
+
+  <!-- 07.04 Stat -->
+  <article class="entry" id="stat">
+    <div class="entry-meta">
+      <div class="entry-num">07.04</div>
+      <h3 class="entry-title">Stat <span class="tag-new">New</span></h3>
+      <p class="entry-desc">One number worth a glance, with what it is compared against. <b>A number without a comparison is a label — and until there is something to compare, say so.</b></p>
+      <dl class="spec">
+        <div><dt>Label</dt><dd>eyebrow · 10 / 600 · +1.6</dd></div>
+        <div><dt>Number</dt><dd><b>40</b> / 700 · −.035em · tabular</dd></div>
+        <div><dt>Unit</dt><dd>17 / 600 · fg-dim · same baseline</dd></div>
+        <div><dt>Compare</dt><dd>words + glyph · tone follows meaning</dd></div>
+        <div><dt>Spark</dt><dd>112 × 24 · 1.5 stroke · last point marked</dd></div>
+        <div><dt>Waiting</dt><dd>“—” plus how much data is missing</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle"></span><span>Digits roll in once, right to left, 40 ms apart; the sparkline draws after them. Neither runs again until the value changes.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p80-stat-replay"><svg class="ic s14" aria-hidden="true"><use href="#i-refresh"/></svg>Replay</button></div>
+      <div class="p80-stats" id="p80-stats">
+        <div class="hj-stat">
+          <span class="hj-stat-label">Listening this week</span>
+          <div class="hj-stat-row">
+            <span class="hj-stat-num" aria-label="14 hours 32 minutes"><span data-count="14">14</span><span class="u">h</span><span data-count="32">32</span><span class="u">m</span></span>
+            <svg class="hj-spark" data-spark="1.6,2.1,1.2,2.8,2.4,1.9,2.53" aria-hidden="true"></svg>
+          </div>
+          <span class="hj-stat-cmp"><span class="g"><svg class="ic" aria-hidden="true"><use href="#i-arrow-u"/></svg></span><span><b>12% more</b> than last week (12h 58m)</span></span>
+        </div>
+        <div class="hj-stat">
+          <span class="hj-stat-label">Saved to library</span>
+          <div class="hj-stat-row">
+            <span class="hj-stat-num" aria-label="1,284 tracks"><span data-count="1,284">1,284</span><span class="u w">tracks</span></span>
+            <svg class="hj-spark" data-spark="1246,1251,1259,1262,1270,1279,1284" aria-hidden="true"></svg>
+          </div>
+          <span class="hj-stat-cmp"><span class="g"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></span><span><b>38 added</b> since Saturday</span></span>
+        </div>
+        <div class="hj-stat">
+          <span class="hj-stat-label">Skipped in the first 30 s</span>
+          <div class="hj-stat-row">
+            <span class="hj-stat-num" aria-label="9.4 percent"><span data-count="9.4">9.4</span><span class="u">%</span></span>
+            <svg class="hj-spark" data-spark="12.1,11.4,11.8,10.2,9.9,9.6,9.4" aria-hidden="true"></svg>
+          </div>
+          <span class="hj-stat-cmp good"><span class="g"><svg class="ic" aria-hidden="true"><use href="#i-arrow-d"/></svg></span><span><b>2.1 points fewer</b> than last week</span></span>
+        </div>
+        <div class="hj-stat wait">
+          <span class="hj-stat-label">Offline listening</span>
+          <div class="hj-stat-row">
+            <span class="hj-stat-num" aria-label="Not enough data yet">—</span>
+            <span><span class="p80-days" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></span></span>
+          </div>
+          <span class="hj-stat-cmp"><span class="g"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><span>Comparisons start after 7 days · <b>3 so far</b></span></span>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Green only where lower is better</span></div>
+    </div>
+  </article>
+
+  <!-- 07.05 Timeline -->
+  <article class="entry" id="timeline">
+    <div class="entry-meta">
+      <div class="entry-num">07.05</div>
+      <h3 class="entry-title">Timeline <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A process or a history, one step per line, each with its time. <b>Status is a word and a node, never colour alone; a failure says what happened and offers the fix.</b></p>
+      <dl class="spec">
+        <div><dt>Node</dt><dd><b>18</b> · done ink · current accent ring · pending hollow · failed danger tint</dd></div>
+        <div><dt>Line</dt><dd>2 · solid behind · dashed ahead</dd></div>
+        <div><dt>Time</dt><dd>absolute (mono) over relative</dd></div>
+        <div><dt>Pulse</dt><dd>current only · 1.6 s · dies under reduced</dd></div>
+        <div><dt>Order</dt><dd>process: oldest first · history: newest first</dd></div>
+        <div><dt>A11y</dt><dd>ordered list · status in the text</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>When a step resolves, only its node changes; the list never reflows under the reader's eye.</span></p>
+    </div>
+    <div class="plate plate--top">
+      <div class="plate-tools"><button class="plate-btn" id="p80-tl-replay"><svg class="ic s14" aria-hidden="true"><use href="#i-refresh"/></svg>Reset</button></div>
+      <div class="p80-tl-wrap">
+        <div>
+          <div class="p80-gh"><span>Export to Files</span><span>started 14:02</span></div>
+          <ol class="hj-tl" aria-label="Export to Files">
+            <li class="done"><span class="hj-tl-node"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><div><div class="hj-tl-title">Export requested</div><div class="hj-tl-meta">From MacBook Air · Library, 41 playlists</div></div><div class="hj-tl-time">14:02<small>38 min ago</small></div></li>
+            <li class="done"><span class="hj-tl-node"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><div><div class="hj-tl-title">Packed 1,284 tracks</div><div class="hj-tl-meta">2.3 GB in 4 archives</div></div><div class="hj-tl-time">14:09<small>31 min ago</small></div></li>
+            <li class="current"><span class="hj-tl-node"></span><div><div class="hj-tl-title">Uploading to iCloud Drive</div><div class="hj-tl-meta">Archive 3 of 4 · about 4 min left</div></div><div class="hj-tl-time">14:31<small>now</small></div>
+              <div class="hj-tl-extra"><div class="hj-pbar" role="progressbar" aria-label="Upload" aria-valuemin="0" aria-valuemax="100" aria-valuenow="61" style="--p:.61"><i></i></div><span class="mono">61%</span></div></li>
+            <li class="pending"><span class="hj-tl-node"></span><div><div class="hj-tl-title">Verify checksums</div><div class="hj-tl-meta">Starts when the upload finishes</div></div><div class="hj-tl-time">—</div></li>
+            <li class="pending"><span class="hj-tl-node"></span><div><div class="hj-tl-title">Tell Mira Okafor it's ready</div><div class="hj-tl-meta">She shares the “Studio” folder</div></div><div class="hj-tl-time">—</div></li>
+          </ol>
+        </div>
+        <div>
+          <div class="p80-gh"><span>Sync history</span><span>newest first</span></div>
+          <ol class="hj-tl" aria-label="Sync history" id="p80-sync">
+            <li class="failed" id="p80-sync-0"><span class="hj-tl-node"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></span><div><div class="hj-tl-title">Sync failed</div><div class="hj-tl-meta">Connection lost while sending 12 changes</div></div><div class="hj-tl-time">14:31<small>9 min ago</small></div>
+              <div class="hj-tl-extra"><button class="hj-btn sm secondary" id="p80-sync-retry"><svg class="ic s16" aria-hidden="true"><use href="#i-refresh"/></svg>Retry now</button><span class="mono">next try 14:45</span></div></li>
+            <li class="done"><span class="hj-tl-node"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><div><div class="hj-tl-title">Synced 214 changes</div><div class="hj-tl-meta">Thu 12 Nov · from iPhone</div></div><div class="hj-tl-time">22:47<small>yesterday</small></div></li>
+            <li class="done"><span class="hj-tl-node"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><div><div class="hj-tl-title">Synced 3 changes</div><div class="hj-tl-meta">Thu 12 Nov · from MacBook Air</div></div><div class="hj-tl-time">08:15<small>yesterday</small></div></li>
+            <li class="done"><span class="hj-tl-node"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><div><div class="hj-tl-title">First sync</div><div class="hj-tl-meta">Mon 9 Nov · 1,246 tracks</div></div><div class="hj-tl-time">19:03<small>4 days ago</small></div></li>
+          </ol>
+          <p class="sr" aria-live="polite" id="p80-sync-live"></p>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Retry the failed sync</span></div>
+    </div>
+  </article>
+
+  <!-- 07.06 Empty state -->
+  <article class="entry" id="empty-state">
+    <div class="entry-meta">
+      <div class="entry-num">07.06</div>
+      <h3 class="entry-title">Empty state</h3>
+      <p class="entry-desc">What an empty screen says depends on why it is empty. <b>Name the cause, say what still works, and offer exactly one next step that fixes it.</b></p>
+      <dl class="spec">
+        <div><dt>Medallion</dt><dd><b>56</b> · glyph 24 · surface-2 or tone tint</dd></div>
+        <div><dt>Title</dt><dd>17 / 600 · names the cause</dd></div>
+        <div><dt>Body</dt><dd>13.5 · ≤ 2 lines · what still works</dd></div>
+        <div><dt>Action</dt><dd>one · matched to the cause</dd></div>
+        <div><dt>Variants</dt><dd>nothing yet · no results · offline · failed</dd></div>
+        <div><dt>Entrance</dt><dd>cascade · after the screen lands</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Medallion, title, body and action arrive 24 ms apart — the reader's eye lands on the glyph first.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p80-empty-replay"><svg class="ic s14" aria-hidden="true"><use href="#i-refresh"/></svg>Replay</button></div>
+      <div class="p80-empties" id="p80-empties">
+        <div class="hj-empty" data-cascade>
+          <span class="hj-empty-med"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></span>
+          <h4>No downloads yet</h4>
+          <p>Save albums and playlists here to play them without a connection.</p>
+          <button class="hj-btn sm">Browse your library</button>
+        </div>
+        <div class="hj-empty" data-cascade>
+          <span class="hj-empty-med"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span>
+          <h4>Nothing for <span class="q">“lo-fi quartett”</span></h4>
+          <p>Check the spelling, or search for an artist, album or playlist instead.</p>
+          <button class="hj-btn sm secondary">Clear search</button>
+        </div>
+        <div class="hj-empty" data-cascade>
+          <span class="hj-empty-med"><svg class="ic" aria-hidden="true"><use href="#i-wifi-off"/></svg></span>
+          <h4>You're offline</h4>
+          <p>Your 48 downloads still play. New releases load when you reconnect.</p>
+          <button class="hj-btn sm secondary">Show downloads</button>
+        </div>
+        <div class="hj-empty" data-cascade id="p80-failcell">
+          <span class="hj-empty-med danger"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg></span>
+          <h4>Couldn't load your library</h4>
+          <p>The server took too long to answer (504). Nothing you saved is lost.</p>
+          <button class="hj-btn sm secondary" id="p80-fail-retry"><svg class="ic s16" aria-hidden="true"><use href="#i-refresh"/></svg>Try again</button>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Try the failed load again</span></div>
+    </div>
+  </article>
+
+  <!-- 07.07 Marquee -->
+  <article class="entry" id="marquee">
+    <div class="entry-meta">
+      <div class="entry-num">07.07</div>
+      <h3 class="entry-title">Marquee</h3>
+      <p class="entry-desc">For the one line that must stay on one line — a title in a player bar. <b>It moves only when the text truly overflows, and only while it is on screen.</b></p>
+      <dl class="spec">
+        <div><dt>Dwell</dt><dd><b>1200 ms</b> at rest before each pass</dd></div>
+        <div><dt>Speed</dt><dd><b>45 px/s</b> · linear</dd></div>
+        <div><dt>Gap</dt><dd>40 between the text and its repeat</dd></div>
+        <div><dt>Slack</dt><dd>2 px — a near-fit stays still</dd></div>
+        <div><dt>Edges</dt><dd>trailing fade at rest · both while moving</dd></div>
+        <div><dt>Clock</dt><dd>one frame clock · paused off-screen</dd></div>
+        <div><dt>Reduced</dt><dd>still, with an ellipsis</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>Measure first: hanji's marquee once looped a 90-second pass because its measuring ghost stretched to a 4000 px box (PRINCIPLES §19). The readout below is that measurement.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p80-mq-measure" aria-pressed="false"><svg class="ic s14" aria-hidden="true"><use href="#i-eye"/></svg>Show measurement</button></div>
+      <div class="p80-mq" id="p80-mq">
+        <div class="p80-mini">
+          <span class="art" data-art="5"></span>
+          <span class="txt"><span class="hj-marquee" id="p80-mq1"><span class="hj-marquee-track"><span>Variations on a Theme in Paper — Live at the Tivoli Concert Hall, Copenhagen</span></span></span><span class="sub">Ilse Brandt &amp; Kopenhagen Session Orchestra</span></span>
+          <button class="btn hj-press" aria-label="Pause"><svg class="ic s24" aria-hidden="true"><use href="#i-pause-f"/></svg></button>
+        </div>
+        <div class="p80-readout" id="p80-mq1-r">measuring…</div>
+        <div class="p80-mini">
+          <span class="art" data-art="1"></span>
+          <span class="txt"><span class="hj-marquee" id="p80-mq2"><span class="hj-marquee-track"><span>Salt &amp; Cedar</span></span></span><span class="sub">Tomás Reyes</span></span>
+          <button class="btn hj-press" aria-label="Play"><svg class="ic s24" aria-hidden="true"><use href="#i-play-f"/></svg></button>
+        </div>
+        <div class="p80-readout" id="p80-mq2-r">measuring…</div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Only the first title overflows</span></div>
+    </div>
+  </article>
+
+  <!-- 07.08 Drag list -->
+  <article class="entry" id="drag-list">
+    <div class="entry-meta">
+      <div class="entry-num">07.08</div>
+      <h3 class="entry-title">Drag list</h3>
+      <p class="entry-desc">Reorder by picking a row up. The grip lifts at once; anywhere else on the row, a long press does, so a scroll is never mistaken for a drag. <b>Every drag has a keyboard twin.</b></p>
+      <dl class="spec">
+        <div><dt>Lift</dt><dd>long press <b>220 ms</b> · grip: at once</dd></div>
+        <div><dt>Held</dt><dd>×<b>1.03</b> · surface-2 · the one shadow</dd></div>
+        <div><dt>Others</dt><dd>slide one row · snappy · clamped</dd></div>
+        <div><dt>Drop</dt><dd>gentle · clamped, into the slot</dd></div>
+        <div><dt>Edges</dt><dd>overdrag resistance 3</dd></div>
+        <div><dt>Scroll</dt><dd>auto-scroll in a 72 px edge zone · ≤ 14 px/frame</dd></div>
+        <div><dt>Keys</dt><dd>Space lift · ↑↓ move · Space drop · Esc cancel</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>Lifting is the only time hanji casts a shadow on a row: the item has left the page, so it reads as a physical thing in the hand.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p80-queue-wrap">
+        <div class="p80-gh"><span>Up next</span><span>6 tracks · 26 min</span></div>
+        <ul class="hj-drag" id="p80-queue" aria-label="Up next. Press Space on a track to move it." aria-describedby="p80-queue-hint"></ul>
+        <p class="sr" id="p80-queue-hint">Reorderable list. Space lifts a track, arrow keys move it, Space drops it, Escape cancels.</p>
+        <p class="sr" aria-live="assertive" id="p80-queue-live"></p>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Grab a grip, hold a row, or press Space</span></div>
+    </div>
+  </article>
+
+  <!-- 07.09 Cascade -->
+  <article class="entry" id="cascade">
+    <div class="entry-meta">
+      <div class="entry-num">07.09</div>
+      <h3 class="entry-title">Cascade</h3>
+      <p class="entry-desc">The entrance for a list: each row fades and rises one step after the last. <b>Past the cap every row shares the last delay, so a long list arrives as fast as a short one.</b></p>
+      <dl class="spec">
+        <div><dt>Step</dt><dd><b>24 ms</b> per row</dd></div>
+        <div><dt>Cap</dt><dd>index <b>10</b> · later rows share 240 ms</dd></div>
+        <div><dt>Rise</dt><dd>12 × travel · gentle · clamped</dd></div>
+        <div><dt>Fade</dt><dd>base 260 · ease-out</dd></div>
+        <div><dt>Once</dt><dd>per surface · never on scroll-back</dd></div>
+        <div><dt>Reduced</dt><dd>no step, no rise · one 180 ms fade</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Choreography, not a crawl: at 24 ms a step uncapped, row 40 would land a second after row 1.</span></p>
+    </div>
+    <div class="plate plate--top">
+      <div class="plate-tools"><button class="plate-btn" id="p80-casc-replay"><svg class="ic s14" aria-hidden="true"><use href="#i-refresh"/></svg>Replay</button></div>
+      <div class="p80-casc">
+        <div>
+          <div class="p80-gh"><span>Recently played</span></div>
+          <ul class="hj-list" data-cascade id="p80-casc-list"></ul>
+        </div>
+        <div>
+          <div class="p80-gh" style="padding-left:44px"><span>When each row starts</span><span>ms</span></div>
+          <div class="p80-gantt" id="p80-gantt"></div>
+          <p class="p80-g-note" id="p80-g-note"></p>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Replay, then switch motion to Reduced</span></div>
+    </div>
+  </article>
+
+  <!-- 07.10 Morph stage -->
+  <article class="entry" id="morph">
+    <div class="entry-meta">
+      <div class="entry-num">07.10</div>
+      <h3 class="entry-title">Morph stage</h3>
+      <p class="entry-desc">A shared-element morph between two measured frames: the mini player becomes the player. <b>One progress value drives everything, so a tap, a drag and an interruption are the same motion.</b></p>
+      <dl class="spec">
+        <div><dt>Driver</dt><dd>one value <b>0 → 1</b> · gentle · clamped</dd></div>
+        <div><dt>Frames</dt><dd>measured at open · art by transform</dd></div>
+        <div><dt>Panel</dt><dd>clip inset from the bar · radius 16 → 28</dd></div>
+        <div><dt>Source</dt><dd>fades out by <b>.22</b></dd></div>
+        <div><dt>Backdrop</dt><dd>darkens until <b>.55</b></dd></div>
+        <div><dt>Content</dt><dd><b>.35 → .88</b> · rises 28</dd></div>
+        <div><dt>Drag</dt><dd>projects .12 s of velocity · opens past .5</dd></div>
+        <div><dt>Latch</dt><dd>skip only if within .02 of target</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Interruptible by design: tap mid-flight and it turns around with its velocity intact. Under reduced motion the same value drives a cross-fade.</span></p>
+    </div>
+    <div class="plate plate--phone">
+      <div class="p80-morph">
+        <div class="phone p80-phone" id="p80-phone">
+          <div class="phone-status"><span>9:41</span><span class="ind"><b></b><i></i></span></div>
+          <div class="p80-lib">
+            <div class="p80-lib-h">Library</div>
+            <ul class="hj-list">
+              <li><div class="hj-row"><span class="hj-row-lead" data-art="7"></span><span class="hj-row-text"><span class="hj-row-title">Liked songs</span><span class="hj-row-sub">1,284 tracks</span></span></div></li>
+              <li><div class="hj-row"><span class="hj-row-lead" data-art="2"></span><span class="hj-row-text"><span class="hj-row-title">Night Drives</span><span class="hj-row-sub">Playlist · Jun-seo Park</span></span></div></li>
+              <li><div class="hj-row"><span class="hj-row-lead" data-art="4"></span><span class="hj-row-text"><span class="hj-row-title">Harbour Lights</span><span class="hj-row-sub">Album · Noor Haddad</span></span></div></li>
+              <li><div class="hj-row"><span class="hj-row-lead tint"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hj-row-text"><span class="hj-row-title">Downloads</span><span class="hj-row-sub">48 items · 731 MB</span></span></div></li>
+            </ul>
+          </div>
+          <div class="p80-scrim" id="p80-scrim"></div>
+          <div class="p80-minibar" id="p80-mini">
+            <button class="p80-mini-open" id="p80-mini-open" aria-label="Open player: Harbour Lights by Noor Haddad"></button>
+            <span class="art" id="p80-mini-art" data-art="4"></span>
+            <span class="txt p80-mf"><span class="t">Harbour Lights</span><span class="s">Noor Haddad</span></span>
+            <button class="btn p80-mf p80-pp" aria-label="Pause"><svg class="ic s24" aria-hidden="true"><use href="#i-pause-f"/></svg></button>
+            <span class="line p80-mf"><i></i></span>
+          </div>
+          <div class="p80-tabs" aria-hidden="true">
+            <span><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg>Home</span>
+            <span><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Search</span>
+            <span class="on"><svg class="ic" aria-hidden="true"><use href="#i-library"/></svg>Library</span>
+            <span><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>Saved</span>
+            <span><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>You</span>
+          </div>
+          <div class="p80-full" id="p80-full" role="dialog" aria-label="Now playing" aria-hidden="true">
+            <div class="p80-full-top p80-fc">
+              <button class="p80-ib" id="p80-close" aria-label="Close player"><svg class="ic s24" aria-hidden="true"><use href="#i-chev-d"/></svg></button>
+              <span class="from">Playing from<b>Up next</b></span>
+              <button class="p80-ib" aria-label="More"><svg class="ic s24" aria-hidden="true"><use href="#i-more"/></svg></button>
+            </div>
+            <div class="p80-full-art" id="p80-full-art" data-art="4"></div>
+            <div class="p80-full-title p80-fc"><span><b>Harbour Lights</b><span>Noor Haddad</span></span><button class="p80-ib" aria-label="Liked"><svg class="ic s24" aria-hidden="true"><use href="#i-heart-f"/></svg></button></div>
+            <div class="p80-scrub p80-fc"><div class="p80-scrub-trk"><i></i><b></b></div><div class="p80-scrub-t"><span>1:42</span><span>−3:21</span></div></div>
+            <div class="p80-ctl p80-fc">
+              <button class="p80-ib dim" aria-label="Shuffle"><svg class="ic" aria-hidden="true"><use href="#i-shuffle"/></svg></button>
+              <button class="p80-ib" aria-label="Previous"><svg class="ic s24" aria-hidden="true"><use href="#i-prev"/></svg></button>
+              <button class="p80-play hj-press p80-pp" aria-label="Pause"><svg class="ic" aria-hidden="true"><use href="#i-pause-f"/></svg></button>
+              <button class="p80-ib" aria-label="Next"><svg class="ic s24" aria-hidden="true"><use href="#i-next"/></svg></button>
+              <button class="p80-ib dim" aria-label="Repeat"><svg class="ic" aria-hidden="true"><use href="#i-repeat"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="p80-phase" aria-hidden="true">
+          <div class="p80-phase-p"><span class="t-eyebrow mute">progress</span><span class="val" id="p80-pv">0.00</span></div>
+          <div class="p80-ph" id="p80-ph">
+            <div class="p80-ph-row"><span class="l"><span>Source hands off</span><span class="mono">0 → .22</span></span><span class="p80-ph-trk"><i style="left:0;width:22%"></i><b></b></span></div>
+            <div class="p80-ph-row"><span class="l"><span>Backdrop darkens</span><span class="mono">0 → .55</span></span><span class="p80-ph-trk"><i style="left:0;width:55%"></i><b></b></span></div>
+            <div class="p80-ph-row"><span class="l"><span>Content arrives, rises 28</span><span class="mono">.35 → .88</span></span><span class="p80-ph-trk"><i class="a" style="left:35%;width:53%"></i><b></b></span></div>
+          </div>
+          <p class="p80-phase-note">Tap the mini player. Drag the open player down, or tap it mid-flight to send it back.</p>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Esc closes</span></div>
+    </div>
+  </article>
+</section>
+
+<script>
+(function(){
+  const { $, $$ } = H;
+  const sec = $('#data'); if (!sec) return;
+  const clamp = (v, a, b) => Math.min(b === undefined ? 1 : b, Math.max(a === undefined ? 0 : a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const isStatic = document.documentElement.classList.contains('static');
+  const cssMs = name => { const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v.endsWith('ms') ? parseFloat(v) : v.endsWith('s') ? parseFloat(v) * 1000 : 300; };
+
+  /* Run `enter` when an element arrives on screen (once unless `again`), `leave` when it goes. */
+  function watch(el, enter, leave, again){
+    if (isStatic || !('IntersectionObserver' in window)){ enter(); return; }
+    let seen = false;
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting){ if (!seen || again){ seen = true; enter(); } }
+      else if (leave) leave();
+    }), { threshold:.2 });
+    io.observe(el);
+  }
+
+  /* ---------- generated art: pigments from the proposed data palette ---------- */
+  const PAIRS = [[1,4],[2,6],[3,1],[4,2],[5,3],[6,5],[1,5],[3,6]];
+  function art(seed){
+    const p = PAIRS[seed % PAIRS.length], v = seed % 4;
+    const bg = `var(--data-${p[0]})`, fg = `var(--data-${p[1]})`;
+    let shape;
+    if (v === 0) shape = `<circle cx="29" cy="29" r="16" style="fill:${fg}"/><circle cx="12" cy="11" r="3" fill="rgba(255,255,255,.6)"/>`;
+    else if (v === 1) shape = `<path d="M0 40 A20 20 0 0 1 40 40 Z" style="fill:${fg}"/><circle cx="20" cy="13" r="5" fill="rgba(255,255,255,.55)"/>`;
+    else if (v === 2) shape = `<rect x="0" y="0" width="15" height="40" style="fill:${fg}"/><rect x="21" y="0" width="5" height="40" fill="rgba(0,0,0,.14)"/><rect x="30" y="0" width="2" height="40" fill="rgba(0,0,0,.1)"/>`;
+    else shape = `<path d="M0 0 H34 A34 34 0 0 1 0 34 Z" style="fill:${fg}"/><circle cx="31" cy="31" r="4" fill="rgba(0,0,0,.16)"/>`;
+    return `<svg viewBox="0 0 40 40" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="display:block;width:100%;height:100%"><rect width="40" height="40" style="fill:${bg}"/>${shape}</svg>`;
+  }
+  H.art40 = art;
+
+  /* ================= 07.01 List row ================= */
+  (function(){
+    const row = $('#p80-cell-row'), tg = $('#p80-cell');
+    const t = H.toggle(tg);
+    row.addEventListener('click', e => { if (!e.target.closest('.hj-toggle')) t.set(!t.get()); });
+    const group = $('#p80-quality'); const radios = $$('[role="radio"]', group);
+    const enabled = () => radios.filter(r => r.getAttribute('aria-disabled') !== 'true');
+    function choose(r, focus){
+      if (r.getAttribute('aria-disabled') === 'true') return;
+      radios.forEach(x => { const on = x === r; x.setAttribute('aria-checked', String(on)); x.tabIndex = on ? 0 : -1; });
+      if (focus) r.focus();
+    }
+    radios.forEach(r => {
+      r.tabIndex = r.getAttribute('aria-checked') === 'true' ? 0 : -1;
+      r.addEventListener('click', () => choose(r, false));
+      r.addEventListener('keydown', e => {
+        const list = enabled(); const i = list.indexOf(r);
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight'){ e.preventDefault(); choose(list[(i + 1) % list.length], true); }
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft'){ e.preventDefault(); choose(list[(i - 1 + list.length) % list.length], true); }
+        else if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); choose(r, false); }
+      });
+    });
+  })();
+
+  /* ================= 07.02 Progress bar ================= */
+  (function(){
+    const dl = $('#p80-dl'), dlBar = $('.hj-pbar', dl);
+    const up = $('#p80-up'), upBar = $('.hj-pbar', up), retry = $('#p80-up-retry');
+    const TOTAL = 48, START = 34, LEFT_AT_START = 212;
+    let done = START, timer = 0, visible = false, upTimer = 0;
+    function paintDl(){
+      const p = done / TOTAL;
+      dlBar.style.setProperty('--p', p.toFixed(4)); dlBar.setAttribute('aria-valuenow', Math.round(p * 100));
+      const top = $('.lbl', dl), v = $('.pc', dl), s = $('.s', dl);
+      if (done >= TOTAL){
+        dl.classList.add('is-done');
+        top.innerHTML = `${H.icon('check-c', 's16')}<span class="t">Downloaded 48 items</span>`;
+        v.textContent = '100%'; s.textContent = '731 MB · ready to play offline';
+      } else {
+        dl.classList.remove('is-done');
+        top.innerHTML = `<span class="t">Downloading ${done} of ${TOTAL}</span>`;
+        v.textContent = Math.round(p * 100) + '%';
+        const left = Math.round(LEFT_AT_START * (TOTAL - done) / (TOTAL - START));
+        s.textContent = `${left} MB left · ${left > 120 ? 'about a minute' : 'under a minute'} on Wi-Fi`;
+      }
+    }
+    function step(){
+      clearTimeout(timer); if (!visible) return;
+      if (done < TOTAL){ done++; paintDl(); timer = setTimeout(step, 520 + ((done * 37) % 5) * 120); }
+      else timer = setTimeout(() => { done = START; paintDl(); timer = setTimeout(step, 1600); }, 3200);
+    }
+    function paintUp(state, sent){
+      clearTimeout(upTimer);
+      const lbl = $('.lbl', up), pc = $('.pc', up), s = $('.s', up);
+      up.classList.toggle('is-danger', state === 'failed'); up.classList.toggle('is-done', state === 'done');
+      upBar.classList.toggle('danger', state === 'failed');
+      const p = sent / 30; upBar.style.setProperty('--p', p.toFixed(4)); upBar.setAttribute('aria-valuenow', Math.round(p * 100));
+      pc.textContent = `${sent} of 30`;
+      if (state === 'failed'){ lbl.innerHTML = `${H.icon('alert', 's16')}<span class="t">Upload failed at 61%</span>`; s.textContent = 'Connection lost · 12 files waiting'; retry.hidden = false; }
+      else if (state === 'sending'){ lbl.innerHTML = `<span class="t">Uploading ${sent} of 30</span>`; s.textContent = `${30 - sent} files left · resumed where it stopped`; retry.hidden = true; }
+      else { lbl.innerHTML = `${H.icon('check-c', 's16')}<span class="t">Uploaded 30 files</span>`; s.textContent = 'Saved to Files › Studio · just now'; retry.hidden = true; }
+    }
+    function sendFrom(n){
+      paintUp('sending', n);
+      if (n >= 30){ paintUp('done', 30); return; }
+      upTimer = setTimeout(() => sendFrom(n + 1), 140);
+    }
+    retry.addEventListener('click', () => sendFrom(18));
+    $('#p80-prog-replay').addEventListener('click', () => { done = START; paintDl(); paintUp('failed', 18); step(); });
+    watch(dl, () => { visible = true; timer = setTimeout(step, 900); }, () => { visible = false; clearTimeout(timer); }, true);
+    paintDl();
+  })();
+
+  /* ================= 07.03 Progress ring ================= */
+  (function(){
+    const C40 = 2 * Math.PI * 18, C96 = 2 * Math.PI * 44, GAP = 2.5;
+    const r1 = $('#p80-r1'), r1v = $('.val', r1), r3v = $('.val', $('#p80-r3'));
+    const big = $('#p80-r96'), segs = $$('.seg', big);
+    const parts = [31.2, 4.8, 16.4], TOTAL = 64;
+    [r1v, r3v].forEach(c => { c.style.strokeDasharray = C40.toFixed(2); c.style.strokeDashoffset = C40.toFixed(2); c.style.opacity = 0; });
+    segs.forEach(s => s.style.strokeDasharray = `0 ${C96.toFixed(2)}`);
+    let starts = 0; const geo = parts.map(v => { const f = v / TOTAL; const g = { off: -(starts * C96), len: f * C96 - GAP }; starts += f; return g; });
+    segs.forEach((s, i) => s.style.strokeDashoffset = geo[i].off.toFixed(2));
+    function play(){
+      [r1v, r3v].forEach(c => { c.style.transition = 'none'; c.style.strokeDashoffset = C40.toFixed(2); c.style.opacity = 0; });
+      segs.forEach(s => { s.style.transition = 'none'; s.style.strokeDasharray = `0 ${C96.toFixed(2)}`; });
+      H.counter($('.n', r1), '00'); H.counter($('.n', big), '00');
+      void big.offsetWidth;
+      requestAnimationFrame(() => {
+        [r1v, r3v].forEach(c => { c.style.transition = ''; c.style.opacity = 1; });
+        r1v.style.strokeDashoffset = (C40 * (1 - .72)).toFixed(2);
+        r3v.style.strokeDashoffset = '0';
+        H.counter($('.n', r1), '72');
+        segs.forEach((s, i) => { s.style.transition = ''; setTimeout(() => s.style.strokeDasharray = `${geo[i].len.toFixed(2)} ${C96.toFixed(2)}`, H.reduced() ? 0 : i * 140); });
+        H.counter($('.n', big), '82');
+      });
+    }
+    $('#p80-ring-replay').addEventListener('click', play);
+    watch(big, play);
+  })();
+
+  /* ================= 07.04 Stat ================= */
+  (function(){
+    const root = $('#p80-stats');
+    const W = 112, Hh = 24, PAD = 3.5;
+    $$('svg[data-spark]', root).forEach(svg => {
+      const vals = svg.dataset.spark.split(',').map(Number);
+      const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+      const pts = vals.map((v, i) => [ (i * (W - 4) / (vals.length - 1)) + .75, Hh - PAD - (v - min) / ((max - min) || 1) * (Hh - PAD * 2) ]);
+      const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' ');
+      const last = pts[pts.length - 1];
+      svg.setAttribute('viewBox', `0 0 ${W} ${Hh}`);
+      svg.innerHTML = `<path d="${d}"/><circle cx="${last[0].toFixed(2)}" cy="${last[1].toFixed(2)}" r="3"/>`;
+    });
+    function play(){
+      $$('[data-count]', root).forEach(el => {
+        const target = el.dataset.count; H.counter(el, target.replace(/\d/g, '0'));
+        requestAnimationFrame(() => requestAnimationFrame(() => H.counter(el, target)));
+      });
+      $$('.hj-spark', root).forEach(svg => {
+        const path = svg.querySelector('path'); const len = path.getTotalLength();
+        svg.classList.remove('in'); path.classList.remove('drawn');
+        path.style.strokeDasharray = len; path.style.strokeDashoffset = len;
+        void path.getBoundingClientRect();
+        setTimeout(() => { path.classList.add('drawn'); path.style.strokeDashoffset = 0; svg.classList.add('in'); }, H.reduced() ? 0 : 220);
+      });
+    }
+    $('#p80-stat-replay').addEventListener('click', play);
+    watch(root, play);
+  })();
+
+  /* ================= 07.05 Timeline ================= */
+  (function(){
+    const li = $('#p80-sync-0'), live = $('#p80-sync-live');
+    const ORIGINAL = li.innerHTML; let t = 0;
+    function bind(){ const b = $('#p80-sync-retry'); if (b) b.addEventListener('click', retry); }
+    function retry(){
+      li.className = 'current';
+      li.innerHTML = `<span class="hj-tl-node"></span><div><div class="hj-tl-title">Sending 12 changes</div><div class="hj-tl-meta">Retrying now · attempt 2</div></div><div class="hj-tl-time">14:40<small>now</small></div>`;
+      live.textContent = 'Retrying sync.';
+      clearTimeout(t);
+      t = setTimeout(() => {
+        li.className = 'done';
+        li.innerHTML = `<span class="hj-tl-node">${H.icon('check')}</span><div><div class="hj-tl-title">Synced 12 changes</div><div class="hj-tl-meta">Fri 13 Nov · on the second try</div></div><div class="hj-tl-time">14:40<small>just now</small></div>`;
+        live.textContent = 'Synced 12 changes.';
+      }, 1800);
+    }
+    $('#p80-tl-replay').addEventListener('click', () => { clearTimeout(t); li.className = 'failed'; li.innerHTML = ORIGINAL; bind(); live.textContent = ''; });
+    bind();
+  })();
+
+  /* ================= 07.06 Empty state ================= */
+  (function(){
+    const cell = $('#p80-failcell'); const ORIGINAL = cell.innerHTML; let t = 0;
+    function bind(){
+      const b = $('#p80-fail-retry'); if (!b) return;
+      b.addEventListener('click', () => {
+        b.disabled = true; b.innerHTML = `<span class="p80-spin" aria-hidden="true"></span>Loading…`;
+        clearTimeout(t);
+        t = setTimeout(() => {
+          cell.innerHTML = `<span class="hj-empty-med ok">${H.icon('check-c')}</span><h4>Library loaded</h4><p>1,284 tracks and 41 playlists, as you left them.</p><button class="hj-btn sm secondary">Open library</button>`;
+          Array.from(cell.children).forEach((ch, i) => ch.style.setProperty('--i', i));
+          H.replay(cell);
+        }, 1400);
+      });
+    }
+    bind();
+    $('#p80-empty-replay').addEventListener('click', () => {
+      clearTimeout(t); cell.innerHTML = ORIGINAL; Array.from(cell.children).forEach((ch, i) => ch.style.setProperty('--i', i)); bind();
+      $$('.hj-empty', $('#p80-empties')).forEach((c, k) => setTimeout(() => H.replay(c), H.reduced() ? 0 : k * 60));
+    });
+  })();
+
+  /* ================= 07.07 Marquee ================= */
+  const DWELL = 1200, SPEED = 45, GAP = 40, SLACK = 2;
+  function marquee(el, readout){
+    const track = el.querySelector('.hj-marquee-track'); const first = track.firstElementChild;
+    let clone = null, raf = 0, t0 = 0, visible = false, dist = 0, scrollMs = 0, over = false, tw = 0, bw = 0;
+    function report(){
+      if (!readout) return;
+      const head = `text <b>${Math.round(tw)} px</b> in a <b>${Math.round(bw)} px</b> box → `;
+      readout.innerHTML = head + (!over ? 'fits, never moves'
+        : H.reduced() ? 'still, with an ellipsis (reduced motion)'
+        : `dwell 1.2 s + pass <b>${(scrollMs / 1000).toFixed(1)} s</b>`);
+    }
+    function measure(){
+      tw = first.getBoundingClientRect().width; bw = el.clientWidth;
+      over = tw > bw + SLACK;
+      el.classList.toggle('fits', !over);
+      if (over && !clone){ clone = first.cloneNode(true); clone.setAttribute('aria-hidden', 'true'); clone.classList.add('clone'); track.appendChild(clone); }
+      if (!over && clone){ clone.remove(); clone = null; }
+      dist = tw + GAP; scrollMs = dist / SPEED * 1000;
+      sync();
+    }
+    function frame(now){
+      const cycle = DWELL + scrollMs; const t = (now - t0) % cycle;
+      const x = t < DWELL ? 0 : -((t - DWELL) / scrollMs) * dist;
+      track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+      el.classList.toggle('moving', t >= DWELL);
+      raf = requestAnimationFrame(frame);
+    }
+    function sync(){
+      const reduced = H.reduced();
+      el.classList.toggle('static', reduced);
+      const run = over && visible && !reduced && !document.hidden;
+      if (run && !raf){ t0 = performance.now(); raf = requestAnimationFrame(frame); }
+      if (!run && raf){ cancelAnimationFrame(raf); raf = 0; track.style.transform = ''; el.classList.remove('moving'); }
+      report();
+    }
+    watch(el, () => { visible = true; sync(); }, () => { visible = false; sync(); }, true);
+    if ('ResizeObserver' in window) new ResizeObserver(measure).observe(el);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    H.on('motion', sync); document.addEventListener('visibilitychange', sync);
+    measure();
+  }
+  marquee($('#p80-mq1'), $('#p80-mq1-r'));
+  marquee($('#p80-mq2'), $('#p80-mq2-r'));
+  (function(){
+    const b = $('#p80-mq-measure'), box = $('#p80-mq');
+    b.addEventListener('click', () => { const on = !box.classList.contains('measure'); box.classList.toggle('measure', on); b.setAttribute('aria-pressed', String(on)); b.lastChild.textContent = on ? 'Hide measurement' : 'Show measurement'; });
+  })();
+
+  /* ================= 07.08 Drag list ================= */
+  (function(){
+    const list = $('#p80-queue'), live = $('#p80-queue-live');
+    const TRACKS = [
+      ['Variations on a Theme', 'Ilse Brandt', '4:12', 5],
+      ['Night Drives', 'Jun-seo Park', '3:47', 2],
+      ['Harbour Lights', 'Noor Haddad', '5:03', 4],
+      ['Salt & Cedar', 'Tomás Reyes', '2:58', 1],
+      ['Paper Moon (Live)', 'Aiko Sato', '6:21', 6],
+      ['Low Season', 'Dev Malhotra', '3:30', 3]
+    ];
+    const esc = s => s.replace(/&/g, '&amp;');
+    list.innerHTML = TRACKS.map(t => `<li class="hj-drag-row" tabindex="0" aria-roledescription="reorderable track" aria-label="${esc(t[0])}, ${t[1]}, ${t[2]}">
+      <div class="hj-drag-inner"><span class="art">${art(t[3])}</span><span class="hj-row-text"><span class="hj-row-title">${esc(t[0])}</span><span class="hj-row-sub">${t[1]}</span></span><span class="hj-row-val">${t[2]}</span><span class="hj-drag-grip" aria-hidden="true">${H.icon('grip')}</span></div></li>`).join('');
+    const ROW = 56; let st = null, pressTimer = 0;
+    const rows = () => $$(':scope > .hj-drag-row', list);
+    const name = r => r.querySelector('.hj-row-title').textContent;
+    const say = m => { live.textContent = ''; setTimeout(() => live.textContent = m, 30); };
+    function lift(row, y, viaKey){
+      const items = rows(); const from = items.indexOf(row);
+      st = { row, items, from, to:from, y0:y, viaKey };
+      row.classList.add('held'); if (viaKey) row.classList.add('keyed');
+      list.classList.add('dragging');
+      if (viaKey) say(`Lifted ${name(row)}, position ${from + 1} of ${items.length}. Arrow keys move it, Space drops it, Escape cancels.`);
+    }
+    function layout(s){
+      s.items.forEach((r, i) => {
+        if (r === s.row) return;
+        let shift = 0;
+        if (s.from < s.to && i > s.from && i <= s.to) shift = -ROW;
+        else if (s.to < s.from && i >= s.to && i < s.from) shift = ROW;
+        r.style.transform = shift ? `translateY(${shift}px)` : '';
+      });
+    }
+    function move(dy){
+      const n = st.items.length, min = -st.from * ROW, max = (n - 1 - st.from) * ROW;
+      let d = dy;
+      if (d < min) d = min - (min - d) / 3;      // overdrag resistance 3
+      if (d > max) d = max + (d - max) / 3;
+      st.row.style.transform = `translateY(${d.toFixed(1)}px)`;
+      const to = clamp(Math.round(st.from + d / ROW), 0, n - 1);
+      if (to !== st.to){ st.to = to; layout(st); }
+    }
+    function drop(cancel){
+      if (!st) return; const s = st; st = null;
+      if (cancel) s.to = s.from;
+      layout(s);
+      const row = s.row;
+      row.classList.remove('keyed', 'held'); row.classList.add('settling');
+      row.style.transition = 'transform var(--dur-gentle-settle) var(--ease-gentle-settle)';
+      row.style.transform = s.to === s.from ? 'translateY(0px)' : `translateY(${(s.to - s.from) * ROW}px)`;
+      setTimeout(() => {
+        const others = s.items.filter(r => r !== row);
+        list.insertBefore(row, others[s.to] || null);
+        rows().forEach(r => { r.style.transition = 'none'; r.style.transform = ''; });
+        void list.offsetHeight;
+        rows().forEach(r => { r.style.transition = ''; });
+        row.classList.remove('settling'); list.classList.remove('dragging');
+        if (s.viaKey) row.focus({ preventScroll:true });
+        if (cancel) say(`${name(row)} put back at position ${s.from + 1}.`);
+        else if (s.to !== s.from) say(`Moved ${name(row)} to position ${s.to + 1} of ${s.items.length}.`);
+      }, cssMs('--dur-gentle-settle') + 30);
+    }
+    list.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || st || list.classList.contains('dragging')) return;
+      const row = e.target.closest('.hj-drag-row'); if (!row) return;
+      const y = e.clientY, pid = e.pointerId;
+      const begin = () => { lift(row, y, false); try{ row.setPointerCapture(pid); }catch(_){} };
+      if (e.target.closest('.hj-drag-grip')){ e.preventDefault(); begin(); }
+      else pressTimer = setTimeout(begin, 220);
+      const mv = ev => { if (st && !st.viaKey) move(ev.clientY - st.y0); else if (Math.abs(ev.clientY - y) > 6) clearTimeout(pressTimer); };
+      const up = () => { clearTimeout(pressTimer); removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); if (st && !st.viaKey) drop(false); };
+      addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+    });
+    list.addEventListener('contextmenu', e => { if (st) e.preventDefault(); });
+    list.addEventListener('keydown', e => {
+      const row = e.target.closest('.hj-drag-row'); if (!row) return;
+      if (!st){
+        if (e.key === ' ' || e.key === 'Enter'){ if (list.classList.contains('dragging')) return; e.preventDefault(); lift(row, 0, true); }
+        else if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const it = rows(); const n = it[it.indexOf(row) + (e.key === 'ArrowDown' ? 1 : -1)]; if (n) n.focus(); }
+        return;
+      }
+      if (!st.viaKey) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+        e.preventDefault();
+        const n = st.items.length, to = clamp(st.to + (e.key === 'ArrowDown' ? 1 : -1), 0, n - 1);
+        if (to !== st.to){ st.to = to; st.row.style.transform = `translateY(${(to - st.from) * ROW}px)`; layout(st); say(`${name(st.row)}, position ${to + 1} of ${n}.`); }
+      }
+      else if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); drop(false); }
+      else if (e.key === 'Escape'){ e.preventDefault(); drop(true); }
+      else if (e.key === 'Tab'){ drop(true); }
+    });
+  })();
+
+  /* ================= 07.09 Cascade ================= */
+  (function(){
+    const list = $('#p80-casc-list'), gantt = $('#p80-gantt'), note = $('#p80-g-note');
+    const ITEMS = [
+      ['Harbour Lights', 'Noor Haddad · 2 min ago', 4], ['Night Drives', 'Jun-seo Park · 14 min ago', 2],
+      ['Salt & Cedar', 'Tomás Reyes · 38 min ago', 1], ['Low Season', 'Dev Malhotra · 1 h ago', 3],
+      ['Paper Moon (Live)', 'Aiko Sato · 3 h ago', 6], ['Variations on a Theme', 'Ilse Brandt · yesterday', 5]
+    ];
+    list.innerHTML = ITEMS.map(t => `<li><div class="hj-row hj-press row-press" tabindex="0"><span class="hj-row-lead">${art(t[2])}</span><span class="hj-row-text"><span class="hj-row-title">${t[0].replace(/&/g, '&amp;')}</span><span class="hj-row-sub">${t[1]}</span></span><span class="hj-row-trail">${H.icon('more', 's18')}</span></div></li>`).join('');
+    Array.from(list.children).forEach((ch, i) => ch.style.setProperty('--i', i));
+    const AXIS = 560; // ms shown
+    const IDX = [0,1,2,3,4,5,6,7,8,9,10,11,'…',40];
+    function draw(){
+      const reduced = H.reduced();
+      const step = reduced ? 0 : 24, dur = reduced ? 180 : 260;
+      const pct = ms => (ms / AXIS * 100).toFixed(2) + '%';
+      let html = '';
+      IDX.forEach(i => {
+        if (i === '…'){ html += `<div class="p80-g-row gap"><span class="lab">···</span><span class="p80-g-trk"></span></div>`; return; }
+        const start = Math.min(i, 10) * step;
+        const cap = !reduced && i >= 10;
+        html += `<div class="p80-g-row${cap ? ' cap' : ''}"><span class="lab">#${i}</span><span class="p80-g-trk"><span class="p80-g-bar" style="left:${pct(start)};width:${pct(dur)}"></span></span></div>`;
+      });
+      html += `<div class="p80-g-axis"><span></span><div class="p80-g-ticks">${[0,100,200,300,400,500].map(t => `<span style="left:${pct(t)}">${t}</span>`).join('')}</div></div>`;
+      html += reduced ? '' : `<span class="p80-g-capline" style="left:calc(44px + (100% - 44px) * ${(240 / AXIS).toFixed(4)})"></span>`;
+      html += `<span class="p80-g-head" id="p80-g-head"></span>`;
+      gantt.innerHTML = html;
+      note.innerHTML = reduced
+        ? '<b>Reduced motion:</b> no step and no rise. Every row fades in together, in 180 ms.'
+        : '<b>#40 starts with #10, at 240 ms.</b> Past the cap the entrance stops growing, so the whole list has landed by 500 ms however long it is.';
+    }
+    let sweepT = 0;
+    function sweep(){
+      const head = $('#p80-g-head'); if (!head) return;
+      const total = H.reduced() ? 180 : 500;          // last row starts at 240 and fades for 260
+      const w = gantt.clientWidth - 44;
+      head.style.transition = 'none'; head.style.opacity = 1; head.style.transform = 'translateX(0px)';
+      void head.offsetWidth;
+      head.style.transition = `transform ${total}ms linear`;
+      head.style.transform = `translateX(${(w * total / AXIS).toFixed(1)}px)`;
+      clearTimeout(sweepT); sweepT = setTimeout(() => { head.style.transition = 'opacity 200ms var(--ease-out)'; head.style.opacity = 0; }, total + 500);
+    }
+    function replay(){ H.replay(list); sweep(); }
+    draw(); H.on('motion', draw);
+    $('#p80-casc-replay').addEventListener('click', replay);
+    watch(gantt, () => setTimeout(sweep, 60));
+  })();
+
+  /* ================= 07.10 Morph stage ================= */
+  (function(){
+    const phone = $('#p80-phone'), mini = $('#p80-mini'), miniArt = $('#p80-mini-art'), full = $('#p80-full'), fullArt = $('#p80-full-art'), scrim = $('#p80-scrim');
+    const fcs = $$('.p80-fc', full), mfs = $$('.p80-mf', mini);
+    const openBtn = $('#p80-mini-open');
+    const pv = $('#p80-pv'), ph = $('#p80-ph'), marks = $$('.p80-ph-trk b', ph);
+    $$('[data-art]', sec).forEach(el => { if (!el.firstChild) el.innerHTML = art(+el.dataset.art); });
+    let geo = null, target = 0, drag = null;
+    const travel = () => H.reduced() ? 0 : 1;
+    function measure(){
+      const pr = phone.getBoundingClientRect();
+      const rel = r => ({ x:r.left - pr.left, y:r.top - pr.top, w:r.width, h:r.height });
+      const prev = fullArt.style.transform; fullArt.style.transform = 'none';
+      const dst = rel(fullArt.getBoundingClientRect()); fullArt.style.transform = prev;
+      geo = { pw:pr.width, ph:pr.height, bar:rel(mini.getBoundingClientRect()), src:rel(miniArt.getBoundingClientRect()), dst };
+    }
+    function paint(p){
+      const P = clamp(p);
+      pv.textContent = P.toFixed(2);
+      const tw = marks[0].parentNode.clientWidth;
+      marks.forEach(m => m.style.transform = `translateX(${(P * tw).toFixed(1)}px)`);
+      const live = p > .001;
+      full.classList.toggle('live', live); full.setAttribute('aria-hidden', String(!live));
+      mini.classList.toggle('morphing', live);
+      miniArt.style.opacity = live ? 0 : 1;
+      const src = clamp(p / .22);
+      mfs.forEach(el => el.style.opacity = (1 - src).toFixed(3));
+      mini.style.visibility = src >= 1 ? 'hidden' : 'visible';
+      scrim.style.opacity = (clamp(p / .55) * .4).toFixed(3);
+      if (!geo) return;
+      if (H.reduced()){
+        full.style.clipPath = 'inset(0px round 28px)'; full.style.opacity = P.toFixed(3);
+        fullArt.style.transform = 'none'; fullArt.style.borderRadius = '16px';
+        fcs.forEach(el => { el.style.opacity = 1; el.style.transform = 'none'; });
+        return;
+      }
+      full.style.opacity = 1;
+      const b = geo.bar;
+      const top = lerp(b.y, 0, P), left = lerp(b.x, 0, P), right = lerp(geo.pw - (b.x + b.w), 0, P), bottom = lerp(geo.ph - (b.y + b.h), 0, P);
+      full.style.clipPath = `inset(${top.toFixed(1)}px ${right.toFixed(1)}px ${bottom.toFixed(1)}px ${left.toFixed(1)}px round ${lerp(16, 28, P).toFixed(1)}px)`;
+      const s = lerp(geo.src.w / geo.dst.w, 1, P);
+      const tx = lerp(geo.src.x - geo.dst.x, 0, P), ty = lerp(geo.src.y - geo.dst.y, 0, P);
+      fullArt.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${s.toFixed(4)})`;
+      fullArt.style.borderRadius = (lerp(8, 16, P) / s).toFixed(2) + 'px';
+      const c = clamp((p - .35) / (.88 - .35));
+      fcs.forEach(el => { el.style.opacity = c.toFixed(3); el.style.transform = `translateY(${((1 - c) * 28 * travel()).toFixed(2)}px)`; });
+    }
+    const sp = H.spring(0, { spring:'gentle', clamp:true, onUpdate:v => paint(v), onRest:v => rested(v) });
+    function rested(v){
+      if (v <= .001){ mini.style.visibility = 'visible'; if (full.contains(document.activeElement)) openBtn.focus({ preventScroll:true }); }
+      else if (v >= .999 && document.activeElement === openBtn) $('#p80-close').focus({ preventScroll:true });
+    }
+    function go(to, velocity){
+      if (to === 1 && sp.x <= .001) measure();
+      target = to;
+      // latch check (PRINCIPLES §6): skip only when the visual already agrees within .02
+      if (Math.abs(sp.x - to) < .02 && !sp.raf && velocity === undefined){ sp.set(to); return; }
+      sp.to(to, velocity === undefined ? {} : { velocity });
+    }
+    openBtn.addEventListener('click', () => go(target === 1 ? 0 : 1));
+    $('#p80-close').addEventListener('click', e => { e.stopPropagation(); go(0); });
+    full.addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); go(0); } });
+    /* play / pause stays in sync across both surfaces */
+    let playing = true;
+    $$('.p80-pp', phone).forEach(b => b.addEventListener('click', e => {
+      e.stopPropagation(); playing = !playing;
+      $$('.p80-pp', phone).forEach(x => { x.setAttribute('aria-label', playing ? 'Pause' : 'Play'); x.querySelector('use').setAttribute('href', playing ? '#i-pause-f' : '#i-play-f'); });
+    }));
+    /* drag to dismiss; a tap mid-flight turns it around */
+    full.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || e.target.closest('button')) return;
+      if (sp.raf){ go(target === 1 ? 0 : 1); return; }
+      if (target !== 1) return;
+      sp.stop();
+      drag = { y:e.clientY, p0:sp.x, last:[{ t:performance.now(), p:sp.x }] };
+      try{ full.setPointerCapture(e.pointerId); }catch(_){}
+      full.style.cursor = 'grabbing';
+    });
+    full.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const p = clamp(drag.p0 - (e.clientY - drag.y) / 480);
+      sp.x = p; sp.target = p; paint(p);
+      drag.last.push({ t:performance.now(), p }); if (drag.last.length > 5) drag.last.shift();
+    });
+    const end = () => {
+      if (!drag) return;
+      const a = drag.last[0], b = drag.last[drag.last.length - 1];
+      const v = b.t > a.t ? (b.p - a.p) / ((b.t - a.t) / 1000) : 0;
+      const moved = Math.abs(sp.x - drag.p0) > .01;
+      drag = null; full.style.cursor = '';
+      if (!moved){ return; }
+      const projected = sp.x + v * .12;
+      go(projected > .5 ? 1 : 0, v);
+    };
+    full.addEventListener('pointerup', end); full.addEventListener('pointercancel', end);
+    H.on('motion', () => paint(sp.x));
+    paint(0);
+  })();
+
+  /* any remaining art slots */
+  $$('[data-art]', sec).forEach(el => { if (!el.firstChild) el.innerHTML = art(+el.dataset.art); });
+})();
+</script>

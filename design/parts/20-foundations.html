@@ -1,0 +1,552 @@
+<!-- ======================================================================
+     01 · FOUNDATIONS — paper, ink, status, data, type, space, radius,
+     depth, voice. Values are computed live by the ported arithmetic.
+     ====================================================================== -->
+<style>
+/* paper ladders */
+.p20-papers{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px; width:100% }
+.p20-sheet{ position:relative; border-radius:var(--r-lg); background:var(--bg); color:var(--fg); padding:22px 20px 18px; text-align:left; box-shadow:inset 0 0 0 1px var(--line); cursor:pointer;
+  transition:transform var(--dur-snappy) var(--ease-snappy), box-shadow var(--dur-base) var(--ease-out) }
+.p20-sheet:active{ transform:scale(var(--press)); transition-duration:70ms }
+.p20-sheet.on{ box-shadow:inset 0 0 0 1px var(--line), 0 0 0 1.5px var(--accent) }
+.p20-sheet.on::after{ content:"In use"; position:absolute; top:24px; right:20px; font:600 9.5px/1 var(--font); letter-spacing:1.4px; text-transform:uppercase; color:var(--accent) }
+.p20-sheet.on h4 span{ display:none }
+.p20-sheet h4{ margin:0; font-weight:600; font-size:22px; letter-spacing:-.025em; display:flex; justify-content:space-between; align-items:baseline }
+.p20-sheet h4 span{ font:500 11px/1 var(--mono); color:var(--fg-mute); letter-spacing:0 }
+.p20-sheet .why{ margin:4px 0 16px; font-size:12.5px; color:var(--fg-mute) }
+.p20-ladder{ border-radius:var(--r-sm); overflow:hidden; box-shadow:inset 0 0 0 1px var(--line) }
+.p20-step{ height:38px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; font-size:12px; font-weight:500 }
+.p20-step + .p20-step{ border-top:1px solid var(--line) }
+.p20-step code{ font:400 11px/1 var(--mono); color:var(--fg-mute) }
+.p20-inks{ margin-top:14px }
+.p20-ink{ display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid var(--line) }
+.p20-ink .aa{ font-weight:600; font-size:22px; letter-spacing:-.03em; line-height:1 }
+.p20-ink .nm{ font-size:12px; font-weight:500 } .p20-ink .nm small{ display:block; font:400 10.5px/1.4 var(--mono); color:var(--fg-mute) }
+.p20-ink .ratio{ font:500 11.5px/1 var(--mono); display:flex; align-items:center; gap:6px; color:var(--fg-dim) }
+.p20-ink .ratio i{ font-style:normal; font-size:9.5px; letter-spacing:.8px; text-transform:uppercase; font-family:var(--font); font-weight:600; padding:3px 5px 2px; border-radius:4px; background:rgba(var(--fg-rgb),.06); color:var(--fg-dim) }
+.p20-tail{ display:flex; gap:8px; margin-top:14px; align-items:center }
+.p20-tail .chip{ height:26px; padding:0 10px; border-radius:var(--r-pill); display:inline-flex; align-items:center; font-size:11.5px; font-weight:600 }
+.p20-tail .a{ background:var(--accent); color:var(--on-accent) }
+.p20-tail .as{ background:var(--accent-soft); color:var(--accent) }
+.p20-tail .d{ background:var(--danger-soft); color:var(--danger) }
+.p20-tail .mono{ margin-left:auto; font:400 10.5px/1 var(--mono); color:var(--fg-mute) }
+.p20-note{ margin-top:18px; padding:12px 14px; border-left:2px solid var(--accent); font-size:12.5px; line-height:1.55; color:var(--fg-dim); background:rgba(var(--fg-rgb),.03); border-radius:0 var(--r-xs) var(--r-xs) 0 }
+.p20-note b{ color:var(--fg); font-weight:600 }
+
+/* accents */
+.p20-ramps{ display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:6px; width:100% }
+.p20-ramp{ display:flex; flex-direction:column; gap:7px; align-items:stretch; text-align:left; border-radius:var(--r-sm); padding:4px; transition:background-color var(--dur-fast) var(--ease-out) }
+.p20-ramp:hover{ background:rgba(var(--fg-rgb),.04) }
+.p20-ramp .pair{ height:86px; border-radius:var(--r-xs); overflow:hidden; display:grid; grid-template-rows:1fr 1fr; box-shadow:inset 0 0 0 1px var(--line); transition:transform var(--dur-snappy) var(--ease-snappy) }
+.p20-ramp:active .pair{ transform:scale(.95); transition-duration:70ms }
+.p20-ramp .pair i{ display:block }
+.p20-ramp .nm{ font-size:12px; font-weight:600; padding-left:2px; display:flex; align-items:center; gap:5px }
+.p20-ramp .hx{ font:400 10px/1.45 var(--mono); color:var(--fg-mute); padding-left:2px }
+.p20-ramp[aria-checked="true"] .pair{ box-shadow:0 0 0 2px var(--bg-soft), 0 0 0 3.5px var(--fg) }
+.p20-derive{ display:grid; grid-template-columns:1.1fr 1fr; gap:40px; width:100%; margin-top:30px; padding-top:26px; border-top:1px solid var(--line) }
+.p20-trio{ display:flex; gap:10px }
+.p20-trio > div{ flex:1; border-radius:var(--r-sm); height:96px; padding:12px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:inset 0 0 0 1px var(--line) }
+.p20-trio b{ font-weight:600; font-size:13px } .p20-trio code{ font:400 11px/1.3 var(--mono); opacity:.8 }
+.p20-formula{ margin-top:12px; font:400 11.5px/1.75 var(--mono); color:var(--fg-dim) }
+.p20-formula em{ font-style:normal; color:var(--fg) }
+.p20-spent{ display:grid; grid-template-columns:1fr 1fr; gap:14px 20px; align-content:start }
+.p20-spent > div{ display:flex; align-items:center; gap:12px; min-height:36px; font-size:12.5px; color:var(--fg-dim) }
+.p20-spent .spec-slider{ width:90px; height:4px; border-radius:4px; background:rgba(var(--accent-rgb),.24); position:relative }
+.p20-spent .spec-slider::before{ content:""; position:absolute; inset:0 40% 0 0; background:var(--accent); border-radius:4px }
+.p20-spent .spec-slider::after{ content:""; position:absolute; left:60%; top:-4px; width:12px; height:12px; margin-left:-6px; border-radius:50%; background:var(--accent) }
+.p20-spent .focus{ height:30px; padding:0 12px; border-radius:var(--r-pill); display:inline-flex; align-items:center; font-weight:600; font-size:12px; background:var(--surface); box-shadow:0 0 0 2px var(--bg-soft), 0 0 0 4px var(--accent) }
+.p20-spent .tabi{ color:var(--accent); display:flex; flex-direction:column; align-items:center; font-size:10px; font-weight:600; gap:2px }
+.p20-spent .chipsel{ height:28px; padding:0 12px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:5px; background:var(--accent-soft); color:var(--accent); font-size:12px; font-weight:600 }
+
+/* status */
+.p20-status{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start }
+.p20-roles{ border-top:1px solid var(--line) }
+.p20-role{ display:grid; grid-template-columns:168px 1fr; gap:14px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line) }
+.p20-pill{ height:28px; padding:0 11px 0 8px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; white-space:nowrap }
+.p20-role .src{ font:400 11px/1.4 var(--mono); color:var(--fg-mute) }
+.p20-role .src b{ color:var(--fg-dim); font-weight:500 }
+.p20-rule{ border-radius:var(--r-md); padding:20px; background:var(--bg); box-shadow:inset 0 0 0 1px var(--line) }
+.p20-rule h5{ margin:0 0 6px; font-size:14px; font-weight:600; letter-spacing:-.01em }
+.p20-rule p{ margin:0 0 16px; font-size:12.5px; line-height:1.55; color:var(--fg-dim) }
+.p20-rule .row{ gap:10px }
+.p20-flag{ margin-top:14px; font-size:11.5px; display:flex; gap:8px; align-items:center; color:var(--fg-mute) }
+
+/* data palette */
+.p20-data{ width:100%; display:grid; grid-template-columns:260px 1fr; gap:40px; align-items:start }
+.p20-hues{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
+.p20-hue{ display:flex; flex-direction:column; gap:6px }
+.p20-hue i{ height:44px; border-radius:var(--r-xs); display:block }
+.p20-hue span{ font-size:11.5px; font-weight:600 } .p20-hue code{ font:400 10px/1 var(--mono); color:var(--fg-mute) }
+.p20-chart h5{ margin:0 0 2px; font-size:10px; font-weight:600; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.p20-chart .big{ font-weight:700; font-size:34px; letter-spacing:-.03em; line-height:1.1; font-variant-numeric:tabular-nums }
+.p20-chart .big small{ font-size:16px; color:var(--fg-mute); font-weight:600; margin-left:3px }
+.p20-chart .of{ font-size:12.5px; color:var(--fg-mute); margin:2px 0 16px }
+.p20-seg{ display:flex; gap:2px; height:10px; border-radius:var(--r-pill); overflow:hidden }
+.p20-seg i{ display:block; height:100%; transform-origin:left center; transform:scaleX(0); transition:transform var(--dur-gentle-settle) var(--ease-gentle-settle); transition-delay:calc(var(--i) * var(--stagger) * 2) }
+.p20-seg.in i{ transform:scaleX(1) }
+html.static .p20-seg i{ transform:none }
+.p20-seg i.free{ background:repeating-linear-gradient(135deg, rgba(var(--fg-rgb),.14) 0 2px, transparent 2px 6px) }
+.p20-legend{ margin-top:14px; border-top:1px solid var(--line) }
+.p20-legend div{ display:grid; grid-template-columns:12px 1fr auto 52px; gap:10px; align-items:center; padding:7px 0; border-bottom:1px solid var(--line); font-size:13px }
+.p20-legend i{ width:8px; height:8px; border-radius:50% }
+.p20-legend b{ font-weight:500; font-variant-numeric:tabular-nums } .p20-legend span{ font:400 11.5px/1 var(--mono); color:var(--fg-mute); text-align:right }
+
+/* type */
+.p20-type{ width:100%; display:grid; grid-template-columns:300px 1fr; gap:40px; align-items:start }
+.p20-aa{ font-weight:700; font-size:168px; line-height:.86; letter-spacing:-.06em }
+.p20-fam{ margin-top:18px; border-top:1px solid var(--line) }
+.p20-fam div{ padding:10px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:baseline; font-size:13px }
+.p20-fam div span{ font:400 11px/1 var(--mono); color:var(--fg-mute) }
+.p20-weights{ display:flex; gap:14px; margin-top:12px; font-size:26px; letter-spacing:-.02em }
+.p20-roles-t{ border-top:1px solid var(--line) }
+.p20-tr{ display:grid; grid-template-columns:92px minmax(0,1fr) 170px; gap:16px; align-items:baseline; padding:14px 0; border-bottom:1px solid var(--line) }
+.p20-tr .r{ font:500 11px/1 var(--mono); color:var(--fg-mute) }
+.p20-tr .m{ font:400 11px/1.5 var(--mono); color:var(--fg-mute); text-align:right }
+.p20-tr .s{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p20-tr.prop{ background:linear-gradient(90deg, rgba(var(--accent-rgb),.06), transparent 70%) }
+.p20-hero{ font-weight:700; font-size:44px; line-height:46px; letter-spacing:-1.2px; font-variant-numeric:tabular-nums }
+.p20-hero small{ font-size:22px; color:var(--fg-mute); letter-spacing:-.3px }
+
+/* space */
+.p20-space{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start }
+.p20-ruler div{ display:grid; grid-template-columns:44px 46px 1fr; gap:12px; align-items:center; height:28px; border-bottom:1px solid var(--line); font:400 11.5px/1 var(--mono); color:var(--fg-mute) }
+.p20-ruler div b{ color:var(--fg); font-weight:500 }
+.p20-ruler i{ display:block; height:10px; background:var(--accent); border-radius:2px; width:calc(var(--v) * 4px * var(--d)); transition:width var(--dur-gentle-settle) var(--ease-gentle-settle) }
+.p20-metrics{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:20px }
+.p20-metric{ display:flex; flex-direction:column; gap:8px; font-size:11.5px; color:var(--fg-mute) }
+.p20-metric b{ font:500 13px/1 var(--mono); color:var(--fg) }
+.p20-touch{ width:44px; height:44px; border:1px dashed var(--accent); border-radius:10px; display:grid; place-items:center; color:var(--fg) }
+.p20-dens{ display:grid; grid-template-columns:1fr 1fr; gap:16px }
+.p20-dens > div{ border-radius:var(--r-md); background:var(--bg); padding:0 var(--s4); box-shadow:inset 0 0 0 1px var(--line) }
+.p20-dens h6{ margin:0; padding:var(--s3) 0 var(--s2); font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); font-weight:600 }
+.p20-row{ display:flex; align-items:center; gap:var(--s3); padding:var(--s3) 0; border-top:1px solid var(--line) }
+.p20-row .art{ width:40px; height:40px; border-radius:var(--r-xs); flex:none }
+.p20-row b{ display:block; font-weight:500; font-size:14px } .p20-row span{ font-size:12px; color:var(--fg-mute) }
+
+/* radius */
+.p20-radii{ display:grid; grid-template-columns:repeat(6,1fr); gap:18px; width:100% }
+.p20-rad{ display:flex; flex-direction:column; gap:10px }
+.p20-rad i{ display:block; aspect-ratio:1; background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line); position:relative }
+.p20-rad i::after{ content:""; position:absolute; top:0; left:0; width:var(--rv); height:var(--rv); max-width:50%; max-height:50%; border-top:1.5px solid var(--accent); border-left:1.5px solid var(--accent); border-top-left-radius:inherit; opacity:.9 }
+.p20-rad b{ font-size:13px; font-weight:600 } .p20-rad code{ font:400 11px/1 var(--mono); color:var(--fg-mute) } .p20-rad span{ font-size:11.5px; color:var(--fg-mute); line-height:1.4 }
+
+/* depth */
+.p20-depth{ width:100%; display:grid; grid-template-columns:1.25fr 1fr; gap:40px; align-items:center }
+.p20-deck{ position:relative; height:300px }
+.p20-layer{ position:absolute; width:300px; height:190px; border-radius:var(--r-lg); box-shadow:inset 0 0 0 1px var(--line); padding:14px 16px; display:flex; flex-direction:column; justify-content:space-between;
+  transform:translate(calc(var(--k) * 44px), calc(var(--k) * 30px)); transition:transform var(--dur-gentle-settle) var(--ease-gentle-settle) }
+.p20-deck:hover .p20-layer{ transform:translate(calc(var(--k) * 54px), calc(var(--k) * 36px)) }
+.p20-layer b{ font-size:13px; font-weight:600 } .p20-layer code{ font:400 11px/1 var(--mono); color:var(--fg-mute) }
+.p20-exc{ display:flex; flex-direction:column; gap:22px }
+.p20-exc > div{ display:grid; grid-template-columns:96px 1fr; gap:18px; align-items:center }
+.p20-exc h6{ margin:0 0 4px; font-size:13px; font-weight:600 } .p20-exc p{ margin:0; font-size:12.5px; line-height:1.5; color:var(--fg-dim) }
+.p20-art{ width:88px; height:88px; border-radius:var(--r-sm); background:linear-gradient(150deg, var(--data-1), var(--data-4) 60%, var(--data-2)); box-shadow:0 12px 24px rgba(0,0,0,.45) }
+.p20-lift{ width:96px; padding:5px; border-radius:var(--r-sm); background:var(--surface-2); border:1px solid var(--line); box-shadow:0 18px 40px -16px rgba(0,0,0,.28) }
+.p20-lift i{ display:block; height:8px; border-radius:4px; background:rgba(var(--fg-rgb),.1); margin:6px 5px } .p20-lift i:nth-child(2){ width:60% }
+.p20-scrim{ width:88px; height:88px; border-radius:var(--r-sm); background:linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), linear-gradient(150deg, var(--data-3), var(--data-6)); display:grid; place-items:end start; padding:10px; color:var(--on-scrim); font-size:11px; font-weight:600 }
+
+/* voice */
+.p20-voice{ width:100%; border-top:1px solid var(--line) }
+.p20-vr{ display:grid; grid-template-columns:150px 1fr 1fr; gap:24px; padding:14px 0; border-bottom:1px solid var(--line); align-items:baseline }
+.p20-vr .k{ font-size:12px; font-weight:600; color:var(--fg-dim) }
+.p20-vr .do, .p20-vr .dont{ font-size:14px; line-height:1.45; display:flex; gap:8px }
+.p20-vr .do::before{ content:"Write"; flex:none; font:600 9.5px/1.9 var(--font); letter-spacing:1.2px; text-transform:uppercase; color:var(--success) }
+.p20-vr .dont{ color:var(--fg-mute); text-decoration:line-through; text-decoration-color:rgba(var(--fg-rgb),.3) }
+.p20-vr .dont::before{ content:"Not"; flex:none; font:600 9.5px/1.9 var(--font); letter-spacing:1.2px; text-transform:uppercase; color:var(--fg-mute); text-decoration:none; display:inline-block }
+
+@media (max-width: 1300px){ .p20-ramps{ grid-template-columns:repeat(6,1fr) } .p20-papers, .p20-status, .p20-data, .p20-type, .p20-space, .p20-depth, .p20-derive{ grid-template-columns:1fr } .p20-radii{ grid-template-columns:repeat(3,1fr) } }
+</style>
+
+<section class="chapter" id="foundations" data-num="01" data-title="Foundations">
+  <header class="chapter-head">
+    <div class="chapter-line"><h2 class="chapter-title">Foundations</h2><span class="chapter-rule"></span><span class="chapter-num">01</span></div>
+    <div class="chapter-body">
+      <p class="chapter-lede">A component names a token; it never names a value. Three papers, twelve inks and one set of springs are the whole contract an app has to satisfy. <b>Depth comes from paper steps and hairlines, not shadows</b> — they cost nothing to draw and survive both a white page and a true-black one.</p>
+      <ol class="chapter-index" data-auto></ol>
+    </div>
+  </header>
+
+  <!-- 01.01 PAPER -->
+  <article class="entry entry--wide" id="paper">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">01.01</div>
+        <h3 class="entry-title">Paper</h3>
+        <p class="entry-desc">Three grounds, each with four surface steps and three inks. Steps move toward the light: on paper they whiten, on ink and charcoal they lift off black. <b>Tap a sheet to use it.</b></p>
+      </div>
+      <dl class="spec">
+        <div><dt>Steps</dt><dd>bg → <b>bgSoft</b> → <b>surface</b> → <b>surface2</b></dd></div>
+        <div><dt>Paper</dt><dd>blend(#f0ece3, white, .45 / .75 / 1)</dd></div>
+        <div><dt>Ink</dt><dd>blend(#000, white, .03 / .05 / .08)</dd></div>
+        <div><dt>Charcoal</dt><dd>blend(#111114, white, .04 / .07 / .11)</dd></div>
+        <div><dt>Floors</dt><dd>body ink <b>4.5 : 1</b> · muted ink <b>3 : 1</b></dd></div>
+        <div><dt>Scrim</dt><dd>black on every paper · onScrim #f4f2ef</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p20-papers" id="p20-papers"></div>
+      <div class="p20-note"><b>The linter's first real catch was hanji's own paper.</b> Muted ink at a .42 blend measured 2.67 : 1 against its own 3 : 1 floor. It ships at .50 — 3.30 : 1, still clearly quiet. The ratios above are measured live.</div>
+      <div class="plate-cap"><span class="live">Live</span><span>Contrast measured against each sheet's ground</span></div>
+    </div>
+  </article>
+
+  <!-- 01.02 ACCENT -->
+  <article class="entry entry--wide" id="accent">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">01.02</div>
+        <h3 class="entry-title">Accent</h3>
+        <p class="entry-desc">Twelve ramps, each a pair: a lighter stop for dark papers and a deeper one for light paper. An accent never arrives carrying ink chosen for another colour — its partners are derived. <b>One accent per app, spent only where the user acts or has chosen.</b></p>
+      </div>
+      <dl class="spec">
+        <div><dt>Ramp</dt><dd>{ dark, light } — picked by the paper</dd></div>
+        <div><dt>onAccent</dt><dd>luminance &gt; .55 ? <b>#0b0a09</b> : <b>#ffffff</b></dd></div>
+        <div><dt>accentSoft</dt><dd>blend(bg, accent, <b>.14</b>)</dd></div>
+        <div><dt>Override</dt><dd>moving accent or bg re-derives both</dd></div>
+        <div><dt>Default</dt><dd>iris in the library · scarlet on this page</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p20-ramps" id="p20-ramps" role="radiogroup" aria-label="Accent"></div>
+      <div class="p20-derive">
+        <div>
+          <div class="p20-trio" id="p20-trio"></div>
+          <div class="p20-formula" id="p20-formula"></div>
+        </div>
+        <div class="p20-spent" aria-label="Where the accent is spent">
+          <div><span class="hj-btn sm" aria-hidden="true">Save</span>Primary action</div>
+          <div><span class="hj-toggle" aria-checked="true" aria-hidden="true"></span>A setting that is on</div>
+          <div><span class="chipsel">${check} Lossless</span>A choice the user made</div>
+          <div><span class="spec-slider"></span>A value being set</div>
+          <div><span class="tabi">${home}Home</span>Where you are</div>
+          <div><span class="focus">Focused</span>Keyboard focus</div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap a ramp to re-ink the page</span></div>
+    </div>
+  </article>
+
+  <!-- 01.03 STATUS -->
+  <article class="entry" id="status-colours">
+    <div class="entry-meta">
+      <div class="entry-num">01.03</div>
+      <h3 class="entry-title">Status colours <span class="tag-new tag-prop">Proposed</span></h3>
+      <p class="entry-desc">hanji ships one semantic hue, <b>danger</b>, and paints success with the accent. With a red accent that reads as an error, so this system adds success, warning and info — <b>with no new hues</b>: each borrows a ramp hanji already ships.</p>
+      <dl class="spec">
+        <div><dt>danger</dt><dd>hanji · #c4321f / #ff6b5e</dd></div>
+        <div><dt>success</dt><dd>moss ramp · #237a46 / #6fcf97</dd></div>
+        <div><dt>warning</dt><dd>amber ramp · #9a6b00 / #f5c044</dd></div>
+        <div><dt>info</dt><dd>azure ramp · #0a6e93 / #62c4e8</dd></div>
+        <div><dt>Soft</dt><dd>blend(bg, hue, .14) · warning .16</dd></div>
+        <div><dt>Rule</dt><dd>word + glyph + tint, never hue alone</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p20-status">
+        <div class="p20-roles">
+          <div class="p20-role"><span class="p20-pill" style="background:var(--danger-soft);color:var(--danger)">${xc} Couldn't sync</span><span class="src"><b>danger</b> · hanji<br><span data-hex="danger"></span></span></div>
+          <div class="p20-role"><span class="p20-pill" style="background:var(--success-soft);color:var(--success)">${cc} Saved offline</span><span class="src"><b>success</b> · from moss<br><span data-hex="success"></span></span></div>
+          <div class="p20-role"><span class="p20-pill" style="background:var(--warning-soft);color:var(--warning)">${al} Storage 92% full</span><span class="src"><b>warning</b> · from amber<br><span data-hex="warning"></span></span></div>
+          <div class="p20-role"><span class="p20-pill" style="background:var(--info-soft);color:var(--info)">${inf} Update ready</span><span class="src"><b>info</b> · from azure<br><span data-hex="info"></span></span></div>
+        </div>
+        <div class="p20-rule">
+          <h5>When the accent is red, form keeps it apart from danger</h5>
+          <p>The accent is always a solid fill. Danger is only ever a tint with a glyph and a verb — never a solid red button — so “Save” and “Delete” can't be confused even in scarlet.</p>
+          <div class="row"><button class="hj-btn sm" type="button">Save changes</button><button class="hj-btn sm danger" type="button">${trash}Delete playlist</button></div>
+          <div class="p20-flag" id="p20-flag"></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Try ember or rose</span></div>
+    </div>
+  </article>
+
+  <!-- 01.04 DATA -->
+  <article class="entry" id="data-palette">
+    <div class="entry-meta">
+      <div class="entry-num">01.04</div>
+      <h3 class="entry-title">Data colours <span class="tag-new tag-prop">Proposed</span></h3>
+      <p class="entry-desc">Six series hues for charts and part-to-whole bars, again taken from hanji's ramps and ordered so neighbours never share a family. <b>The accent marks the one series that matters; three hues is the most a chart should need.</b></p>
+      <dl class="spec">
+        <div><dt>Order</dt><dd>cobalt · ember · moss · violet · amber · teal</dd></div>
+        <div><dt>Remainder</dt><dd>hatched fg@14%, never a seventh hue</dd></div>
+        <div><dt>Segments</dt><dd>10 tall · pill · 2px gaps</dd></div>
+        <div><dt>Entrance</dt><dd>scaleX from the left · gentle, settled</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p20-data">
+        <div class="p20-hues" id="p20-hues"></div>
+        <div class="p20-chart">
+          <h5>On this device</h5>
+          <div class="big"><span>48.6</span><small>GB</small></div>
+          <div class="of">of 64 GB · 15.4 GB free</div>
+          <div class="p20-seg" id="p20-seg"><i style="--i:0;flex:22.4;background:var(--data-1)"></i><i style="--i:1;flex:11.9;background:var(--data-2)"></i><i style="--i:2;flex:8.7;background:var(--data-3)"></i><i style="--i:3;flex:5.6;background:var(--data-4)"></i><i class="free" style="--i:4;flex:15.4"></i></div>
+          <div class="p20-legend">
+            <div><i style="background:var(--data-1)"></i><span style="text-align:left;font:inherit;color:var(--fg)">Downloaded music</span><b>22.4 GB</b><span>46%</span></div>
+            <div><i style="background:var(--data-2)"></i><span style="text-align:left;font:inherit;color:var(--fg)">Podcasts</span><b>11.9 GB</b><span>24%</span></div>
+            <div><i style="background:var(--data-3)"></i><span style="text-align:left;font:inherit;color:var(--fg)">Audiobooks</span><b>8.7 GB</b><span>18%</span></div>
+            <div><i style="background:var(--data-4)"></i><span style="text-align:left;font:inherit;color:var(--fg)">Cache</span><b>5.6 GB</b><span>12%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Hues re-pick their stop per paper</span></div>
+    </div>
+  </article>
+
+  <!-- 01.05 TYPE -->
+  <article class="entry entry--wide" id="type">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">01.05</div>
+        <h3 class="entry-title">Type</h3>
+        <p class="entry-desc">Nine roles, one family. Character comes from how the sans is set — weight contrast and tight tracking at the top, plain at reading size — not from a second face. <b>Numbers are tabular everywhere</b>, so a ticking clock never shuffles.</p>
+      </div>
+      <dl class="spec">
+        <div><dt>Family</dt><dd>Figtree 400 · 500 · 600 · 700 (app-registered)</dd></div>
+        <div><dt>Mono</dt><dd>DM Mono 400 · 500 <span class="tag-new tag-prop" style="margin-left:4px">Proposed</span></dd></div>
+        <div><dt>Library</dt><dd>platform face until an app registers one</dd></div>
+        <div><dt>Hero</dt><dd>44/46 · 700 · −1.2 <span class="tag-new tag-prop" style="margin-left:4px">Proposed</span></dd></div>
+        <div><dt>Ink</dt><dd>muted ink on plain surfaces only</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p20-type">
+        <div>
+          <div class="p20-aa" aria-hidden="true">Aa</div>
+          <div class="p20-weights" aria-hidden="true"><span style="font-weight:400">Ag</span><span style="font-weight:500">Ag</span><span style="font-weight:600">Ag</span><span style="font-weight:700">Ag</span></div>
+          <div class="p20-fam">
+            <div><b style="font-weight:600">Figtree</b><span>sans · 4 weights</span></div>
+            <div><b style="font-family:var(--mono);font-weight:500">DM Mono</b><span>mono role · 2 weights</span></div>
+            <div><b>0123456789</b><span>tabular-nums</span></div>
+          </div>
+        </div>
+        <div class="p20-roles-t">
+          <div class="p20-tr prop"><span class="r">hero <span class="tag-new tag-prop" style="font-size:8px;padding:2px 3px">New</span></span><span class="s p20-hero">2 h 47<small> min today</small></span><span class="m">44 / 46 · 700 · −1.2</span></div>
+          <div class="p20-tr"><span class="r">display</span><span class="s t-display">Tuesday mix</span><span class="m">34 / 38 · 700 · −0.5</span></div>
+          <div class="p20-tr"><span class="r">title</span><span class="s t-title">Recently played</span><span class="m">22 / 26 · 700 · −0.3</span></div>
+          <div class="p20-tr"><span class="r">heading</span><span class="s t-heading">Up next from Kōya Lanes</span><span class="m">19 / 24 · 600 · −0.2</span></div>
+          <div class="p20-tr"><span class="r">subheading</span><span class="s t-subheading">Downloads</span><span class="m">18 / 23 · 600 · −0.2</span></div>
+          <div class="p20-tr"><span class="r">body</span><span class="s t-body">48 tracks · 3 h 12 min · updated this morning</span><span class="m">15 / 20 · 500 · 0</span></div>
+          <div class="p20-tr"><span class="r">sub</span><span class="s t-sub dim">Saved to this device · 212 MB</span><span class="m">12.5 / 17 · 400 · 0</span></div>
+          <div class="p20-tr"><span class="r">label</span><span class="s t-label">Lossless</span><span class="m">11 / 14 · 600 · +0.4</span></div>
+          <div class="p20-tr"><span class="r">eyebrow</span><span class="s t-eyebrow mute">Now playing</span><span class="m">10 / 12 · 600 · +1.6 · caps</span></div>
+          <div class="p20-tr"><span class="r">mono</span><span class="s t-mono">02:47 / 04:13 · −1:26</span><span class="m">12.5 / 17 · 500 · tabular</span></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span>Sizes in points, as the library sets them</span><span></span></div>
+    </div>
+  </article>
+
+  <!-- 01.06 SPACE -->
+  <article class="entry entry--wide" id="space">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">01.06</div>
+        <h3 class="entry-title">Space &amp; density</h3>
+        <p class="entry-desc">A 4-point scale with named steps, and density as a token transform: compact multiplies the rhythm by .7 and rounds. <b>Hairlines and touch targets are floors, not rhythm — density never shrinks them.</b> Switch density in the bar above.</p>
+      </div>
+      <dl class="spec">
+        <div><dt>Scale</dt><dd>s1 4 · s2 8 · s3 12 · s4 16 · s5 20 · s6 24 · s8 32 · s10 40 · s12 48</dd></div>
+        <div><dt>Density</dt><dd>cozy <b>×1</b> · compact <b>×0.7</b> · clamp .6–1.4</dd></div>
+        <div><dt>Gutter</dt><dd>s5 (20) · section gap s10 (40)</dd></div>
+        <div><dt>Floors</dt><dd>hairline 1 · touch target 44</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p20-space">
+        <div>
+          <div class="p20-ruler" id="p20-ruler"></div>
+          <div class="p20-metrics">
+            <div class="p20-metric"><b data-m="20">20</b>gutter</div>
+            <div class="p20-metric"><b data-m="40">40</b>section gap</div>
+            <div class="p20-metric"><b>1</b>hairline</div>
+            <div class="p20-metric"><span class="p20-touch">${heart}</span>44 touch target</div>
+          </div>
+        </div>
+        <div class="p20-dens">
+          <div style="--d:1;--s2:8px;--s3:12px;--s4:16px"><h6>Cozy · ×1</h6>
+            <div class="p20-row"><span class="art" style="background:var(--data-1)"></span><div><b>Low Tide Choir</b><span>Album · 2024</span></div></div>
+            <div class="p20-row"><span class="art" style="background:var(--data-3)"></span><div><b>Field Notes</b><span>Podcast · 3 new</span></div></div>
+            <div class="p20-row"><span class="art" style="background:var(--data-2)"></span><div><b>Run Club</b><span>Playlist · 32 tracks</span></div></div>
+          </div>
+          <div style="--s2:6px;--s3:8px;--s4:11px"><h6>Compact · ×0.7</h6>
+            <div class="p20-row"><span class="art" style="background:var(--data-1)"></span><div><b>Low Tide Choir</b><span>Album · 2024</span></div></div>
+            <div class="p20-row"><span class="art" style="background:var(--data-3)"></span><div><b>Field Notes</b><span>Podcast · 3 new</span></div></div>
+            <div class="p20-row"><span class="art" style="background:var(--data-2)"></span><div><b>Run Club</b><span>Playlist · 32 tracks</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Bars drawn ×4</span></div>
+    </div>
+  </article>
+
+  <!-- 01.07 RADIUS -->
+  <article class="entry" id="radius">
+    <div class="entry-meta">
+      <div class="entry-num">01.07</div>
+      <h3 class="entry-title">Radius</h3>
+      <p class="entry-desc">Six steps, applied by element class, never by eye. Corners are continuous (squircle, smoothing .72) wherever the platform draws them, so a 28-point sheet reads soft, not bulbous.</p>
+      <dl class="spec">
+        <div><dt>Steps</dt><dd>8 · 12 · 16 · 20 · 28 · pill</dd></div>
+        <div><dt>Smoothing</dt><dd>squircle .72 · corner .60</dd></div>
+        <div><dt>Nesting</dt><dd>inner radius = outer − padding</dd></div>
+      </dl>
+    </div>
+    <div class="plate">
+      <div class="p20-radii">
+        <div class="p20-rad"><i class="sq" style="border-radius:8px;--rv:8px"></i><b>xs</b><code>8</code><span>Row art, small wells</span></div>
+        <div class="p20-rad"><i class="sq" style="border-radius:12px;--rv:12px"></i><b>sm</b><code>12</code><span>Fields, menus' rows</span></div>
+        <div class="p20-rad"><i class="sq" style="border-radius:16px;--rv:16px"></i><b>md</b><code>16</code><span>Cards, popovers</span></div>
+        <div class="p20-rad"><i class="sq" style="border-radius:20px;--rv:20px"></i><b>lg</b><code>20</code><span>Dialogs, plates</span></div>
+        <div class="p20-rad"><i class="sq" style="border-radius:28px;--rv:28px"></i><b>xl</b><code>28</code><span>Sheets, screens</span></div>
+        <div class="p20-rad"><i style="border-radius:999px;--rv:50%"></i><b>pill</b><code>999</code><span>Buttons, chips, toggles, avatars</span></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 01.08 DEPTH -->
+  <article class="entry" id="depth">
+    <div class="entry-meta">
+      <div class="entry-num">01.08</div>
+      <h3 class="entry-title">Depth</h3>
+      <p class="entry-desc">There is no shadow scale. A raised thing is one paper step lighter with a hairline edge. <b>Two exceptions</b>: imagery gets one soft drop so a cover reads as an object, and — proposed here — anchored popovers get a lift, because nothing else separates them from the row they cover.</p>
+      <dl class="spec">
+        <div><dt>Art</dt><dd>0 12 24 · black .45 · elevation 12</dd></div>
+        <div><dt>Lift</dt><dd>0 18 40 −16 · black .28 <span class="tag-new tag-prop" style="margin-left:4px">Proposed</span></dd></div>
+        <div><dt>Drag</dt><dd>lift ×1.03 while held — the only moving shadow</dd></div>
+        <div><dt>Scrim</dt><dd>black · .55 under sheets</dd></div>
+      </dl>
+    </div>
+    <div class="plate">
+      <div class="p20-depth">
+        <div class="p20-deck" aria-hidden="true">
+          <div class="p20-layer" style="--k:0;background:var(--bg)"><b>bg</b><code data-tok="bg"></code></div>
+          <div class="p20-layer" style="--k:1;background:var(--bg-soft)"><b>bgSoft</b><code data-tok="bgSoft"></code></div>
+          <div class="p20-layer" style="--k:2;background:var(--surface)"><b>surface</b><code data-tok="surface"></code></div>
+          <div class="p20-layer" style="--k:3;background:var(--surface-2)"><b>surface2</b><code data-tok="surface2"></code></div>
+        </div>
+        <div class="p20-exc">
+          <div><span class="p20-art"></span><div><h6>Imagery</h6><p>One soft drop so art sits on the page.</p></div></div>
+          <div><span class="p20-lift"><i></i><i></i><i></i></span><div><h6>Anchored popovers</h6><p>A lift, because they cover content of the same paper.</p></div></div>
+          <div><span class="p20-scrim">Lyrics</span><div><h6>Scrim</h6><p>Black on every paper; ink on it is always light.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 01.09 VOICE -->
+  <article class="entry" id="voice">
+    <div class="entry-meta">
+      <div class="entry-num">01.09</div>
+      <h3 class="entry-title">Voice <span class="tag-new">New</span></h3>
+      <p class="entry-desc">Copy is part of the component. Sentence case, verbs on buttons, numbers with units, status with a time, and errors that say what happened and what to do next.</p>
+    </div>
+    <div class="plate plate--top">
+      <div class="p20-voice">
+        <div class="p20-vr"><span class="k">Errors</span><span class="do">Couldn't download 3 tracks. Check your connection, then try again.</span><span class="dont">Oops! Something went wrong.</span></div>
+        <div class="p20-vr"><span class="k">Buttons</span><span class="do">Delete playlist</span><span class="dont">Yes, I'm sure</span></div>
+        <div class="p20-vr"><span class="k">Status</span><span class="do">Synced 2 min ago</span><span class="dont">Synced</span></div>
+        <div class="p20-vr"><span class="k">Numbers</span><span class="do">48 tracks · 3 h 12 min</span><span class="dont">48 Tracks, 3:12:00</span></div>
+        <div class="p20-vr"><span class="k">Consequences</span><span class="do">Lossless uses about 1.4 GB an hour.</span><span class="dont">Higher quality may use more data.</span></div>
+        <div class="p20-vr"><span class="k">Case</span><span class="do">Download over cellular</span><span class="dont">Download Over Cellular</span></div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<script>
+(function(){
+  const { $, $$ } = H; const C = H.color;
+  // icon placeholders written as ${name} in the static markup above
+  const ico = { check:H.icon('check','s14'), home:H.icon('home','s18'), xc:H.icon('x-c','s16'), cc:H.icon('check-c','s16'), al:H.icon('alert','s16'), inf:H.icon('info','s16'), trash:H.icon('trash','s16'), heart:H.icon('heart','s24') };
+  const sec = $('#foundations');
+  sec.querySelectorAll('.plate').forEach(pl => { pl.innerHTML = pl.innerHTML.replace(/\$\{(\w+)\}/g, (m, k) => ico[k] || m); });
+
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const why = { paper:'Warm, light — the default here', ink:'True black, for OLED', charcoal:'Soft dark, for long sessions' };
+
+  /* 01.01 paper ladders */
+  function papers(){
+    const host = $('#p20-papers');
+    host.innerHTML = ['paper','ink','charcoal'].map(t => {
+      const c = H.colorsFor(t, H.state.accent);
+      const r = k => C.contrast(c[k], c.bg);
+      const floor = (k, f) => { const v = r(k); return `<span class="ratio">${v.toFixed(2)} : 1 <i>${v >= f ? (f === 3 ? '≥ 3' : '≥ 4.5') : 'below'}</i></span>`; };
+      return `<button class="p20-sheet${t === H.state.theme ? ' on' : ''}" data-theme="${t}" data-t="${t}" aria-pressed="${t === H.state.theme}">
+        <h4>${cap(t)} <span>${c.bg}</span></h4><div class="why">${why[t]}</div>
+        <div class="p20-ladder">
+          <div class="p20-step" style="background:var(--bg)">bg <code>${c.bg}</code></div>
+          <div class="p20-step" style="background:var(--bg-soft)">bgSoft <code>${c.bgSoft}</code></div>
+          <div class="p20-step" style="background:var(--surface)">surface <code>${c.surface}</code></div>
+          <div class="p20-step" style="background:var(--surface-2)">surface2 <code>${c.surface2}</code></div>
+        </div>
+        <div class="p20-inks">
+          <div class="p20-ink"><span class="aa">Aa</span><span class="nm">fg<small>${c.fg}</small></span>${floor('fg', 4.5)}</div>
+          <div class="p20-ink"><span class="aa" style="color:var(--fg-dim)">Aa</span><span class="nm">fgDim<small>${c.fgDim}</small></span>${floor('fgDim', 4.5)}</div>
+          <div class="p20-ink"><span class="aa" style="color:var(--fg-mute)">Aa</span><span class="nm">fgMute<small>${c.fgMute}</small></span>${floor('fgMute', 3)}</div>
+        </div>
+        <div class="p20-tail"><span class="chip a">Accent</span><span class="chip as">Soft</span><span class="chip d">Danger</span><span class="mono">isDark: ${c.isDark}</span></div>
+      </button>`;
+    }).join('');
+  }
+  $('#p20-papers').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (b) H.set('theme', b.dataset.t); });
+
+  /* 01.02 accents */
+  function ramps(){
+    const host = $('#p20-ramps');
+    host.innerHTML = Object.keys(H.accents).map(n => {
+      const a = H.accents[n];
+      return `<button class="p20-ramp" role="radio" aria-checked="${n === H.state.accent}" data-acc="${n}">
+        <span class="pair"><i style="background:${a.light}"></i><i style="background:${a.dark}"></i></span>
+        <span class="nm">${cap(n)}</span><span class="hx">${a.light}<br>${a.dark}</span></button>`;
+    }).join('');
+    const c = H.current();
+    $('#p20-trio').innerHTML = `
+      <div style="background:var(--accent);color:var(--on-accent)"><b>accent</b><code>${c.accent}</code></div>
+      <div style="background:var(--bg);color:var(--fg)"><b style="color:var(--accent)">onAccent</b><code><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${c.onAccent};box-shadow:inset 0 0 0 1px var(--line);vertical-align:-1px;margin-right:5px"></span>${c.onAccent}</code></div>
+      <div style="background:var(--accent-soft);color:var(--accent)"><b>accentSoft</b><code>${c.accentSoft}</code></div>`;
+    $('#p20-formula').innerHTML = `deriveAccent(<em>'${c.accent}'</em>, <em>'${c.bg}'</em>)<br>→ luminance ${C.luminance(c.accent).toFixed(3)} ${C.luminance(c.accent) > .55 ? '&gt;' : '≤'} .55 → onAccent <em>${c.onAccent}</em><br>→ blend(bg, accent, .14) → accentSoft <em>${c.accentSoft}</em><br>→ contrast onAccent on accent <em>${C.contrast(c.onAccent, c.accent).toFixed(2)} : 1</em>`;
+  }
+  $('#p20-ramps').addEventListener('click', e => { const b = e.target.closest('[data-acc]'); if (b) H.set('accent', b.dataset.acc); });
+  $('#p20-ramps').addEventListener('keydown', e => {
+    if (!/Arrow(Right|Left)/.test(e.key)) return; e.preventDefault();
+    const names = Object.keys(H.accents); const i = names.indexOf(H.state.accent);
+    const n = names[(i + (e.key === 'ArrowRight' ? 1 : -1) + names.length) % names.length]; H.set('accent', n);
+    requestAnimationFrame(() => $(`#p20-ramps [data-acc="${n}"]`).focus());
+  });
+
+  /* 01.03 status hexes + the red-family flag */
+  function status(){
+    const c = H.current();
+    $$('#status-colours [data-hex]').forEach(el => { const k = el.dataset.hex; el.textContent = c[k] + ' · ' + c[k + 'Soft']; });
+    const red = ['scarlet','rose','ember'].includes(H.state.accent);
+    $('#p20-flag').innerHTML = red
+      ? `${H.icon('info','s14')}<span><b style="color:var(--fg-dim);font-weight:600">${cap(H.state.accent)}</b> shares a family with danger — form carries the difference.</span>`
+      : `${H.icon('check','s14')}<span><b style="color:var(--fg-dim);font-weight:600">${cap(H.state.accent)}</b> sits far from danger; the rule still holds.</span>`;
+  }
+
+  /* 01.04 data hues */
+  function hues(){
+    const c = H.current();
+    $('#p20-hues').innerHTML = H.dataOrder.map((n, i) => `<div class="p20-hue"><i style="background:var(--data-${i+1})"></i><span>${i+1} · ${cap(n)}</span><code>${c.data[i]}</code></div>`).join('');
+  }
+  const seg = $('#p20-seg');
+  if ('IntersectionObserver' in window){ const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ seg.classList.add('in'); io.disconnect(); } }), { threshold:.6 }); io.observe(seg); } else seg.classList.add('in');
+
+  /* 01.06 ruler */
+  const steps = [['s1',4],['s2',8],['s3',12],['s4',16],['s5',20],['s6',24],['s8',32],['s10',40],['s12',48]];
+  function ruler(){
+    const d = H.state.density === 'compact' ? .7 : 1;
+    const step = v => Math.max(1, Math.round(v * d));
+    $('#p20-ruler').innerHTML = steps.map(([k, v]) => `<div><b>${k}</b><span>${step(v)}</span><i style="--v:${v}"></i></div>`).join('');
+    $$('#space [data-m]').forEach(el => el.textContent = step(+el.dataset.m));
+  }
+
+  /* 01.08 depth tokens */
+  function depth(){ const c = H.current(); $$('#depth [data-tok]').forEach(el => el.textContent = c[el.dataset.tok]); }
+
+  function all(){ papers(); ramps(); status(); hues(); ruler(); depth(); }
+  all();
+  H.on('theme', all); H.on('accent', all); H.on('density', ruler);
+})();
+</script>

@@ -7,5 +7,5 @@
   "arrowParens": "always",
   "sortImports": {},
   "sortPackageJson": {},
-  "ignorePatterns": ["**/dist/**", "**/generated/**", "pnpm-lock.yaml", "registry/**"]
+  "ignorePatterns": ["**/dist/**", "**/generated/**", "pnpm-lock.yaml", "registry/**", "design/**"]
 }

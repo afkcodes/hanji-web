@@ -1,0 +1,1410 @@
+<section class="chapter" id="controls" data-num="04" data-title="Controls">
+  <header class="chapter-head">
+    <div class="chapter-line"><h2 class="chapter-title">Controls</h2><span class="chapter-rule"></span><span class="chapter-num">04</span></div>
+    <div class="chapter-body">
+      <p class="chapter-lede">Controls change something. <b>Every one of them answers the finger in the same frame</b> — the press lands before the value does, and the value lands on a spring the finger can still interrupt. Thirteen controls, every state drawn, nothing that only works with a mouse.</p>
+      <ol class="chapter-index" data-auto></ol>
+    </div>
+  </header>
+
+  <!-- 04.01 Toggle ========================================================= -->
+  <article class="entry" id="toggle">
+    <div class="entry-meta">
+      <div class="entry-num">04.01</div>
+      <h3 class="entry-title">Toggle</h3>
+      <p class="entry-desc">An on/off switch for a setting that takes effect the moment it flips. <b>Never for a choice that waits for a Save button</b> — use a checkbox there.</p>
+      <dl class="spec">
+        <div><dt>Track</dt><dd><b>46 × 28</b> · pill · surface-2 → accent</dd></div>
+        <div><dt>Knob</dt><dd><b>22</b> · fg-mute → on-accent</dd></div>
+        <div><dt>Spring</dt><dd>snappy · clamped (settle)</dd></div>
+        <div><dt>Press</dt><dd>track holds still · knob stretches +6 toward travel</dd></div>
+        <div><dt>States</dt><dd>off · on · pressed · disabled .4</dd></div>
+        <div><dt>A11y</dt><dd>role=switch · Space / Enter · whole row is the target</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>Clamped, because the knob's colour cross-fades while it travels; an overshoot would flash past on-accent and back.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p50-split">
+        <div class="p50-list" id="p50-toggles">
+          <div class="p50-set" data-row>
+            <div class="p50-set-txt"><div class="p50-set-t" id="p50-tg1">Crossfade</div><div class="p50-set-h">Blend the last 6 seconds of a track into the next.</div></div>
+            <button class="hj-toggle" aria-checked="true" aria-labelledby="p50-tg1"></button>
+          </div>
+          <div class="p50-set" data-row>
+            <div class="p50-set-txt"><div class="p50-set-t" id="p50-tg2">Gapless playback</div><div class="p50-set-h">No silence between tracks on live albums.</div></div>
+            <button class="hj-toggle" aria-checked="true" aria-labelledby="p50-tg2"></button>
+          </div>
+          <div class="p50-set" data-row>
+            <div class="p50-set-txt"><div class="p50-set-t" id="p50-tg3">Download on mobile data</div><div class="p50-set-h">Uses about 120 MB per album.</div></div>
+            <button class="hj-toggle" aria-checked="false" aria-labelledby="p50-tg3"></button>
+          </div>
+          <div class="p50-set is-dis" data-row>
+            <div class="p50-set-txt"><div class="p50-set-t" id="p50-tg4">Explicit content</div><div class="p50-set-h"><svg class="ic s14" aria-hidden="true"><use href="#i-lock"/></svg>Managed by Noor Haddad on your family plan.</div></div>
+            <button class="hj-toggle" aria-checked="false" aria-labelledby="p50-tg4" disabled></button>
+          </div>
+        </div>
+        <div class="p50-states" aria-hidden="true">
+          <div class="p50-state"><span class="hj-toggle p50-frozen" aria-checked="false"></span><span class="swatch-label">off</span></div>
+          <div class="p50-state"><span class="hj-toggle p50-frozen" aria-checked="true"></span><span class="swatch-label">on</span></div>
+          <div class="p50-state"><span class="hj-toggle p50-frozen p50-pressed" aria-checked="false"></span><span class="swatch-label">pressed</span></div>
+          <div class="p50-state"><span class="hj-toggle p50-frozen" aria-checked="true" style="opacity:.4"></span><span class="swatch-label">disabled</span></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap a row · press and hold to see the stretch</span></div>
+    </div>
+  </article>
+
+  <!-- 04.02 Checkbox ======================================================= -->
+  <article class="entry" id="checkbox">
+    <div class="entry-meta">
+      <div class="entry-num">04.02</div>
+      <h3 class="entry-title">Checkbox</h3>
+      <p class="entry-desc">For choices that are collected and submitted together, and for picking several items from a list. <b>A parent box speaks for its children</b>: all, none, or mixed.</p>
+      <dl class="spec">
+        <div><dt>Box</dt><dd><b>22</b> · r-xs · surface + line border</dd></div>
+        <div><dt>Mark</dt><dd>stroke <b>.13</b> × box = 2.86 · on-accent</dd></div>
+        <div><dt>Draw</dt><dd>fill 1 frame · mark draws 220 ms behind it</dd></div>
+        <div><dt>States</dt><dd>off · on · mixed · disabled · error</dd></div>
+        <div><dt>A11y</dt><dd>role=checkbox · aria-checked=mixed · Space</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>The box fills at once and dips like a key; the tick then writes itself left to right, so the eye reads “done” before “ticked”.</span></p>
+    </div>
+    <div class="plate plate--top">
+      <div class="p50-split p50-split--wide">
+        <div class="p50-group" id="p50-dl">
+          <div class="p50-cbrow p50-cbrow--head" data-cb>
+            <button class="hj-check" role="checkbox" aria-checked="mixed" aria-labelledby="p50-cb-all" data-all></button>
+            <div class="p50-cb-txt"><div class="p50-cb-t" id="p50-cb-all">Download for offline</div><div class="p50-cb-h" id="p50-dl-sum">2 of 4 playlists · 1.9 GB</div></div>
+          </div>
+          <div class="p50-cbkids">
+            <div class="p50-cbrow" data-cb data-size="0.6"><button class="hj-check" role="checkbox" aria-checked="true" aria-labelledby="p50-cb1"></button><div class="p50-cb-txt"><div class="p50-cb-t" id="p50-cb1">Morning Pages</div><div class="p50-cb-h">42 tracks · 0.6 GB</div></div></div>
+            <div class="p50-cbrow" data-cb data-size="1.3"><button class="hj-check" role="checkbox" aria-checked="true" aria-labelledby="p50-cb2"></button><div class="p50-cb-txt"><div class="p50-cb-t" id="p50-cb2">Field Recordings, Vol. 2</div><div class="p50-cb-h">18 tracks · 1.3 GB</div></div></div>
+            <div class="p50-cbrow" data-cb data-size="0.8"><button class="hj-check" role="checkbox" aria-checked="false" aria-labelledby="p50-cb3"></button><div class="p50-cb-txt"><div class="p50-cb-t" id="p50-cb3">Late Trains</div><div class="p50-cb-h">31 tracks · 0.8 GB</div></div></div>
+            <div class="p50-cbrow" data-cb data-size="0.4"><button class="hj-check" role="checkbox" aria-checked="false" aria-labelledby="p50-cb4"></button><div class="p50-cb-txt"><div class="p50-cb-t" id="p50-cb4">Kitchen Radio</div><div class="p50-cb-h">27 tracks · 0.4 GB</div></div></div>
+          </div>
+        </div>
+        <div class="p50-group">
+          <div class="p50-cbrow" data-cb id="p50-terms">
+            <button class="hj-check" role="checkbox" aria-checked="false" aria-invalid="true" aria-labelledby="p50-cb5" aria-describedby="p50-terms-err"></button>
+            <div class="p50-cb-txt"><div class="p50-cb-t" id="p50-cb5">I agree to the Terms of Service</div>
+              <div class="p50-err" id="p50-terms-err" role="alert"><svg class="ic s14" aria-hidden="true"><use href="#i-alert"/></svg>Accept the terms to continue.</div></div>
+          </div>
+          <div class="p50-cbrow is-dis" data-cb>
+            <button class="hj-check" role="checkbox" aria-checked="true" aria-labelledby="p50-cb6" disabled></button>
+            <div class="p50-cb-txt"><div class="p50-cb-t" id="p50-cb6">Sync listening history</div><div class="p50-cb-h">Required by your organisation.</div></div>
+          </div>
+          <button class="hj-btn sm ink p50-continue" id="p50-continue">Continue</button>
+          <div class="p50-states p50-states--row" aria-hidden="true">
+            <div class="p50-state"><span class="hj-check" aria-checked="false"></span><span class="swatch-label">off</span></div>
+            <div class="p50-state"><span class="hj-check" aria-checked="true"></span><span class="swatch-label">on</span></div>
+            <div class="p50-state"><span class="hj-check" aria-checked="mixed"></span><span class="swatch-label">mixed</span></div>
+            <div class="p50-state"><span class="hj-check" aria-checked="true" data-dis></span><span class="swatch-label">disabled</span></div>
+            <div class="p50-state"><span class="hj-check" aria-checked="false" aria-invalid="true"></span><span class="swatch-label">error</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tick the parent to fill the list · Continue validates</span></div>
+    </div>
+  </article>
+
+  <!-- 04.03 Radio group ==================================================== -->
+  <article class="entry" id="radio">
+    <div class="entry-meta">
+      <div class="entry-num">04.03</div>
+      <h3 class="entry-title">Radio group</h3>
+      <p class="entry-desc">One choice from a short, visible list — two to five options. <b>Always one selected</b>; if “none” is valid, make it an option and say so.</p>
+      <dl class="spec">
+        <div><dt>Ring</dt><dd><b>22</b> · stroke 2 · fg-mute → accent</dd></div>
+        <div><dt>Dot</dt><dd><b>.5</b> × ring = 11 · scales 0 → 1 on snappy</dd></div>
+        <div><dt>Leaving</dt><dd>dot shrinks on fast · no bounce</dd></div>
+        <div><dt>Focus</dt><dd>roving · arrows move focus and selection</dd></div>
+        <div><dt>A11y</dt><dd>role=radiogroup / radio · one tab stop</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>The arriving dot is unclamped — it lands about 3% past its size and is still in 250 ms. That is the whole celebration.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p50-split">
+        <div>
+          <div class="p50-qlabel" id="p50-rq">Streaming quality on mobile data</div>
+          <div class="hj-radios" role="radiogroup" aria-labelledby="p50-rq" aria-describedby="p50-rhelp" id="p50-radios">
+            <button class="hj-radio-item" role="radio" aria-checked="false"><span class="hj-radio"></span><span class="p50-cb-txt"><span class="p50-cb-t">Low</span><span class="p50-cb-h">24 kbit/s · saves the most data</span></span></button>
+            <button class="hj-radio-item" role="radio" aria-checked="true"><span class="hj-radio"></span><span class="p50-cb-txt"><span class="p50-cb-t">Normal</span><span class="p50-cb-h">96 kbit/s · about 45 MB an hour</span></span></button>
+            <button class="hj-radio-item" role="radio" aria-checked="false"><span class="hj-radio"></span><span class="p50-cb-txt"><span class="p50-cb-t">High</span><span class="p50-cb-h">160 kbit/s · about 72 MB an hour</span></span></button>
+            <button class="hj-radio-item" role="radio" aria-checked="false" aria-disabled="true"><span class="hj-radio"></span><span class="p50-cb-txt"><span class="p50-cb-t">Very high</span><span class="p50-cb-h">320 kbit/s · not on your plan</span></span></button>
+          </div>
+          <p class="p50-help" id="p50-rhelp">Downloads keep their own quality. Change it in Storage.</p>
+        </div>
+        <div class="p50-states" aria-hidden="true">
+          <div class="p50-state"><span class="hj-radio-item p50-static" aria-checked="false"><span class="hj-radio"></span></span><span class="swatch-label">off</span></div>
+          <div class="p50-state"><span class="hj-radio-item p50-static" aria-checked="true"><span class="hj-radio"></span></span><span class="swatch-label">on</span></div>
+          <div class="p50-state"><span class="hj-radio-item p50-static" aria-checked="false" aria-disabled="true"><span class="hj-radio"></span></span><span class="swatch-label">disabled</span></div>
+          <div class="p50-state"><span class="hj-radio-item p50-static" aria-checked="true" aria-disabled="true"><span class="hj-radio"></span></span><span class="swatch-label">disabled on</span></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Click, or tab in and use the arrow keys</span></div>
+    </div>
+  </article>
+
+  <!-- 04.04 Choice cards =================================================== -->
+  <article class="entry" id="choice">
+    <div class="entry-meta">
+      <div class="entry-num">04.04</div>
+      <h3 class="entry-title">Choice cards <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A radio group whose options carry consequences worth reading before you choose. <b>Each card states what it costs</b>, and the total under the group updates as you move.</p>
+      <dl class="spec">
+        <div><dt>Card</dt><dd>r-md · surface-2 · line → <b>1.5 accent</b> ring</dd></div>
+        <div><dt>Anatomy</dt><dd>title · fact in mono · consequence</dd></div>
+        <div><dt>Count</dt><dd>2–4 cards · equal width · one row</dd></div>
+        <div><dt>Summary</dt><dd>changed digits slide · .55 travel</dd></div>
+        <div><dt>A11y</dt><dd>role=radiogroup · arrows · summary aria-live</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>The ring moves in one frame; the consequence beneath rolls to its new figure, and only the digits that changed move.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="hj-choices" role="radiogroup" aria-label="Download quality" id="p50-choices">
+        <button class="hj-choice hj-press" role="radio" aria-checked="false" data-gb="0.6"><span class="hj-choice-top"><span class="hj-choice-t">Normal</span><span class="hj-radio"></span></span><span class="hj-choice-f">96 kbit/s · AAC</span><span class="hj-choice-c">About 45 MB an hour. Fine on earbuds.</span></button>
+        <button class="hj-choice hj-press" role="radio" aria-checked="false" data-gb="2.0"><span class="hj-choice-top"><span class="hj-choice-t">High</span><span class="hj-radio"></span></span><span class="hj-choice-f">320 kbit/s · AAC</span><span class="hj-choice-c">About 145 MB an hour. Our default.</span></button>
+        <button class="hj-choice hj-press" role="radio" aria-checked="true" data-gb="19.0"><span class="hj-choice-top"><span class="hj-choice-t">Lossless</span><span class="hj-radio"></span></span><span class="hj-choice-f">24-bit / 96 kHz · ALAC</span><span class="hj-choice-c">About 1.4 GB an hour. Uses the most storage.</span></button>
+      </div>
+      <p class="p50-sum" aria-live="polite"><span class="p50-sum-n"><span id="p50-gb" class="hj-digits">19.0</span> GB</span><span class="p50-sum-t">for your 214 downloads (13 h 34 min) · <span id="p50-free">41.2 GB free</span></span></p>
+      <div class="plate-cap"><span class="live">Live</span><span>The total answers before you commit</span></div>
+    </div>
+  </article>
+
+  <!-- 04.05 Segmented control ============================================== -->
+  <article class="entry" id="segmented">
+    <div class="entry-meta">
+      <div class="entry-num">04.05</div>
+      <h3 class="entry-title">Segmented control</h3>
+      <p class="entry-desc">Switches between two to four views of the same content. <b>Not navigation and not a form field</b>: the view changes the instant a segment is chosen.</p>
+      <dl class="spec">
+        <div><dt>Height</dt><dd><b>40</b> · pad 4 · 32 small</dd></div>
+        <div><dt>Paint</dt><dd>track surface · pill accent-soft · label accent</dd></div>
+        <div><dt>Pill</dt><dd>drawn at widest · translateX + scaleX ≤ 1</dd></div>
+        <div><dt>Spring</dt><dd>snappy · clamped</dd></div>
+        <div><dt>States</dt><dd>2 · 3 · 4 segments · icons · disabled .6</dd></div>
+        <div><dt>A11y</dt><dd>radiogroup · ← → · icon segments labelled</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>One pill, one transform. A width animation would drop frames in a release build; a squeeze never does.</span></p>
+    </div>
+    <div class="plate" id="p50-segplate">
+      <div class="plate-tools"><button class="plate-btn" id="p50-slow" aria-pressed="false">Slow × 5</button></div>
+      <div class="p50-segs">
+        <span class="swatch-label">2</span>
+        <div class="hj-seg" aria-label="Library view"><button data-value="songs" aria-checked="true">Songs</button><button data-value="albums">Albums</button></div>
+        <span class="swatch-label">3</span>
+        <div class="hj-seg" aria-label="Range"><button data-value="d">Day</button><button data-value="w" aria-checked="true">Week</button><button data-value="m">Month</button></div>
+        <span class="swatch-label">4 · unequal</span>
+        <div>
+          <div class="hj-seg" aria-label="Filter" id="p50-seg4"><button data-value="all" aria-checked="true">All</button><button data-value="dl">Downloaded</button><button data-value="rp">Recently played</button><button data-value="lk">Liked</button></div>
+          <div class="p50-readout t-mono" id="p50-seg4-read">translateX 0 · scaleX 1.00</div>
+        </div>
+        <span class="swatch-label">icons</span>
+        <div class="row">
+          <div class="hj-seg p50-iconseg" aria-label="Layout"><button data-value="list" aria-label="List" aria-checked="true"><svg class="ic s18" aria-hidden="true"><use href="#i-list"/></svg></button><button data-value="grid" aria-label="Grid"><svg class="ic s18" aria-hidden="true"><use href="#i-grid"/></svg></button></div>
+          <div class="hj-seg sm" aria-label="Appearance"><button data-value="light" aria-checked="true">Light</button><button data-value="dark">Dark</button><button data-value="auto">Auto</button></div>
+        </div>
+        <span class="swatch-label">disabled</span>
+        <div class="hj-seg" aria-label="Sort" aria-disabled="true"><button data-value="a" aria-checked="true">A–Z</button><button data-value="r">Recent</button></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Watch the pill squeeze between unequal segments</span></div>
+    </div>
+  </article>
+
+  <!-- 04.06 Slider ========================================================= -->
+  <article class="entry" id="slider">
+    <div class="entry-meta">
+      <div class="entry-num">04.06</div>
+      <h3 class="entry-title">Slider</h3>
+      <p class="entry-desc">Sets a value on a continuous scale where the exact number matters less than the feel. <b>Tap anywhere to jump, drag to fine-tune</b>. When the value lives on another device, the slider says so until that device agrees.</p>
+      <dl class="spec">
+        <div><dt>Track</dt><dd><b>4</b> · pill · accent @ .24</dd></div>
+        <div><dt>Thumb</dt><dd><b>12</b> · × <b>1.6</b> while held · snappy</dd></div>
+        <div><dt>Fill</dt><dd>scaleX from the left — never width</dd></div>
+        <div><dt>Input</dt><dd>tap travels on snappy · drag follows 1:1</dd></div>
+        <div><dt>Pending</dt><dd>holds committed value until source agrees · stale 2.5 s</dd></div>
+        <div><dt>Range</dt><dd><span class="tag-new" style="font-size:8.5px;padding:3px 4px 2px">New</span> two thumbs · never cross</dd></div>
+        <div><dt>A11y</dt><dd>role=slider · ← → · PgUp PgDn · Home End</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>Tap-to-set is interruptible: catch the thumb mid-flight and it is yours, velocity and all. Release snaps to the step on the same spring.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p50-eqflat">Flat</button></div>
+      <div class="p50-sl-grid">
+        <div class="p50-sl-col">
+          <div class="p50-sl">
+            <div class="p50-sl-head"><span class="p50-sl-l" id="p50-sl1l">Crossfade</span><span class="p50-sl-v t-mono" id="p50-sl1v">6 s</span></div>
+            <div class="hj-slider" id="p50-sl1" tabindex="0" role="slider" aria-labelledby="p50-sl1l"><div class="rl"><div class="tr"><div class="fl"></div></div><div class="th"><span class="kn"></span><span class="bub"></span></div></div></div>
+          </div>
+          <div class="p50-sl">
+            <div class="p50-sl-head"><span class="p50-sl-l" id="p50-sl2l">Living Room · volume</span><span class="p50-sl-v p50-pend" id="p50-sl2v"><svg class="ic s14" aria-hidden="true"><use href="#i-check"/></svg>Speaker at 40%</span></div>
+            <div class="hj-slider" id="p50-sl2" tabindex="0" role="slider" aria-labelledby="p50-sl2l"><div class="rl"><div class="tr"><div class="fl"></div></div><div class="th"><span class="halo"></span><span class="kn"></span><span class="bub"></span></div></div></div>
+          </div>
+          <div class="p50-sl">
+            <div class="p50-sl-head"><span class="p50-sl-l" id="p50-rgl">Release year</span><span class="p50-sl-v t-mono" id="p50-rgv">1994 – 2011</span></div>
+            <div class="hj-slider hj-range" id="p50-rg"><div class="rl"><div class="tr"><div class="fl"></div></div>
+              <div class="th" data-i="0" tabindex="0" role="slider" aria-label="Earliest year"><span class="kn"></span><span class="bub"></span></div>
+              <div class="th" data-i="1" tabindex="0" role="slider" aria-label="Latest year"><span class="kn"></span><span class="bub"></span></div></div></div>
+          </div>
+          <div class="p50-sl is-dis">
+            <div class="p50-sl-head"><span class="p50-sl-l" id="p50-sl3l">Normalise loudness</span><span class="p50-sl-v t-mono">−14 LUFS · off</span></div>
+            <div class="hj-slider" id="p50-sl3" role="slider" aria-labelledby="p50-sl3l" aria-disabled="true"><div class="rl"><div class="tr"><div class="fl"></div></div><div class="th"><span class="kn"></span></div></div></div>
+          </div>
+        </div>
+        <div class="p50-eq" role="group" aria-label="Equaliser">
+          <div class="p50-eq-scale" aria-hidden="true"><span>+12</span><span>0 dB</span><span>−12</span></div>
+          <div class="p50-eq-bands" id="p50-eq"></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap the track · drag · release on the speaker and watch it agree</span></div>
+    </div>
+  </article>
+
+  <!-- 04.07 Stepper ======================================================== -->
+  <article class="entry" id="stepper">
+    <div class="entry-meta">
+      <div class="entry-num">04.07</div>
+      <h3 class="entry-title">Stepper</h3>
+      <p class="entry-desc">Nudges a small whole number up or down: minutes, copies, guests. <b>Hold to repeat</b>; the repeat waits long enough that a tap is never two.</p>
+      <dl class="spec">
+        <div><dt>Buttons</dt><dd><b>36</b> round · fg @ 8% · 44 hit</dd></div>
+        <div><dt>Hold</dt><dd><b>420</b> ms, then 220 ms × .82 per step → 60</dd></div>
+        <div><dt>Value</dt><dd>changed digits slide · tabular</dd></div>
+        <div><dt>Bounds</dt><dd>the end button disables at min / max</dd></div>
+        <div><dt>A11y</dt><dd>role=spinbutton · ↑ ↓ · announced once</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>The repeat accelerates, the digits keep up: each step is a short slide, so a fast hold reads as a smooth count, not a flicker.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p50-steppers">
+        <div class="p50-step-row">
+          <div class="p50-cb-txt"><div class="p50-cb-t" id="p50-st1l">Sleep timer</div><div class="p50-cb-h">Fades out over the last 30 seconds.</div></div>
+          <div class="hj-stepper" data-min="5" data-max="120" data-step="5" data-value="30" data-unit="min" aria-labelledby="p50-st1l">
+            <button class="hj-step-btn" data-d="-1" aria-label="Five minutes less"><svg class="ic s18" aria-hidden="true"><use href="#i-minus"/></svg></button>
+            <span class="hj-step-val" role="spinbutton" tabindex="0"><span class="hj-digits"></span><span class="hj-step-u">min</span></span>
+            <button class="hj-step-btn" data-d="1" aria-label="Five minutes more"><svg class="ic s18" aria-hidden="true"><use href="#i-plus"/></svg></button>
+          </div>
+        </div>
+        <div class="p50-step-row">
+          <div class="p50-cb-txt"><div class="p50-cb-t" id="p50-st2l">Play each track</div><div class="p50-cb-h">For learning a part by ear.</div></div>
+          <div class="hj-stepper" data-min="1" data-max="9" data-step="1" data-value="1" data-unit="×" aria-labelledby="p50-st2l">
+            <button class="hj-step-btn" data-d="-1" aria-label="Fewer times"><svg class="ic s18" aria-hidden="true"><use href="#i-minus"/></svg></button>
+            <span class="hj-step-val" role="spinbutton" tabindex="0"><span class="hj-digits"></span><span class="hj-step-u">×</span></span>
+            <button class="hj-step-btn" data-d="1" aria-label="More times"><svg class="ic s18" aria-hidden="true"><use href="#i-plus"/></svg></button>
+          </div>
+        </div>
+        <div class="p50-hold">
+          <div class="p50-hold-cap">Gap before each repeat</div>
+          <div class="p50-hold-bars" id="p50-hold" aria-hidden="true"></div>
+          <div class="p50-hold-t t-mono" id="p50-hold-t">hold + · 420 ms, then 220 → 60 ms</div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Press and hold + to feel the acceleration</span></div>
+    </div>
+  </article>
+
+  <!-- 04.08 Text field ===================================================== -->
+  <article class="entry" id="text-field">
+    <div class="entry-meta">
+      <div class="entry-num">04.08</div>
+      <h3 class="entry-title">Text field</h3>
+      <p class="entry-desc">Single-line input with its label above and its help below. <b>An error says what to do next</b>, not what went wrong — and it waits for a blur or a submit before it speaks.</p>
+      <dl class="spec">
+        <div><dt>Shell</dt><dd><b>48</b> · r-sm · surface · line</dd></div>
+        <div><dt>Focus</dt><dd>1.5 accent border · accent caret</dd></div>
+        <div><dt>Error</dt><dd>1.5 danger · glyph + sentence · one 4 px nudge</dd></div>
+        <div><dt>Label</dt><dd>13 / 600 above · help 12.5 fg-dim below</dd></div>
+        <div><dt>Extras</dt><dd>clear · count · reveal <span class="tag-new" style="font-size:8.5px;padding:3px 4px 2px">New</span> · search pill</dd></div>
+        <div><dt>A11y</dt><dd>label for · aria-describedby · aria-invalid</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="bouncy"></span><span>Focus and error are colour on a fast ease-out. The only travel is the nudge on a failed submit — bouncy, 4 px, once.</span></p>
+    </div>
+    <div class="plate plate--top">
+      <div class="plate-tools"><button class="plate-btn" id="p50-submit">Submit</button></div>
+      <div class="p50-fields">
+        <div class="hj-tf" data-max="40">
+          <label class="hj-tf-label" for="p50-f1">Playlist name</label>
+          <div class="hj-field"><input id="p50-f1" value="Sunday, slowly" maxlength="48" aria-describedby="p50-f1h" autocomplete="off"><button class="hj-tf-clear" aria-label="Clear playlist name" tabindex="-1"><svg class="ic s14" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+          <div class="hj-tf-help" id="p50-f1h"><span class="hj-tf-msg">Shown on your profile and in shares.</span><span class="hj-tf-count">14 / 40</span></div>
+        </div>
+        <div class="hj-tf err" id="p50-email">
+          <label class="hj-tf-label" for="p50-f2">Email</label>
+          <div class="hj-field"><svg class="ic s18 hj-tf-lead" aria-hidden="true"><use href="#i-mail"/></svg><input id="p50-f2" type="email" value="mira.okafor@" aria-invalid="true" aria-describedby="p50-f2h" autocomplete="off"></div>
+          <div class="hj-tf-help" id="p50-f2h"><span class="hj-tf-msg"><svg class="ic s14" aria-hidden="true"><use href="#i-alert"/></svg><span>Enter an email address like name@example.com</span></span></div>
+        </div>
+        <div class="hj-tf">
+          <label class="hj-tf-label" for="p50-f3">Password <span class="tag-new" style="font-size:8.5px;padding:3px 4px 2px">New</span></label>
+          <div class="hj-field"><svg class="ic s18 hj-tf-lead" aria-hidden="true"><use href="#i-lock"/></svg><input id="p50-f3" type="password" value="night-bus-to-bilbao" aria-describedby="p50-f3h" autocomplete="off"><button class="hj-tf-reveal" aria-label="Show password" aria-pressed="false"><svg class="ic s18" aria-hidden="true"><use href="#i-eye"/></svg></button></div>
+          <div class="hj-tf-help" id="p50-f3h"><span class="hj-tf-msg"><span class="p50-strength" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span id="p50-f3s">Strong · 19 characters</span></span></div>
+        </div>
+        <div class="hj-tf dis">
+          <label class="hj-tf-label" for="p50-f4">Username</label>
+          <div class="hj-field"><input id="p50-f4" value="@miraokafor" disabled aria-describedby="p50-f4h"></div>
+          <div class="hj-tf-help" id="p50-f4h"><span class="hj-tf-msg">You can change this again in 23 days.</span></div>
+        </div>
+        <div class="hj-tf p50-span2">
+          <label class="sr" for="p50-f5">Search</label>
+          <div class="hj-field is-search"><svg class="ic s18 hj-tf-lead" aria-hidden="true"><use href="#i-search"/></svg><input id="p50-f5" type="search" placeholder="Artists, songs or podcasts" autocomplete="off"><button class="hj-tf-clear" aria-label="Clear search" tabindex="-1"><svg class="ic s14" aria-hidden="true"><use href="#i-x"/></svg></button><button class="hj-tf-mic" aria-label="Search by voice"><svg class="ic s18" aria-hidden="true"><use href="#i-mic"/></svg></button></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Fix the email, or Submit to see the nudge</span></div>
+    </div>
+  </article>
+
+  <!-- 04.09 One-time code ================================================== -->
+  <article class="entry" id="otp">
+    <div class="entry-meta">
+      <div class="entry-num">04.09</div>
+      <h3 class="entry-title">One-time code <span class="tag-new">New</span></h3>
+      <p class="entry-desc">Six digits from a text or an authenticator. <b>One real input under six drawn cells</b>, so paste, autofill and screen readers all see a single field.</p>
+      <dl class="spec">
+        <div><dt>Cell</dt><dd><b>46 × 56</b> · r-sm · surface · 3 + 3</dd></div>
+        <div><dt>Active</dt><dd>1.5 accent · caret blinks 1.1 s</dd></div>
+        <div><dt>Fill</dt><dd>digit pops on snappy · paste cascades 24 ms</dd></div>
+        <div><dt>Result</dt><dd>success ring + word · error nudge + sentence</dd></div>
+        <div><dt>A11y</dt><dd>inputmode=numeric · autocomplete=one-time-code</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Pasted digits land 24 ms apart, left to right — the same clock as every list on the page.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="plate-tools"><button class="plate-btn" data-otp="482915">Paste 482915</button><button class="plate-btn" data-otp="482951">Paste a wrong code</button><button class="plate-btn" data-otp="">Clear</button></div>
+      <div class="p50-otp-wrap">
+        <div class="p50-otp-t">Enter the code we sent</div>
+        <div class="p50-otp-h">To the phone ending <span class="t-mono">•• 4471</span>. It expires in 10 minutes.</div>
+        <div class="hj-otp foc" id="p50-otp">
+          <input inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="Six-digit code" aria-describedby="p50-otp-msg" value="4829">
+          <span class="c"><span class="d"></span></span><span class="c"><span class="d"></span></span><span class="c"><span class="d"></span></span><span class="gap" aria-hidden="true"></span><span class="c"><span class="d"></span></span><span class="c"><span class="d"></span></span><span class="c"><span class="d"></span></span>
+        </div>
+        <div class="p50-otp-msg" id="p50-otp-msg" aria-live="polite"><span class="m">Didn’t get it? <button class="p50-link" id="p50-resend" disabled>Resend in <span class="t-mono" id="p50-cd">0:24</span></button></span></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Type, or paste from the tools above</span></div>
+    </div>
+  </article>
+
+  <!-- 04.10 Counter ======================================================== -->
+  <article class="entry" id="counter">
+    <div class="entry-meta">
+      <div class="entry-num">04.10</div>
+      <h3 class="entry-title">Counter</h3>
+      <p class="entry-desc">A number that changes while you watch it. <b>Only the digits that changed move</b>: 1:09 → 1:10 slides the last two and leaves the minute standing.</p>
+      <dl class="spec">
+        <div><dt>Travel</dt><dd><b>.55</b> × line height · up = enters from below</dd></div>
+        <div><dt>Stagger</dt><dd>ones first · each higher digit 24 ms behind</dd></div>
+        <div><dt>Curve</dt><dd>in gentle · out fast ease-out + fade</dd></div>
+        <div><dt>Figures</dt><dd>tabular, so nothing beside it shifts</dd></div>
+        <div><dt>A11y</dt><dd>label is the whole value · read once</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Proportional travel: a 72 px figure and a 12 px timer make the same gesture at two sizes. Re-rolling every digit reads as a slot machine.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="plate-tools"><button class="plate-btn" data-ct="-1">− 1</button><button class="plate-btn" data-ct="1">+ 1</button><button class="plate-btn" data-ct="250">+ 250</button><button class="plate-btn" data-ct="r">Random</button></div>
+      <div class="p50-ct">
+        <div class="p50-ct-eyebrow"><span class="p50-livedot" aria-hidden="true"></span>Listening right now</div>
+        <div class="p50-ct-big"><span class="hj-digits" id="p50-ct"></span></div>
+        <div class="p50-ct-sub">across 41 countries · <span class="p50-ct-timer">sleep timer <span class="hj-digits t-mono" id="p50-timer"></span></span></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>The ambient tick stops under reduced motion · the timer does not</span></div>
+    </div>
+  </article>
+
+  <!-- 04.11 Rating ========================================================= -->
+  <article class="entry" id="rating">
+    <div class="entry-meta">
+      <div class="entry-num">04.11</div>
+      <h3 class="entry-title">Rating <span class="tag-new">New</span></h3>
+      <p class="entry-desc">Five stars for a personal verdict, with a word for each so the number means the same to everyone. <b>Read-only ratings show the average and how many people made it.</b></p>
+      <dl class="spec">
+        <div><dt>Star</dt><dd><b>28</b> · 44 hit · fg-mute → accent</dd></div>
+        <div><dt>Preview</dt><dd>hover / drag at 35% before commit</dd></div>
+        <div><dt>Commit</dt><dd>fills 24 ms apart · bouncy scale</dd></div>
+        <div><dt>Words</dt><dd>Not for me · Fine · Good · Really good · Loved it</dd></div>
+        <div><dt>A11y</dt><dd>radiogroup · ← → · value spoken with its word</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="bouncy"></span><span>Bouncy is kept for moments of delight. Giving something five stars is one; correcting it to three is not, so lowering never bounces.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p50-rate-grid">
+        <div class="p50-rate-main">
+          <div class="p50-qlabel" id="p50-rateq">How was <i class="p50-it">Field Recordings, Vol. 2</i>?</div>
+          <div class="hj-rating" role="radiogroup" aria-labelledby="p50-rateq" id="p50-rating"></div>
+          <div class="p50-rate-word" id="p50-rate-word" aria-hidden="true">Tap a star</div>
+        </div>
+        <div class="p50-rate-ro">
+          <div class="p50-rate-avg"><span class="p50-rate-num">4.6</span>
+            <span class="hj-stars-ro" role="img" aria-label="4.6 out of 5"><span class="base"></span><span class="fill" style="clip-path:inset(0 8% 0 0)"></span></span></div>
+          <div class="p50-rate-n">2,184 ratings · 312 this month</div>
+          <div class="p50-dist" aria-hidden="true">
+            <div><span>5</span><i style="--w:.71"></i><em>71%</em></div>
+            <div><span>4</span><i style="--w:.19"></i><em>19%</em></div>
+            <div><span>3</span><i style="--w:.06"></i><em>6%</em></div>
+            <div><span>2</span><i style="--w:.02"></i><em>2%</em></div>
+            <div><span>1</span><i style="--w:.02"></i><em>2%</em></div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Hover to preview · click to commit · arrows work too</span></div>
+    </div>
+  </article>
+
+  <!-- 04.12 Picker wheel =================================================== -->
+  <article class="entry" id="picker">
+    <div class="entry-meta">
+      <div class="entry-num">04.12</div>
+      <h3 class="entry-title">Picker wheel <span class="tag-new">New</span></h3>
+      <p class="entry-desc">Picks from a long ordered list where the neighbours matter: hours, minutes, a year. <b>Flat, not a drum</b> — the list scrolls with native momentum and snaps to a band of two hairlines.</p>
+      <dl class="spec">
+        <div><dt>Row</dt><dd><b>40</b> · 5 visible · fade mask top and bottom</dd></div>
+        <div><dt>Band</dt><dd>two hairlines · ticks once per detent</dd></div>
+        <div><dt>Scale</dt><dd>1 → .84 two rows out · fg → fg-mute</dd></div>
+        <div><dt>Snap</dt><dd>CSS scroll-snap · native momentum</dd></div>
+        <div><dt>A11y</dt><dd>each column a spinbutton · ↑ ↓ · tap a row</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>Each detent ticks the band — a hairline flash and a 4 ms vibration where the device has one. It is feedback, so it survives reduced motion.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="hj-picker" id="p50-picker">
+        <div class="hj-picker-band" aria-hidden="true"></div>
+        <div class="hj-picker-col" data-kind="h" role="spinbutton" tabindex="0" aria-label="Hours"></div>
+        <div class="hj-picker-colon" aria-hidden="true">:</div>
+        <div class="hj-picker-col" data-kind="m" role="spinbutton" tabindex="0" aria-label="Minutes"></div>
+      </div>
+      <div class="p50-pick-read"><span class="p50-pick-t">Alarm <b class="t-mono" id="p50-pick-v">07:30</b></span><span class="p50-pick-h" id="p50-pick-h">rings in 8 h 12 min</span></div>
+      <div class="plate-cap"><span class="live">Live</span><span>Scroll or drag a column · tap any row</span></div>
+    </div>
+  </article>
+
+  <!-- 04.13 Date picker ==================================================== -->
+  <article class="entry" id="date-picker">
+    <div class="entry-meta">
+      <div class="entry-num">04.13</div>
+      <h3 class="entry-title">Date picker <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A month at a glance for a day or a span of days. <b>Past days are visible but unpickable</b>, today is marked, and the footer says in words what you have chosen.</p>
+      <dl class="spec">
+        <div><dt>Cell</dt><dd><b>44</b> · day in a 36 circle · tabular</dd></div>
+        <div><dt>Selected</dt><dd>accent circle · on-accent · pops on snappy</dd></div>
+        <div><dt>Range</dt><dd>accent-soft band between · ends are circles</dd></div>
+        <div><dt>Month</dt><dd>slides 16 px × travel · out fast, in gentle</dd></div>
+        <div><dt>Week</dt><dd>Monday first (en-GB) · 6 rows always</dd></div>
+        <div><dt>A11y</dt><dd>grid · arrows ±1 / ±7 · PgUp PgDn · Enter</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Months slide toward the direction you asked for. Six rows, always, so the grid never jumps when a month needs five.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="hj-cal" id="p50-cal">
+        <div class="hj-cal-mode"><div class="hj-seg sm" id="p50-calmode" aria-label="Pick"><button data-value="day">One day</button><button data-value="range" aria-checked="true">Range</button></div></div>
+        <div class="hj-cal-head">
+          <button class="hj-cal-nav hj-press" data-dir="-1" aria-label="Previous month"><svg class="ic s18" aria-hidden="true"><use href="#i-chev-l"/></svg></button>
+          <div class="hj-cal-title" aria-live="polite"></div>
+          <button class="hj-cal-nav hj-press" data-dir="1" aria-label="Next month"><svg class="ic s18" aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+        </div>
+        <div class="hj-cal-wk" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="hj-cal-view"><div class="hj-cal-grid" role="grid"></div></div>
+        <div class="hj-cal-foot"><div class="hj-cal-sum" aria-live="polite"></div><div class="hj-cal-acts"><button class="hj-btn sm quiet" id="p50-calclear">Clear</button><button class="hj-btn sm" id="p50-calgo">Pause</button></div></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Pick a start, then an end · past days are locked</span></div>
+    </div>
+  </article>
+</section>
+
+<style>
+/* ===== 04 Controls — demo layout (p50-) ===================================== */
+.p50-split{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:56px; align-items:center; width:100%; max-width:640px }
+.p50-split--wide{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:48px; align-items:start; max-width:720px }
+.p50-list{ display:flex; flex-direction:column; min-width:0 }
+.p50-set{ display:flex; align-items:center; gap:20px; min-height:68px; padding:12px 0; border-bottom:1px solid var(--line); cursor:pointer; -webkit-tap-highlight-color:transparent }
+.p50-set:first-child{ border-top:1px solid var(--line) }
+.p50-set.is-dis{ cursor:default }
+.p50-set.is-dis .p50-set-t{ color:var(--fg-dim) }
+.p50-set-txt{ flex:1; min-width:0 }
+.p50-set-t{ font-weight:500; font-size:15px; line-height:20px }
+.p50-set-h{ font-size:12.5px; line-height:17px; color:var(--fg-dim); margin-top:3px; display:flex; align-items:center; gap:5px }
+.p50-states{ display:flex; flex-direction:column; gap:18px; padding-left:40px; border-left:1px solid var(--line) }
+.p50-states--row{ flex-direction:row; flex-wrap:wrap; gap:18px 22px; padding:20px 0 0; border-left:0; border-top:1px solid var(--line); margin-top:22px }
+.p50-state{ display:flex; align-items:center; gap:12px }
+.p50-states--row .p50-state{ flex-direction:column; gap:8px }
+.p50-frozen{ pointer-events:none }
+.p50-pressed::after{ width:calc(var(--k) + 6px) !important }
+.p50-qlabel{ font-weight:600; font-size:15px; line-height:20px; margin-bottom:14px; letter-spacing:-.005em }
+.p50-it{ font-style:normal; color:var(--fg) }
+.p50-help{ margin:14px 0 0; font-size:12.5px; line-height:17px; color:var(--fg-dim) }
+.p50-link{ color:var(--accent); font-weight:600; font-size:12.5px; text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px }
+.p50-link:disabled{ color:var(--fg-mute); text-decoration:none; cursor:default }
+
+/* ===== Checkbox ============================================================ */
+.p50-group{ display:flex; flex-direction:column; min-width:0 }
+.p50-cbrow{ display:flex; align-items:flex-start; gap:14px; padding:10px 0; cursor:pointer; -webkit-tap-highlight-color:transparent }
+.p50-cbrow.is-dis{ cursor:default }
+.p50-cbrow.is-dis .p50-cb-t{ color:var(--fg-dim) }
+.p50-cbrow--head{ padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:4px }
+.p50-cbrow--head .p50-cb-t{ font-weight:600 }
+.p50-cbkids .p50-cbrow{ padding-left:2px }
+.p50-cb-txt{ display:flex; flex-direction:column; min-width:0; text-align:left }
+.p50-cb-t{ font-weight:500; font-size:15px; line-height:22px }
+.p50-cb-h{ font-size:12.5px; line-height:17px; color:var(--fg-dim); margin-top:1px }
+.p50-err{ display:flex; align-items:center; gap:6px; margin-top:4px; font-size:12.5px; line-height:17px; color:var(--danger); font-weight:500 }
+.p50-err[hidden]{ display:none }
+.p50-continue{ align-self:flex-start; margin-top:14px }
+
+.hj-check{
+  --b:22px; position:relative; width:var(--b); height:var(--b); flex:none; display:block; margin-top:0;
+  border-radius:7px; background:var(--surface); box-shadow:inset 0 0 0 1.5px rgba(var(--fg-rgb),.22);
+  transition:background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy);
+}
+@supports (corner-shape: squircle){ .hj-check{ corner-shape:superellipse(1.6); border-radius:8px } }
+.p50-cbrow .hj-check{ margin-top:0 }
+.hj-check::before, .hj-check::after{ content:""; position:absolute; inset:0; pointer-events:none }
+.hj-check svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; fill:none; stroke:var(--on-accent); stroke-width:2.86; stroke-linecap:round; stroke-linejoin:round }
+.hj-check .ck{ stroke-dasharray:19; stroke-dashoffset:19; transition:stroke-dashoffset 120ms var(--ease-out) }
+.hj-check .mx{ stroke-dasharray:11; stroke-dashoffset:11; transition:stroke-dashoffset 120ms var(--ease-out) }
+.hj-check[aria-checked="true"], .hj-check[aria-checked="mixed"]{ background:var(--accent); box-shadow:inset 0 0 0 1.5px var(--accent) }
+.hj-check[aria-checked="true"] .ck{ stroke-dashoffset:0; transition:stroke-dashoffset 220ms var(--ease-out) 40ms }
+.hj-check[aria-checked="mixed"] .mx{ stroke-dashoffset:0; transition:stroke-dashoffset 180ms var(--ease-out) 30ms }
+.p50-cbrow:not(.is-dis):hover .hj-check[aria-checked="false"]{ box-shadow:inset 0 0 0 1.5px rgba(var(--fg-rgb),.42) }
+.p50-cbrow:not(.is-dis):active .hj-check, .hj-check:not(:disabled):active{ transform:scale(.9); transition-duration:var(--dur-fast), var(--dur-fast), 70ms }
+.hj-check[aria-invalid="true"]{ box-shadow:inset 0 0 0 1.5px var(--danger) }
+.hj-check:disabled, .hj-check[data-dis]{ background:var(--surface-2); box-shadow:inset 0 0 0 1.5px var(--line); cursor:not-allowed }
+.hj-check:disabled svg, .hj-check[data-dis] svg{ stroke:var(--fg-mute) }
+.hj-check:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:8px }
+
+/* ===== Radio =============================================================== */
+.hj-radios{ display:flex; flex-direction:column }
+.hj-radio-item{ display:flex; align-items:flex-start; gap:14px; padding:10px 0; text-align:left; width:100%; border-radius:var(--r-xs) }
+.hj-radio-item[aria-disabled="true"]{ cursor:default }
+.hj-radio-item[aria-disabled="true"] .p50-cb-t{ color:var(--fg-dim) }
+.hj-radio{
+  width:22px; height:22px; flex:none; border-radius:50%; display:grid; place-items:center;
+  box-shadow:inset 0 0 0 2px var(--fg-mute); transition:box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy);
+}
+.hj-radio::after{ content:""; width:11px; height:11px; border-radius:50%; background:var(--accent); transform:scale(0); transition:transform var(--dur-fast) var(--ease-out) }
+[aria-checked="true"] > .hj-radio, [aria-checked="true"] .hj-radio-top .hj-radio{ box-shadow:inset 0 0 0 2px var(--accent) }
+[aria-checked="true"] > .hj-radio::after{ transform:scale(1); transition:transform var(--dur-snappy) var(--ease-snappy) }
+.hj-radio-item:not([aria-disabled="true"]):active .hj-radio{ transform:scale(.9); transition-duration:var(--dur-fast), 70ms }
+.hj-radio-item[aria-disabled="true"] .hj-radio{ box-shadow:inset 0 0 0 2px var(--line) }
+.hj-radio-item[aria-disabled="true"] .hj-radio::after{ background:var(--fg-mute) }
+.hj-radio-item[aria-disabled="true"][aria-checked="true"] .hj-radio{ box-shadow:inset 0 0 0 2px var(--line) }
+.p50-static{ padding:0; width:auto; pointer-events:none }
+.hj-radio-item:focus-visible{ outline:none }
+.hj-radio-item:focus-visible .hj-radio{ outline:2px solid var(--accent); outline-offset:3px }
+
+/* ===== Choice cards ======================================================== */
+.hj-choices{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; width:100%; max-width:720px }
+.hj-choice{
+  display:flex; flex-direction:column; gap:6px; padding:16px 16px 18px; text-align:left; min-height:150px;
+  background:var(--surface-2); border-radius:var(--r-md); box-shadow:inset 0 0 0 1px var(--line);
+  transition:box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy), background-color var(--dur-base) var(--ease-out);
+}
+@supports (corner-shape: squircle){ .hj-choice{ corner-shape:superellipse(1.6) } }
+.hj-choice:hover{ box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.22) }
+.hj-choice[aria-checked="true"]{ box-shadow:inset 0 0 0 1.5px var(--accent) }
+.hj-choice-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px }
+.hj-choice-t{ font-weight:600; font-size:17px; letter-spacing:-.015em }
+.hj-choice .hj-radio{ width:20px; height:20px }
+.hj-choice .hj-radio::after{ width:10px; height:10px }
+.hj-choice[aria-checked="true"] .hj-radio{ box-shadow:inset 0 0 0 2px var(--accent) }
+.hj-choice[aria-checked="true"] .hj-radio::after{ transform:scale(1); transition:transform var(--dur-snappy) var(--ease-snappy) }
+.hj-choice-f{ font:500 11.5px/1.4 var(--mono); color:var(--fg-dim); letter-spacing:.01em }
+.hj-choice-c{ font-size:12.5px; line-height:17px; color:var(--fg-dim); margin-top:auto; padding-top:10px }
+.hj-choice:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:var(--r-md) }
+.p50-sum{ margin:22px 0 0; display:flex; align-items:baseline; gap:12px; width:100%; max-width:720px; padding-top:18px; border-top:1px solid var(--line) }
+.p50-sum-n{ font-weight:700; font-size:34px; line-height:38px; letter-spacing:-.03em; font-variant-numeric:tabular-nums; white-space:nowrap }
+.p50-sum-t{ font-size:13px; color:var(--fg-dim) }
+
+/* ===== Segmented =========================================================== */
+.p50-segs{ display:grid; grid-template-columns:96px auto; gap:22px 20px; align-items:center }
+.p50-segs > .swatch-label{ text-align:right }
+.p50-segs > *:not(.swatch-label){ justify-self:start }
+.p50-iconseg > button{ display:grid; place-items:center; padding:0 14px }
+.hj-seg[aria-disabled="true"]{ opacity:.6; pointer-events:none }
+.p50-readout{ margin-top:8px; color:var(--fg-mute); font-size:11px }
+#p50-segplate.slow .hj-seg-ind{ transition-duration:calc(var(--dur-snappy-settle) * 5), var(--dur-base) }
+
+/* ===== Slider ============================================================== */
+.p50-sl-grid{ display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:56px; width:100%; max-width:700px; align-items:center }
+.p50-sl-col{ display:flex; flex-direction:column; gap:14px; min-width:0 }
+.p50-sl-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px }
+.p50-sl-l{ font-weight:500; font-size:14px }
+.p50-sl-v{ font-size:12px; color:var(--fg-dim); display:inline-flex; align-items:center; gap:5px; white-space:nowrap }
+.p50-sl.is-dis .p50-sl-l{ color:var(--fg-dim) }
+.p50-pend{ font-family:var(--font); font-weight:500 }
+.p50-pend .ic{ color:var(--success) }
+.p50-pend.pending .ic{ display:none }
+.p50-pend.pending::before{ content:""; width:10px; height:10px; border-radius:50%; border:1.5px solid rgba(var(--accent-rgb),.25); border-top-color:var(--accent); animation:p50-spin .8s linear infinite }
+html[data-motion="reduced"] .p50-pend.pending::before{ animation:none; border-color:var(--accent) }
+@keyframes p50-spin{ to{ transform:rotate(1turn) } }
+
+.hj-slider{ --v:0; --len:0px; position:relative; height:44px; width:100%; display:flex; align-items:center; touch-action:none; cursor:pointer; outline:none; -webkit-tap-highlight-color:transparent; user-select:none }
+.hj-slider .rl{ position:relative; width:100%; height:4px }
+.hj-slider .tr{ position:absolute; inset:0; border-radius:var(--r-pill); background:rgba(var(--accent-rgb),.24); overflow:hidden }
+.hj-slider .fl{ position:absolute; inset:0; background:var(--accent); transform-origin:left center; transform:scaleX(var(--v)) }
+.hj-slider .th{ position:absolute; left:0; top:50%; width:12px; height:12px; margin:-6px 0 0 -6px; transform:translateX(calc(var(--v) * var(--len))); outline:none }
+.hj-slider .kn{ position:absolute; inset:0; border-radius:50%; background:var(--accent); transition:transform var(--dur-snappy) var(--ease-snappy), box-shadow var(--dur-fast) var(--ease-out) }
+.hj-slider.held .kn{ transform:scale(1.6) }
+.hj-slider:focus-visible .kn, .hj-range .th:focus-visible .kn{ box-shadow:0 0 0 3px var(--bg-soft), 0 0 0 5px var(--accent) }
+.hj-slider .bub{
+  position:absolute; left:50%; bottom:22px; padding:4px 7px 3px; border-radius:7px; white-space:nowrap;
+  background:var(--fg); color:var(--bg); font:500 11.5px/1.2 var(--mono); font-variant-numeric:tabular-nums; pointer-events:none;
+  opacity:0; transform:translate(-50%, calc(4px * var(--travel))) scale(.86); transform-origin:50% 100%;
+  transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.hj-slider.held .bub, .hj-range .th.held .bub{ opacity:1; transform:translate(-50%, 0) scale(1); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.hj-slider .halo{ position:absolute; inset:-7px; border-radius:50%; border:1.5px solid rgba(var(--accent-rgb),.45); opacity:0; transform:scale(.6); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.hj-slider.pending .halo{ opacity:1; transform:scale(1); animation:p50-halo 1.1s var(--ease-out) infinite }
+html[data-motion="reduced"] .hj-slider.pending .halo{ animation:none }
+@keyframes p50-halo{ 0%{ opacity:.9 } 60%{ opacity:.25 } 100%{ opacity:.9 } }
+.hj-slider[aria-disabled="true"]{ cursor:default }
+.hj-slider[aria-disabled="true"] .tr{ background:rgba(var(--fg-rgb),.1) }
+.hj-slider[aria-disabled="true"] .fl, .hj-slider[aria-disabled="true"] .kn{ background:var(--fg-mute) }
+/* range: the fill is translated and squeezed, never resized */
+.hj-range .fl{ transform:translateX(calc(var(--lo) * var(--len))) scaleX(calc(var(--hi) - var(--lo))) }
+.hj-range .th[data-i="0"]{ transform:translateX(calc(var(--lo) * var(--len))) }
+.hj-range .th[data-i="1"]{ transform:translateX(calc(var(--hi) * var(--len))) }
+.hj-range .th.held .kn{ transform:scale(1.6) }
+.hj-range .th.held{ z-index:2 }
+/* vertical, bipolar (EQ) */
+.hj-slider.v{ width:44px; height:168px; flex-direction:column; justify-content:center }
+.hj-slider.v .rl{ width:4px; height:100% }
+.hj-slider.v .fl{ inset:0 0 50% 0; transform-origin:center bottom; transform:scaleY(var(--b, 0)) }
+.hj-slider.v .th{ left:50%; top:0; transform:translateY(calc((1 - var(--v)) * var(--len))) }
+.hj-slider.v .bub{ bottom:auto; left:22px; top:50%; transform:translate(calc(4px * var(--travel)), -50%) scale(.86); transform-origin:0 50% }
+.hj-slider.v.held .bub{ transform:translate(0, -50%) scale(1) }
+.hj-slider.v .zero{ position:absolute; left:50%; top:50%; width:14px; height:1px; margin-left:-7px; background:var(--fg-mute); opacity:.6 }
+.p50-eq{ display:flex; gap:10px; align-items:stretch }
+.p50-eq-scale{ display:flex; flex-direction:column; justify-content:space-between; padding:30px 0 38px; font:500 10.5px/1 var(--mono); color:var(--fg-mute); text-align:right }
+.p50-eq-bands{ display:flex; gap:4px }
+.p50-band{ display:flex; flex-direction:column; align-items:center; gap:6px }
+.p50-band-v{ font:500 11px/1 var(--mono); color:var(--fg-dim); font-variant-numeric:tabular-nums; height:14px }
+.p50-band-f{ font:500 10.5px/1 var(--mono); color:var(--fg-mute) }
+
+/* ===== Stepper ============================================================= */
+.p50-steppers{ display:flex; flex-direction:column; width:100%; max-width:460px }
+.p50-step-row{ display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 0; border-bottom:1px solid var(--line) }
+.p50-step-row:first-child{ border-top:1px solid var(--line) }
+.hj-stepper{ display:inline-flex; align-items:center; gap:4px; flex:none }
+.hj-step-btn{
+  width:36px; height:36px; border-radius:50%; display:grid; place-items:center; position:relative;
+  background:rgba(var(--fg-rgb),.08); color:var(--fg);
+  transition:transform var(--dur-snappy) var(--ease-snappy), opacity var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  touch-action:manipulation; user-select:none; -webkit-user-select:none;
+}
+.hj-step-btn::before{ content:""; position:absolute; inset:-4px }
+.hj-step-btn:hover{ background:rgba(var(--fg-rgb),.12) }
+.hj-step-btn:active, .hj-step-btn.down{ transform:scale(.9); transition-duration:70ms, var(--dur-fast), var(--dur-fast) }
+.hj-step-btn:disabled{ opacity:.4; cursor:not-allowed; transform:none }
+.hj-step-val{ min-width:76px; display:inline-flex; justify-content:center; align-items:baseline; gap:4px; font-weight:600; font-size:20px; line-height:24px; letter-spacing:-.02em; font-variant-numeric:tabular-nums; border-radius:var(--r-xs); outline-offset:4px }
+.hj-step-u{ font-size:13px; font-weight:500; color:var(--fg-dim); letter-spacing:0 }
+.p50-hold{ margin-top:22px; display:grid; grid-template-columns:auto 1fr; gap:6px 16px; align-items:end }
+.p50-hold-cap{ grid-column:1 / -1; font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.p50-hold-bars{ display:flex; align-items:flex-end; gap:4px; height:36px }
+.p50-hold-bars i{ width:6px; border-radius:2px; background:rgba(var(--fg-rgb),.16); height:var(--h); transform-origin:bottom; animation:p50-bar var(--dur-fast) var(--ease-out) }
+.p50-hold-bars i.on{ background:var(--accent) }
+@keyframes p50-bar{ from{ transform:scaleY(0) } }
+.p50-hold-t{ color:var(--fg-dim); font-size:11.5px; padding-bottom:1px }
+
+/* ===== Text field ========================================================== */
+.p50-fields{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:22px 24px; width:100%; max-width:680px; margin-top:12px }
+.p50-span2{ grid-column:1 / -1 }
+.hj-tf{ display:flex; flex-direction:column; gap:7px; min-width:0 }
+.hj-tf-label{ font-weight:600; font-size:13px; line-height:16px; display:flex; align-items:center; gap:8px }
+.hj-field{
+  position:relative; display:flex; align-items:center; gap:10px; height:48px; padding:0 8px 0 14px;
+  background:var(--surface); border-radius:var(--r-sm); box-shadow:inset 0 0 0 1px var(--line); cursor:text;
+  transition:box-shadow var(--dur-fast) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+}
+.hj-field:hover{ box-shadow:inset 0 0 0 1px rgba(var(--fg-rgb),.22) }
+.hj-field:focus-within{ box-shadow:inset 0 0 0 1.5px var(--accent) }
+.hj-field input{ flex:1; min-width:0; height:100%; border:0; background:transparent; outline:none; padding:0; font-size:15px; font-weight:500; color:var(--fg); caret-color:var(--accent); -webkit-appearance:none; appearance:none }
+.hj-field input::placeholder{ color:var(--fg-mute); font-weight:400 }
+.hj-field input::-webkit-search-cancel-button{ display:none }
+.hj-tf-lead{ color:var(--fg-mute); transition:color var(--dur-fast) var(--ease-out) }
+.hj-field:focus-within .hj-tf-lead{ color:var(--fg-dim) }
+.hj-tf-help{ display:flex; justify-content:space-between; gap:12px; font-size:12.5px; line-height:17px; color:var(--fg-dim); min-height:17px }
+.hj-tf-msg{ display:flex; align-items:center; gap:6px; min-width:0 }
+.hj-tf-count{ font:500 11px/17px var(--mono); color:var(--fg-mute); white-space:nowrap; transition:color var(--dur-fast) var(--ease-out) }
+.hj-tf-count.over{ color:var(--danger) }
+.hj-tf.err .hj-field{ box-shadow:inset 0 0 0 1.5px var(--danger) }
+.hj-tf.err .hj-field input{ caret-color:var(--danger) }
+.hj-tf.err .hj-tf-msg{ color:var(--danger); font-weight:500 }
+.hj-tf.err .hj-tf-lead{ color:var(--danger) }
+.hj-tf.dis{ opacity:.4 }
+.hj-tf.dis .hj-field{ cursor:not-allowed }
+.hj-tf-clear{ width:28px; height:28px; flex:none; border-radius:50%; display:grid; place-items:center; color:var(--fg-dim); opacity:0; transform:scale(.6); pointer-events:none; transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out) }
+.hj-tf-clear .ic{ width:14px; height:14px; stroke-width:2 }
+.hj-tf-clear::before{ content:""; position:absolute; width:20px; height:20px; border-radius:50%; background:rgba(var(--fg-rgb),.09); z-index:-1 }
+.hj-tf-clear{ position:relative; isolation:isolate }
+.hj-field.has .hj-tf-clear{ opacity:1; transform:none; pointer-events:auto; transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.hj-tf-reveal, .hj-tf-mic{ width:36px; height:36px; flex:none; border-radius:50%; display:grid; place-items:center; color:var(--fg-dim) }
+.hj-tf-reveal:hover, .hj-tf-mic:hover{ color:var(--fg); background:rgba(var(--fg-rgb),.06) }
+.hj-tf-reveal .ic{ transition:transform var(--dur-snappy) var(--ease-snappy) }
+.hj-tf-reveal.pop .ic{ animation:p50-pop var(--dur-snappy) var(--ease-snappy) }
+@keyframes p50-pop{ from{ transform:scale(.6) rotate(-12deg) } }
+.hj-field.is-search{ border-radius:var(--r-pill); padding-left:16px }
+.hj-field.is-search:focus-within .hj-tf-lead{ color:var(--accent) }
+.p50-strength{ display:inline-flex; gap:3px }
+.p50-strength i{ width:14px; height:3px; border-radius:2px; background:rgba(var(--fg-rgb),.14); transition:background-color var(--dur-base) var(--ease-out) }
+.p50-strength[data-n="1"] i:nth-child(-n+1), .p50-strength[data-n="2"] i:nth-child(-n+2){ background:var(--warning) }
+.p50-strength[data-n="3"] i:nth-child(-n+3), .p50-strength[data-n="4"] i{ background:var(--success) }
+
+/* ===== One-time code ======================================================= */
+.p50-otp-wrap{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:8px }
+.p50-otp-t{ font-weight:700; font-size:22px; line-height:26px; letter-spacing:-.02em }
+.p50-otp-h{ margin-top:6px; font-size:13px; color:var(--fg-dim) }
+.hj-otp{ position:relative; display:flex; gap:8px; margin-top:24px }
+.hj-otp input{ position:absolute; inset:0; width:100%; height:100%; opacity:0; border:0; font-size:16px; color:transparent; caret-color:transparent; background:transparent; z-index:2; cursor:text; letter-spacing:40px }
+.hj-otp .gap{ width:10px }
+.hj-otp .c{
+  position:relative; width:46px; height:56px; border-radius:var(--r-sm); display:grid; place-items:center;
+  background:var(--surface); box-shadow:inset 0 0 0 1px var(--line);
+  font-weight:600; font-size:26px; letter-spacing:-.01em; font-variant-numeric:tabular-nums;
+  transition:box-shadow var(--dur-fast) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+}
+@supports (corner-shape: squircle){ .hj-otp .c{ corner-shape:superellipse(1.6) } }
+.hj-otp .c .d{ display:block }
+.hj-otp .c.pop .d{ animation:p50-digit var(--dur-snappy) var(--ease-snappy) }
+@keyframes p50-digit{ from{ transform:translateY(calc(6px * var(--travel))) scale(.7); opacity:0 } }
+.hj-otp.foc .c.act{ box-shadow:inset 0 0 0 1.5px var(--accent) }
+.hj-otp.foc .c.act::after{ content:""; position:absolute; left:50%; top:16px; bottom:16px; width:1.5px; margin-left:-.75px; background:var(--accent); animation:p50-blink 1.1s steps(1) infinite }
+html[data-motion="reduced"] .hj-otp .c.act::after{ animation:none }
+@keyframes p50-blink{ 50%{ opacity:0 } }
+.hj-otp.ok .c{ box-shadow:inset 0 0 0 1.5px var(--success); background:var(--success-soft) }
+.hj-otp.bad .c{ box-shadow:inset 0 0 0 1.5px var(--danger) }
+.hj-otp.bad .c.act::after, .hj-otp.ok .c.act::after{ display:none }
+.p50-otp-msg{ margin-top:16px; min-height:20px; font-size:13px; color:var(--fg-dim) }
+.p50-otp-msg .m{ display:inline-flex; align-items:center; gap:6px }
+.p50-otp-msg .m.bad{ color:var(--danger); font-weight:500 }
+.p50-otp-msg .m.ok{ color:var(--success); font-weight:600 }
+.p50-otp-msg .m.in{ animation:p50-rise var(--dur-base) var(--ease-out) }
+@keyframes p50-rise{ from{ opacity:0; transform:translateY(calc(6px * var(--travel))) } }
+.p50-otp-msg .m.ok .ic{ animation:p50-seal var(--dur-bouncy) var(--ease-bouncy) }
+@keyframes p50-seal{ from{ transform:scale(.4) rotate(-20deg); opacity:0 } }
+
+/* ===== Counter (hanji digit slide) ========================================== */
+.hj-digits{ display:inline-flex; font-variant-numeric:tabular-nums; white-space:pre }
+.hj-digits .cl{ position:relative; display:inline-block }
+.hj-digits .g{ display:inline-block }
+.hj-digits .g.out{ position:absolute; left:0; top:0 }
+.p50-ct{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:4px }
+.p50-ct-eyebrow{ font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); display:flex; align-items:center; gap:8px }
+.p50-livedot{ width:7px; height:7px; border-radius:50%; background:var(--accent); position:relative }
+.p50-livedot::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:1.5px solid var(--accent); opacity:0; animation:p50-ping 2.4s var(--ease-out) infinite }
+html[data-motion="reduced"] .p50-livedot::after{ animation:none }
+@keyframes p50-ping{ 0%{ opacity:.6; transform:scale(.6) } 70%,100%{ opacity:0; transform:scale(1.5) } }
+.p50-ct-big{ margin-top:14px; font-weight:700; font-size:88px; line-height:88px; letter-spacing:-.045em; overflow:visible }
+.p50-ct-sub{ margin-top:14px; font-size:13.5px; color:var(--fg-dim); display:flex; gap:6px; align-items:baseline }
+.p50-ct-timer{ display:inline-flex; gap:6px; align-items:baseline }
+.p50-ct-timer .hj-digits{ color:var(--fg); font-size:13px }
+
+/* ===== Rating ============================================================== */
+.p50-rate-grid{ display:grid; grid-template-columns:minmax(0, 1fr) 240px; gap:56px; align-items:center; width:100%; max-width:640px }
+.hj-rating{ display:flex; gap:0; margin-left:-8px }
+.hj-star{ position:relative; width:44px; height:44px; display:grid; place-items:center; border-radius:50% }
+.hj-star svg{ grid-area:1 / 1; width:28px; height:28px }
+.hj-star .o{ color:var(--fg-mute) }
+.hj-star .f{ color:var(--accent); opacity:0; transform:scale(.3); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out) }
+.hj-star.pv .f{ opacity:.35; transform:scale(1) }
+.hj-star.on .f{ opacity:1; transform:scale(1); transition:opacity var(--dur-fast) var(--ease-out) var(--dl, 0ms), transform var(--dur-bouncy) var(--ease-bouncy) var(--dl, 0ms) }
+.hj-star.on.down .f{ transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy-settle) var(--ease-snappy-settle) }
+.hj-star:active .f, .hj-star:active .o{ transform:scale(.88) }
+.hj-star:focus-visible{ outline:2px solid var(--accent); outline-offset:-4px }
+.p50-rate-word{ margin-top:8px; font-weight:600; font-size:15px; color:var(--fg-dim); min-height:20px }
+.p50-rate-word.on{ color:var(--fg) }
+.p50-rate-word.in{ animation:p50-rise var(--dur-base) var(--ease-out) }
+.p50-rate-ro{ padding-left:32px; border-left:1px solid var(--line) }
+.p50-rate-avg{ display:flex; align-items:center; gap:12px }
+.p50-rate-num{ font-weight:700; font-size:34px; line-height:38px; letter-spacing:-.03em; font-variant-numeric:tabular-nums }
+.hj-stars-ro{ position:relative; display:inline-block; width:90px; height:16px }
+.hj-stars-ro .base, .hj-stars-ro .fill{ position:absolute; inset:0 }
+.hj-stars-ro .base{ background-color:var(--fg-mute); opacity:.35; -webkit-mask:var(--p50-star) 0 0 / 18px 16px repeat-x; mask:var(--p50-star) 0 0 / 18px 16px repeat-x }
+.hj-stars-ro .fill{ background-color:var(--accent); -webkit-mask:var(--p50-star) 0 0 / 18px 16px repeat-x; mask:var(--p50-star) 0 0 / 18px 16px repeat-x }
+.p50-rate-n{ margin-top:6px; font-size:12.5px; color:var(--fg-dim) }
+.p50-dist{ margin-top:14px; display:flex; flex-direction:column; gap:5px }
+.p50-dist > div{ display:grid; grid-template-columns:10px 1fr 30px; gap:8px; align-items:center; font:500 10.5px/1 var(--mono); color:var(--fg-mute) }
+.p50-dist i{ height:4px; border-radius:2px; background:rgba(var(--fg-rgb),.1); position:relative; overflow:hidden }
+.p50-dist i::after{ content:""; position:absolute; inset:0; background:var(--fg-dim); transform-origin:left; transform:scaleX(var(--w)) }
+.p50-dist em{ font-style:normal; text-align:right }
+
+/* ===== Picker wheel ======================================================== */
+.hj-picker{ --row:40px; position:relative; display:flex; align-items:stretch; justify-content:center; height:calc(var(--row) * 5); width:240px; margin-top:4px; user-select:none }
+.hj-picker-col{
+  height:100%; width:84px; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none; overscroll-behavior:contain; outline:none;
+  padding:calc(var(--row) * 2) 0; -webkit-mask-image:linear-gradient(transparent, #000 32%, #000 68%, transparent); mask-image:linear-gradient(transparent, #000 32%, #000 68%, transparent);
+  border-radius:var(--r-sm);
+}
+.hj-picker-col::-webkit-scrollbar{ display:none }
+.hj-picker-col:focus-visible{ background:rgba(var(--accent-rgb),.06) }
+.hj-picker-item{ height:var(--row); display:grid; place-items:center; scroll-snap-align:center; font-weight:500; font-size:24px; letter-spacing:-.02em; font-variant-numeric:tabular-nums; color:var(--fg-mute); cursor:pointer; will-change:transform }
+.hj-picker-item.sel{ color:var(--fg); font-weight:600 }
+.hj-picker-colon{ display:grid; place-items:center; font-weight:600; font-size:24px; width:16px; padding-bottom:3px; color:var(--fg) }
+.hj-picker-band{ position:absolute; left:0; right:0; top:calc(var(--row) * 2); height:var(--row); border-top:1px solid var(--line); border-bottom:1px solid var(--line); pointer-events:none; transition:border-color 260ms var(--ease-out) }
+.hj-picker-band.tick{ border-color:rgba(var(--accent-rgb),.55); transition:none }
+.p50-pick-read{ margin-top:22px; display:flex; flex-direction:column; align-items:center; gap:3px }
+.p50-pick-t{ font-size:15px; font-weight:500 }
+.p50-pick-t b{ font-weight:500; font-size:15px }
+.p50-pick-h{ font-size:12.5px; color:var(--fg-dim) }
+
+/* ===== Date picker ========================================================= */
+.hj-cal{ width:336px; max-width:100% }
+.hj-cal-mode{ display:flex; justify-content:center; margin-bottom:18px }
+.hj-cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px }
+.hj-cal-title{ font-weight:600; font-size:16px; letter-spacing:-.015em }
+.hj-cal-nav{ width:36px; height:36px; border-radius:50%; display:grid; place-items:center; color:var(--fg) }
+.hj-cal-nav:hover{ background:rgba(var(--fg-rgb),.06) }
+.hj-cal-nav:disabled{ opacity:.3; cursor:default; transform:none }
+.hj-cal-wk{ display:grid; grid-template-columns:repeat(7, 1fr); font-weight:600; font-size:10.5px; letter-spacing:1px; color:var(--fg-mute); text-align:center; padding-bottom:6px }
+.hj-cal-view{ overflow:hidden }
+.hj-cal-grid{ display:grid; grid-template-columns:repeat(7, 1fr); row-gap:2px }
+.hj-day{ position:relative; height:44px; display:grid; place-items:center; isolation:isolate; border-radius:0; outline:none }
+.hj-day .n{ width:36px; height:36px; border-radius:50%; display:grid; place-items:center; font-weight:500; font-size:14px; font-variant-numeric:tabular-nums; position:relative; transition:background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out) }
+.hj-day:not(.past):not(.blank):hover .n{ background:rgba(var(--fg-rgb),.07) }
+.hj-day.blank{ pointer-events:none }
+.hj-day.past{ color:var(--fg-mute); cursor:default }
+.hj-day.past .n{ opacity:.55 }
+.hj-day.today .n::after{ content:""; position:absolute; bottom:5px; left:50%; width:4px; height:4px; margin-left:-2px; border-radius:50%; background:var(--accent) }
+.hj-day.today .n{ font-weight:700 }
+.hj-day::before{ content:""; position:absolute; top:4px; bottom:4px; left:0; right:0; z-index:-1; background:var(--accent-soft); opacity:0; transition:opacity var(--dur-fast) var(--ease-out) }
+.hj-day.in::before, .hj-day.pv::before{ opacity:1 }
+.hj-day.pv:not(.in)::before{ opacity:.55 }
+.hj-day.s::before{ left:50%; opacity:1 }
+.hj-day.e::before{ right:50%; opacity:1 }
+.hj-day.pre::before{ opacity:.55 }
+.hj-day.s.e::before, .hj-day.solo::before{ opacity:0 }
+.hj-day.c0.in::before, .hj-day.c0.pv::before{ left:4px; border-radius:18px 0 0 18px }
+.hj-day.c6.in::before, .hj-day.c6.pv::before{ right:4px; border-radius:0 18px 18px 0 }
+.hj-day.sel .n{ background:var(--accent) !important; color:var(--on-accent); font-weight:600; animation:p50-daypop var(--dur-snappy) var(--ease-snappy) }
+.hj-day.sel.today .n::after{ background:var(--on-accent) }
+@keyframes p50-daypop{ from{ transform:scale(.78) } }
+.hj-day:focus-visible .n{ box-shadow:0 0 0 2px var(--accent) }
+.hj-cal-foot{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line); display:flex; flex-direction:column; align-items:stretch; gap:12px }
+.hj-cal-sum{ font-size:13px; line-height:18px; color:var(--fg-dim); min-width:0; min-height:18px }
+.hj-cal-acts{ display:flex; justify-content:flex-end; gap:8px }
+.hj-cal-sum b{ color:var(--fg); font-weight:600 }
+
+@media (max-width: 1100px){
+  .p50-split, .p50-split--wide, .p50-sl-grid, .p50-rate-grid{ grid-template-columns:1fr; gap:32px }
+  .p50-states{ padding-left:0; border-left:0; flex-direction:row; flex-wrap:wrap }
+  .p50-rate-ro{ padding-left:0; border-left:0 }
+}
+@media (max-width: 720px){
+  .hj-choices, .p50-fields{ grid-template-columns:1fr }
+  .p50-segs{ grid-template-columns:1fr; gap:10px } .p50-segs > .swatch-label{ text-align:left; margin-top:8px }
+  .hj-otp .c{ width:40px; height:52px } .hj-otp{ gap:6px }
+}
+</style>
+
+<script>
+/* ===== 04 Controls ======================================================== */
+(function(){
+  const { $, $$ } = H;
+  const root = $('#controls');
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const ms = n => { const v = css(n); return v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000; };
+  const safe = (name, fn) => { try { fn(); } catch (e) { console.error('[controls] ' + name, e); } };
+  document.documentElement.style.setProperty('--p50-star', `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z"/></svg>')}")`);
+
+  /* hanji Counter (H.digits) lives in core: only changed digits move, .55 line-height, ones first */
+
+  /* ---- 04.01 Toggle ---- */
+  safe('toggle', () => {
+    $$('#p50-toggles .hj-toggle').forEach(t => H.toggle(t));
+    $$('#p50-toggles [data-row]').forEach(row => row.addEventListener('click', e => {
+      const b = row.querySelector('.hj-toggle'); if (!b || b.disabled || e.target === b) return; b.click();
+    }));
+  });
+
+  /* ---- 04.02 Checkbox ---- */
+  const MARK = '<svg viewBox="0 0 22 22" aria-hidden="true"><path class="ck" d="M4.84 11.66 9.24 16.06 17.16 6.82"/><path class="mx" d="M5.72 11h10.56"/></svg>';
+  safe('checkbox', () => {
+    $$('#controls .hj-check').forEach(b => { b.innerHTML = MARK; });
+    const dl = $('#p50-dl'); const all = dl.querySelector('[data-all]');
+    const kids = $$('.p50-cbkids .hj-check', dl);
+    function sync(){
+      const on = kids.filter(k => k.getAttribute('aria-checked') === 'true');
+      all.setAttribute('aria-checked', on.length === 0 ? 'false' : on.length === kids.length ? 'true' : 'mixed');
+      const gb = on.reduce((s, k) => s + parseFloat(k.closest('[data-size]').dataset.size), 0);
+      $('#p50-dl-sum').textContent = on.length === 0 ? 'Nothing selected' : `${on.length} of ${kids.length} playlists · ${gb.toFixed(1)} GB`;
+    }
+    function toggle(b){
+      if (b.disabled) return;
+      if (b === all){
+        const to = all.getAttribute('aria-checked') !== 'true';
+        const targets = kids.filter(k => (k.getAttribute('aria-checked') === 'true') !== to);
+        targets.forEach((k, i) => setTimeout(() => { k.setAttribute('aria-checked', String(to)); if (i === targets.length - 1) sync(); }, H.reduced() ? 0 : i * 24));
+        all.setAttribute('aria-checked', String(to));
+        if (!targets.length) sync();
+        return;
+      }
+      const on = b.getAttribute('aria-checked') !== 'true';
+      b.setAttribute('aria-checked', String(on));
+      if (kids.includes(b)) sync();
+      if (b.closest('#p50-terms')) setTermsError(false);
+    }
+    // the whole row is the target; the button's own click (mouse, keyboard or assistive tech) bubbles here
+    $$('#checkbox [data-cb]').forEach(row => row.addEventListener('click', () => { const b = row.querySelector('.hj-check'); if (b) toggle(b); }));
+    const terms = $('#p50-terms .hj-check'), err = $('#p50-terms-err');
+    function setTermsError(on){ terms.setAttribute('aria-invalid', String(on)); err.hidden = !on; }
+    $('#p50-continue').addEventListener('click', () => {
+      const ok = terms.getAttribute('aria-checked') === 'true';
+      setTermsError(!ok);
+      if (!ok && !H.reduced()) terms.animate([{ transform:'translateX(0)' }, { transform:'translateX(-4px)' }, { transform:'translateX(3px)' }, { transform:'translateX(-1px)' }, { transform:'none' }], { duration:360, easing:'cubic-bezier(.33,1,.68,1)' });
+      if (ok){ const b = $('#p50-continue'); b.textContent = 'Saved'; setTimeout(() => b.textContent = 'Continue', 1400); }
+    });
+    sync();
+  });
+
+  /* ---- 04.03 Radio (roving focus) ---- */
+  function radioGroup(group, itemSel, onChange){
+    const items = $$(itemSel, group);
+    const enabled = () => items.filter(i => i.getAttribute('aria-disabled') !== 'true');
+    function select(it, focus){
+      if (it.getAttribute('aria-disabled') === 'true') return;
+      items.forEach(i => { const on = i === it; i.setAttribute('aria-checked', String(on)); i.tabIndex = on ? 0 : -1; });
+      if (focus) it.focus();
+      onChange && onChange(it);
+    }
+    items.forEach(it => {
+      it.tabIndex = it.getAttribute('aria-checked') === 'true' ? 0 : -1;
+      it.addEventListener('click', () => select(it, false));
+      it.addEventListener('keydown', e => {
+        const en = enabled(); const i = en.indexOf(it);
+        if (['ArrowDown', 'ArrowRight'].includes(e.key)){ e.preventDefault(); select(en[(i + 1) % en.length], true); }
+        if (['ArrowUp', 'ArrowLeft'].includes(e.key)){ e.preventDefault(); select(en[(i - 1 + en.length) % en.length], true); }
+      });
+    });
+  }
+  safe('radio', () => radioGroup($('#p50-radios'), '.hj-radio-item'));
+
+  /* ---- 04.04 Choice cards ---- */
+  safe('choice', () => {
+    const gb = $('#p50-gb');
+    H.digits(gb, '19.0');
+    radioGroup($('#p50-choices'), '.hj-choice', it => {
+      H.digits(gb, it.dataset.gb);
+      const free = (60.2 - parseFloat(it.dataset.gb)).toFixed(1);
+      $('#p50-free').textContent = `${free} GB free after`;
+    });
+    $('#p50-free').textContent = '41.2 GB free after';
+  });
+
+  /* ---- 04.05 Segmented ---- */
+  safe('segmented', () => {
+    $$('#segmented .hj-seg').forEach(s => { if (s.getAttribute('aria-disabled') === 'true'){ s.querySelectorAll('button').forEach(b => b.tabIndex = -1); } H.segmented(s); });
+    const s4 = $('#p50-seg4'), read = $('#p50-seg4-read');
+    const show = () => { const ind = s4.querySelector('.hj-seg-ind'); const x = parseFloat(ind.style.getPropertyValue('--x')) || 0; const sx = parseFloat(ind.style.getPropertyValue('--sx')) || 1; read.textContent = `translateX ${Math.round(x)}px · scaleX ${sx.toFixed(2)}`; };
+    s4.addEventListener('change', show); setTimeout(show, 50); if (document.fonts) document.fonts.ready.then(() => setTimeout(show, 30));
+    const slow = $('#p50-slow');
+    slow.addEventListener('click', () => { const on = slow.getAttribute('aria-pressed') !== 'true'; slow.setAttribute('aria-pressed', String(on)); slow.textContent = on ? 'Slow × 5 · on' : 'Slow × 5'; $('#p50-segplate').classList.toggle('slow', on); });
+  });
+
+  /* ---- 04.06 Slider ---- */
+  function slider(el, o){
+    const rl = el.querySelector('.rl'), bub = el.querySelector('.bub');
+    const range = o.max - o.min;
+    const toN = v => (v - o.min) / range, fromN = n => o.min + n * range;
+    const snap = v => Math.min(o.max, Math.max(o.min, Math.round((v - o.min) / o.step) * o.step + o.min));
+    let len = 0, value = o.value, dragging = false, follow = false, x0 = 0, y0 = 0;
+    const sp = H.spring(toN(value), { spring:'snappy', onUpdate:n => paint(n) });
+    function paint(n){
+      el.style.setProperty('--v', n.toFixed(4));
+      if (o.bipolar) el.style.setProperty('--b', ((n - .5) * 2).toFixed(4));
+      if (bub) bub.textContent = o.format(snap(fromN(n)));
+      o.onPaint && o.onPaint(snap(fromN(n)));
+    }
+    function measure(){ const r = rl.getBoundingClientRect(); len = o.vertical ? r.height : r.width; el.style.setProperty('--len', len + 'px'); }
+    new ResizeObserver(measure).observe(rl); measure(); paint(toN(value));
+    function aria(v){ el.setAttribute('aria-valuemin', o.min); el.setAttribute('aria-valuemax', o.max); el.setAttribute('aria-valuenow', v); el.setAttribute('aria-valuetext', o.format(v)); if (o.vertical) el.setAttribute('aria-orientation', 'vertical'); }
+    aria(value);
+    if (o.disabled) return { set(){} };
+    const pos = e => { const r = rl.getBoundingClientRect(); const n = o.vertical ? 1 - (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width; return Math.min(1, Math.max(0, n)); };
+    function commit(v){ const changed = v !== value; value = v; aria(v); sp.to(toN(v)); if (changed) o.onCommit && o.onCommit(v); }
+    el.addEventListener('pointerdown', e => {
+      e.preventDefault(); el.setPointerCapture(e.pointerId); el.focus({ preventScroll:true });
+      const n = pos(e); dragging = true; x0 = e.clientX; y0 = e.clientY;
+      follow = Math.abs(n - sp.x) * len < 16;  // grabbed the thumb: follow 1:1
+      el.classList.add('held');
+      if (follow) sp.set(n); else sp.to(n);    // tap-to-set travels on snappy
+      o.onInput && o.onInput(snap(fromN(n)));
+    });
+    el.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      if (!follow && Math.hypot(e.clientX - x0, e.clientY - y0) > 3) follow = true;
+      if (follow){ const n = pos(e); sp.set(n); o.onInput && o.onInput(snap(fromN(n))); }
+    });
+    const end = e => { if (!dragging) return; dragging = false; el.classList.remove('held'); commit(snap(fromN(follow ? pos(e) : sp.target))); };
+    el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+    let kt = 0;
+    el.addEventListener('keydown', e => {
+      const big = Math.max(o.step, Math.round(range / 10 / o.step) * o.step);
+      const map = { ArrowRight:o.step, ArrowUp:o.step, ArrowLeft:-o.step, ArrowDown:-o.step, PageUp:big, PageDown:-big };
+      let v = null;
+      if (e.key in map) v = snap(value + map[e.key]); else if (e.key === 'Home') v = o.min; else if (e.key === 'End') v = o.max;
+      if (v === null) return; e.preventDefault();
+      el.classList.add('held'); clearTimeout(kt); kt = setTimeout(() => el.classList.remove('held'), 700);
+      commit(v);
+    });
+    return { set(v){ value = snap(v); aria(value); sp.to(toN(value)); }, get:() => value, spring:sp };
+  }
+
+  safe('slider', () => {
+    slider($('#p50-sl1'), { min:0, max:12, step:1, value:6, format:v => `${v} s`, onPaint:v => $('#p50-sl1v').textContent = v === 0 ? 'off' : `${v} s` });
+
+    // pending-hold: the speaker is the source of truth
+    const pend = $('#p50-sl2v'), sl2 = $('#p50-sl2'); let agreeT = 0, staleT = 0;
+    slider(sl2, { min:0, max:100, step:1, value:40, format:v => `${v}%`,
+      onInput:v => { clearTimeout(agreeT); pend.classList.remove('pending'); sl2.classList.remove('pending'); pend.lastChild.textContent = `Set to ${v}%`; },
+      onCommit:v => {
+        pend.classList.add('pending'); sl2.classList.add('pending'); pend.lastChild.textContent = 'Applying…';
+        clearTimeout(agreeT); clearTimeout(staleT);
+        agreeT = setTimeout(() => { pend.classList.remove('pending'); sl2.classList.remove('pending'); pend.lastChild.textContent = `Speaker at ${v}%`; }, 900);
+        staleT = setTimeout(() => { if (sl2.classList.contains('pending')){ sl2.classList.remove('pending'); pend.classList.remove('pending'); pend.lastChild.textContent = 'Speaker didn’t answer'; } }, 2500);
+      } });
+
+    slider($('#p50-sl3'), { min:0, max:100, step:1, value:36, format:v => v, disabled:true });
+
+    // range: two thumbs that never cross
+    const rg = $('#p50-rg'), rl = rg.querySelector('.rl'), ths = $$('.th', rg), MIN = 1960, MAX = 2026;
+    let lo = 1994, hi = 2011, len = 0;
+    const springs = [0, 1].map(i => H.spring((i ? hi : lo) - MIN, { spring:'snappy', onUpdate:() => paintR() }));
+    const n = y => y / (MAX - MIN);
+    function paintR(){ rg.style.setProperty('--lo', n(springs[0].x).toFixed(4)); rg.style.setProperty('--hi', n(springs[1].x).toFixed(4)); ths[0].querySelector('.bub').textContent = Math.round(springs[0].x + MIN); ths[1].querySelector('.bub').textContent = Math.round(springs[1].x + MIN); }
+    function measureR(){ len = rl.getBoundingClientRect().width; rg.style.setProperty('--len', len + 'px'); }
+    new ResizeObserver(measureR).observe(rl); measureR(); paintR();
+    function ariaR(){ [lo, hi].forEach((v, i) => { ths[i].setAttribute('aria-valuemin', i ? lo + 1 : MIN); ths[i].setAttribute('aria-valuemax', i ? MAX : hi - 1); ths[i].setAttribute('aria-valuenow', v); }); $('#p50-rgv').textContent = `${lo} – ${hi}`; }
+    ariaR();
+    let act = -1, follow = false, x0 = 0;
+    const yearAt = e => { const r = rl.getBoundingClientRect(); return MIN + Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * (MAX - MIN); };
+    function setThumb(i, y, direct){
+      y = Math.round(y); if (i === 0) y = Math.min(y, hi - 1); else y = Math.max(y, lo + 1); y = Math.max(MIN, Math.min(MAX, y));
+      if (i === 0) lo = y; else hi = y;
+      if (direct) springs[i].set(y - MIN); else springs[i].to(y - MIN);
+      ariaR();
+    }
+    rg.addEventListener('pointerdown', e => {
+      e.preventDefault(); rg.setPointerCapture(e.pointerId);
+      const y = yearAt(e); act = Math.abs(y - lo) <= Math.abs(y - hi) ? (y > hi ? 1 : 0) : 1;
+      if (y < lo) act = 0; if (y > hi) act = 1;
+      follow = Math.abs(y - (act ? hi : lo)) / (MAX - MIN) * len < 16; x0 = e.clientX;
+      ths[act].classList.add('held'); rg.classList.add('held-any'); ths[act].focus({ preventScroll:true });
+      setThumb(act, y, follow);
+    });
+    rg.addEventListener('pointermove', e => { if (act < 0) return; if (!follow && Math.abs(e.clientX - x0) > 3) follow = true; if (follow){ const y = yearAt(e); const raw = Math.max(MIN, Math.min(MAX, y)); const cl = act === 0 ? Math.min(raw, hi - 1) : Math.max(raw, lo + 1); springs[act].set(cl - MIN); if (act === 0) lo = Math.round(cl); else hi = Math.round(cl); ariaR(); } });
+    const endR = () => { if (act < 0) return; ths[act].classList.remove('held'); setThumb(act, act ? hi : lo, false); act = -1; };
+    rg.addEventListener('pointerup', endR); rg.addEventListener('pointercancel', endR);
+    ths.forEach((th, i) => th.addEventListener('keydown', e => {
+      const d = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1, PageUp:10, PageDown:-10 }[e.key];
+      if (d === undefined && e.key !== 'Home' && e.key !== 'End') return; e.preventDefault();
+      const cur = i ? hi : lo; const v = e.key === 'Home' ? MIN : e.key === 'End' ? MAX : cur + d;
+      th.classList.add('held'); clearTimeout(th._t); th._t = setTimeout(() => th.classList.remove('held'), 700);
+      setThumb(i, v, false);
+    }));
+
+    // vertical EQ — five bands, bipolar fill from the zero line
+    const bands = [['60', 3], ['230', 1], ['910', -2], ['3.6k', 2], ['14k', 5]];
+    const eq = $('#p50-eq');
+    eq.innerHTML = bands.map((b, i) => `<div class="p50-band"><span class="p50-band-v" id="p50-eqv${i}"></span><div class="hj-slider v" tabindex="0" role="slider" aria-label="${b[0]} Hz" id="p50-eq${i}"><div class="rl"><div class="tr"><div class="fl"></div></div><span class="zero"></span><div class="th"><span class="kn"></span><span class="bub"></span></div></div></div><span class="p50-band-f">${b[0]}</span></div>`).join('');
+    const fmt = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v);
+    const eqs = bands.map((b, i) => slider($('#p50-eq' + i), { min:-12, max:12, step:1, value:b[1], vertical:true, bipolar:true, format:v => `${fmt(v)} dB`, onPaint:v => $('#p50-eqv' + i).textContent = fmt(v) }));
+    $('#p50-eqflat').addEventListener('click', () => eqs.forEach((s, i) => setTimeout(() => s.set(0), H.reduced() ? 0 : i * 24)));
+  });
+
+  /* ---- 04.07 Stepper: hold to repeat (420 / 220 × .82 → 60) ---- */
+  safe('stepper', () => {
+    const bars = $('#p50-hold'), holdT = $('#p50-hold-t');
+    function drawBars(list){ const max = 420; bars.innerHTML = list.slice(-22).map((v, i, a) => `<i class="${i === a.length - 1 ? 'on' : ''}" style="--h:${Math.max(4, Math.round(v / max * 36))}px"></i>`).join(''); }
+    $$('#stepper .hj-stepper').forEach(st => {
+      const min = +st.dataset.min, max = +st.dataset.max, step = +st.dataset.step; let value = +st.dataset.value;
+      const val = st.querySelector('.hj-step-val'), dg = val.querySelector('.hj-digits');
+      const [minus, plus] = $$('.hj-step-btn', st);
+      st.setAttribute('role', 'group'); val.setAttribute('aria-labelledby', st.getAttribute('aria-labelledby')); val.setAttribute('aria-valuemin', min); val.setAttribute('aria-valuemax', max);
+      function paint(){ H.digits(dg, String(value)); val.setAttribute('aria-valuenow', value); val.setAttribute('aria-valuetext', `${value} ${st.dataset.unit}`); minus.disabled = value <= min; plus.disabled = value >= max; }
+      function bump(d){ const v = Math.min(max, Math.max(min, value + d * step)); if (v === value) return false; value = v; paint(); return true; }
+      paint();
+      let timer = 0, gap = 220, trail = [];
+      const stop = b => { clearTimeout(timer); timer = 0; b && b.classList.remove('down'); if (trail.length) holdT.textContent = `released after ${trail.length} steps · last gap ${Math.round(trail[trail.length - 1])} ms`; };
+      [minus, plus].forEach(b => {
+        const d = +b.dataset.d;
+        b.addEventListener('pointerdown', e => {
+          if (b.disabled) return; e.preventDefault(); b.setPointerCapture(e.pointerId); b.classList.add('down');
+          trail = [420]; drawBars(trail); holdT.textContent = 'waiting 420 ms…';
+          bump(d); gap = 220;
+          const rep = () => { if (!bump(d)){ stop(b); holdT.textContent = `stopped at the ${d > 0 ? 'maximum' : 'minimum'}`; return; } trail.push(gap); drawBars(trail); holdT.textContent = `repeating · next in ${Math.round(gap)} ms`; const g = gap; gap = Math.max(60, gap * .82); timer = setTimeout(rep, g); };
+          timer = setTimeout(rep, 420);
+        });
+        ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => b.addEventListener(ev, () => stop(b)));
+        b.addEventListener('click', e => { if (e.detail === 0) bump(d); });
+      });
+      val.addEventListener('keydown', e => { const d = { ArrowUp:1, ArrowRight:1, ArrowDown:-1, ArrowLeft:-1 }[e.key]; if (d){ e.preventDefault(); bump(d); } if (e.key === 'Home'){ e.preventDefault(); value = min; paint(); } if (e.key === 'End'){ e.preventDefault(); value = max; paint(); } });
+    });
+    drawBars([420, 220, 180, 148, 121, 99, 81, 67, 60, 60]);
+  });
+
+  /* ---- 04.08 Text field ---- */
+  safe('text-field', () => {
+    $$('#text-field .hj-tf').forEach(tf => {
+      const field = tf.querySelector('.hj-field'), input = tf.querySelector('input');
+      const clear = tf.querySelector('.hj-tf-clear'), count = tf.querySelector('.hj-tf-count');
+      const max = +tf.dataset.max || 0;
+      const upd = () => { field.classList.toggle('has', !!input.value && !input.disabled); if (count){ count.textContent = `${input.value.length} / ${max}`; count.classList.toggle('over', input.value.length > max); } };
+      field.addEventListener('pointerdown', e => { if (e.target === field) { e.preventDefault(); input.focus(); } });
+      input.addEventListener('input', upd); upd();
+      clear && clear.addEventListener('click', () => { input.value = ''; upd(); input.focus(); });
+    });
+    // email: speaks on blur or submit, clears as soon as it is right
+    const em = $('#p50-email'), emIn = $('#p50-f2'), emMsg = em.querySelector('.hj-tf-msg');
+    const valid = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+    function setEmail(err){
+      em.classList.toggle('err', err); emIn.setAttribute('aria-invalid', String(err));
+      emMsg.innerHTML = err ? `<svg class="ic s14" aria-hidden="true"><use href="#i-alert"/></svg><span>Enter an email address like name@example.com</span>` : `<span>We’ll send receipts and sign-in links here.</span>`;
+    }
+    emIn.addEventListener('input', () => { if (em.classList.contains('err') && valid(emIn.value)) setEmail(false); });
+    emIn.addEventListener('blur', () => { if (emIn.value && !valid(emIn.value)) setEmail(true); });
+    $('#p50-submit').addEventListener('click', () => {
+      const bad = !valid(emIn.value); setEmail(bad);
+      if (bad && !H.reduced()) em.querySelector('.hj-field').animate([{ transform:'translateX(0)' }, { transform:'translateX(-4px)' }, { transform:'translateX(4px)' }, { transform:'translateX(-2px)' }, { transform:'none' }], { duration:Math.max(360, ms('--dur-bouncy') * .7), easing:'cubic-bezier(.33,1,.68,1)' });
+    });
+    // password reveal + strength
+    const pw = $('#p50-f3'), rv = $('#text-field .hj-tf-reveal'), str = $('#text-field .p50-strength'), strT = $('#p50-f3s');
+    rv.addEventListener('click', () => {
+      const show = pw.type === 'password'; pw.type = show ? 'text' : 'password';
+      rv.setAttribute('aria-pressed', String(show)); rv.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      rv.innerHTML = H.icon(show ? 'eye-off' : 'eye', 's18'); rv.classList.remove('pop'); void rv.offsetWidth; rv.classList.add('pop');
+    });
+    const score = v => { let s = 0; if (v.length >= 8) s++; if (v.length >= 12) s++; if (/[^a-z]/i.test(v) || /\d/.test(v)) s++; if (v.length >= 16) s++; return Math.min(4, s); };
+    const words = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'];
+    const updPw = () => { const s = score(pw.value); str.dataset.n = s; strT.textContent = `${words[s]} · ${pw.value.length} characters`; };
+    pw.addEventListener('input', updPw); updPw();
+  });
+
+  /* ---- 04.09 One-time code ---- */
+  safe('otp', () => {
+    const box = $('#p50-otp'), input = box.querySelector('input'), cells = $$('.c', box), msg = $('#p50-otp-msg');
+    const RIGHT = '482915';
+    let state = '';
+    function render(){
+      const v = input.value;
+      cells.forEach((c, i) => {
+        const d = v[i] || '';
+        if (c.dataset.d !== d){ c.dataset.d = d; c.querySelector('.d').textContent = d; if (d){ c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); } }
+        c.classList.toggle('act', i === Math.min(v.length, 5) && !state);
+      });
+    }
+    const resendHTML = () => `Didn’t get it? <button class="p50-link" id="p50-resend" ${cd > 0 ? 'disabled' : ''}>${cd > 0 ? `Resend in <span class="t-mono" id="p50-cd">${fmtCd()}</span>` : 'Resend code'}</button>`;
+    function setMsg(kind, html){ msg.innerHTML = `<span class="m ${kind} in">${html}</span>`; wireResend(); }
+    function clearState(){ if (!state) return; state = ''; box.classList.remove('ok', 'bad'); setMsg('', resendHTML()); }
+    function verify(){
+      if (input.value.length < 6) return;
+      if (input.value === RIGHT){ state = 'ok'; box.classList.add('ok'); setMsg('ok', `${H.icon('check-c', 's16')}Verified · signed in on this device`); }
+      else {
+        state = 'bad'; box.classList.add('bad');
+        setMsg('bad', `${H.icon('alert', 's14')}That code didn’t match. Check the latest text, or resend.`);
+        if (!H.reduced()) box.animate([{ transform:'translateX(0)' }, { transform:'translateX(-5px)' }, { transform:'translateX(4px)' }, { transform:'translateX(-2px)' }, { transform:'none' }], { duration:380, easing:'cubic-bezier(.33,1,.68,1)' });
+      }
+      render();
+    }
+    input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 6); clearState(); render(); verify(); });
+    input.addEventListener('focus', () => { box.classList.add('foc'); render(); });
+    input.addEventListener('blur', () => box.classList.remove('foc'));
+    let fillT = [];
+    function cascade(code){
+      fillT.forEach(clearTimeout); fillT = [];
+      input.value = ''; clearState(); render();
+      if (!code) return;
+      code.split('').forEach((d, i) => fillT.push(setTimeout(() => { input.value += d; render(); if (i === code.length - 1) verify(); }, H.reduced() ? 0 : 60 + i * 24)));
+    }
+    input.addEventListener('paste', e => { e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6); cascade(t); });
+    $$('#otp [data-otp]').forEach(b => b.addEventListener('click', () => { cascade(b.dataset.otp); input.focus({ preventScroll:true }); }));
+    // resend countdown — a 1 Hz label tick, not a frame clock
+    let cd = 24, cdT = 0;
+    const fmtCd = () => `0:${String(cd).padStart(2, '0')}`;
+    function wireResend(){ const r = $('#p50-resend'); if (r) r.onclick = () => { cd = 24; tick(); input.value = ''; clearState(); render(); input.focus(); }; }
+    function tick(){ clearInterval(cdT); cdT = setInterval(() => { cd = Math.max(0, cd - 1); if (!state){ const c = $('#p50-cd'); if (c && cd > 0) c.textContent = fmtCd(); else if (cd === 0){ setMsg('', resendHTML()); clearInterval(cdT); } } }, 1000); }
+    wireResend(); tick(); render();
+  });
+
+  /* ---- 04.10 Counter ---- */
+  safe('counter', () => {
+    const el = $('#p50-ct'); let n = 12840;
+    const show = () => H.digits(el, H.fmt(n)); show();
+    $$('#counter [data-ct]').forEach(b => b.addEventListener('click', () => { const v = b.dataset.ct; n = v === 'r' ? 1000 + Math.floor(Math.random() * 98000) : Math.max(0, n + +v); show(); }));
+    // ambient tick — decoration, so it never arms under reduced motion
+    let amb = 0;
+    const arm = () => { clearInterval(amb); if (!H.reduced()) amb = setInterval(() => { if (document.hidden) return; n += Math.round(Math.random() * 14) - 4; show(); }, 2600); };
+    arm(); H.on('motion', arm);
+    // sleep timer: a 1 Hz label, the clock example from hanji's own docs
+    const tm = $('#p50-timer'); let s = 14 * 60 + 9;
+    const fmtT = () => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    H.digits(tm, fmtT());
+    setInterval(() => { s = s > 0 ? s - 1 : 15 * 60; H.digits(tm, fmtT()); }, 1000);
+  });
+
+  /* ---- 04.11 Rating ---- */
+  safe('rating', () => {
+    const r = $('#p50-rating'), word = $('#p50-rate-word');
+    const words = ['Not for me', 'It was fine', 'Good', 'Really good', 'Loved it'];
+    r.innerHTML = words.map((w, i) => `<button class="hj-star" role="radio" aria-checked="false" aria-label="${i + 1} star${i ? 's' : ''}, ${w}" tabindex="${i ? -1 : 0}"><svg class="ic o" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic f" aria-hidden="true"><use href="#i-star-f"/></svg></button>`).join('');
+    const stars = $$('.hj-star', r); let val = 0;
+    const preview = k => stars.forEach((s, i) => s.classList.toggle('pv', i < k && i >= val));
+    function setWord(k, committed){ const t = k ? words[k - 1] : 'Tap a star'; if (word.textContent !== t){ word.textContent = t; word.classList.remove('in'); void word.offsetWidth; word.classList.add('in'); } word.classList.toggle('on', committed && k > 0); }
+    function commit(k, focus){
+      const lowering = k < val; val = k;
+      stars.forEach((s, i) => {
+        s.style.setProperty('--dl', (H.reduced() ? 0 : i * 24) + 'ms');
+        s.classList.toggle('down', lowering);
+        const on = i < k;
+        if (on && !s.classList.contains('on')){ s.classList.add('on'); } else if (!on) s.classList.remove('on');
+        s.classList.remove('pv'); s.setAttribute('aria-checked', String(i === k - 1)); s.tabIndex = i === Math.max(0, k - 1) ? 0 : -1;
+      });
+      if (focus) stars[k - 1].focus();
+      setWord(k, true);
+    }
+    stars.forEach((s, i) => {
+      s.addEventListener('pointerenter', () => { preview(i + 1); setWord(i + 1, false); });
+      s.addEventListener('click', () => commit(i + 1));
+      s.addEventListener('keydown', e => { const d = { ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1 }[e.key]; if (d){ e.preventDefault(); commit(Math.min(5, Math.max(1, (val || 1) + (val ? d : 0))), true); } });
+    });
+    r.addEventListener('pointerleave', () => { preview(0); setWord(val, true); });
+    // drag across the stars to preview, release to commit
+    let dragging = false;
+    r.addEventListener('pointerdown', () => { dragging = true; });
+    r.addEventListener('pointermove', e => { if (!dragging || e.pointerType === 'mouse') return; const el = document.elementFromPoint(e.clientX, e.clientY); const s = el && el.closest('.hj-star'); if (s){ const k = stars.indexOf(s) + 1; preview(k); setWord(k, false); } });
+    addEventListener('pointerup', () => { dragging = false; });
+    commit(4); // a remembered verdict
+  });
+
+  /* ---- 04.12 Picker wheel ---- */
+  safe('picker', () => {
+    const pk = $('#p50-picker'), band = pk.querySelector('.hj-picker-band'), ROW = 40;
+    const cols = $$('.hj-picker-col', pk);
+    const data = { h:Array.from({ length:24 }, (_, i) => String(i).padStart(2, '0')), m:Array.from({ length:12 }, (_, i) => String(i * 5).padStart(2, '0')) };
+    const sel = { h:7, m:6 };
+    function readout(){
+      $('#p50-pick-v').textContent = `${data.h[sel.h]}:${data.m[sel.m]}`;
+      const now = new Date(); const t = new Date(now); t.setHours(sel.h, sel.m * 5, 0, 0); if (t <= now) t.setDate(t.getDate() + 1);
+      const mins = Math.round((t - now) / 60000); $('#p50-pick-h').textContent = `rings in ${Math.floor(mins / 60)} h ${mins % 60} min`;
+    }
+    cols.forEach(col => {
+      const kind = col.dataset.kind, list = data[kind];
+      col.innerHTML = list.map((v, i) => `<div class="hj-picker-item" data-i="${i}">${v}</div>`).join('');
+      const items = $$('.hj-picker-item', col);
+      col.setAttribute('aria-valuemin', 0); col.setAttribute('aria-valuemax', list.length - 1);
+      let idx = sel[kind], raf = 0;
+      function paint(){
+        raf = 0; const pos = col.scrollTop / ROW;
+        items.forEach((it, i) => { const d = Math.abs(i - pos); if (d > 3.5) return; it.style.transform = `scale(${(1 - Math.min(d, 2) * .08).toFixed(3)})`; it.style.opacity = (1 - Math.min(d, 2.5) * .26).toFixed(3); it.classList.toggle('sel', d < .5); });
+        const i = Math.max(0, Math.min(list.length - 1, Math.round(pos)));
+        if (i !== idx){ idx = i; sel[kind] = i; col.setAttribute('aria-valuenow', i); col.setAttribute('aria-valuetext', list[i]); readout(); band.classList.add('tick'); requestAnimationFrame(() => requestAnimationFrame(() => band.classList.remove('tick'))); try { navigator.vibrate && navigator.userActivation && navigator.userActivation.isActive && navigator.vibrate(4); } catch (e) {} }
+      }
+      col.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paint); }, { passive:true });
+      const go = i => col.scrollTo({ top:i * ROW, behavior:H.reduced() ? 'auto' : 'smooth' });
+      col.addEventListener('click', e => { const it = e.target.closest('.hj-picker-item'); if (it) go(+it.dataset.i); });
+      col.addEventListener('keydown', e => { const d = { ArrowDown:1, ArrowUp:-1, PageDown:3, PageUp:-3 }[e.key]; if (d){ e.preventDefault(); go(Math.max(0, Math.min(list.length - 1, idx + d))); } });
+      const place = () => { col.scrollTop = idx * ROW; paint(); col.setAttribute('aria-valuenow', idx); col.setAttribute('aria-valuetext', list[idx]); };
+      place(); requestAnimationFrame(place);
+    });
+    readout();
+  });
+
+  /* ---- 04.13 Date picker ---- */
+  safe('date-picker', () => {
+    const cal = $('#p50-cal'), grid = cal.querySelector('.hj-cal-grid'), title = cal.querySelector('.hj-cal-title'), sum = cal.querySelector('.hj-cal-sum');
+    const [prevB, nextB] = $$('.hj-cal-nav', cal);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+    const same = (a, b) => a && b && a.getTime() === b.getTime();
+    let mode = 'range', start = addD(today, 7), end = addD(today, 11), hover = null;
+    let view = new Date(today.getFullYear(), today.getMonth(), 1), focusD = start;
+    const short = d => d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' });
+    function cls(d){
+      const c = [];
+      if (d < today) c.push('past');
+      if (same(d, today)) c.push('today');
+      if (mode === 'day'){ if (same(d, start)) c.push('sel', 'solo'); return c; }
+      const e = end || (hover && start && hover > start ? hover : null);
+      if (same(d, start)) c.push('sel', 's');
+      if (end && same(d, end)) c.push('sel', 'e');
+      if (!end && e && same(d, e)) c.push('e');
+      if (start && e && d > start && d < e) c.push(end ? 'in' : 'pv');
+      if (start && !e) c.push('solo');
+      if (!end && e && (same(d, start) || same(d, e))) c.push('pre');
+      return c;
+    }
+    function build(){
+      title.textContent = view.toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+      prevB.disabled = view.getFullYear() === today.getFullYear() && view.getMonth() === today.getMonth();
+      const first = new Date(view), off = (first.getDay() + 6) % 7, days = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+      let html = '';
+      for (let i = 0; i < 42; i++){
+        const dn = i - off + 1, col = i % 7;
+        if (dn < 1 || dn > days){ html += `<span class="hj-day blank c${col}" aria-hidden="true"></span>`; continue; }
+        const d = new Date(view.getFullYear(), view.getMonth(), dn);
+        const c = cls(d).concat('c' + col);
+        const past = d < today;
+        html += `<button class="hj-day ${c.join(' ')}" data-t="${d.getTime()}" tabindex="-1" role="gridcell" aria-selected="${c.includes('sel')}" ${past ? 'aria-disabled="true"' : ''} aria-label="${d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}${same(d, today) ? ', today' : ''}"><span class="n">${dn}</span></button>`;
+      }
+      grid.innerHTML = html;
+      const f = grid.querySelector(`[data-t="${focusD.getTime()}"]`) || grid.querySelector('.hj-day:not(.blank):not(.past)') || grid.querySelector('.hj-day:not(.blank)');
+      if (f) f.tabIndex = 0;
+      summary();
+    }
+    function refresh(){ // repaint classes without rebuilding (keeps the pop on the new circle only)
+      $$('.hj-day:not(.blank)', grid).forEach(b => {
+        const d = new Date(+b.dataset.t), col = b.className.match(/c\d/)[0];
+        const next = ['hj-day'].concat(cls(d), col).join(' ');
+        if (b.className !== next){ b.className = next; b.setAttribute('aria-selected', String(b.classList.contains('sel'))); }
+      });
+      summary();
+    }
+    function summary(){
+      if (mode === 'day') sum.innerHTML = start ? `Remind me on <b>${short(start)}</b>` : 'Pick a day';
+      else if (start && end){ const n = Math.round((end - start) / 864e5) + 1; sum.innerHTML = `Notifications paused <b>${short(start)} → ${short(end)}</b> · ${n} days`; }
+      else if (start) sum.innerHTML = `From <b>${short(start)}</b> · now pick the last day`;
+      else sum.innerHTML = 'Pick the first day';
+      $('#p50-calgo').disabled = mode === 'range' ? !(start && end) : !start;
+      $('#p50-calgo').textContent = mode === 'day' ? 'Remind me' : 'Pause';
+    }
+    function pick(d){
+      if (d < today) return;
+      focusD = d;
+      if (mode === 'day'){ start = d; end = null; }
+      else if (!start || end || d < start){ start = d; end = null; }
+      else if (same(d, start)){ start = null; }
+      else end = d;
+      refresh();
+      const b = grid.querySelector(`[data-t="${d.getTime()}"]`); if (b){ $$('.hj-day', grid).forEach(x => x.tabIndex = -1); b.tabIndex = 0; }
+    }
+    let busy = false;
+    async function turn(dir, focusAfter){
+      if (busy) return; busy = true;
+      const t = H.reduced() ? 0 : 1;
+      try {
+        await grid.animate([{ opacity:1, transform:'none' }, { opacity:0, transform:`translateX(${-16 * dir * t}px)` }], { duration:H.reduced() ? 90 : 140, easing:'cubic-bezier(.32,0,.67,0)', fill:'forwards' }).finished;
+      } catch (e) {}
+      view = new Date(view.getFullYear(), view.getMonth() + dir, 1);
+      if (focusAfter) focusD = focusAfter;
+      build();
+      const ease = H.reduced() ? 'cubic-bezier(.33,1,.68,1)' : (css('--ease-gentle-settle') || 'cubic-bezier(.33,1,.68,1)');
+      grid.getAnimations().forEach(a => a.cancel());
+      grid.animate([{ opacity:0, transform:`translateX(${16 * dir * t}px)` }, { opacity:1, transform:'none' }], { duration:H.reduced() ? 160 : (ms('--dur-gentle-settle') || 320), easing:ease });
+      busy = false;
+      if (focusAfter){ const b = grid.querySelector(`[data-t="${focusAfter.getTime()}"]`); b && b.focus(); }
+    }
+    prevB.addEventListener('click', () => turn(-1)); nextB.addEventListener('click', () => turn(1));
+    grid.addEventListener('click', e => { const b = e.target.closest('.hj-day:not(.blank)'); if (b) pick(new Date(+b.dataset.t)); });
+    grid.addEventListener('pointerover', e => { if (mode !== 'range' || !start || end) return; const b = e.target.closest('.hj-day:not(.blank)'); const d = b ? new Date(+b.dataset.t) : null; if (!same(d, hover)){ hover = d; refresh(); } });
+    grid.addEventListener('pointerleave', () => { if (hover){ hover = null; refresh(); } });
+    grid.addEventListener('keydown', e => {
+      const b = e.target.closest('.hj-day'); if (!b) return;
+      const d = new Date(+b.dataset.t);
+      const step = { ArrowRight:1, ArrowLeft:-1, ArrowDown:7, ArrowUp:-7 }[e.key];
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(d); b.focus(); return; }
+      if (e.key === 'PageDown' || e.key === 'PageUp'){ e.preventDefault(); const dir = e.key === 'PageDown' ? 1 : -1; if (dir < 0 && prevB.disabled) return; const n = new Date(d); n.setMonth(n.getMonth() + dir); turn(dir, n); return; }
+      if (!step) return; e.preventDefault();
+      const n = addD(d, step);
+      if (n.getMonth() !== view.getMonth()){ const dir = n > d ? 1 : -1; if (dir < 0 && prevB.disabled) return; turn(dir, n); return; }
+      const nb = grid.querySelector(`[data-t="${n.getTime()}"]`); if (nb){ b.tabIndex = -1; nb.tabIndex = 0; nb.focus(); focusD = n; }
+    });
+    H.segmented($('#p50-calmode'), v => { mode = v; if (v === 'day'){ end = null; } else if (start && !end){ end = null; } refresh(); });
+    $('#p50-calclear').addEventListener('click', () => { start = end = null; refresh(); });
+    $('#p50-calgo').addEventListener('click', () => { const b = $('#p50-calgo'); const t = b.textContent; b.textContent = mode === 'day' ? 'Reminder set' : 'Paused'; setTimeout(() => { b.textContent = t; }, 1400); });
+    build();
+  });
+})();
+</script>

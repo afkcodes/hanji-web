@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="en" data-theme="paper" data-accent="scarlet" data-density="cozy" data-motion="full">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hanji — design system</title>
+<meta name="description" content="hanji: a performance-first component system. Tokens, atoms, components and motion, live in every paper and ink.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&text=%ED%95%9C%EC%A7%80%EB%8B%B4%EC%9D%B8&display=swap" rel="stylesheet">
+<style id="theme-vars"></style>
+<style>
+/* ==========================================================================
+   hanji — base. Every value here is a hanji token, or a declared proposal.
+   Colour vars are written per theme by the runtime (#theme-vars) from the
+   same arithmetic as @hanji/core (blend / contrastOn / deriveAccent).
+   ========================================================================== */
+:root{
+  /* fallback = paper × scarlet, so the page never paints unthemed */
+  --bg:#f0ece3; --bg-soft:#f7f5f0; --surface:#fbfaf8; --surface-2:#ffffff;
+  --line:rgba(0,0,0,.1); --fg:#16130f; --fg-dim:#5c5853; --fg-mute:#83807a;
+  --accent:#b81f18; --on-accent:#ffffff; --accent-soft:#e8d2c8;
+  --danger:#c4321f; --scrim:#000000; --on-scrim:#f4f2ef;
+  --fg-rgb:22,19,15; --accent-rgb:184,31,24; --bg-rgb:240,236,227;
+  --seal:#b5241b;
+
+  /* spacing (hanji s1–s12) × density */
+  --d:1;
+  --s1:calc(4px*var(--d)); --s2:calc(8px*var(--d)); --s3:calc(12px*var(--d));
+  --s4:calc(16px*var(--d)); --s5:calc(20px*var(--d)); --s6:calc(24px*var(--d));
+  --s8:calc(32px*var(--d)); --s10:calc(40px*var(--d)); --s12:calc(48px*var(--d));
+  --gutter:var(--s5); --hairline:1px; --touch:44px;
+
+  /* radius (hanji) */
+  --r-xs:8px; --r-sm:12px; --r-md:16px; --r-lg:20px; --r-xl:28px; --r-pill:999px;
+
+  /* motion (hanji) — springs become CSS linear() curves at runtime */
+  --ease-out:cubic-bezier(.33,1,.68,1);
+  --dur-fast:180ms; --dur-base:260ms; --dur-slow:400ms;
+  --ease-snappy:var(--ease-out); --dur-snappy:320ms;
+  --ease-gentle:var(--ease-out); --dur-gentle:380ms;
+  --ease-bouncy:var(--ease-out); --dur-bouncy:600ms;
+  --ease-snappy-settle:var(--ease-out); --dur-snappy-settle:260ms;
+  --ease-gentle-settle:var(--ease-out); --dur-gentle-settle:320ms;
+  --ease-bouncy-settle:var(--ease-out); --dur-bouncy-settle:220ms;
+  --stagger:24ms; --rise:12px; --press:.97; --press-opacity:.75;
+  --travel:1;
+
+  /* type */
+  --font:'Figtree',ui-sans-serif,system-ui,sans-serif;
+  --mono:'DM Mono',ui-monospace,'SFMono-Regular',monospace;
+  --seal-font:'Noto Serif KR',serif;
+
+  /* page metrics (documentation page, not component tokens) */
+  --rail:236px; --bar:60px; --page-pad:56px; --measure:1180px;
+}
+html[data-density="compact"]{ --d:.7 }
+html[data-motion="reduced"]{
+  /* hanji MotionPolicy 'reduced': feedback survives, decoration dies,
+     travel becomes a fade, nothing runs longer than durations.fast */
+  --ease-snappy:var(--ease-out); --ease-gentle:var(--ease-out); --ease-bouncy:var(--ease-out);
+  --ease-snappy-settle:var(--ease-out); --ease-gentle-settle:var(--ease-out); --ease-bouncy-settle:var(--ease-out);
+  --dur-snappy:120ms; --dur-gentle:160ms; --dur-bouncy:160ms;
+  --dur-snappy-settle:120ms; --dur-gentle-settle:160ms; --dur-bouncy-settle:160ms;
+  --dur-base:180ms; --dur-slow:180ms; --stagger:0ms; --travel:0;
+}
+
+*,*::before,*::after{ box-sizing:border-box }
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; scroll-padding-top:calc(var(--bar) + 24px) }
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:400 15px/1.55 var(--font); letter-spacing:0;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  font-feature-settings:"ss01" off;
+  transition:background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+::selection{ background:rgba(var(--accent-rgb),.22) }
+button,input,select,textarea{ font:inherit; color:inherit; letter-spacing:inherit }
+button{ cursor:pointer; background:none; border:0; padding:0; -webkit-tap-highlight-color:transparent }
+a{ color:inherit }
+img,svg{ display:block }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px }
+.sr{ position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap }
+
+/* icons: one family, 1.5 stroke, round joins — through the adapter */
+.ic{ width:20px; height:20px; flex:none; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round }
+.ic.s16{ width:16px; height:16px } .ic.s18{ width:18px; height:18px } .ic.s24{ width:24px; height:24px } .ic.s14{ width:14px; height:14px }
+
+/* squircle: hanji draws continuous corners (smoothing .72). Where the
+   platform can, so do we; elsewhere a circular radius is the fallback. */
+.sq{ border-radius:var(--r-md) }
+@supports (corner-shape: squircle){ .sq,.plate,.hj-btn,.hj-field,.hj-surface{ corner-shape:superellipse(1.6) } }
+
+/* ---------- type roles (hanji typeScale) ---------- */
+.t-display{ font-weight:700; font-size:34px; line-height:38px; letter-spacing:-.5px }
+.t-title{ font-weight:700; font-size:22px; line-height:26px; letter-spacing:-.3px }
+.t-heading{ font-weight:600; font-size:19px; line-height:24px; letter-spacing:-.2px }
+.t-subheading{ font-weight:600; font-size:18px; line-height:23px; letter-spacing:-.2px }
+.t-body{ font-weight:500; font-size:15px; line-height:20px }
+.t-sub{ font-weight:400; font-size:12.5px; line-height:17px }
+.t-label{ font-weight:600; font-size:11px; line-height:14px; letter-spacing:.4px }
+.t-eyebrow{ font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase }
+.t-mono{ font-family:var(--mono); font-weight:500; font-size:12.5px; line-height:17px; letter-spacing:.2px; font-variant-numeric:tabular-nums }
+.dim{ color:var(--fg-dim) } .mute{ color:var(--fg-mute) } .acc{ color:var(--accent) }
+.num{ font-variant-numeric:tabular-nums }
+
+/* ---------- press: feedback in one frame, release on a spring ---------- */
+.hj-press{ transition:transform var(--dur-snappy) var(--ease-snappy), opacity var(--dur-fast) var(--ease-out); will-change:transform }
+.hj-press:active{ transform:scale(var(--press)); transition-duration:70ms,70ms }
+.hj-press.row-press:active{ transform:none; opacity:var(--press-opacity) }
+
+/* ==========================================================================
+   PAGE SHELL
+   ========================================================================== */
+.topbar{
+  position:fixed; inset:0 0 auto 0; height:var(--bar); z-index:50;
+  display:flex; align-items:center; gap:20px; padding:0 24px 0 28px;
+  background:var(--bg);
+  border-bottom:1px solid transparent;
+  transition:border-color var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+}
+.topbar.scrolled{ border-bottom-color:var(--line) }
+.brand{ display:flex; align-items:center; gap:10px; text-decoration:none; width:calc(var(--rail) - 28px) }
+.brand-word{ font-weight:700; font-size:19px; letter-spacing:-.04em }
+.brand-ver{ font:500 11px/1 var(--mono); color:var(--fg-mute); padding-top:2px }
+.bar-tools{ margin-left:auto; display:flex; align-items:center; gap:18px }
+.bar-group{ display:flex; align-items:center; gap:10px }
+.bar-label{ font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.bar-sep{ width:1px; height:22px; background:var(--line) }
+
+.seal{
+  --size:30px;
+  width:var(--size); height:var(--size); flex:none; display:grid; place-items:center;
+  background:var(--seal); color:#fbf3ea; border-radius:calc(var(--size)*.14);
+  font:900 calc(var(--size)*.38)/1 var(--seal-font); letter-spacing:-.02em;
+  writing-mode:vertical-rl; text-orientation:upright;
+  box-shadow:inset 0 0 0 calc(var(--size)*.045) var(--seal), inset 0 0 0 calc(var(--size)*.08) #fbf3ea;
+  position:relative; overflow:hidden; user-select:none;
+}
+.seal::after{ /* the stamp is never perfectly inked */
+  content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode:screen; opacity:.5;
+  background:
+    radial-gradient(circle at 22% 78%, rgba(255,255,255,.35) 0 1.5%, transparent 2.5%),
+    radial-gradient(circle at 74% 18%, rgba(255,255,255,.28) 0 1.2%, transparent 2%),
+    radial-gradient(circle at 60% 66%, rgba(255,255,255,.22) 0 .8%, transparent 1.6%);
+}
+
+.rail{
+  position:fixed; top:var(--bar); bottom:0; left:0; width:var(--rail); z-index:40;
+  padding:28px 0 40px 28px; overflow-y:auto; scrollbar-width:none;
+}
+.rail::-webkit-scrollbar{ display:none }
+.rail-list{ list-style:none; margin:0; padding:0; position:relative }
+.rail-ind{
+  position:absolute; left:-28px; top:0; width:3px; height:20px; border-radius:0 3px 3px 0;
+  background:var(--accent); transform:translateY(var(--y,0)); opacity:0;
+  transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle), height var(--dur-snappy-settle) var(--ease-snappy-settle), opacity var(--dur-fast) var(--ease-out);
+}
+.rail-ch > a{
+  display:grid; grid-template-columns:26px 1fr; align-items:baseline; gap:4px;
+  padding:6px 16px 6px 0; text-decoration:none; color:var(--fg-dim);
+  font-weight:600; font-size:13.5px; letter-spacing:-.005em;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.rail-ch > a .n{ font:500 11px/1 var(--mono); color:var(--fg-mute) }
+.rail-ch > a:hover, .rail-ch.on > a{ color:var(--fg) }
+.rail-sub{
+  display:grid; grid-template-rows:0fr; transition:grid-template-rows var(--dur-gentle-settle) var(--ease-gentle-settle);
+}
+.rail-ch.on .rail-sub{ grid-template-rows:1fr }
+.rail-sub > ul{ overflow:hidden; list-style:none; margin:0; padding:0 0 0 30px }
+.rail-sub a{
+  display:block; padding:4px 12px 4px 0; font-size:12.5px; color:var(--fg-mute); text-decoration:none;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.rail-sub a:hover, .rail-sub a.on{ color:var(--fg) }
+.rail-foot{ margin-top:28px; padding-right:20px; font-size:11.5px; line-height:1.5; color:var(--fg-mute) }
+
+main{ padding:var(--bar) var(--page-pad) 160px calc(var(--rail) + var(--page-pad)); }
+.wrap{ max-width:var(--measure) }
+
+/* ---------- chapter opener: the split headline ---------- */
+.chapter{ padding-top:128px }
+.chapter-head{ margin-bottom:56px }
+.chapter-line{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:28px;
+}
+.chapter-title{ margin:0; font-weight:700; font-size:76px; line-height:.92; letter-spacing:-.045em }
+.chapter-rule{ height:2px; background:var(--fg); transform-origin:left center }
+.chapter-num{ font:500 76px/.92 var(--font); letter-spacing:-.05em; color:var(--fg-mute); font-variant-numeric:tabular-nums }
+.chapter-body{ display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:56px; margin-top:28px; align-items:start }
+.chapter-lede{ margin:0; max-width:620px; font-size:18px; line-height:1.55; color:var(--fg-dim); letter-spacing:-.005em }
+.chapter-lede b{ color:var(--fg); font-weight:600 }
+.chapter-index{ list-style:none; margin:0; padding:0; columns:2; column-gap:20px; font-size:12.5px }
+.chapter-index li{ break-inside:avoid; padding:3px 0; display:flex; gap:8px; color:var(--fg-dim) }
+.chapter-index li span{ font:500 11px/1.6 var(--mono); color:var(--fg-mute); min-width:34px }
+.chapter-index a{ text-decoration:none } .chapter-index a:hover{ color:var(--fg) }
+
+/* ---------- entry: one component, its spec, its live plate ---------- */
+.entry{
+  display:grid; grid-template-columns:300px minmax(0,1fr); gap:48px;
+  padding:44px 0 52px; border-top:1px solid var(--line); position:relative;
+}
+.entry-num{ font:500 11.5px/1 var(--mono); color:var(--fg-mute); letter-spacing:.02em; margin-bottom:14px; display:flex; gap:10px; align-items:center }
+.entry-title{ margin:0 0 10px; font-weight:650; font-weight:600; font-size:28px; line-height:1.1; letter-spacing:-.025em; display:flex; align-items:center; gap:10px; flex-wrap:wrap }
+.entry-desc{ margin:0 0 22px; font-size:14.5px; line-height:1.6; color:var(--fg-dim) }
+.entry-desc b{ color:var(--fg); font-weight:600 }
+.tag-new{
+  font:600 9.5px/1 var(--font); letter-spacing:1.4px; text-transform:uppercase;
+  color:var(--accent); border:1px solid currentColor; border-radius:4px; padding:4px 5px 3px; transform:translateY(-1px)
+}
+.tag-prop{ color:var(--fg-mute) }
+.spec{ margin:0; display:grid; border-top:1px solid var(--line) }
+.spec > div{ display:grid; grid-template-columns:84px 1fr; gap:12px; padding:7px 0; border-bottom:1px solid var(--line); align-items:baseline }
+.spec dt{ font-size:11.5px; font-weight:500; color:var(--fg-mute) }
+.spec dd{ margin:0; font:400 12px/1.5 var(--mono); color:var(--fg-dim); letter-spacing:0 }
+.spec dd b{ font-weight:500; color:var(--fg) }
+.motion-note{ margin-top:16px; display:flex; gap:10px; align-items:flex-start; font-size:12.5px; line-height:1.5; color:var(--fg-dim) }
+svg.curve{ width:34px; height:22px; flex:none; display:inline-block; vertical-align:middle; color:var(--accent); overflow:visible }
+.motion-note .curve{ margin-top:1px }
+
+.plate{
+  position:relative; min-height:240px; border-radius:var(--r-lg);
+  background:var(--bg-soft); padding:40px 32px 48px;
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:28px;
+  isolation:isolate;
+}
+[data-theme="ink"] .plate, html[data-theme="ink"] .plate{ background:var(--bg-soft) }
+.plate--top{ align-items:flex-start }
+.plate--col{ flex-direction:column }
+.plate--stack{ flex-direction:column; align-items:stretch }
+.plate--phone{ padding:40px 32px; background:var(--bg-soft) }
+.plate-cap{
+  position:absolute; left:20px; bottom:16px; right:20px; display:flex; justify-content:space-between; gap:12px;
+  font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); pointer-events:none;
+}
+.plate-cap .live::before{ content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent); margin-right:7px; transform:translateY(-1px) }
+.plate-tools{ position:absolute; top:14px; right:14px; display:flex; gap:6px; z-index:2 }
+.plate-btn{
+  height:28px; padding:0 10px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:600; color:var(--fg-dim); background:rgba(var(--fg-rgb),.06);
+}
+.plate-btn:hover{ color:var(--fg); background:rgba(var(--fg-rgb),.1) }
+.entry--wide{ grid-template-columns:1fr }
+.entry--wide .entry-meta{ display:grid; grid-template-columns:300px minmax(0,1fr); gap:48px; align-items:start }
+.entry--wide .entry-meta .spec{ grid-column:2; grid-row:1; }
+
+/* phone stage: a 375pt viewport, not a device frame */
+.phone{
+  width:360px; height:640px; border-radius:var(--r-xl); background:var(--bg); color:var(--fg);
+  border:1px solid var(--line); position:relative; overflow:hidden; flex:none;
+  display:flex; flex-direction:column; isolation:isolate;
+}
+.phone-status{ height:40px; flex:none; display:flex; align-items:center; justify-content:space-between; padding:0 24px; font:600 13px/1 var(--font); letter-spacing:-.01em }
+.phone-status .ind{ display:flex; gap:5px; align-items:center }
+.phone-status .ind i{ display:block; width:15px; height:9px; border-radius:2px; border:1.2px solid currentColor; position:relative }
+.phone-status .ind i::after{ content:""; position:absolute; inset:1px 4px 1px 1px; background:currentColor; border-radius:1px }
+.phone-status .ind b{ display:block; width:3px; height:9px; background:currentColor; border-radius:1px; box-shadow:-5px 2px 0 -0.5px currentColor,-10px 4px 0 -1px currentColor }
+
+/* small layout helpers inside plates */
+.row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap }
+.col{ display:flex; flex-direction:column; gap:12px }
+.stack-l{ display:flex; flex-direction:column; align-items:flex-start; gap:14px }
+.swatch-label{ font:500 11px/1.3 var(--mono); color:var(--fg-mute) }
+
+/* ---------- cascade: staggered entrance, one clock per surface ---------- */
+html.js [data-cascade]:not(.in) > *{ opacity:0; transform:translateY(calc(var(--rise)*var(--travel))) }
+html.js [data-cascade] > *{
+  transition:opacity var(--dur-base) var(--ease-out), transform var(--dur-gentle-settle) var(--ease-gentle-settle);
+  transition-delay:calc(min(var(--i,0),10) * var(--stagger));
+}
+html.static [data-cascade] > *{ opacity:1!important; transform:none!important }
+
+/* ==========================================================================
+   CORE KIT — the controls the page chrome itself is built from.
+   (Documented in chapter 04; defined here so every chapter can use them.)
+   ========================================================================== */
+
+/* SegmentedControl — 40 tall, 4 pad, indicator moved by translateX + scaleX */
+.hj-seg{
+  --h:40px; position:relative; display:inline-flex; align-items:stretch; height:var(--h); padding:4px;
+  background:var(--surface); border-radius:var(--r-pill); box-shadow:inset 0 0 0 1px var(--line);
+  isolation:isolate; user-select:none;
+}
+.hj-seg.sm{ --h:32px; padding:3px }
+.hj-seg-ind{
+  position:absolute; top:4px; bottom:4px; left:4px; width:var(--w,0px); border-radius:var(--r-pill);
+  background:var(--accent-soft); z-index:-1; transform-origin:center;
+  transform:translateX(var(--x,0px)) scaleX(var(--sx,1));
+  transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle), background-color var(--dur-base) var(--ease-out);
+}
+.hj-seg.sm .hj-seg-ind{ top:3px; bottom:3px; left:3px }
+.hj-seg.noanim .hj-seg-ind{ transition:none }
+.hj-seg > button{
+  position:relative; padding:0 14px; border-radius:var(--r-pill); font-weight:600; font-size:13px; color:var(--fg-dim);
+  white-space:nowrap; transition:color var(--dur-fast) var(--ease-out);
+}
+.hj-seg.sm > button{ padding:0 11px; font-size:12px }
+.hj-seg > button[aria-checked="true"]{ color:var(--accent) }
+.hj-seg > button:hover{ color:var(--fg) }
+.hj-seg > button[aria-checked="true"]:hover{ color:var(--accent) }
+.hj-seg > button:focus-visible{ outline-offset:-2px; border-radius:var(--r-pill) }
+
+/* Toggle — 46 × 28 track, 22 knob, clamped snappy spring. The track never
+   dips under the finger; the knob stretches toward where it is going. */
+.hj-toggle{
+  --tw:46px; --th:28px; --k:22px; --pad:3px;
+  position:relative; width:var(--tw); height:var(--th); border-radius:var(--r-pill); flex:none;
+  background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line);
+  transition:background-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.hj-toggle::after{
+  content:""; position:absolute; top:var(--pad); left:var(--pad); width:var(--k); height:var(--k); border-radius:var(--r-pill);
+  background:var(--fg-mute); transform-origin:left center;
+  transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle), background-color var(--dur-base) var(--ease-out);
+}
+.hj-toggle[aria-checked="true"]{ background:var(--accent); box-shadow:inset 0 0 0 1px transparent }
+.hj-toggle[aria-checked="true"]::after{ background:var(--on-accent); transform:translateX(calc(var(--tw) - var(--k) - var(--pad)*2)) }
+/* press: the knob stretches toward where it is going — by transform (PRINCIPLES §1) */
+.hj-toggle:active::after{ transform:scaleX(1.27) }
+.hj-toggle[aria-checked="true"]:active::after{ transform:translateX(calc(var(--tw) - var(--k) * 1.27 - var(--pad)*2)) scaleX(1.27) }
+.hj-toggle:disabled{ opacity:.4; cursor:not-allowed }
+.hj-toggle.sm{ --tw:38px; --th:24px; --k:18px }
+
+/* Button — pill, 3 sizes; primary (accent), ink (proposed), secondary (fg 8%), quiet, danger (tint only) */
+.hj-btn{
+  --h:44px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:var(--h); padding:0 20px; border-radius:var(--r-pill); font-weight:600; font-size:15px; letter-spacing:-.01em;
+  background:var(--accent); color:var(--on-accent); white-space:nowrap; position:relative; overflow:hidden; text-decoration:none;
+  transition:transform var(--dur-snappy) var(--ease-snappy), background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+.hj-btn:active{ transform:scale(var(--press)); transition-duration:70ms, var(--dur-base), var(--dur-base), var(--dur-fast) }
+.hj-btn.sm{ --h:34px; padding:0 14px; font-size:13.5px; gap:6px }
+.hj-btn.lg{ --h:52px; padding:0 26px; font-size:16px }
+.hj-btn.block{ display:flex; width:100% }
+.hj-btn.ink{ background:var(--fg); color:var(--bg) }
+.hj-btn.secondary{ background:rgba(var(--fg-rgb),.08); color:var(--fg) }
+.hj-btn.quiet{ background:transparent; color:var(--fg) }
+.hj-btn.quiet:hover{ background:rgba(var(--fg-rgb),.06) }
+.hj-btn.danger{ background:color-mix(in srgb, var(--danger) 14%, transparent); color:var(--danger) }
+.hj-btn:disabled{ opacity:.4; cursor:not-allowed; transform:none }
+.hj-btn.icon{ width:var(--h); padding:0 }
+
+/* Popover surface — the one place hanji allows lift (declared proposal) */
+.hj-surface{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md);
+  box-shadow:0 1px 0 rgba(var(--fg-rgb),.02), 0 18px 40px -16px rgba(0,0,0,.28);
+}
+html[data-theme="ink"] .hj-surface, html[data-theme="charcoal"] .hj-surface,
+[data-theme="ink"] .hj-surface, [data-theme="charcoal"] .hj-surface{ box-shadow:0 18px 40px -16px rgba(0,0,0,.7) }
+.hj-pop{
+  position:absolute; z-index:60; padding:6px; min-width:200px;
+  opacity:0; transform:scale(.92); transform-origin:var(--ox,top right); pointer-events:none; visibility:hidden;
+  transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), visibility 0s linear var(--dur-fast);
+}
+.hj-pop.open{
+  opacity:1; transform:none; pointer-events:auto; visibility:visible;
+  transition:opacity var(--dur-base) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy), visibility 0s;
+}
+
+/* accent picker */
+.acc-btn{ display:inline-flex; align-items:center; gap:8px; height:32px; padding:0 12px 0 6px; border-radius:var(--r-pill); background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); font-weight:600; font-size:12.5px; color:var(--fg-dim) }
+.acc-btn:hover{ color:var(--fg) }
+.acc-dot{ width:20px; height:20px; border-radius:50%; background:var(--accent); box-shadow:inset 0 0 0 1px rgba(0,0,0,.08) }
+.acc-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; padding:4px; width:236px }
+.acc-opt{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 4px 8px; border-radius:var(--r-sm); font-size:11px; font-weight:600; color:var(--fg-dim) }
+.acc-opt:hover{ background:rgba(var(--fg-rgb),.05); color:var(--fg) }
+.acc-opt i{ width:26px; height:26px; border-radius:50%; display:block; position:relative; transition:transform var(--dur-snappy) var(--ease-snappy) }
+.acc-opt[aria-checked="true"] i::after{ content:""; position:absolute; inset:-4px; border-radius:50%; box-shadow:0 0 0 1.5px var(--fg) }
+.acc-opt[aria-checked="true"]{ color:var(--fg) }
+.acc-opt:active i{ transform:scale(.88) }
+.pop-head{ padding:8px 10px 6px; font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+
+/* Counter — digit roll (hanji Counter: changed digits only, travel .55, ones first) */
+.hj-digits{ display:inline-flex; font-variant-numeric:tabular-nums; white-space:pre }
+.hj-digits .cl{ position:relative; display:inline-block }
+.hj-digits .g{ display:inline-block }
+.hj-digits .g.out{ position:absolute; left:0; top:0 }
+
+@media (max-width: 1100px){
+  :root{ --rail:0px; --page-pad:28px }
+  .rail{ display:none }
+  .entry, .entry--wide .entry-meta, .chapter-body{ grid-template-columns:1fr }
+  .entry--wide .entry-meta .spec{ grid-column:auto; grid-row:auto }
+  .chapter-title,.chapter-num{ font-size:52px }
+  .brand{ width:auto }
+}
+@media (max-width: 720px){
+  :root{ --page-pad:16px }
+  .topbar{ padding:0 16px; gap:10px } .bar-label,.bar-sep{ display:none } .bar-tools{ gap:8px }
+  .brand-ver{ display:none }
+  .chapter-title,.chapter-num{ font-size:40px }
+  .plate{ padding:32px 16px 44px }
+  .phone{ width:100%; max-width:360px }
+}
+</style>
+
+<script>
+/* ==========================================================================
+   hanji runtime — a faithful port of @hanji/core's arithmetic to the web:
+   colour (blend, contrastOn, deriveAccent), themes, accents, density, the
+   spring vocabulary, the MotionPolicy, and the press/stagger tokens.
+   ========================================================================== */
+(function(){
+  const H = window.H = {};
+  document.documentElement.classList.add('js');
+  if (/[?&]static\b/.test(location.search)) document.documentElement.classList.add('static');
+
+  /* ---- colour (core/theme/color.ts) ---- */
+  const HEX = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i;
+  const c255 = n => n < 0 ? 0 : n > 255 ? 255 : Math.round(n);
+  const clamp01 = n => n < 0 ? 0 : n > 1 ? 1 : n;
+  function parseHex(hex){ const m = HEX.exec(hex.trim()); let b = m[1]; if (b.length===3) b = b.replace(/./g, c=>c+c); return { r:parseInt(b.slice(0,2),16), g:parseInt(b.slice(2,4),16), b:parseInt(b.slice(4,6),16) }; }
+  function toHex({r,g,b}){ const p = n => c255(n).toString(16).padStart(2,'0'); return '#'+p(r)+p(g)+p(b); }
+  function rgba(hex,a){ const {r,g,b} = parseHex(hex); return `rgba(${r}, ${g}, ${b}, ${clamp01(a)})`; }
+  function blend(base, over, a){ const b0=parseHex(base), o=parseHex(over), t=clamp01(a); return toHex({ r:b0.r+(o.r-b0.r)*t, g:b0.g+(o.g-b0.g)*t, b:b0.b+(o.b-b0.b)*t }); }
+  function luminance(hex){ const {r,g,b} = parseHex(hex); return (0.2126*r + 0.7152*g + 0.0722*b)/255; }
+  function contrastOn(hex){ return luminance(hex) > 0.55 ? '#0b0a09' : '#ffffff'; }
+  function rgbStr(hex){ const {r,g,b} = parseHex(hex); return `${r},${g},${b}`; }
+  // WCAG relative luminance, for the contrast linter shown in Foundations
+  function relLum(hex){ const {r,g,b} = parseHex(hex); const f = v => { v/=255; return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4); }; return .2126*f(r)+.7152*f(g)+.0722*f(b); }
+  function contrast(a,b){ const A = relLum(a), B = relLum(b); return (Math.max(A,B)+.05)/(Math.min(A,B)+.05); }
+  H.color = { parseHex, toHex, rgba, blend, luminance, contrastOn, contrast, rgbStr };
+
+  /* ---- themes (core/theme/themes.ts) ---- */
+  const W = '#ffffff', K = '#000000';
+  const INK_BG='#000000', INK_FG='#f4f2ef', CH_BG='#111114', CH_FG='#f1efec', PA_BG='#f0ece3', PA_FG='#16130f';
+  const themes = {
+    paper:{ isDark:false, bg:PA_BG, bgSoft:blend(PA_BG,W,.45), surface:blend(PA_BG,W,.75), surface2:W, line:rgba(K,.1), lineHex:blend(PA_BG,K,.1), fg:PA_FG, fgDim:blend(PA_BG,PA_FG,.68), fgMute:blend(PA_BG,PA_FG,.5), danger:'#c4321f' },
+    ink:{ isDark:true, bg:INK_BG, bgSoft:blend(INK_BG,W,.03), surface:blend(INK_BG,W,.05), surface2:blend(INK_BG,W,.08), line:rgba(W,.08), lineHex:blend(INK_BG,W,.08), fg:INK_FG, fgDim:blend(INK_BG,INK_FG,.72), fgMute:blend(INK_BG,INK_FG,.45), danger:'#ff6b5e' },
+    charcoal:{ isDark:true, bg:CH_BG, bgSoft:blend(CH_BG,W,.04), surface:blend(CH_BG,W,.07), surface2:blend(CH_BG,W,.11), line:rgba(W,.1), lineHex:blend(CH_BG,W,.1), fg:CH_FG, fgDim:blend(CH_BG,CH_FG,.74), fgMute:blend(CH_BG,CH_FG,.48), danger:'#ff6b5e' }
+  };
+  /* ---- accents (core/theme/accents.ts) ---- */
+  const accents = {
+    iris:{dark:'#8e7bf0',light:'#5a45c9'}, violet:{dark:'#c083e8',light:'#8b33c4'}, rose:{dark:'#f5789f',light:'#c81e56'},
+    scarlet:{dark:'#ff5a52',light:'#b81f18'}, ember:{dark:'#ff7a4d',light:'#c4441a'}, amber:{dark:'#f5c044',light:'#9a6b00'},
+    lime:{dark:'#b8d94a',light:'#5c7a00'}, moss:{dark:'#6fcf97',light:'#237a46'}, teal:{dark:'#4fd1c5',light:'#0f7f76'},
+    azure:{dark:'#62c4e8',light:'#0a6e93'}, cobalt:{dark:'#7e9bff',light:'#2848c9'}, mono:{dark:'#e8e6e2',light:'#2a2622'}
+  };
+  const ACCENT_SOFT_ALPHA = .14;
+  /* PROPOSED semantic roles — no new hues: borrowed from hanji's own ramps */
+  const semantic = { success:accents.moss, warning:accents.amber, info:accents.azure };
+  /* PROPOSED data palette — ordered so neighbours never share a family */
+  const dataOrder = ['cobalt','ember','moss','violet','amber','teal'];
+  H.themes = themes; H.accents = accents; H.semantic = semantic; H.dataOrder = dataOrder;
+
+  function colorsFor(theme, accent){
+    const b = themes[theme], tone = b.isDark ? 'dark' : 'light';
+    const a = accents[accent][tone];
+    const s = semantic.success[tone], w = semantic.warning[tone], inf = semantic.info[tone];
+    return Object.assign({}, b, {
+      accent:a, onAccent:contrastOn(a), accentSoft:blend(b.bg, a, ACCENT_SOFT_ALPHA),
+      success:s, successSoft:blend(b.bg, s, .14), warning:w, warningSoft:blend(b.bg, w, .16), info:inf, infoSoft:blend(b.bg, inf, .14),
+      dangerSoft:blend(b.bg, b.danger, .14), scrim:'#000000', onScrim:'#f4f2ef',
+      seal: b.isDark ? '#d23a2e' : '#b5241b',
+      data: dataOrder.map(n => accents[n][tone])
+    });
+  }
+  H.colorsFor = colorsFor;
+  function cssVars(c){
+    return [
+      `--bg:${c.bg}`,`--bg-soft:${c.bgSoft}`,`--surface:${c.surface}`,`--surface-2:${c.surface2}`,`--line:${c.line}`,`--line-hex:${c.lineHex}`,
+      `--fg:${c.fg}`,`--fg-dim:${c.fgDim}`,`--fg-mute:${c.fgMute}`,
+      `--accent:${c.accent}`,`--on-accent:${c.onAccent}`,`--accent-soft:${c.accentSoft}`,
+      `--danger:${c.danger}`,`--danger-soft:${c.dangerSoft}`,`--success:${c.success}`,`--success-soft:${c.successSoft}`,
+      `--warning:${c.warning}`,`--warning-soft:${c.warningSoft}`,`--info:${c.info}`,`--info-soft:${c.infoSoft}`,
+      `--scrim:${c.scrim}`,`--on-scrim:${c.onScrim}`,`--seal:${c.seal}`,
+      `--fg-rgb:${rgbStr(c.fg)}`,`--accent-rgb:${rgbStr(c.accent)}`,`--bg-rgb:${rgbStr(c.bg)}`,
+      ...c.data.map((d,i)=>`--data-${i+1}:${d}`),
+      `color-scheme:${c.isDark?'dark':'light'}`
+    ].join(';');
+  }
+
+  /* ---- state + persistence (per-viewer convenience only) ---- */
+  const root = document.documentElement;
+  const store = { get(k){ try{ return localStorage.getItem('hanji.'+k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem('hanji.'+k, v); }catch(e){} } };
+  const sysReduced = () => { try{ return matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } };
+  H.state = {
+    theme: store.get('theme') || 'paper',
+    accent: store.get('accent') || 'scarlet',
+    density: store.get('density') || 'cozy',
+    motion: store.get('motion') || (sysReduced() ? 'reduced' : 'full')
+  };
+  // URL overrides (?theme=ink&accent=cobalt&density=compact&motion=reduced) — for review renders; not persisted
+  try { const q = new URLSearchParams(location.search); ['theme','accent','density','motion'].forEach(k => { if (q.get(k)) H.state[k] = q.get(k); }); } catch(e){}
+  if (window.HANJI_FORCE) Object.assign(H.state, window.HANJI_FORCE); // build.py --force theme=ink
+  if (!themes[H.state.theme]) H.state.theme = 'paper';
+  if (!accents[H.state.accent]) H.state.accent = 'scarlet';
+  const listeners = {};
+  H.on = (ev, fn) => { (listeners[ev] = listeners[ev] || []).push(fn); };
+  H.emit = (ev, d) => (listeners[ev] || []).forEach(fn => { try{ fn(d); }catch(e){ console.error(e); } });
+
+  function writeThemeVars(){
+    const el = document.getElementById('theme-vars');
+    const css = Object.keys(themes).map(t => {
+      const vars = cssVars(colorsFor(t, H.state.accent));
+      return `html[data-theme="${t}"],[data-theme="${t}"]{${vars}}`;
+    }).join('\n');
+    if (el) el.textContent = css;
+  }
+  H.set = function(key, value){
+    H.state[key] = value; store.set(key, value);
+    if (key === 'theme' || key === 'accent') { root.dataset[key] = value; writeThemeVars(); }
+    if (key === 'density') root.dataset.density = value;
+    if (key === 'motion') { root.dataset.motion = value; }
+    H.emit(key, value); H.emit('change', {key, value});
+  };
+  H.reduced = () => H.state.motion === 'reduced';
+  H.current = () => colorsFor(H.state.theme, H.state.accent);
+
+  /* ---- motion tokens (core/tokens/motion.ts) ---- */
+  const springs = {
+    snappy:{ damping:28, stiffness:380, mass:1 },
+    gentle:{ damping:24, stiffness:210, mass:1 },
+    bouncy:{ damping:14, stiffness:320, mass:1 }
+  };
+  const REDUCED_SPRING = { damping:240, stiffness:14400, mass:1, clamp:true }; // core/motion/policy.ts
+  H.motion = { springs, durations:{ fast:180, base:260, slow:400 }, easeOutCubic:[.33,1,.68,1], stagger:{ stepMs:24, cap:10, rise:12 }, press:{ scale:.97, opacity:.75 }, pulse:{ from:.55, to:.9, duration:1100 }, REDUCED_SPRING };
+
+  /* Simulate a unit spring 0 → 1 (semi-implicit Euler, 1 ms steps). Returns
+     samples every `every` ms until rest, or until the first crossing when
+     clamped — Reanimated's overshootClamping. Rest uses hanji's settle
+     threshold (energy 1e-3 on a unit move). */
+  function simulate(cfg, clamp, every){
+    every = every || 1;
+    let x = 0, v = 0, t = 0; const pts = [0];
+    const k = cfg.stiffness, c = cfg.damping, m = cfg.mass;
+    for (; t < 3000; t++){
+      const a = (-k*(x-1) - c*v)/m; v += a/1000; x += v/1000;
+      if (clamp && x >= 1){ x = 1; if ((t+1) % every) pts.push(1); else pts.push(1); t++; break; }
+      if ((t+1) % every === 0) pts.push(x);
+      const energy = .5*k*(x-1)*(x-1) + .5*m*v*v;
+      if (Math.abs(x-1) < 1e-3 && energy < 1e-3*1e-3*k) { t++; break; }
+    }
+    if (pts[pts.length-1] !== 1) pts.push(1);
+    return { pts, ms: t };
+  }
+  H.simulate = simulate;
+  function toLinear(sim){
+    // thin to ≤ 64 stops while keeping the shape
+    const n = sim.pts.length, step = Math.max(1, Math.ceil(n/64)); const out = [];
+    for (let i = 0; i < n; i += step) out.push(+sim.pts[i].toFixed(4));
+    if (out[out.length-1] !== 1) out.push(1);
+    return `linear(${out.join(', ')})`;
+  }
+  function writeMotionVars(){
+    const decl = [];
+    for (const name of Object.keys(springs)){
+      const free = simulate(springs[name], false, 8), held = simulate(springs[name], true, 6);
+      decl.push(`--ease-${name}:${toLinear(free)}`, `--dur-${name}:${free.ms}ms`, `--ease-${name}-settle:${toLinear(held)}`, `--dur-${name}-settle:${held.ms}ms`);
+      H.motion.springs[name].ms = free.ms; H.motion.springs[name].settleMs = held.ms;
+    }
+    const st = document.createElement('style'); st.id = 'motion-vars';
+    st.textContent = `html:not([data-motion="reduced"]){${decl.join(';')}}`;
+    document.head.appendChild(st);
+  }
+  let linearOK = false; try { linearOK = CSS.supports('transition-timing-function', 'linear(0, 1)'); } catch(e){}
+  if (linearOK) writeMotionVars();
+
+  /* ---- Spring: the JS twin of withSpring, for gesture-driven values.
+         Interruptible: retargeting keeps the current velocity. ---- */
+  class Spring {
+    constructor(value, opts){ this.x = value || 0; this.v = 0; this.target = this.x; this.o = opts || {}; this.raf = 0; this.eps = 1e-3; }
+    cfg(){ if (H.reduced() && !this.o.ignorePolicy) return REDUCED_SPRING; const s = this.o.spring || 'snappy'; return typeof s === 'string' ? springs[s] : s; }
+    to(target, opts){
+      opts = opts || {}; this.target = target;
+      if (opts.velocity != null) this.v = opts.velocity;
+      if (opts.spring) this.o.spring = opts.spring;
+      this.eps = Math.max(Math.abs(target - this.x), this.o.scale || 1) * 1e-3;
+      if (!this.raf){ this.last = performance.now(); this.raf = requestAnimationFrame(t => this.frame(t)); }
+      return this;
+    }
+    set(value){ cancelAnimationFrame(this.raf); this.raf = 0; this.x = this.target = value; this.v = 0; this.o.onUpdate && this.o.onUpdate(value, 0); return this; }
+    stop(){ cancelAnimationFrame(this.raf); this.raf = 0; }
+    frame(now){
+      const cfg = this.cfg(); const clamp = cfg.clamp || this.o.clamp;
+      let ms = Math.min(48, Math.max(1, now - this.last)); this.last = now;
+      const from = this.x;
+      for (let i = 0; i < ms; i++){
+        const a = (-cfg.stiffness*(this.x - this.target) - cfg.damping*this.v)/cfg.mass;
+        this.v += a/1000; this.x += this.v/1000;
+        if (clamp && ((from <= this.target && this.x >= this.target) || (from >= this.target && this.x <= this.target))){ this.x = this.target; this.v = 0; break; }
+      }
+      const rest = Math.abs(this.x - this.target) < this.eps && Math.abs(this.v) < this.eps*20;
+      if (rest){ this.x = this.target; this.v = 0; }
+      this.o.onUpdate && this.o.onUpdate(this.x, this.v);
+      if (rest){ this.raf = 0; this.o.onRest && this.o.onRest(this.x); return; }
+      this.raf = requestAnimationFrame(t => this.frame(t));
+    }
+  }
+  H.Spring = Spring;
+  H.spring = (v, o) => new Spring(v, o);
+
+  /* timing twin (withTiming + easeOutCubic), policy-capped */
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+  H.ease = { outCubic: easeOutCubic, linear: t => t };
+  H.tween = function(from, to, o){
+    o = o || {}; let dur = o.duration == null ? 260 : o.duration; if (H.reduced()) dur = Math.min(dur, 180);
+    const ease = o.ease || easeOutCubic; const t0 = performance.now(); let raf = 0; let dead = false;
+    const tick = now => { if (dead) return; const t = dur ? Math.min(1, Math.max(0, now - t0)/dur) : 1; const v = from + (to - from)*ease(t); o.onUpdate && o.onUpdate(v, t); if (t < 1) raf = requestAnimationFrame(tick); else o.onDone && o.onDone(); };
+    raf = requestAnimationFrame(tick);
+    return { stop(){ dead = true; cancelAnimationFrame(raf); } };
+  };
+
+  /* ---- a spring's curve as a tiny glyph, for spec notes: <span data-curve="snappy-settle"> ---- */
+  H.curveSVG = function(name, w, h){
+    w = w || 34; h = h || 22;
+    const clamp = /-settle$/.test(name); const key = name.replace(/-settle$/, '');
+    const cfg = springs[key] || springs.snappy; const sim = simulate(cfg, clamp, 4);
+    const n = sim.pts.length, top = 4, bot = h - 3;
+    const d = sim.pts.map((y, i) => `${i ? 'L' : 'M'}${(1 + (i/(n-1))*(w-2)).toFixed(2)} ${(bot - y*(bot-top)).toFixed(2)}`).join(' ');
+    return `<svg class="curve" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path d="M1 ${top}H${w-1}" stroke="currentColor" stroke-opacity=".25" stroke-dasharray="2 2" fill="none"/><path d="${d}" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  };
+
+  /* ---- icons: the adapter. hanji ships no icon set; this page supplies one. ---- */
+  H.icon = (name, cls) => `<svg class="ic ${cls||''}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+
+  /* ---- helpers for plate scripts ---- */
+  H.$ = (s, r) => (r || document).querySelector(s);
+  H.$$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  H.wait = ms => new Promise(r => setTimeout(r, ms));
+  H.fmt = n => n.toLocaleString('en-GB');
+
+  /* ---- Counter: hanji's digit roll. Only changed digits move, by .55 of the
+         line, ones first, 24 ms apart; the first call paints without motion. ---- */
+  H.digits = function(el, str){
+    str = String(str);
+    const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const msOf = n => { const v = css(n); return v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000; };
+    const prev = el._digits;
+    el._digits = str; el.setAttribute('aria-label', str); el.classList.add('hj-digits');
+    const first = prev === undefined;
+    if (first) el.textContent = '';
+    let cells = Array.from(el.children).filter(c => c.classList.contains('cl'));
+    const num = s => parseFloat(String(s).replace(/[^\d.\-]/g, '')) || 0;
+    const up = first ? true : num(str) >= num(prev);
+    while (cells.length < str.length){ const c = document.createElement('span'); c.className = 'cl'; c.setAttribute('aria-hidden', 'true'); el.prepend(c); cells.unshift(c); }
+    while (cells.length > str.length){ const c = cells.shift(); c.remove(); }
+    const red = H.reduced(); const t = red ? 0 : 1;
+    const easeIn = red ? 'cubic-bezier(.33,1,.68,1)' : (css('--ease-gentle-settle') || 'cubic-bezier(.33,1,.68,1)');
+    const durIn = red ? 160 : (msOf('--dur-gentle-settle') || 320);
+    const step = red ? 0 : 24;
+    let k = 0;
+    for (let i = str.length - 1; i >= 0; i--){
+      const c = cells[i], ch = str[i];
+      if (c.dataset.ch === ch) continue;
+      c.dataset.ch = ch;
+      c.querySelectorAll('.g.out').forEach(o => o.remove()); // a stale exit never outlives the next change
+      const old = c.querySelector('.g:not(.out)');
+      const g = document.createElement('span'); g.className = 'g'; g.textContent = ch;
+      if (first || !old){ if (old) old.remove(); c.appendChild(g); continue; }
+      const dir = up ? 1 : -1, delay = k++ * step;
+      old.classList.add('out'); c.appendChild(g);
+      g.animate([{ transform:`translateY(${.55 * dir * t}em)`, opacity:0 }, { transform:'none', opacity:1 }], { duration:durIn, easing:easeIn, delay, fill:'backwards' });
+      old.animate([{ transform:'none', opacity:1 }, { transform:`translateY(${-.55 * dir * t}em)`, opacity:0 }], { duration:Math.min(180, durIn), easing:'cubic-bezier(.33,1,.68,1)', delay, fill:'forwards' }).finished.then(() => old.remove(), () => old.remove());
+      setTimeout(() => old.remove(), delay + 400); // hidden tabs never resolve `finished`
+    }
+  };
+  H.counter = (el, value) => H.digits(el, typeof value === 'number' ? H.fmt(value) : String(value));
+
+  /* ---- Segmented control wiring ---- */
+  H.segmented = function(el, onChange){
+    const ind = el.querySelector('.hj-seg-ind') || (() => { const s = document.createElement('span'); s.className = 'hj-seg-ind'; el.prepend(s); return s; })();
+    const btns = Array.from(el.querySelectorAll(':scope > button'));
+    let first = true;
+    function place(){
+      const widths = btns.map(b => b.offsetWidth); const base = Math.max.apply(null, widths);
+      const i = Math.max(0, btns.findIndex(b => b.getAttribute('aria-checked') === 'true'));
+      const left = btns[i].offsetLeft - btns[0].offsetLeft; const w = widths[i];
+      // hanji segmented-track: draw at the widest, squeeze with scaleX ≤ 1, translate so the centre lands
+      const sx = base ? w / base : 0; const tx = left + w/2 - base/2;
+      if (first){ el.classList.add('noanim'); }
+      el.style.setProperty('--w', base + 'px'); ind.style.setProperty('--x', tx + 'px'); ind.style.setProperty('--sx', sx);
+      if (first){ void ind.offsetWidth; el.classList.remove('noanim'); first = false; }
+    }
+    btns.forEach((b, i) => {
+      b.setAttribute('role', 'radio'); b.classList.add('hj-press');
+      b.addEventListener('click', () => select(i, true));
+      b.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ e.preventDefault(); const n = (i + (e.key === 'ArrowRight' ? 1 : -1) + btns.length) % btns.length; select(n, true); btns[n].focus(); }
+      });
+    });
+    el.setAttribute('role', 'radiogroup');
+    function select(i, user){
+      btns.forEach((b, j) => { b.setAttribute('aria-checked', String(j === i)); b.tabIndex = j === i ? 0 : -1; });
+      place(); if (user && onChange) onChange(btns[i].dataset.value, i);
+      el.dispatchEvent(new CustomEvent('change', { detail:{ value:btns[i].dataset.value, index:i } }));
+    }
+    const ro = new ResizeObserver(() => place()); ro.observe(el);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { first = true; place(); });
+    place();
+    return { select: (v) => { const i = btns.findIndex(b => b.dataset.value === v); if (i >= 0) select(i, false); }, place };
+  };
+
+  /* ---- Toggle wiring ---- */
+  H.toggle = function(el, onChange){
+    el.setAttribute('role', 'switch');
+    if (!el.hasAttribute('aria-checked')) el.setAttribute('aria-checked', 'false');
+    el.addEventListener('click', () => { const on = el.getAttribute('aria-checked') !== 'true'; el.setAttribute('aria-checked', String(on)); onChange && onChange(on); el.dispatchEvent(new CustomEvent('toggle', { detail:{ on } })); });
+    return { set:on => el.setAttribute('aria-checked', String(!!on)), get:() => el.getAttribute('aria-checked') === 'true' };
+  };
+
+  /* ---- Cascade: stagger 24 ms, capped at 10, rise 12, once per surface ---- */
+  H.cascade = function(scope){
+    const els = H.$$('[data-cascade]', scope || document);
+    els.forEach(c => Array.from(c.children).forEach((ch, i) => ch.style.setProperty('--i', i)));
+    if (!('IntersectionObserver' in window) || root.classList.contains('static')){ els.forEach(c => c.classList.add('in')); return; }
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin:'0px 0px -8% 0px' });
+    els.forEach(c => io.observe(c));
+  };
+  H.replay = function(c){ c.classList.remove('in'); void c.offsetWidth; requestAnimationFrame(() => c.classList.add('in')); };
+
+  /* ---- Popover: grows from its anchor ---- */
+  H.popover = function(trigger, pop, opts){
+    opts = opts || {};
+    function close(){ pop.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); document.removeEventListener('pointerdown', outside, true); document.removeEventListener('keydown', esc); }
+    function outside(e){ if (!pop.contains(e.target) && !trigger.contains(e.target)) close(); }
+    function esc(e){ if (e.key === 'Escape'){ close(); trigger.focus(); } }
+    function open(){
+      const host = pop.offsetParent || document.body;
+      const tr = trigger.getBoundingClientRect(), hr = host.getBoundingClientRect();
+      const align = opts.align || 'end';
+      pop.style.top = (tr.bottom - hr.top + 6) + 'px';
+      if (align === 'end'){ pop.style.right = (hr.right - tr.right) + 'px'; pop.style.left = 'auto'; pop.style.setProperty('--ox', 'top right'); }
+      else { pop.style.left = (tr.left - hr.left) + 'px'; pop.style.right = 'auto'; pop.style.setProperty('--ox', 'top left'); }
+      pop.classList.add('open'); trigger.setAttribute('aria-expanded', 'true');
+      setTimeout(() => { document.addEventListener('pointerdown', outside, true); document.addEventListener('keydown', esc); }, 0);
+      const f = pop.querySelector('[aria-checked="true"], button'); f && f.focus({ preventScroll:true });
+    }
+    trigger.setAttribute('aria-haspopup', 'true'); trigger.setAttribute('aria-expanded', 'false');
+    trigger.addEventListener('click', () => pop.classList.contains('open') ? close() : open());
+    return { open, close };
+  };
+
+  writeThemeVars();
+  root.dataset.theme = H.state.theme; root.dataset.accent = H.state.accent; root.dataset.density = H.state.density; root.dataset.motion = H.state.motion;
+})();
+</script>
+</head>

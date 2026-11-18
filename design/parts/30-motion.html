@@ -1,0 +1,739 @@
+<!-- ======================================================================
+     02 · MOTION — principles, springs, timing, stagger, choreography,
+     the reduced-motion policy, the seal, and the performance law.
+     Every curve is simulated from @hanji/core's own constants.
+     ====================================================================== -->
+<style>
+/* principles grid: ruled cells, no cards */
+.p30-grid{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:2px solid var(--fg); width:100% }
+.p30-cell{ position:relative; padding:24px 26px 24px 0; display:flex; flex-direction:column; min-height:330px; border-bottom:1px solid var(--line); cursor:pointer; outline:none }
+.p30-cell:nth-child(3n+2), .p30-cell:nth-child(3n+3){ padding-left:26px; border-left:1px solid var(--line) }
+.p30-cell .n{ font:500 11px/1 var(--mono); color:var(--fg-mute); display:flex; justify-content:space-between }
+.p30-cell .n span:last-child{ opacity:0; transition:opacity var(--dur-fast) var(--ease-out) }
+.p30-cell:hover .n span:last-child, .p30-cell:focus-visible .n span:last-child{ opacity:1 }
+.p30-cell h4{ margin:14px 0 8px; font-weight:600; font-size:20px; line-height:1.15; letter-spacing:-.025em }
+.p30-cell p{ margin:0; font-size:13.5px; line-height:1.55; color:var(--fg-dim); max-width:320px }
+.p30-cell p b{ color:var(--fg); font-weight:600 }
+.p30-cell:focus-visible{ box-shadow:inset 0 -2px 0 var(--accent) }
+.p30-demo{ margin-top:auto; height:118px; position:relative; border-radius:var(--r-md); background:var(--bg-soft); overflow:hidden; display:grid; place-items:center; isolation:isolate }
+.p30-demo .lbl{ position:absolute; left:12px; bottom:9px; font:500 10px/1 var(--mono); color:var(--fg-mute) }
+.p30-demo .lbr{ position:absolute; right:12px; bottom:9px; font:500 10px/1 var(--mono); color:var(--fg-mute) }
+
+/* demo 1 — press */
+.d1-btn.pressed{ transform:scale(var(--press)); transition-duration:70ms!important }
+/* demo 2 — spring vs curve */
+.d2{ display:flex; gap:26px; align-items:center }
+.d2-track{ width:120px; height:28px; border-radius:var(--r-pill); background:rgba(var(--fg-rgb),.07); position:relative }
+.d2-knob{ position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:var(--accent); transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle) }
+.d2.on .d2-knob{ transform:translateX(92px) }
+.d2-sw{ width:44px; height:44px; border-radius:var(--r-sm); background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line); transition:background-color var(--dur-base) var(--ease-out) }
+.d2.on .d2-sw{ background:var(--accent-soft) }
+/* demo 3 — short travel */
+.d3{ width:72%; display:flex; flex-direction:column; gap:7px; margin-top:-10px }
+.d3 > i{ display:block; height:12px; border-radius:4px; background:rgba(var(--fg-rgb),.12) }
+.d3 > i:nth-child(1){ width:80% } .d3 > i:nth-child(2){ width:62% } .d3 > i:nth-child(3){ width:72% } .d3 > i:nth-child(4){ width:48% }
+/* demo 4 — grow from the source */
+.d4-anchor{ position:absolute; top:18px; right:22px; width:28px; height:28px; border-radius:50%; background:rgba(var(--fg-rgb),.08); display:grid; place-items:center; color:var(--fg) }
+.d4-menu{ position:absolute; top:52px; right:22px; width:132px; padding:5px; border-radius:var(--r-sm); background:var(--surface-2); border:1px solid var(--line); box-shadow:0 18px 40px -16px rgba(0,0,0,.28);
+  transform-origin:top right; transform:scale(.92); opacity:0; transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out) }
+.d4-menu i{ display:block; height:8px; margin:7px 6px; border-radius:4px; background:rgba(var(--fg-rgb),.12) } .d4-menu i:nth-child(2){ width:70% } .d4-menu i:nth-child(3){ width:50%; background:color-mix(in srgb, var(--danger) 40%, transparent) }
+.d4.on .d4-menu{ opacity:1; transform:none; transition:opacity var(--dur-base) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+/* demo 5 — leave faster */
+.d5-toast{ position:absolute; left:50%; top:26px; height:34px; padding:0 14px 0 10px; display:flex; align-items:center; gap:7px; border-radius:var(--r-pill); background:var(--surface-2); border:1px solid var(--line); font-size:12px; font-weight:600; white-space:nowrap;
+  transform:translate(-50%, calc(14px * var(--travel))); opacity:0; transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out) }
+.d5-toast .ic{ color:var(--success) }
+.d5.on .d5-toast{ transform:translate(-50%, 0); opacity:1; transition:opacity var(--dur-base) var(--ease-out), transform var(--dur-gentle-settle) var(--ease-gentle-settle) }
+.d5-bars{ position:absolute; left:14px; right:14px; bottom:26px; display:flex; gap:4px; align-items:center; font:500 9.5px/1 var(--mono); color:var(--fg-mute) }
+.d5-bars i{ display:block; height:4px; border-radius:2px; background:var(--accent) } .d5-bars i.x{ background:rgba(var(--fg-rgb),.3) }
+/* demo 6 — one clock */
+.d6{ display:flex; gap:5px; align-items:flex-end; height:64px }
+.d6 > i{ display:block; width:9px; border-radius:3px; background:var(--accent); height:var(--h) }
+html.js .d6:not(.in) > i{ transform:translateY(calc(16px * var(--travel))); opacity:0 }
+.d6 > i{ transition:opacity var(--dur-base) var(--ease-out), transform var(--dur-gentle-settle) var(--ease-gentle-settle); transition-delay:calc(min(var(--i), 10) * var(--stagger)) }
+.d6 > i.capped{ background:var(--fg) }
+/* demo 7 — settle vs wobble */
+.d7{ width:78%; display:flex; flex-direction:column; gap:16px }
+.d7 > div{ position:relative; height:20px; border-bottom:1px dashed rgba(var(--fg-rgb),.18) }
+.d7 > div::after{ content:""; position:absolute; right:18px; top:-4px; bottom:-4px; width:1px; background:rgba(var(--fg-rgb),.35) }
+.d7 b{ position:absolute; left:0; top:2px; width:16px; height:16px; border-radius:50%; background:var(--fg-mute) }
+.d7 .settle b{ background:var(--accent) }
+.d7 span{ position:absolute; left:0; top:-13px; font:500 9.5px/1 var(--mono); color:var(--fg-mute) }
+/* demo 8 — decoration first */
+.d8{ display:flex; gap:4px; align-items:flex-end; height:40px }
+.d8 i{ display:block; width:6px; height:40px; border-radius:2px; background:var(--accent); transform-origin:bottom; transform:scaleY(.3) }
+.d8.run i{ animation:d8 900ms var(--ease-out) infinite alternate }
+.d8.run i:nth-child(2){ animation-duration:700ms; animation-delay:-200ms } .d8.run i:nth-child(3){ animation-duration:1100ms; animation-delay:-500ms } .d8.run i:nth-child(4){ animation-duration:800ms; animation-delay:-350ms }
+@keyframes d8{ 0%{ transform:scaleY(.25) } 25%{ transform:scaleY(.75) } 50%{ transform:scaleY(.375) } 75%{ transform:scaleY(1) } 100%{ transform:scaleY(.5) } }
+html[data-motion="reduced"] .d8 i{ animation:none!important; transform:scaleY(.5) }
+.d8-state{ position:absolute; top:12px; right:12px; font:500 10px/1 var(--mono); color:var(--fg-mute) }
+/* demo 9 — seal */
+.d9 .seal{ --size:62px; transform:rotate(-4deg) }
+
+/* springs plotter — the bespoke element */
+.p30-plot{ width:100%; display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:36px; align-items:start }
+.p30-plot-head{ display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap }
+.p30-plot-head .grow{ flex:1 }
+.p30-chk{ display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:500; color:var(--fg-dim); cursor:pointer }
+.p30-svg{ width:100%; height:auto; display:block; overflow:visible }
+.p30-svg .grid line{ stroke:rgba(var(--fg-rgb),.07) }
+.p30-svg .axis text{ font:500 10.5px var(--mono); fill:var(--fg-mute) }
+.p30-svg .target{ stroke:var(--fg); stroke-opacity:.35; stroke-dasharray:3 4 }
+.p30-svg .curve{ fill:none; stroke-linecap:round; stroke-linejoin:round; transition:stroke var(--dur-base) var(--ease-out), stroke-width var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out) }
+.p30-svg .curve.dim{ stroke:rgba(var(--fg-rgb),.2); stroke-width:1.25 }
+.p30-svg .curve.sel{ stroke:var(--accent); stroke-width:2.5 }
+.p30-svg .area{ fill:var(--accent); opacity:.07 }
+.p30-svg .cursor{ stroke:var(--accent); stroke-width:1; stroke-dasharray:2 3 }
+.p30-svg .dot{ fill:var(--accent); stroke:var(--bg-soft); stroke-width:3 }
+.p30-svg .settle-mark{ font:500 10.5px var(--mono); fill:var(--accent) }
+.p30-rail{ position:relative; height:44px; margin-top:16px; border-radius:var(--r-pill); background:rgba(var(--fg-rgb),.05); box-shadow:inset 0 0 0 1px var(--line) }
+.p30-rail::before, .p30-rail::after{ content:""; position:absolute; top:10px; bottom:10px; width:1px; background:rgba(var(--fg-rgb),.2) }
+.p30-rail::before{ left:22px } .p30-rail::after{ right:22px }
+.p30-puck{ position:absolute; top:6px; left:6px; width:32px; height:32px; border-radius:11px; background:var(--accent); will-change:transform }
+.p30-stats{ border-top:1px solid var(--line) }
+.p30-stats div{ display:flex; justify-content:space-between; align-items:baseline; padding:9px 0; border-bottom:1px solid var(--line); font-size:12.5px; color:var(--fg-mute) }
+.p30-stats b{ font:500 13px/1 var(--mono); color:var(--fg); font-variant-numeric:tabular-nums }
+.p30-big{ font-weight:700; font-size:44px; line-height:46px; letter-spacing:-1.2px; font-variant-numeric:tabular-nums; margin:2px 0 2px }
+.p30-big small{ font-size:20px; color:var(--fg-mute); letter-spacing:-.3px; margin-left:3px }
+.p30-use{ margin:6px 0 18px; font-size:13px; line-height:1.55; color:var(--fg-dim) }
+.p30-tune{ margin-top:18px; display:grid; gap:12px }
+.p30-tune label{ display:grid; grid-template-columns:76px 1fr 40px; gap:10px; align-items:center; font-size:12px; color:var(--fg-mute) }
+.p30-tune output{ font:500 12px/1 var(--mono); color:var(--fg); text-align:right }
+.p30-range{ -webkit-appearance:none; appearance:none; height:20px; background:transparent; width:100%; cursor:pointer }
+.p30-range::-webkit-slider-runnable-track{ height:4px; border-radius:4px; background:rgba(var(--accent-rgb),.24) }
+.p30-range::-moz-range-track{ height:4px; border-radius:4px; background:rgba(var(--accent-rgb),.24) }
+.p30-range::-webkit-slider-thumb{ -webkit-appearance:none; width:12px; height:12px; border-radius:50%; background:var(--accent); margin-top:-4px; transition:transform var(--dur-snappy) var(--ease-snappy) }
+.p30-range::-moz-range-thumb{ width:12px; height:12px; border:0; border-radius:50%; background:var(--accent) }
+.p30-range:active::-webkit-slider-thumb{ transform:scale(1.6) }
+.p30-policy-note{ margin-top:14px; font-size:12px; line-height:1.5; color:var(--fg-mute); display:none }
+html[data-motion="reduced"] .p30-policy-note{ display:block }
+
+/* timing */
+.p30-timing{ width:100%; display:grid; grid-template-columns:240px 1fr; gap:40px; align-items:center }
+.p30-ease{ width:100%; height:auto }
+.p30-ease path{ fill:none; stroke:var(--accent); stroke-width:2.5; stroke-linecap:round }
+.p30-ease .g{ stroke:rgba(var(--fg-rgb),.1); stroke-width:1 }
+.p30-ease text{ font:500 10px var(--mono); fill:var(--fg-mute) }
+.p30-durs{ display:flex; flex-direction:column; gap:12px }
+.p30-dur{ display:grid; grid-template-columns:110px 1fr 46px; gap:16px; align-items:center }
+.p30-dur b{ display:block; font-weight:600; font-size:14px } .p30-dur span{ font-size:12px; color:var(--fg-mute) }
+.p30-dur .bar{ height:30px; border-radius:var(--r-xs); background:rgba(var(--fg-rgb),.05); position:relative; overflow:hidden }
+.p30-dur .bar i{ position:absolute; inset:0; background:var(--accent-soft); transform-origin:left; transform:scaleX(0) }
+.p30-dur .bar em{ position:absolute; left:10px; top:50%; transform:translateY(-50%); font:500 11px/1 var(--mono); font-style:normal; color:var(--fg-dim) }
+.p30-dur .sw{ width:30px; height:30px; border-radius:var(--r-xs); background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line) }
+
+/* stagger */
+.p30-stag{ width:100%; display:grid; grid-template-columns:300px 1fr; gap:40px; align-items:start }
+.p30-list > div{ display:flex; align-items:center; gap:10px; height:30px; border-bottom:1px solid var(--line); font-size:12.5px }
+.p30-list > div i{ width:20px; height:20px; border-radius:6px; flex:none }
+.p30-list > div span{ margin-left:auto; font:400 10.5px/1 var(--mono); color:var(--fg-mute) }
+.p30-gantt{ position:relative }
+.p30-gantt .row{ height:30px; border-bottom:1px solid var(--line); position:relative }
+.p30-gantt .row i{ position:absolute; top:9px; height:12px; border-radius:3px; background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent) }
+.p30-gantt .row.cap i{ background:rgba(var(--fg-rgb),.08); box-shadow:inset 3px 0 0 var(--fg) }
+.p30-gantt .ticks{ display:flex; justify-content:space-between; font:500 10px/1 var(--mono); color:var(--fg-mute); margin-top:8px }
+.p30-gantt .now{ position:absolute; top:0; bottom:22px; left:0; width:1px; background:var(--accent); opacity:0 }
+.p30-gantt .capline{ position:absolute; top:-6px; bottom:22px; width:0; border-left:1px dashed var(--fg) }
+.p30-gantt .capline span{ position:absolute; top:-14px; left:6px; white-space:nowrap; font:500 10px/1 var(--mono); color:var(--fg) }
+
+/* choreography */
+.p30-chor{ width:100%; display:grid; grid-template-columns:minmax(0,1fr) 270px; gap:32px; align-items:start }
+.p30-table{ width:100%; border-collapse:collapse; font-size:13px }
+.p30-table th{ text-align:left; font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); padding:0 10px 10px 0; border-bottom:1px solid var(--line) }
+.p30-table td{ padding:11px 10px 11px 0; border-bottom:1px solid var(--line); vertical-align:middle; color:var(--fg-dim) }
+.p30-table td:first-child{ color:var(--fg); font-weight:600 }
+.p30-table td .m{ font:400 11px/1.4 var(--mono); color:var(--fg-mute); display:block; margin-top:4px }
+.p30-table td svg.curve{ width:40px; height:22px }
+.p30-table tr.on td{ background:linear-gradient(90deg, rgba(var(--accent-rgb),.06), transparent) }
+.p30-stage{ position:relative; height:420px; border-radius:var(--r-xl); background:var(--bg); box-shadow:inset 0 0 0 1px var(--line); overflow:hidden; isolation:isolate }
+.p30-stage .bgrows{ position:absolute; inset:56px 18px auto 18px; display:flex; flex-direction:column; gap:12px }
+.p30-stage .bgrows i{ display:block; height:40px; border-radius:var(--r-xs); background:rgba(var(--fg-rgb),.05) }
+.p30-stage .ttl{ position:absolute; left:18px; top:18px; font-weight:700; font-size:20px; letter-spacing:-.02em }
+.p30-stage .more{ position:absolute; right:14px; top:14px; width:32px; height:32px; border-radius:50%; display:grid; place-items:center; color:var(--fg) }
+.st-scrim{ position:absolute; inset:0; background:var(--scrim); opacity:0; pointer-events:none }
+.st-sheet{ position:absolute; left:8px; right:8px; bottom:8px; height:62%; border-radius:var(--r-xl); background:var(--surface-2); border:1px solid var(--line); transform:translateY(110%) }
+.st-sheet::before{ content:""; position:absolute; top:7px; left:50%; width:36px; height:4px; margin-left:-18px; border-radius:4px; background:rgba(var(--fg-rgb),.2) }
+.st-dialog{ position:absolute; left:22px; right:22px; top:50%; height:150px; margin-top:-75px; border-radius:var(--r-lg); background:var(--surface-2); border:1px solid var(--line); opacity:0; transform:scale(.94) }
+.st-menu{ position:absolute; right:14px; top:50px; width:150px; height:132px; border-radius:var(--r-md); background:var(--surface-2); border:1px solid var(--line); box-shadow:0 18px 40px -16px rgba(0,0,0,.28); transform-origin:top right; opacity:0; transform:scale(.92) }
+.st-toast{ position:absolute; left:18px; right:18px; bottom:18px; height:46px; border-radius:var(--r-md); background:var(--surface-2); border:1px solid var(--line); opacity:0; transform:translateY(calc(12px * var(--travel))); display:flex; align-items:center; padding:0 14px; gap:8px; font-size:12.5px; font-weight:600 }
+.st-toast .ic{ color:var(--success) }
+.st-morph{ position:absolute; left:8px; right:8px; bottom:8px; height:56px; border-radius:var(--r-md); background:var(--surface-2); border:1px solid var(--line); transform-origin:bottom center }
+.st-fake{ display:block; height:9px; margin:16px 16px 0; border-radius:5px; background:rgba(var(--fg-rgb),.1) } .st-fake.s{ width:50% }
+
+/* reduced side-by-side */
+.p30-rm{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:20px }
+.p30-rm-col{ border-radius:var(--r-lg); background:var(--bg); box-shadow:inset 0 0 0 1px var(--line); padding:18px 20px 20px }
+.p30-rm-col h5{ margin:0 0 14px; display:flex; justify-content:space-between; font-size:13px; font-weight:600 }
+.p30-rm-col h5 span{ font:500 10.5px/1 var(--mono); color:var(--fg-mute) }
+.p30-rm-row{ display:grid; grid-template-columns:96px 1fr; align-items:center; gap:14px; height:64px; border-top:1px solid var(--line) }
+.p30-rm-row > span{ font-size:12px; color:var(--fg-mute) }
+.p30-rm-card{ height:40px; border-radius:var(--r-sm); background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); display:flex; align-items:center; gap:10px; padding:0 10px; font-size:12.5px; font-weight:600; transition:opacity var(--dur-base) var(--ease-out), transform var(--dur-gentle-settle) var(--ease-gentle-settle) }
+.p30-rm-card i{ width:22px; height:22px; border-radius:6px; background:var(--data-1) }
+.p30-rm-card.out{ opacity:0; transform:translateY(calc(18px * var(--travel))); transition:none }
+.p30-red{ --ease-snappy:var(--ease-out); --ease-gentle:var(--ease-out); --ease-bouncy:var(--ease-out); --ease-snappy-settle:var(--ease-out); --ease-gentle-settle:var(--ease-out); --ease-bouncy-settle:var(--ease-out);
+  --dur-snappy:120ms; --dur-gentle:160ms; --dur-bouncy:160ms; --dur-snappy-settle:120ms; --dur-gentle-settle:160ms; --dur-bouncy-settle:160ms; --dur-base:180ms; --dur-slow:180ms; --stagger:0ms; --travel:0 }
+.p30-red .d8 i{ animation:none!important; transform:scaleY(.5) }
+.p30-policy{ width:100%; margin-top:22px; display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line) }
+.p30-policy div{ padding:14px 16px 4px 0 } .p30-policy div + div{ padding-left:16px; border-left:1px solid var(--line) }
+.p30-policy b{ display:block; font-size:13.5px; font-weight:600; margin-bottom:4px; letter-spacing:-.01em } .p30-policy span{ font-size:12.5px; line-height:1.5; color:var(--fg-dim) }
+
+/* the seal */
+.p30-seal{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center }
+.p30-receipt{ position:relative; max-width:380px; border-radius:var(--r-lg); background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line); padding:24px 24px 22px; overflow:visible }
+.p30-receipt h5{ margin:0; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); font-weight:600 }
+.p30-receipt .big{ margin:8px 0 18px; font-weight:700; font-size:26px; letter-spacing:-.03em; line-height:1.1 }
+.p30-receipt dl{ margin:0; border-top:1px solid var(--line) }
+.p30-receipt dl div{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:13px }
+.p30-receipt dt{ color:var(--fg-mute) } .p30-receipt dd{ margin:0; font-weight:500; font-variant-numeric:tabular-nums }
+.p30-receipt .bar{ margin-top:18px; height:4px; border-radius:4px; background:rgba(var(--accent-rgb),.22); overflow:hidden }
+.p30-receipt .bar i{ display:block; height:100%; background:var(--accent); transform-origin:left; transform:scaleX(0) }
+.p30-receipt .stamp{ position:absolute; right:-34px; bottom:-40px; width:92px; height:92px; pointer-events:none }
+.p30-receipt .stamp .seal{ position:absolute; inset:0; --size:92px; opacity:0 }
+.p30-receipt .stamp .ink-bloom{ border-color:var(--seal) }
+.p30-seal-rules{ border-top:1px solid var(--line) }
+.p30-seal-rules div{ display:grid; grid-template-columns:22px 1fr; gap:10px; padding:11px 0; border-bottom:1px solid var(--line); font-size:13.5px; line-height:1.45; color:var(--fg-dim) }
+.p30-seal-rules div b{ color:var(--fg); font-weight:600 }
+.p30-seal-rules .ic{ margin-top:1px }
+.p30-seal-rules .yes{ color:var(--success) } .p30-seal-rules .no{ color:var(--danger) }
+
+/* performance law */
+.p30-law{ width:100%; display:grid; grid-template-columns:1fr 1fr; column-gap:40px; border-top:2px solid var(--fg) }
+.p30-law div{ display:grid; grid-template-columns:34px 1fr; gap:6px 12px; padding:16px 0 15px; border-bottom:1px solid var(--line) }
+.p30-law .k{ font:500 11px/1.7 var(--mono); color:var(--fg-mute); grid-row:span 3 }
+.p30-law b{ font-weight:600; font-size:15px; letter-spacing:-.015em }
+.p30-law p{ margin:0; font-size:13px; line-height:1.55; color:var(--fg-dim) }
+.p30-law code{ font:400 10.5px/1.4 var(--mono); color:var(--fg-mute) }
+
+@media (max-width: 1300px){ .p30-grid{ grid-template-columns:1fr 1fr } .p30-cell:nth-child(n){ padding-left:0; border-left:0 } .p30-cell:nth-child(2n){ padding-left:26px; border-left:1px solid var(--line) } .p30-plot, .p30-timing, .p30-stag, .p30-chor, .p30-rm, .p30-seal, .p30-law{ grid-template-columns:1fr } .p30-policy{ grid-template-columns:1fr 1fr } }
+</style>
+
+<section class="chapter" id="motion" data-num="02" data-title="Motion">
+  <header class="chapter-head">
+    <div class="chapter-line"><h2 class="chapter-title">Motion</h2><span class="chapter-rule"></span><span class="chapter-num">02</span></div>
+    <div class="chapter-body">
+      <p class="chapter-lede">hanji moves like a sheet of paper on a table: it answers the finger at once, travels a short way, and settles without fuss. <b>Motion explains what changed — it is never the show.</b> Every curve in this chapter is simulated from the library's own spring constants; switch Motion to Reduced above to watch the policy rewrite them.</p>
+      <ol class="chapter-index" data-auto></ol>
+    </div>
+  </header>
+
+  <!-- 02.01 PRINCIPLES -->
+  <article class="entry entry--wide" id="principles">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">02.01</div>
+        <h3 class="entry-title">Nine principles</h3>
+        <p class="entry-desc">Each one is a rule a reviewer can check, not a mood. <b>Hover or tap a principle to see it.</b></p>
+      </div>
+      <dl class="spec">
+        <div><dt>Springs</dt><dd>snappy 28/380 · gentle 24/210 · bouncy 14/320</dd></div>
+        <div><dt>Timing</dt><dd>fast 180 · base 260 · slow 400 · ease-out cubic</dd></div>
+        <div><dt>Stagger</dt><dd>24 ms a step · cap 10 · rise 12</dd></div>
+        <div><dt>Press</dt><dd>scale .97 · rows opacity .75</dd></div>
+        <div><dt>Pulse</dt><dd>.55 → .90 over 1100 ms</dd></div>
+      </dl>
+    </div>
+    <div class="p30-grid" id="p30-grid">
+      <div class="p30-cell" tabindex="0" data-demo="1"><div class="n"><span>01</span><span>Replay ↺</span></div><h4>Answer in one frame</h4><p>The press dip lands on pointer-down, inside 70 ms. <b>Feedback never waits for the network, the spring or the list.</b></p>
+        <div class="p30-demo"><span class="hj-btn sm d1-btn">${heart} Like</span><span class="lbl">down 70 ms</span><span class="lbr">up · snappy</span></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="2"><div class="n"><span>02</span><span>Replay ↺</span></div><h4>Springs for touch, curves for state</h4><p>Anything a finger moves or might interrupt rides a spring and keeps its velocity. <b>Colour and opacity ease out on a clock.</b></p>
+        <div class="p30-demo"><div class="d2"><div class="d2-track"><i class="d2-knob"></i></div><i class="d2-sw"></i></div><span class="lbl">spring</span><span class="lbr">ease-out 260</span></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="3"><div class="n"><span>03</span><span>Replay ↺</span></div><h4>Travel a short way</h4><p>Entrances rise 12 points and fade. <b>Nothing flies across the screen</b>; distance is the enemy of calm.</p>
+        <div class="p30-demo"><div class="d3" data-cascade><i></i><i></i><i></i><i></i></div><span class="lbl">rise 12 · gentle</span></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="4"><div class="n"><span>04</span><span>Replay ↺</span></div><h4>Grow from the source</h4><p>Menus open from the button that made them, sheets from their edge, toasts from where they live. <b>Origin tells you what caused it.</b></p>
+        <div class="p30-demo d4"><span class="d4-anchor">${more}</span><div class="d4-menu"><i></i><i></i><i></i></div><span class="lbl">origin · top right</span></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="5"><div class="n"><span>05</span><span>Replay ↺</span></div><h4>Leave faster than you arrive</h4><p>Arrivals take base or gentle; exits take fast. <b>Attention is already elsewhere when something leaves.</b></p>
+        <div class="p30-demo d5"><span class="d5-toast">${cc} Saved to Downloads</span><div class="d5-bars"><span>in</span><i style="width:104px"></i><span style="margin-left:8px">out</span><i class="x" style="width:72px"></i></div></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="6"><div class="n"><span>06</span><span>Replay ↺</span></div><h4>One clock per surface</h4><p>Lists stagger 24 ms a row and stop counting at ten. <b>Row 40 lands with row 10</b>, so long lists never feel slow.</p>
+        <div class="p30-demo"><div class="d6" id="d6"></div><span class="lbl">24 ms · cap 10</span></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="7"><div class="n"><span>07</span><span>Replay ↺</span></div><h4>Settle, don't wobble</h4><p>Wherever completion unlocks something, the spring is clamped. <b>A spring looks done at 250 ms and is alive at 500</b> — never make the user wait for the tail.</p>
+        <div class="p30-demo"><div class="d7"><div class="settle"><span>snappy · clamped</span><b></b></div><div><span>bouncy · free</span><b></b></div></div></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="8"><div class="n"><span>08</span><span>Replay ↺</span></div><h4>Decoration goes first</h4><p>When motion is reduced, loops never arm and travel becomes a fade. <b>Feedback survives; ornament does not.</b> Idle decoration costs nothing.</p>
+        <div class="p30-demo"><div class="d8" id="d8"><i></i><i></i><i></i><i></i></div><span class="d8-state" id="d8-state">ambient · on</span></div></div>
+      <div class="p30-cell" tabindex="0" data-demo="9"><div class="n"><span>09</span><span>Replay ↺</span></div><h4>Celebrate rarely</h4><p>One moment per flow earns bounce: the seal, when something the user waited for is done. <b>Never on errors, never on load.</b></p>
+        <div class="p30-demo d9"><span class="seal" id="d9-seal">한지</span><span class="lbl">bouncy · once</span></div></div>
+    </div>
+  </article>
+
+  <!-- 02.02 SPRINGS -->
+  <article class="entry entry--wide" id="springs">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">02.02</div>
+        <h3 class="entry-title">Springs</h3>
+        <p class="entry-desc">Three springs carry everything that moves. Each curve below is integrated from its damping, stiffness and mass — the same numbers the library hands Reanimated. <b>Play it and the puck moves on the identical spring.</b> Clamping cuts the tail where completion gates state.</p>
+      </div>
+      <dl class="spec">
+        <div><dt>snappy</dt><dd>controls, toggles, pills, press release</dd></div>
+        <div><dt>gentle</dt><dd>entrances, sheets, reveals</dd></div>
+        <div><dt>bouncy</dt><dd>celebration only — the seal, a like</dd></div>
+        <div><dt>settle()</dt><dd>overshootClamping · energy 1e−3</dd></div>
+        <div><dt>Reduced</dt><dd>damping 240 · stiffness 14400 (critical)</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p30-plot">
+        <div>
+          <div class="p30-plot-head">
+            <div class="hj-seg sm" id="p30-which"><button data-value="snappy">Snappy</button><button data-value="gentle">Gentle</button><button data-value="bouncy">Bouncy</button><button data-value="custom">Yours</button></div>
+            <label class="p30-chk"><button class="hj-toggle sm" id="p30-clamp" aria-label="Clamped"></button>Clamped</label>
+            <span class="grow"></span>
+            <button class="hj-btn sm ink" id="p30-play">${play} Play</button>
+          </div>
+          <svg class="p30-svg" id="p30-svg" viewBox="0 0 640 300" role="img" aria-label="Position over time for the selected spring"></svg>
+          <div class="p30-rail" aria-hidden="true"><span class="p30-puck" id="p30-puck"></span></div>
+        </div>
+        <div>
+          <div class="t-eyebrow mute">Settles in</div>
+          <div class="p30-big"><span id="p30-ms">0</span><small>ms</small></div>
+          <p class="p30-use" id="p30-use"></p>
+          <div class="p30-stats" id="p30-stats"></div>
+          <div class="p30-tune" id="p30-tune">
+            <label>Stiffness <input class="p30-range" type="range" min="80" max="900" step="10" id="p30-k"><output id="p30-ko"></output></label>
+            <label>Damping <input class="p30-range" type="range" min="4" max="60" step="1" id="p30-c"><output id="p30-co"></output></label>
+          </div>
+          <p class="p30-policy-note">Motion is reduced: every spring now runs critically damped (240 / 14400) and settles in about 40 ms. The finger still gets an answer.</p>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Drag the sliders to tune “Yours”</span></div>
+    </div>
+  </article>
+
+  <!-- 02.03 TIMING -->
+  <article class="entry" id="timing">
+    <div class="entry-meta">
+      <div class="entry-num">02.03</div>
+      <h3 class="entry-title">Durations &amp; easing</h3>
+      <p class="entry-desc">For state that no finger is holding — colour, opacity, a label swapping — hanji uses three clocks on one curve, ease-out cubic: fast at the start, gentle at the end, so the change is seen at once and lands softly.</p>
+      <dl class="spec">
+        <div><dt>Curve</dt><dd>cubic-bezier(.33, 1, .68, 1)</dd></div>
+        <div><dt>fast</dt><dd>180 · exits, colour, reduced cap</dd></div>
+        <div><dt>base</dt><dd>260 · fades and state changes</dd></div>
+        <div><dt>slow</dt><dd>400 · large crossfades, rarely</dd></div>
+      </dl>
+    </div>
+    <div class="plate">
+      <div class="p30-timing">
+        <svg class="p30-ease" viewBox="0 0 240 200" aria-hidden="true">
+          <line class="g" x1="20" y1="170" x2="220" y2="170"/><line class="g" x1="20" y1="20" x2="220" y2="20"/><line class="g" x1="20" y1="20" x2="20" y2="170"/>
+          <path id="p30-easepath"/>
+          <circle r="5" id="p30-easedot" fill="var(--accent)" cx="20" cy="170"/>
+          <text x="20" y="190">0</text><text x="206" y="190">1</text><text x="26" y="34">ease-out cubic</text>
+        </svg>
+        <div class="p30-durs" id="p30-durs">
+          <div class="p30-dur" data-ms="180"><div><b>fast</b><span>180 ms</span></div><div class="bar"><i></i><em>Exit · colour</em></div><i class="sw"></i></div>
+          <div class="p30-dur" data-ms="260"><div><b>base</b><span>260 ms</span></div><div class="bar"><i></i><em>Fade · state</em></div><i class="sw"></i></div>
+          <div class="p30-dur" data-ms="400"><div><b>slow</b><span>400 ms</span></div><div class="bar"><i></i><em>Large crossfade</em></div><i class="sw"></i></div>
+        </div>
+      </div>
+      <div class="plate-tools"><button class="plate-btn" id="p30-time-play">${play} Play</button></div>
+      <div class="plate-cap"><span class="live">Live</span><span>Bars fill in real time</span></div>
+    </div>
+  </article>
+
+  <!-- 02.04 STAGGER -->
+  <article class="entry" id="stagger">
+    <div class="entry-meta">
+      <div class="entry-num">02.04</div>
+      <h3 class="entry-title">Stagger</h3>
+      <p class="entry-desc">A list arrives as one surface on one clock: each row starts 24 ms after the last, rises 12 points and fades in. <b>The count stops at ten</b>, so the eleventh row and the four-hundredth land together.</p>
+      <dl class="spec">
+        <div><dt>Step</dt><dd>24 ms · cap 10 · rise 12</dd></div>
+        <div><dt>Row</dt><dd>opacity base · transform gentle, settled</dd></div>
+        <div><dt>When</dt><dd>first paint of a surface, once</dd></div>
+        <div><dt>Never</dt><dd>on scroll, on every data change</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--top">
+      <div class="p30-stag">
+        <div class="p30-list" id="p30-list" data-cascade></div>
+        <div class="p30-gantt" id="p30-gantt"></div>
+      </div>
+      <div class="plate-tools"><button class="plate-btn" id="p30-stag-play">${refresh} Replay</button></div>
+    </div>
+  </article>
+
+  <!-- 02.05 CHOREOGRAPHY -->
+  <article class="entry entry--wide" id="choreography">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">02.05</div>
+        <h3 class="entry-title">Enter &amp; exit</h3>
+        <p class="entry-desc">Every surface has a pair: how it arrives and how it leaves, from where, on what. Content inside a surface mounts after the surface lands, holding the room with a quiet line. <b>Play a row to run it.</b></p>
+      </div>
+      <dl class="spec">
+        <div><dt>Scrim</dt><dd>black, follows the surface's progress</dd></div>
+        <div><dt>Mount</dt><dd>content after the entrance (PRINCIPLES §12)</dd></div>
+        <div><dt>Interrupt</dt><dd>reversing keeps velocity; no restart</dd></div>
+        <div><dt>Exit</dt><dd>always fast · never bouncy</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p30-chor">
+        <table class="p30-table" id="p30-table">
+          <thead><tr><th>Surface</th><th>Enter</th><th>Exit</th><th>Origin</th><th></th></tr></thead>
+          <tbody>
+            <tr data-run="sheet"><td>Sheet</td><td><span data-curve="gentle-settle"></span><span class="m">translateY 100% → 0 · scrim → .55</span></td><td>fast · slide + fade<span class="m">dismiss past 25%</span></td><td>bottom edge</td><td><button class="plate-btn" data-play>${play} Play</button></td></tr>
+            <tr data-run="dialog"><td>Dialog</td><td><span data-curve="snappy-settle"></span><span class="m">scale .94 → 1 · fade base</span></td><td>fast · fade, scale .97<span class="m">≤ 2 actions</span></td><td>centre</td><td><button class="plate-btn" data-play>${play} Play</button></td></tr>
+            <tr data-run="menu"><td>Menu</td><td><span data-curve="snappy"></span><span class="m">scale .92 → 1 · fade base</span></td><td>fast · fade<span class="m">gap 6 · margin 8</span></td><td>its anchor</td><td><button class="plate-btn" data-play>${play} Play</button></td></tr>
+            <tr data-run="toast"><td>Toast</td><td><span data-curve="gentle-settle"></span><span class="m">rise 12 · fade base</span></td><td>fast · fade<span class="m">3.2 s · +1.8 s with action</span></td><td>bottom</td><td><button class="plate-btn" data-play>${play} Play</button></td></tr>
+            <tr data-run="morph"><td>Morph</td><td><span data-curve="gentle-settle"></span><span class="m">measured frame → full · content .35 → .88, rise 28</span></td><td>reverse on the same spring<span class="m">interruptible</span></td><td>the tapped frame</td><td><button class="plate-btn" data-play>${play} Play</button></td></tr>
+          </tbody>
+        </table>
+        <div class="p30-stage" id="p30-stage" aria-hidden="true">
+          <div class="ttl">Library</div><span class="more">${more}</span>
+          <div class="bgrows"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="st-morph" id="st-morph"><span class="st-fake s"></span></div>
+          <div class="st-scrim" id="st-scrim"></div>
+          <div class="st-sheet" id="st-sheet"><span class="st-fake" style="margin-top:30px"></span><span class="st-fake s"></span><span class="st-fake"></span></div>
+          <div class="st-dialog" id="st-dialog"><span class="st-fake s" style="margin-top:22px"></span><span class="st-fake"></span><span class="st-fake s"></span></div>
+          <div class="st-menu" id="st-menu"><span class="st-fake"></span><span class="st-fake s"></span><span class="st-fake"></span></div>
+          <div class="st-toast" id="st-toast">${cc} Added to Late Night Drive</div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 02.06 REDUCED -->
+  <article class="entry entry--wide" id="reduced-motion">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">02.06</div>
+        <h3 class="entry-title">Reduced motion</h3>
+        <p class="entry-desc">hanji owns the policy instead of leaving it to each component. It reads the system setting, lets the app override it, and rewrites every curve in one place. <b>The same three behaviours, side by side.</b></p>
+      </div>
+      <dl class="spec">
+        <div><dt>Source</dt><dd>system · or app preference full / reduced</dd></div>
+        <div><dt>Springs</dt><dd>→ critically damped, ~40 ms</dd></div>
+        <div><dt>Timings</dt><dd>capped at fast (180)</dd></div>
+        <div><dt>Travel</dt><dd>→ 0 · entrances become fades</dd></div>
+        <div><dt>Ambient</dt><dd>never arms · releases its clock</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p30-rm" id="p30-rm">
+        <div class="p30-rm-col"><h5>Full <span>policy = 'full'</span></h5>
+          <div class="p30-rm-row"><span>Feedback</span><div><button class="hj-toggle" aria-checked="true" aria-label="Toggle, full motion"></button></div></div>
+          <div class="p30-rm-row"><span>Entrance</span><div class="p30-rm-card"><i></i>Field Notes · 3 new</div></div>
+          <div class="p30-rm-row"><span>Ambient</span><div class="d8 run"><i></i><i></i><i></i><i></i></div></div>
+        </div>
+        <div class="p30-rm-col p30-red"><h5>Reduced <span>policy = 'reduced'</span></h5>
+          <div class="p30-rm-row"><span>Feedback</span><div><button class="hj-toggle" aria-checked="true" aria-label="Toggle, reduced motion"></button></div></div>
+          <div class="p30-rm-row"><span>Entrance</span><div class="p30-rm-card"><i></i>Field Notes · 3 new</div></div>
+          <div class="p30-rm-row"><span>Ambient</span><div class="d8"><i></i><i></i><i></i><i></i></div></div>
+        </div>
+      </div>
+      <div class="p30-policy">
+        <div><b>Feedback survives</b><span>Presses, toggles and drags still answer — faster, not slower.</span></div>
+        <div><b>Decoration dies</b><span>Visualisers, shimmer and marquees never start.</span></div>
+        <div><b>Travel becomes a fade</b><span>Things appear where they live instead of sliding there.</span></div>
+        <div><b>Nothing lingers</b><span>No curve runs longer than 180 ms.</span></div>
+      </div>
+      <div class="plate-tools"><button class="plate-btn" id="p30-rm-play">${refresh} Run both</button></div>
+    </div>
+  </article>
+
+  <!-- 02.07 SEAL -->
+  <article class="entry" id="seal">
+    <div class="entry-meta">
+      <div class="entry-num">02.07</div>
+      <h3 class="entry-title">The seal <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A 도장 — the red stamp that closes a Korean document. It is this system's one celebration: when something the user waited for is finished, it lands once, on <b>bouncy</b>, with a little ink spreading under it.</p>
+      <dl class="spec">
+        <div><dt>Scale</dt><dd>1.7 → 1 · bouncy (14/320)</dd></div>
+        <div><dt>Turn</dt><dd>−14° → −4°</dd></div>
+        <div><dt>Bloom</dt><dd>ring .45 → 0 · ×1.38 · 620 ms</dd></div>
+        <div><dt>Weight</dt><dd>the page dips 2 pt as it lands</dd></div>
+        <div><dt>Reduced</dt><dd>fade in, 180 ms, no bloom</dd></div>
+      </dl>
+    </div>
+    <div class="plate">
+      <div class="p30-seal">
+        <div class="p30-receipt" id="p30-receipt">
+          <h5>Export</h5>
+          <div class="big" id="p30-rc-title">Exporting…</div>
+          <dl>
+            <div><dt>Playlist</dt><dd>Late Night Drive</dd></div>
+            <div><dt>Tracks</dt><dd>48 · 3 h 12 min</dd></div>
+            <div><dt>Size</dt><dd>212.4 MB</dd></div>
+            <div><dt>Saved to</dt><dd>Files › Exports</dd></div>
+          </dl>
+          <div class="bar"><i id="p30-rc-bar"></i></div>
+          <div class="stamp"><span class="ink-bloom" id="p30-rc-bloom"></span><span class="seal" id="p30-rc-seal">한지</span></div>
+        </div>
+        <div class="p30-seal-rules">
+          <div><svg class="ic s18 yes"><use href="#i-check"/></svg><span><b>Use</b> when a wait ends well: exported, sent, saved for offline.</span></div>
+          <div><svg class="ic s18 yes"><use href="#i-check"/></svg><span><b>Once per flow</b>, on the screen that confirms it.</span></div>
+          <div><svg class="ic s18 no"><use href="#i-x"/></svg><span><b>Never</b> on errors, on load, or for things that took no time.</span></div>
+          <div><svg class="ic s18 no"><use href="#i-x"/></svg><span><b>Never</b> re-coloured: the seal is cinnabar on every paper and with every accent.</span></div>
+        </div>
+      </div>
+      <div class="plate-tools"><button class="plate-btn" id="p30-rc-go">${refresh} Export again</button></div>
+    </div>
+  </article>
+
+  <!-- 02.08 LAW -->
+  <article class="entry entry--wide" id="performance">
+    <div class="entry-meta">
+      <div>
+        <div class="entry-num">02.08</div>
+        <h3 class="entry-title">The performance law</h3>
+        <p class="entry-desc">Delight that drops frames is a bug with good taste. These are the rules behind every component above — each was a shipped bug on a real phone first, and a review rejection now.</p>
+      </div>
+      <dl class="spec">
+        <div><dt>Steady state</dt><dd>zero JavaScript per frame</dd></div>
+        <div><dt>Lists</dt><dd>60 fps over 1000 rows with art</dd></div>
+        <div><dt>Gate</dt><dd>release-build device pass before stable</dd></div>
+      </dl>
+    </div>
+    <div class="p30-law">
+      <div><span class="k">§1</span><b>Animate transforms, never layout</b><p>Width, height and top are skipped on gesture-driven frames in release builds: the thumb moves and the fill freezes. Draw full size inside a clip and move it.</p><code>norae seek bar, dock line, slider, EQ · 2026-08-18/19</code></div>
+      <div><span class="k">§4</span><b>Springs lie about being done</b><p>Settled to the eye at 250 ms, alive to the maths at 500. Anything gated on “finished” uses a clamped spring or a timing.</p><code>norae sheet back button · 2026-08-18</code></div>
+      <div><span class="k">§5</span><b>One clock per surface</b><p>Progress is an anchor — value, time, rate — projected per frame. A 1 Hz tick serves the labels. Never a second subscription.</p><code>scrubber · zero-polling playhead</code></div>
+      <div><span class="k">§6</span><b>Latches verify their skip</b><p>An “already done” flag checks the world agrees before skipping, or an invisible overlay eats every touch.</p><code>norae morph freeze · 2026-08-19</code></div>
+      <div><span class="k">§12</span><b>Content mounts after the entrance</b><p>A heavy subtree mounting during an entrance is a jerk. Let the surface land, then mount, holding the room with a quiet line.</p><code>norae queue · 2026-08-18</code></div>
+      <div><span class="k">§17</span><b>Quantise ambient motion</b><p>Snap decorative outputs to coarse steps so unchanged frames cost nothing: 200 dots at 12 Hz contended with scrolling until snapped to eighths.</p><code>norae dock spectrum · 2026-08-21</code></div>
+      <div><span class="k">§18</span><b>Decoration releases its resources</b><p>Paused, hidden or switched off costs zero — not even the sampler. The last subscriber turns the lights out.</p><code>ambient layers</code></div>
+      <div><span class="k">§19</span><b>Suspect the numbers before the machine</b><p>A marquee “ran once and never came back” through four rewrites — its measured text had stretched to a 4000 px box. Assert the inputs first.</p><code>hanji marquee · 2026-08-21</code></div>
+    </div>
+  </article>
+</section>
+
+<script>
+(function(){
+  const { $, $$ } = H;
+  const ico = { heart:H.icon('heart-f','s16'), more:H.icon('more','s18'), cc:H.icon('check-c','s16'), play:H.icon('play-f','s14'), refresh:H.icon('refresh','s14') };
+  const sec = $('#motion');
+  sec.querySelectorAll('.p30-grid, .plate').forEach(el => { el.innerHTML = el.innerHTML.replace(/\$\{(\w+)\}/g, (m, k) => ico[k] || m); });
+
+  /* ---------------- 02.01 principle demos ---------------- */
+  const d6 = $('#d6'); d6.innerHTML = Array.from({ length:14 }, (_, i) => `<i class="${i >= 10 ? 'capped' : ''}" style="--i:${i};--h:${18 + ((i * 37) % 40)}px"></i>`).join('');
+  const d7b = $$('.d7 b');
+  const springs7 = [ H.spring(0, { spring:'snappy', clamp:true, onUpdate:v => d7b[0].style.transform = `translateX(${v}px)` }),
+                     H.spring(0, { spring:'bouncy', onUpdate:v => d7b[1].style.transform = `translateX(${v}px)` }) ];
+  const timers = new WeakMap();
+  function later(cell, fn, ms){ const t = timers.get(cell) || []; t.push(setTimeout(fn, ms)); timers.set(cell, t); }
+  function clear(cell){ (timers.get(cell) || []).forEach(clearTimeout); timers.set(cell, []); }
+  const demos = {
+    1(c){ const b = c.querySelector('.d1-btn'); b.classList.add('pressed'); later(c, () => b.classList.remove('pressed'), 220); },
+    2(c){ const d = c.querySelector('.d2'); d.classList.add('on'); later(c, () => d.classList.remove('on'), 900); },
+    3(c){ H.replay(c.querySelector('.d3')); },
+    4(c){ const d = c.querySelector('.d4'); d.classList.add('on'); later(c, () => d.classList.remove('on'), 1100); },
+    5(c){ const d = c.querySelector('.d5'); d.classList.add('on'); later(c, () => d.classList.remove('on'), 1000); },
+    6(c){ H.replay(d6); },
+    7(c){ const w = c.querySelector('.d7').clientWidth - 36; springs7.forEach(s => s.set(0)); requestAnimationFrame(() => springs7.forEach(s => s.to(w))); },
+    8(c){ const d = $('#d8'); const st = $('#d8-state'); if (H.reduced()){ d.classList.remove('run'); st.textContent = 'ambient · never armed'; return; } d.classList.toggle('run'); st.textContent = d.classList.contains('run') ? 'ambient · on' : 'paused · 0 frames'; },
+    9(c){ stamp($('#d9-seal'), null, -4); }
+  };
+  $$('.p30-cell').forEach(cell => {
+    const run = () => { clear(cell); demos[cell.dataset.demo](cell); };
+    cell.addEventListener('mouseenter', run);
+    cell.addEventListener('click', run);
+    cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); run(); } });
+  });
+  // the grid plays once, in reading order, when it arrives
+  const grid = $('#p30-grid');
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ io.disconnect(); $$('.p30-cell', grid).forEach((c, i) => { if (+c.dataset.demo === 8) return; setTimeout(() => demos[c.dataset.demo](c), 300 + i * 140); }); } }), { threshold:.25 });
+    io.observe(grid);
+  }
+  function syncAmbient(){ const d = $('#d8'), st = $('#d8-state'); if (H.reduced()){ d.classList.remove('run'); st.textContent = 'ambient · never armed'; } else { d.classList.add('run'); st.textContent = 'ambient · on'; } }
+  syncAmbient(); H.on('motion', syncAmbient);
+  // decoration releases its clock when off-screen
+  if ('IntersectionObserver' in window){ new IntersectionObserver(es => es.forEach(e => { const d = $('#d8'); if (!e.isIntersecting) d.style.animationPlayState = 'paused'; $$('i', d).forEach(i => i.style.animationPlayState = e.isIntersecting ? 'running' : 'paused'); })).observe($('#d8')); }
+
+  /* ---------------- the stamp (shared by 02.01 and 02.07) ---------------- */
+  function stamp(seal, bloom, rest){
+    rest = rest == null ? -4 : rest;
+    if (H.reduced()){ seal.style.transform = `rotate(${rest}deg)`; seal.style.opacity = 0; H.tween(0, 1, { duration:180, onUpdate:v => seal.style.opacity = v }); return; }
+    seal.style.opacity = 0;
+    const s = H.spring(1.7, { spring:'bouncy', onUpdate:v => {
+      const t = Math.max(0, Math.min(1, (1.7 - v) / .7));
+      seal.style.opacity = Math.min(1, t * 1.6); seal.style.transform = `scale(${v}) rotate(${rest - 10 * (1 - t)}deg)`;
+    }});
+    requestAnimationFrame(() => s.to(1));
+    if (bloom) setTimeout(() => bloom.animate([{ opacity:.45, transform:`scale(1) rotate(${rest}deg)` }, { opacity:0, transform:`scale(1.38) rotate(${rest}deg)` }], { duration:620, easing:'cubic-bezier(.33,1,.68,1)' }), 150);
+  }
+  H.stamp = stamp;
+
+  /* ---------------- 02.02 spring plotter ---------------- */
+  const svg = $('#p30-svg'); const W = 640, Hh = 300, PL = 44, PR = 12, PT = 18, PB = 34;
+  const TMAX = 900; const YMAX = 1.35;
+  const X = ms => PL + (ms / TMAX) * (W - PL - PR);
+  const Y = v => PT + (1 - v / YMAX) * (Hh - PT - PB);
+  let which = 'snappy', clamp = false;
+  const custom = { damping:18, stiffness:260, mass:1 };
+  const cfgOf = n => n === 'custom' ? custom : H.motion.springs[n];
+  const uses = {
+    snappy:'Controls and anything the finger just let go of: toggles, segmented pills, press release, sliders snapping to a value.',
+    gentle:'Things arriving: sheets, lists, reveals. Softer onset, no visible overshoot, nothing to wait for.',
+    bouncy:'Celebration only — the seal, a heart filling. Its overshoot is the point, so it never gates state.',
+    custom:'Tune stiffness and damping to feel the trade-off. Higher stiffness is faster; lower damping overshoots.'
+  };
+  function pathFor(cfg, cl){
+    const sim = H.simulate(cfg, cl, 4); const n = sim.pts.length; let d = '';
+    for (let i = 0; i < n; i++){ const ms = i * 4; if (ms > TMAX) break; d += (i ? 'L' : 'M') + X(ms).toFixed(1) + ' ' + Y(sim.pts[i]).toFixed(1); }
+    if (sim.ms < TMAX) d += 'L' + X(TMAX) + ' ' + Y(1).toFixed(1);
+    return { d, ms: sim.ms };
+  }
+  function stats(cfg){
+    const k = cfg.stiffness, c = cfg.damping, m = cfg.mass || 1; const w0 = Math.sqrt(k / m); const z = c / (2 * Math.sqrt(k * m));
+    const os = z < 1 ? Math.exp(-z * Math.PI / Math.sqrt(1 - z * z)) * 100 : 0;
+    const free = H.simulate(cfg, false, 4).ms, held = H.simulate(cfg, true, 1).ms;
+    return { k, c, m, z, w0, os, free, held };
+  }
+  function draw(){
+    const policy = H.reduced();
+    let g = '<g class="grid">';
+    for (let t = 0; t <= TMAX; t += 100) g += `<line x1="${X(t)}" y1="${PT}" x2="${X(t)}" y2="${Hh - PB}"/>`;
+    g += '</g><g class="axis">';
+    for (let t = 0; t <= TMAX; t += 300) g += `<text x="${X(t)}" y="${Hh - 12}" text-anchor="${t ? 'middle' : 'start'}">${t} ms</text>`;
+    g += `<text x="${PL - 8}" y="${Y(1) + 4}" text-anchor="end">1</text><text x="${PL - 8}" y="${Y(0) + 4}" text-anchor="end">0</text></g>`;
+    g += `<line class="target" x1="${PL}" y1="${Y(1)}" x2="${W - PR}" y2="${Y(1)}"/><line x1="${PL}" y1="${Y(0)}" x2="${W - PR}" y2="${Y(0)}" stroke="rgba(var(--fg-rgb),.25)"/>`;
+    const names = ['snappy','gentle','bouncy'].concat(which === 'custom' ? ['custom'] : []);
+    let sel = null;
+    names.forEach(n => {
+      const cfg = policy ? H.motion.REDUCED_SPRING : cfgOf(n);
+      const p = pathFor(cfg, policy ? true : (n === which ? clamp : false));
+      if (n === which){ sel = p; return; }
+      g += `<path class="curve dim" d="${p.d}"/>`;
+    });
+    g += `<path class="area" d="${sel.d} L${X(TMAX)} ${Y(0)} L${X(0)} ${Y(0)} Z"/>`;
+    g += `<path class="curve sel" d="${sel.d}"/>`;
+    const sx = X(Math.min(sel.ms, TMAX));
+    g += `<line x1="${sx}" y1="${Y(1) - 10}" x2="${sx}" y2="${Y(0)}" stroke="var(--accent)" stroke-opacity=".5" stroke-dasharray="1 3"/><text class="settle-mark" x="${sx + 6}" y="${Y(1) - 14}">at rest · ${sel.ms} ms</text>`;
+    g += `<line class="cursor" id="p30-cur" x1="${X(0)}" x2="${X(0)}" y1="${PT}" y2="${Hh - PB}" opacity="0"/><circle class="dot" id="p30-dot" r="6" cx="${X(0)}" cy="${Y(0)}"/>`;
+    svg.innerHTML = g;
+    const cfg = policy ? H.motion.REDUCED_SPRING : cfgOf(which); const s = stats(cfg);
+    $('#p30-ms').textContent = policy ? H.simulate(cfg, true, 1).ms : (clamp ? s.held : s.free);
+    $('#p30-use').textContent = uses[which];
+    $('#p30-stats').innerHTML = `<div>Damping · stiffness · mass<b>${s.c} · ${s.k} · ${s.m}</b></div><div>Damping ratio ζ<b>${s.z.toFixed(2)}</b></div><div>Natural frequency<b>${(s.w0 / (2 * Math.PI)).toFixed(2)} Hz</b></div><div>Overshoot<b>${s.os < .05 ? 'none' : s.os.toFixed(1) + '%'}</b></div><div>Free · clamped<b>${s.free} · ${s.held} ms</b></div>`;
+    $('#p30-k').value = cfgOf(which).stiffness; $('#p30-c').value = cfgOf(which).damping;
+    $('#p30-ko').textContent = cfgOf(which).stiffness; $('#p30-co').textContent = cfgOf(which).damping;
+  }
+  const whichSeg = H.segmented($('#p30-which'), v => { which = v; draw(); play(); });
+  whichSeg.select('snappy');
+  H.toggle($('#p30-clamp'), on => { clamp = on; draw(); play(); });
+  ['k','c'].forEach(key => $('#p30-' + key).addEventListener('input', e => {
+    if (which !== 'custom'){ const base = cfgOf(which); custom.stiffness = base.stiffness; custom.damping = base.damping; which = 'custom'; whichSeg.select('custom'); }
+    custom[key === 'k' ? 'stiffness' : 'damping'] = +e.target.value; draw();
+  }));
+  ['k','c'].forEach(key => $('#p30-' + key).addEventListener('change', () => play()));
+
+  const puck = $('#p30-puck'); let puckSpring = null; let raf = 0;
+  function play(){
+    cancelAnimationFrame(raf);
+    const rail = puck.parentElement; const dist = rail.clientWidth - 44;
+    const policy = H.reduced(); const cfg = policy ? H.motion.REDUCED_SPRING : cfgOf(which);
+    if (puckSpring) puckSpring.stop();
+    puckSpring = H.spring(0, { spring:cfg, clamp: policy || clamp, ignorePolicy:true, onUpdate:v => puck.style.transform = `translateX(${v * dist}px)` });
+    puckSpring.set(0);
+    const sim = H.simulate(cfg, policy || clamp, 1); const t0 = performance.now();
+    const dot = $('#p30-dot'), cur = $('#p30-cur');
+    const tick = now => {
+      const t = Math.max(0, now - t0); const i = Math.min(sim.pts.length - 1, Math.floor(t)); const v = sim.pts[i];
+      if (dot){ dot.setAttribute('cx', X(Math.min(t, TMAX))); dot.setAttribute('cy', Y(v)); }
+      if (cur){ cur.setAttribute('x1', X(Math.min(t, TMAX))); cur.setAttribute('x2', X(Math.min(t, TMAX))); cur.setAttribute('opacity', t < sim.ms ? 1 : 0); }
+      if (t < Math.max(sim.ms, 120) && t < TMAX) raf = requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(now => { puckSpring.to(1); raf = requestAnimationFrame(tick); });
+  }
+  $('#p30-play').addEventListener('click', play);
+  draw(); H.on('motion', draw); H.on('theme', draw);
+  if ('IntersectionObserver' in window){ const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ io.disconnect(); setTimeout(play, 300); } }), { threshold:.5 }); io.observe(svg); }
+
+  /* ---------------- 02.03 timing ---------------- */
+  const ease = H.ease.outCubic; let ep = '';
+  for (let i = 0; i <= 60; i++){ const t = i / 60; ep += (i ? 'L' : 'M') + (20 + t * 200).toFixed(1) + ' ' + (170 - ease(t) * 150).toFixed(1); }
+  $('#p30-easepath').setAttribute('d', ep);
+  function playTiming(){
+    const dot = $('#p30-easedot');
+    $$('#p30-durs .p30-dur').forEach(row => {
+      const ms = +row.dataset.ms; const bar = row.querySelector('.bar i'); const sw = row.querySelector('.sw');
+      bar.style.transition = 'none'; bar.style.transform = 'scaleX(0)'; sw.style.transition = 'none'; sw.style.background = '';
+      void bar.offsetWidth;
+      const d = H.reduced() ? Math.min(ms, 180) : ms;
+      bar.style.transition = `transform ${d}ms linear`; bar.style.transform = 'scaleX(1)';
+      sw.style.transition = `background-color ${d}ms cubic-bezier(.33,1,.68,1)`; sw.style.background = 'var(--accent)';
+    });
+    H.tween(0, 1, { duration:400, ease:H.ease.linear, onUpdate:t => { dot.setAttribute('cx', 20 + t * 200); dot.setAttribute('cy', 170 - ease(t) * 150); } });
+  }
+  $('#p30-time-play').addEventListener('click', playTiming);
+  if ('IntersectionObserver' in window){ const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ io.disconnect(); setTimeout(playTiming, 250); } }), { threshold:.6 }); io.observe($('#p30-durs')); }
+
+  /* ---------------- 02.04 stagger ---------------- */
+  const people = ['Mira Okafor','Jun-seo Park','Ilse Brandt','Tomás Reyes','Aiko Sato','Dev Malhotra','Noor Haddad','Wren Callister','Kofi Mensah','Sana Iqbal','Lior Ben-Ami','Odile Fournier','Ravi Natarajan','Hana Kim'];
+  $('#p30-list').innerHTML = people.map((p, i) => `<div style="--i:${i}"><i style="background:var(--data-${(i % 6) + 1})"></i>${p}<span>+${Math.min(i, 10) * 24} ms</span></div>`).join('');
+  const SPAN = 600; const g = $('#p30-gantt');
+  g.innerHTML = people.map((p, i) => `<div class="row${i >= 10 ? ' cap' : ''}"><i style="left:${(Math.min(i, 10) * 24) / SPAN * 100}%;width:${260 / SPAN * 100}%"></i></div>`).join('')
+    + `<span class="capline" style="left:${240 / SPAN * 100}%"><span>cap · row 10 onwards start together</span></span><span class="now" id="p30-now"></span><div class="ticks"><span>0</span><span>150</span><span>300</span><span>450</span><span>600 ms</span></div>`;
+  function playStagger(){
+    const list = $('#p30-list'); H.replay(list);
+    const now = $('#p30-now'); const rows = g.querySelectorAll('.row').length;
+    H.tween(0, 1, { duration:H.reduced() ? 0 : SPAN, ease:H.ease.linear, onUpdate:t => { now.style.opacity = t < 1 ? 1 : 0; now.style.left = (t * 100) + '%'; } });
+  }
+  $('#p30-stag-play').addEventListener('click', playStagger);
+
+  /* ---------------- 02.05 choreography ---------------- */
+  const st = { scrim:$('#st-scrim'), sheet:$('#st-sheet'), dialog:$('#st-dialog'), menu:$('#st-menu'), toast:$('#st-toast'), morph:$('#st-morph') };
+  const V = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const tr = (el, props, ms, ease) => { el.style.transition = props.map(p => `${p} ${ms} ${ease}`).join(', '); };
+  let chorTimers = [];
+  function reset(){
+    chorTimers.forEach(clearTimeout); chorTimers = [];
+    Object.values(st).forEach(el => { el.style.transition = 'none'; el.style.transform = ''; el.style.opacity = ''; el.style.clipPath = ''; });
+    void st.sheet.offsetWidth;
+  }
+  const at = (fn, ms) => chorTimers.push(setTimeout(fn, ms));
+  const runs = {
+    sheet(){ tr(st.sheet, ['transform'], V('--dur-gentle-settle'), V('--ease-gentle-settle')); tr(st.scrim, ['opacity'], V('--dur-base'), V('--ease-out'));
+      st.sheet.style.transform = 'translateY(0)'; st.scrim.style.opacity = .55;
+      at(() => { tr(st.sheet, ['transform','opacity'], V('--dur-fast'), V('--ease-out')); tr(st.scrim, ['opacity'], V('--dur-fast'), V('--ease-out')); st.sheet.style.transform = 'translateY(110%)'; st.scrim.style.opacity = 0; }, 1500); },
+    dialog(){ tr(st.dialog, ['transform'], V('--dur-snappy-settle'), V('--ease-snappy-settle')); st.dialog.style.transition += `, opacity ${V('--dur-base')} ${V('--ease-out')}`; tr(st.scrim, ['opacity'], V('--dur-base'), V('--ease-out'));
+      st.dialog.style.transform = 'scale(1)'; st.dialog.style.opacity = 1; st.scrim.style.opacity = .55;
+      at(() => { tr(st.dialog, ['transform','opacity'], V('--dur-fast'), V('--ease-out')); tr(st.scrim, ['opacity'], V('--dur-fast'), V('--ease-out')); st.dialog.style.transform = 'scale(.97)'; st.dialog.style.opacity = 0; st.scrim.style.opacity = 0; }, 1500); },
+    menu(){ tr(st.menu, ['transform'], V('--dur-snappy'), V('--ease-snappy')); st.menu.style.transition += `, opacity ${V('--dur-base')} ${V('--ease-out')}`;
+      st.menu.style.transform = 'scale(1)'; st.menu.style.opacity = 1;
+      at(() => { tr(st.menu, ['transform','opacity'], V('--dur-fast'), V('--ease-out')); st.menu.style.transform = 'scale(.96)'; st.menu.style.opacity = 0; }, 1400); },
+    toast(){ tr(st.toast, ['transform'], V('--dur-gentle-settle'), V('--ease-gentle-settle')); st.toast.style.transition += `, opacity ${V('--dur-base')} ${V('--ease-out')}`;
+      st.toast.style.transform = 'translateY(0)'; st.toast.style.opacity = 1;
+      at(() => { tr(st.toast, ['opacity'], V('--dur-fast'), V('--ease-out')); st.toast.style.opacity = 0; }, 1700); },
+    morph(){ const h = st.morph.parentElement.clientHeight; tr(st.morph, ['clip-path','transform'], V('--dur-gentle-settle'), V('--ease-gentle-settle'));
+      st.morph.style.transition = 'none'; st.morph.style.top = '8px'; st.morph.style.height = 'auto'; st.morph.style.clipPath = `inset(${h - 16 - 56}px 0 0 0 round 16px)`; void st.morph.offsetWidth;
+      tr(st.morph, ['clip-path'], V('--dur-gentle-settle'), V('--ease-gentle-settle')); st.morph.style.clipPath = 'inset(0 0 0 0 round 28px)';
+      at(() => { st.morph.style.clipPath = `inset(${h - 16 - 56}px 0 0 0 round 16px)`; }, 1500);
+      at(() => { st.morph.style.transition = 'none'; st.morph.style.top = ''; st.morph.style.height = ''; st.morph.style.clipPath = ''; }, 1500 + 700); }
+  };
+  $('#p30-table').addEventListener('click', e => {
+    const b = e.target.closest('[data-play]'); if (!b) return; const row = b.closest('tr');
+    $$('#p30-table tr').forEach(r => r.classList.toggle('on', r === row));
+    reset(); requestAnimationFrame(() => runs[row.dataset.run]());
+  });
+
+  /* ---------------- 02.06 reduced side by side ---------------- */
+  $$('#p30-rm .hj-toggle').forEach(t => H.toggle(t));
+  function runBoth(){
+    const tg = $$('#p30-rm .hj-toggle'); tg.forEach(t => t.click());
+    const cards = $$('#p30-rm .p30-rm-card'); cards.forEach(c => c.classList.add('out')); void cards[0].offsetWidth;
+    requestAnimationFrame(() => requestAnimationFrame(() => cards.forEach(c => c.classList.remove('out'))));
+  }
+  $('#p30-rm-play').addEventListener('click', runBoth);
+
+  /* ---------------- 02.07 the seal on a receipt ---------------- */
+  let exporting = false;
+  function exportRun(){
+    if (exporting) return; exporting = true;
+    const bar = $('#p30-rc-bar'), seal = $('#p30-rc-seal'), title = $('#p30-rc-title');
+    seal.style.opacity = 0; title.textContent = 'Exporting…';
+    bar.style.transition = 'none'; bar.style.transform = 'scaleX(0)'; void bar.offsetWidth;
+    const dur = H.reduced() ? 600 : 1400;
+    bar.style.transition = `transform ${dur}ms cubic-bezier(.45,.05,.4,1)`; bar.style.transform = 'scaleX(1)';
+    setTimeout(() => {
+      title.textContent = 'Export complete'; stamp(seal, H.reduced() ? null : $('#p30-rc-bloom'), -6);
+      const rc = $('#p30-receipt'); if (!H.reduced()) setTimeout(() => { rc.animate([{ transform:'translateY(0)' }, { transform:'translateY(2px)' }, { transform:'translateY(0)' }], { duration:260, easing:'cubic-bezier(.33,1,.68,1)' }); }, 150);
+      exporting = false;
+    }, dur + 120);
+  }
+  $('#p30-rc-go').addEventListener('click', exportRun);
+  if ('IntersectionObserver' in window){ const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ io.disconnect(); setTimeout(exportRun, 300); } }), { threshold:.6 }); io.observe($('#p30-receipt')); }
+  else { exportRun(); }
+})();
+</script>

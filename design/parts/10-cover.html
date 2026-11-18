@@ -1,0 +1,270 @@
+<!-- ======================================================================
+     00 · COVER — the wordmark, the seal, the claim, and the proof:
+     one live screen in all three papers at once.
+     ====================================================================== -->
+<style>
+.cover{ position:relative; padding-top:72px; min-height:880px; isolation:isolate }
+.cover-fibres{ position:absolute; z-index:-1; pointer-events:none; top:-60px; left:calc(-1 * (var(--rail) + var(--page-pad))); width:calc(100% + var(--rail) + var(--page-pad) * 2); height:980px;
+  -webkit-mask-image:radial-gradient(120% 90% at 18% 10%, #000 30%, transparent 78%); mask-image:radial-gradient(120% 90% at 18% 10%, #000 30%, transparent 78%) }
+.cover-fibres{ -webkit-mask-image:radial-gradient(90% 85% at 30% 22%, #000 25%, transparent 80%); mask-image:radial-gradient(90% 85% at 30% 22%, #000 25%, transparent 80%) }
+.cover-light{ position:absolute; z-index:-2; pointer-events:none; top:-140px; left:-260px; width:1100px; height:820px;
+  background:radial-gradient(closest-side, rgba(255,255,255,.62), rgba(255,255,255,0)); }
+html[data-theme="ink"] .cover-light, html[data-theme="charcoal"] .cover-light{ background:radial-gradient(closest-side, rgba(var(--accent-rgb),.10), rgba(var(--accent-rgb),0)) }
+.cover-grid{ display:grid; grid-template-columns:minmax(0,1fr) 520px; gap:40px; align-items:start }
+.cover-eyebrow{ display:flex; gap:14px; align-items:center; font-weight:600; font-size:10.5px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.cover-eyebrow i{ width:24px; height:1px; background:var(--fg-mute); opacity:.6 }
+.cover-word{ position:relative; margin:30px 0 0; font-weight:700; font-size:188px; line-height:.8; letter-spacing:-.058em; display:inline-block; padding-right:20px }
+.cover-word .w{ display:inline-block; transition:transform 120ms var(--ease-out) }
+.cover-seal{ position:absolute; --size:104px; right:-92px; top:-18px; transform:rotate(-4deg); font-size:40px; }
+.cover-seal-wrap{ position:absolute; right:-92px; top:-18px; width:104px; height:104px }
+.cover-seal-wrap .seal{ position:absolute; inset:0; --size:104px; transform-origin:50% 60% }
+.ink-bloom{ position:absolute; inset:-6px; border-radius:18px; border:2px solid var(--seal); opacity:0; pointer-events:none }
+.cover-claim{ margin:52px 0 0; max-width:560px; font-weight:600; font-size:30px; line-height:1.18; letter-spacing:-.028em }
+.cover-claim span{ color:var(--fg-mute) }
+.cover-sub{ margin:20px 0 0; max-width:520px; font-size:15.5px; line-height:1.62; color:var(--fg-dim) }
+.cover-sub .kr{ font-family:var(--seal-font); font-weight:700; color:var(--fg) }
+.cover-stats{ margin:34px 0 0; display:flex; flex-wrap:wrap; gap:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); max-width:600px }
+.cover-stat{ flex:1 1 0; padding:14px 0 13px; display:flex; flex-direction:column; gap:6px; min-width:96px }
+.cover-stat + .cover-stat{ padding-left:18px; border-left:1px solid var(--line) }
+.cover-stat b{ font-weight:700; font-size:30px; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; display:flex; align-items:baseline }
+.cover-stat b small{ font-size:16px; font-weight:600; color:var(--fg-mute); margin-left:1px }
+.cover-stat > span{ font-size:12px; color:var(--fg-mute) }
+.cover-cta{ margin-top:30px; display:flex; gap:10px; align-items:center }
+.cover-cta .hint{ margin-left:10px; font-size:12.5px; color:var(--fg-mute) }
+
+/* the triptych: three sheets, one screen, three papers */
+.sheets{ position:relative; height:640px; margin-top:6px }
+.sheet{ position:absolute; top:0; left:0; width:360px; height:640px; transform-origin:0 0; cursor:pointer;
+  transform:translate(var(--sx,0px), var(--sy,0px)) scale(var(--ss,.84));
+  transition:transform var(--dur-gentle-settle) var(--ease-gentle-settle), filter var(--dur-base) var(--ease-out) }
+.sheet .phone{ transition:box-shadow var(--dur-base) var(--ease-out) }
+.sheet[data-pos="0"]{ --sx:212px; --sy:0px; --ss:.86; z-index:3; cursor:default }
+.sheet[data-pos="1"]{ --sx:106px; --sy:26px; --ss:.82; z-index:2 }
+.sheet[data-pos="2"]{ --sx:0px; --sy:52px; --ss:.78; z-index:1 }
+.sheet[data-pos="1"] .phone, .sheet[data-pos="2"] .phone{ box-shadow:none }
+.sheet:not([data-pos="0"]):hover{ --sy:16px }
+.sheet[data-pos="2"]:not([data-pos="0"]):hover{ --sy:40px }
+.sheet-catch{ position:absolute; inset:0; z-index:5; border-radius:var(--r-xl); display:none }
+.sheet:not([data-pos="0"]) .sheet-catch{ display:block }
+.sheet-tag{ position:absolute; left:0; bottom:-30px; font:500 11px/1 var(--mono); color:var(--fg-mute); white-space:nowrap; transform-origin:0 0 }
+.sheet[data-pos="0"] .sheet-catch{ position:absolute; inset:0; z-index:5; border-radius:var(--r-xl); display:none }
+.sheet:not([data-pos="0"]) .sheet-catch{ display:block }
+.sheet-tag{ color:var(--fg) }
+.sheet .phone{ border-color:var(--line) }
+
+/* the screen inside each sheet */
+.pb{ flex:1; display:flex; flex-direction:column; min-height:0 }
+.pb-nav{ height:40px; display:flex; align-items:center; padding:0 12px; color:var(--accent); font-weight:500; font-size:15px; gap:2px }
+.pb-body{ flex:1; padding:2px 20px 0; overflow:hidden }
+.pb-title{ font-weight:700; font-size:34px; line-height:38px; letter-spacing:-.5px; margin:2px 0 18px }
+.pb-eyebrow{ font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); margin:0 0 10px }
+.pb .hj-seg{ width:100%; } .pb .hj-seg > button{ flex:1 }
+.pb-help{ font-size:12.5px; line-height:17px; color:var(--fg-mute); margin:9px 2px 22px }
+.pb-help b{ color:var(--fg-dim); font-weight:600 }
+.pb-rows{ border-top:1px solid var(--line) }
+.pb-row{ min-height:56px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--line); padding:8px 0 }
+.pb-row .t{ flex:1; min-width:0 }
+.pb-row .t b{ display:block; font-weight:500; font-size:15px; line-height:20px }
+.pb-row .t span{ display:block; font-size:12.5px; line-height:17px; color:var(--fg-mute) }
+.pb-row .v{ font:500 12.5px/1 var(--mono); color:var(--fg-dim); font-variant-numeric:tabular-nums }
+.pb-row .ic{ color:var(--fg-mute) }
+.pb-slide{ padding:6px 0 14px; border-bottom:1px solid var(--line) }
+.pb-slide-top{ display:flex; justify-content:space-between; align-items:baseline; height:40px; align-items:center }
+.pb-slide-top b{ font-weight:500; font-size:15px }
+.mini-slider{ position:relative; height:24px; touch-action:none; cursor:pointer }
+.mini-slider .tr{ position:absolute; left:0; right:0; top:10px; height:4px; border-radius:4px; background:rgba(var(--accent-rgb),.24); overflow:hidden }
+.mini-slider .fi{ position:absolute; inset:0; background:var(--accent); transform-origin:left center; transform:scaleX(var(--p,.5)) }
+.mini-slider .th{ position:absolute; top:6px; left:0; width:12px; height:12px; margin-left:-6px; border-radius:50%; background:var(--accent);
+  transform:translateX(var(--px,0px)) scale(var(--grow,1)); transition:transform 60ms linear }
+.mini-slider.held .th{ --grow:1.6 }
+.mini-slider .th{ transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle) }
+.mini-slider.drag .th{ transition:none }
+.pb-tabs{ height:56px; flex:none; display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--line); background:var(--bg); padding-bottom:4px }
+.pb-tabs span{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:10px; font-weight:600; color:var(--fg-dim) }
+.pb-tabs span .ic{ width:22px; height:22px }
+.pb-tabs span.on{ color:var(--accent) }
+
+/* the five ideas */
+.ideas{ list-style:none; margin:110px 0 0; padding:0; display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); border-top:2px solid var(--fg) }
+.ideas li{ padding:22px 22px 4px 0 }
+.ideas li + li{ padding-left:22px; border-left:1px solid var(--line) }
+.ideas .n{ font:500 11px/1 var(--mono); color:var(--fg-mute) }
+.ideas h3{ margin:14px 0 8px; font-weight:600; font-size:17px; line-height:1.2; letter-spacing:-.02em }
+.ideas p{ margin:0; font-size:13px; line-height:1.55; color:var(--fg-dim) }
+
+@media (max-width: 1300px){ .cover-grid{ grid-template-columns:1fr } .sheets{ max-width:520px } .ideas{ grid-template-columns:repeat(2,1fr); row-gap:20px } .ideas li + li{ border-left:0; padding-left:0 } }
+@media (max-width: 720px){ .cover-word{ font-size:104px } .cover-seal-wrap{ width:64px; height:64px; right:-54px; top:-10px } .cover-seal-wrap .seal{ --size:64px } .cover-claim{ font-size:23px } .sheets{ transform:scale(.62); transform-origin:0 0; height:420px } .ideas{ grid-template-columns:1fr } }
+</style>
+
+<section class="cover" id="cover" aria-labelledby="cover-title">
+  <svg class="cover-fibres" id="fibres" aria-hidden="true"></svg>
+  <div class="cover-light" aria-hidden="true"></div>
+  <div class="cover-grid">
+    <div class="cover-left">
+      <div class="cover-eyebrow">Design system <i></i> 0.9 <i></i> React Native · New Architecture</div>
+      <h1 class="cover-word" id="cover-title"><span class="w" id="cover-w">hanji</span>
+        <span class="cover-seal-wrap" aria-hidden="true"><span class="ink-bloom" id="bloom"></span><span class="seal" id="cover-seal">한지</span></span>
+      </h1>
+      <p class="cover-claim">Thin, strong, and it takes <span>whatever ink you bring.</span></p>
+      <p class="cover-sub"><span class="kr">한지</span> is Korean mulberry paper — the surface things are drawn on. This system is that surface for apps: one token contract, a suite of components and a motion vocabulary, extracted from a shipped music player. Every rule in it was a bug on a real phone first.</p>
+      <div class="cover-stats" aria-label="hanji in numbers">
+        <div class="cover-stat"><b><span data-roll="components">0</span></b><span>components</span></div>
+        <div class="cover-stat"><b><span data-roll="3">0</span></b><span>papers</span></div>
+        <div class="cover-stat"><b><span data-roll="12">0</span></b><span>inks</span></div>
+        <div class="cover-stat"><b><span data-roll="3">0</span></b><span>springs</span></div>
+        <div class="cover-stat"><b><span data-roll="1,300">0</span><small>+</small></b><span>tests in the library</span></div>
+      </div>
+      <div class="cover-cta">
+        <a class="hj-btn" href="#motion">Motion principles</a>
+        <a class="hj-btn secondary" href="#atoms">Components</a>
+        <span class="hint">Tap a sheet to change paper</span>
+      </div>
+    </div>
+
+    <div class="sheets" id="sheets" aria-label="The same Playback screen in three papers"></div>
+  </div>
+
+  <ol class="ideas" data-cascade>
+    <li><span class="n">i</span><h3>Performance is the first feature</h3><p>Animation runs on the UI thread. Transforms, never layout. One clock per surface, and nothing ticks when it is idle.</p></li>
+    <li><span class="n">ii</span><h3>Themable, not themed</h3><p>Components read one semantic contract and nothing else. Change the paper, the ink or the density and every screen repaints.</p></li>
+    <li><span class="n">iii</span><h3>hanji owns reduced motion</h3><p>Loops never arm, entrances become fades, travel becomes stillness. Feedback survives; decoration goes first.</p></li>
+    <li><span class="n">iv</span><h3>Adapter over dependency</h3><p>Icons, haptics and storage are interfaces the app implements. No icon set ships in the library.</p></li>
+    <li><span class="n">v</span><h3>Accessibility is the floor</h3><p>Sliders answer swipes, composite rows are one focus stop, toasts are announced, and every target is 44 points.</p></li>
+  </ol>
+</section>
+
+<script>
+(function(){
+  const { $, $$ } = H;
+
+  /* ---------- hanji fibres: the cover's one lit place ---------- */
+  function drawFibres(){
+    const svg = $('#fibres'); if (!svg) return;
+    const W = svg.clientWidth || 1400, Hh = svg.clientHeight || 960;
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const dark = H.themes[H.state.theme].isDark;
+    const ink = dark ? '255,255,255' : '60,46,30';
+    let paths = '';
+    for (let i = 0; i < 340; i++){
+      const x = rnd() * W, y = rnd() * Hh, len = 18 + Math.pow(rnd(), 2) * 150, a = rnd() * Math.PI * 2;
+      const bend = (rnd() - .5) * len * .7;
+      const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len;
+      const cx = (x + x2) / 2 + Math.cos(a + Math.PI/2) * bend, cy = (y + y2) / 2 + Math.sin(a + Math.PI/2) * bend;
+      const w = (.35 + rnd() * .8).toFixed(2), o = ((dark ? .045 : .07) + rnd() * (dark ? .06 : .12)).toFixed(3);
+      paths += `<path d="M${x.toFixed(1)} ${y.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="rgba(${ink},${o})" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+    }
+    svg.setAttribute('viewBox', `0 0 ${W} ${Hh}`);
+    svg.innerHTML = `<defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 ${dark?1:.2}  0 0 0 0 ${dark?1:.16}  0 0 0 0 ${dark?1:.1}  0 0 0 ${dark?.05:.07} 0"/></filter></defs><rect width="100%" height="100%" filter="url(#grain)"/>` + paths;
+  }
+  drawFibres(); H.on('theme', drawFibres);
+
+  /* ---------- the stamp: the seal lands once, on bouncy ---------- */
+  const seal = $('#cover-seal'), bloom = $('#bloom'), word = $('#cover-w');
+  function stamp(){
+    if (H.reduced()){
+      seal.style.opacity = 0; seal.style.transform = 'rotate(-4deg)';
+      H.tween(0, 1, { duration:180, onUpdate:v => seal.style.opacity = v });
+      return;
+    }
+    seal.style.opacity = 0;
+    const s = H.spring(1.7, { spring:'bouncy', onUpdate:v => {
+      const t = Math.max(0, Math.min(1, (1.7 - v) / .7));
+      seal.style.opacity = Math.min(1, t * 1.6);
+      seal.style.transform = `scale(${v}) rotate(${-14 + 10 * t}deg)`;
+    }});
+    setTimeout(() => {
+      s.to(1);
+      setTimeout(() => {
+        word.style.transform = 'translateY(2px)'; setTimeout(() => word.style.transform = '', 120);
+        bloom.animate([{ opacity:.45, transform:'scale(1) rotate(-4deg)' }, { opacity:0, transform:'scale(1.38) rotate(-4deg)' }], { duration:620, easing:'cubic-bezier(.33,1,.68,1)' });
+      }, 150);
+    }, 380);
+  }
+  seal.addEventListener('click', stamp);
+  seal.style.cursor = 'pointer'; seal.title = 'Stamp again';
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(stamp);
+
+  /* ---------- the Playback screen, once per paper ---------- */
+  const papers = ['paper','ink','charcoal'];
+  const state = { quality:'lossless', crossfade:.5, gapless:true, normalise:false, cellular:false };
+  const qualityHelp = { normal:'<b>Normal</b> · about 40 MB per hour', high:'<b>High</b> · about 150 MB per hour', lossless:'<b>Lossless</b> · about 1.4 GB per hour, Wi-Fi only' };
+  function screen(p){
+    return `<div class="phone" data-theme="${p}">
+      <div class="phone-status"><span>9:41</span><span class="ind"><b></b><i></i></span></div>
+      <div class="pb">
+        <div class="pb-nav">${H.icon('chev-l','s24')}Settings</div>
+        <div class="pb-body">
+          <div class="pb-title">Playback</div>
+          <div class="pb-eyebrow">Streaming quality</div>
+          <div class="hj-seg" data-k="quality"><button data-value="normal">Normal</button><button data-value="high">High</button><button data-value="lossless">Lossless</button></div>
+          <div class="pb-help" data-k="qhelp"></div>
+          <div class="pb-slide">
+            <div class="pb-slide-top"><b>Crossfade</b><span class="v t-mono" data-k="cfv">6 s</span></div>
+            <div class="mini-slider" data-k="crossfade" role="slider" tabindex="0" aria-label="Crossfade" aria-valuemin="0" aria-valuemax="12"><div class="tr"><div class="fi"></div></div><div class="th"></div></div>
+          </div>
+          <div class="pb-rows" style="border-top:0">
+            <div class="pb-row"><div class="t"><b>Gapless playback</b><span>No silence between album tracks</span></div><button class="hj-toggle" data-k="gapless" aria-label="Gapless playback"></button></div>
+            <div class="pb-row"><div class="t"><b>Normalise volume</b><span>Same loudness across tracks</span></div><button class="hj-toggle" data-k="normalise" aria-label="Normalise volume"></button></div>
+            <div class="pb-row"><div class="t"><b>Equaliser</b></div><span class="v">Warm</span>${H.icon('chev-r','s18')}</div>
+          </div>
+        </div>
+        <div class="pb-tabs" aria-hidden="true"><span>${H.icon('home')}Home</span><span>${H.icon('search')}Search</span><span>${H.icon('library')}Library</span><span>${H.icon('queue')}Queue</span><span class="on">${H.icon('sliders')}Settings</span></div>
+      </div>
+    </div><div class="sheet-tag">${p}</div>`;
+  }
+  const host = $('#sheets'); const sheets = {};
+  papers.forEach(p => {
+    const d = document.createElement('div'); d.className = 'sheet'; d.dataset.paper = p; d.innerHTML = screen(p); host.appendChild(d); sheets[p] = d;
+    const seg = H.segmented(d.querySelector('[data-k="quality"]'), v => set('quality', v, p)); d._seg = seg;
+    d.querySelectorAll('.hj-toggle').forEach(t => { const k = t.dataset.k; H.toggle(t, on => set(k, on, p)); });
+    wireSlider(d.querySelector('.mini-slider'), p);
+    const catcher = document.createElement('button'); catcher.className = 'sheet-catch'; catcher.setAttribute('aria-label', 'Show ' + p + ' paper'); d.appendChild(catcher);
+    catcher.addEventListener('click', () => H.set('theme', p));
+  });
+  function order(){
+    const front = H.state.theme; const rest = papers.filter(p => p !== front);
+    [front].concat(rest).forEach((p, i) => { sheets[p].dataset.pos = String(i); const ph = sheets[p].querySelector('.phone'); ph.inert = !!i; ph.setAttribute('aria-hidden', i ? 'true' : 'false'); });
+  }
+  function paint(p, delay){
+    const d = sheets[p];
+    const go = () => {
+      d._seg.select(state.quality);
+      d.querySelector('[data-k="qhelp"]').innerHTML = qualityHelp[state.quality];
+      d.querySelector('[data-k="gapless"]').setAttribute('aria-checked', state.gapless);
+      d.querySelector('[data-k="normalise"]').setAttribute('aria-checked', state.normalise);
+      const sl = d.querySelector('.mini-slider'); sl.querySelector('.fi').style.setProperty('--p', state.crossfade);
+      sl.querySelector('.th').style.setProperty('--px', (state.crossfade * sl.clientWidth) + 'px');
+      const secs = Math.round(state.crossfade * 12); d.querySelector('[data-k="cfv"]').textContent = secs ? secs + ' s' : 'Off';
+      sl.setAttribute('aria-valuenow', secs);
+    };
+    delay ? setTimeout(go, delay) : go();
+  }
+  function set(k, v, from){
+    state[k] = v;
+    // one contract, three papers: the other sheets follow on hanji's stagger
+    papers.forEach(p => { const pos = +sheets[p].dataset.pos; paint(p, p === from ? 0 : 60 + pos * 24 * 3); });
+  }
+  function wireSlider(sl, p){
+    const at = e => { const r = sl.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); };
+    sl.addEventListener('pointerdown', e => { sl.setPointerCapture(e.pointerId); sl.classList.add('held'); set('crossfade', Math.round(at(e) * 12) / 12, p); setTimeout(() => sl.classList.add('drag'), 120); });
+    sl.addEventListener('pointermove', e => { if (!sl.classList.contains('held')) return; set('crossfade', Math.round(at(e) * 12) / 12, p); });
+    const up = () => { sl.classList.remove('held', 'drag'); };
+    sl.addEventListener('pointerup', up); sl.addEventListener('pointercancel', up);
+    sl.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ e.preventDefault(); set('crossfade', Math.max(0, Math.min(1, state.crossfade + (e.key === 'ArrowRight' ? 1 : -1) / 12)), p); } });
+  }
+  order(); papers.forEach(p => paint(p));
+  H.on('theme', () => { order(); });
+  new ResizeObserver(() => papers.forEach(p => paint(p))).observe(host);
+
+  /* ---------- counters roll in once the page has landed ---------- */
+  H.on('ready', () => {
+    const n = H.$$('section.chapter:not(#foundations):not(#motion):not(#in-use) .entry').length || 64;
+    setTimeout(() => {
+      H.$$('[data-roll]').forEach((el, i) => {
+        const raw = el.dataset.roll === 'components' ? String(n) : el.dataset.roll;
+        H.digits(el, raw.replace(/\d/g, '0')); setTimeout(() => H.digits(el, raw), 60 + i * 24);
+      });
+    }, H.reduced() ? 0 : 520);
+  });
+})();
+</script>

@@ -1,0 +1,692 @@
+<!-- ======================================================================
+     08 · SHOWCASE — @hanji/showcase: the domain-flavoured pieces (audio,
+     art) that prove the system. Arithmetic ported from packages/showcase.
+     ====================================================================== -->
+<style>
+/* ---------- covers (shared by art, collage, glyph cover) ---------- */
+.hj-cover{ position:relative; display:block; flex:none; overflow:hidden; border-radius:var(--r-sm); background:var(--surface-2); isolation:isolate }
+@supports (corner-shape: squircle){ .hj-cover{ corner-shape:superellipse(1.6) } }
+.hj-cover > svg, .hj-cover .hj-cell > svg{ display:block; width:100%; height:100% }
+.hj-cover .hj-cell{ position:absolute; overflow:hidden }
+.hj-cover.round{ border-radius:50%; corner-shape:round }
+.hj-cover-scrim{ position:absolute; inset:0; background:rgba(0,0,0,.38) }
+.hj-cover-glyph{ position:absolute; inset:0; display:grid; place-items:center; color:var(--on-scrim) }
+.hj-cover-glyph .ic{ stroke-width:2 }
+
+/* ---------- PlayingBars ---------- */
+.hj-bars{ --h:16px; --bw:2.5px; --gap:2px; display:inline-flex; align-items:flex-end; justify-content:center; gap:var(--gap); height:var(--h); color:var(--accent); flex:none; vertical-align:middle; pointer-events:none }
+.hj-bars > i{ display:block; width:var(--bw); height:var(--h); border-radius:calc(var(--bw) / 2); background:currentColor; transform-origin:50% 100%; transform:scaleY(var(--min)); will-change:transform }
+/* withTiming's default curve (inOut quad), alternating: min ↔ max on the bar's own period */
+.hj-bars.dance > i{ animation:hj-bar var(--period) cubic-bezier(.455,.03,.515,.955) infinite alternate }
+.hj-bars.offscreen > i{ animation-play-state:paused }
+@keyframes hj-bar{ from{ transform:scaleY(var(--min)) } to{ transform:scaleY(var(--max)) } }
+
+/* ---------- DotSpectrum ---------- */
+.hj-spectrum{ display:flex; align-items:flex-end; justify-content:space-between; overflow:hidden; color:var(--fg); pointer-events:none }
+.hj-spectrum > span{ display:flex; flex-direction:column; gap:4px; align-items:center }
+.hj-spectrum > span > i{ display:block; width:3px; height:3px; border-radius:50%; background:currentColor; opacity:0; transform:scale(.6); transition:opacity 80ms linear, transform 80ms linear }
+
+/* ---------- Scrubber ---------- */
+.hj-scrub{ display:flex; align-items:center; gap:var(--s3); width:100%; min-width:0 }
+.hj-scrub-time{ font:500 12.5px/17px var(--mono); letter-spacing:.2px; color:var(--fg-dim); font-variant-numeric:tabular-nums; text-align:center; flex:none; display:inline-flex; justify-content:center }
+.hj-scrub-time .dg > span{ transition-duration:var(--dur-slow); transition-timing-function:var(--ease-out) }
+.hj-scrub-track{ position:relative; flex:1; min-width:60px; height:44px; touch-action:none; cursor:pointer; outline:none }
+.hj-scrub-track:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--r-xs) }
+.hj-scrub-rail{ position:absolute; left:0; right:0; top:50%; height:4px; margin-top:-2px; border-radius:var(--r-pill); background:rgba(var(--accent-rgb),.24); overflow:hidden }
+.hj-scrub-fill{ position:absolute; inset:0; background:var(--accent); transform-origin:0 50%; transform:scaleX(0) }
+.hj-scrub-thumb{ position:absolute; left:0; top:50%; width:0; height:0; transform:translateX(0px) }
+.hj-scrub-thumb i{ position:absolute; left:-6px; top:-6px; width:12px; height:12px; border-radius:50%; background:var(--accent);
+  transition:transform var(--dur-snappy) var(--ease-snappy), box-shadow var(--dur-base) var(--ease-out) }
+.hj-scrub.held .hj-scrub-thumb i{ transform:scale(1.6) }
+.hj-scrub.pending .hj-scrub-thumb i{ box-shadow:0 0 0 5px rgba(var(--accent-rgb),.16) }
+.hj-scrub.disabled{ opacity:.4; pointer-events:none }
+
+/* ---------- plate layouts for this chapter ---------- */
+.p90-sizes{ display:flex; align-items:flex-end; gap:40px }
+.p90-size{ display:flex; flex-direction:column; align-items:center; gap:12px }
+.p90-cap{ font:500 11px/1.3 var(--mono); color:var(--fg-mute); text-align:center; white-space:nowrap }
+.p90-cap b{ font-weight:500; color:var(--fg-dim) }
+.p90-rows{ width:360px; max-width:100%; border-top:1px solid var(--line) }
+.p90-row{ height:56px; display:grid; grid-template-columns:28px 40px 1fr auto; align-items:center; gap:12px; border-bottom:1px solid var(--line); padding:0 4px }
+.p90-row .lead{ display:flex; justify-content:center; font:500 12.5px/1 var(--mono); color:var(--fg-mute) }
+.p90-row .tt{ min-width:0 }
+.p90-row .tt b{ display:block; font-weight:500; font-size:15px; line-height:20px; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p90-row .tt span{ display:block; font-size:12.5px; line-height:17px; color:var(--fg-dim) }
+.p90-row.on .tt b{ color:var(--accent) }
+.p90-row .tr{ font:500 12.5px/1 var(--mono); color:var(--fg-mute) }
+.p90-note{ font-size:12.5px; color:var(--fg-mute); max-width:360px; margin:0; line-height:1.5 }
+
+.p90-specs{ width:100%; max-width:560px; display:flex; flex-direction:column; gap:10px }
+.p90-specs .p90-cap{ text-align:left; margin-bottom:14px }
+.p90-dock{ position:relative; height:64px; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden; isolation:isolate }
+.p90-dock-spec{ position:absolute; left:0; right:0; bottom:6px; height:45px; z-index:-1 }
+.p90-bare{ height:45px; width:100% }
+@supports (corner-shape: squircle){ .p90-dock{ corner-shape:superellipse(1.6) } }
+.p90-dock-row{ height:100%; display:grid; grid-template-columns:44px 1fr 44px; gap:12px; align-items:center; padding:0 6px 0 10px }
+.p90-dock-row .tt b{ display:block; font-weight:600; font-size:14.5px; line-height:19px; letter-spacing:-.01em }
+.p90-dock-row .tt span{ display:block; font-size:12.5px; line-height:17px; color:var(--fg-dim) }
+.p90-readout{ margin-top:4px; display:flex; flex-wrap:wrap; gap:6px 18px; font:500 11.5px/1.4 var(--mono); color:var(--fg-mute); width:100%; max-width:560px }
+.p90-readout b{ font-weight:500; color:var(--fg-dim) }
+.p90-readout .arm{ display:inline-flex; align-items:center; gap:6px }
+.p90-readout .arm::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--fg-mute) }
+.p90-readout .arm.on::before{ background:var(--success) }
+.p90-play{ width:44px; height:44px; border-radius:50%; display:grid; place-items:center; color:var(--fg) }
+.p90-play:hover{ background:rgba(var(--fg-rgb),.06) }
+
+.p90-scrubs{ width:100%; max-width:560px; display:flex; flex-direction:column; gap:26px }
+.p90-scrub-head{ display:flex; align-items:center; gap:12px; margin-bottom:2px }
+.p90-scrub-head .tt b{ display:block; font-weight:600; font-size:15px; line-height:20px; letter-spacing:-.01em }
+.p90-scrub-head .tt span{ display:block; font-size:12.5px; line-height:17px; color:var(--fg-dim) }
+.p90-scrub-head .p90-play{ background:var(--fg); color:var(--bg) }
+.p90-scrub-head .p90-play:hover{ background:var(--fg) }
+.p90-anchor{ font:500 11.5px/1.5 var(--mono); color:var(--fg-mute); display:flex; gap:14px; flex-wrap:wrap; margin-top:2px }
+.p90-anchor b{ font-weight:500; color:var(--fg-dim) }
+.p90-anchor .st{ display:inline-flex; align-items:center; gap:6px }
+.p90-anchor .st::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--fg-mute); transition:background-color var(--dur-fast) var(--ease-out) }
+.p90-anchor .st.wait::before{ background:var(--warning) }
+.p90-anchor .st.ok::before{ background:var(--success) }
+
+.p90-art{ display:grid; grid-template-columns:184px minmax(0,1fr); gap:36px; align-items:start; width:100%; max-width:640px }
+.p90-art-live{ display:flex; flex-direction:column; gap:14px }
+.p90-input{ height:40px; width:100%; border:0; border-radius:var(--r-sm); background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); padding:0 12px; font-size:14px; font-weight:500; color:var(--fg); outline:none; transition:box-shadow var(--dur-fast) var(--ease-out) }
+.p90-input:focus{ box-shadow:inset 0 0 0 1.5px var(--accent) }
+.p90-input::placeholder{ color:var(--fg-mute) }
+.p90-big{ width:184px; height:184px; border-radius:var(--r-md); box-shadow:0 12px 24px -10px rgba(0,0,0,.45) }
+.p90-big > svg{ transition:opacity var(--dur-fast) var(--ease-out) }
+.p90-spec{ margin:0; display:grid; border-top:1px solid var(--line) }
+.p90-spec > div{ display:flex; justify-content:space-between; gap:10px; padding:5px 0; border-bottom:1px solid var(--line); font:500 11.5px/1.4 var(--mono) }
+.p90-spec dt{ color:var(--fg-mute) } .p90-spec dd{ margin:0; color:var(--fg-dim) }
+.p90-wall{ display:grid; grid-template-columns:repeat(4, 84px); gap:12px }
+.p90-wall .hj-cover{ width:84px; height:84px }
+
+.p90-collages{ display:flex; gap:22px; align-items:flex-start; flex-wrap:wrap; justify-content:center }
+.p90-collages .p90-size .hj-cover{ width:104px; height:104px }
+
+.p90-glyphs{ display:flex; align-items:flex-end; gap:28px; flex-wrap:wrap; justify-content:center }
+.p90-cats{ display:grid; grid-template-columns:repeat(6, 72px); gap:14px; margin-top:6px }
+.p90-cat{ display:flex; flex-direction:column; gap:8px; align-items:flex-start; text-align:left }
+.p90-cat span{ font-size:11.5px; font-weight:600; line-height:1.25; color:var(--fg-dim); letter-spacing:-.005em }
+
+@media (max-width: 720px){
+  .p90-art{ grid-template-columns:1fr }
+  .p90-wall{ grid-template-columns:repeat(3, 84px) }
+  .p90-cats{ grid-template-columns:repeat(3, 72px) }
+  .p90-sizes{ gap:24px }
+}
+</style>
+
+<section class="chapter" id="showcase" data-num="08" data-title="Showcase">
+  <header class="chapter-head">
+    <div class="chapter-line"><h2 class="chapter-title">Showcase</h2><span class="chapter-rule"></span><span class="chapter-num">08</span></div>
+    <div class="chapter-body">
+      <p class="chapter-lede">The opinionated, domain-flavoured pieces — audio and art — that prove the system can carry a real product. <b>They live in @hanji/showcase, outside core:</b> nothing in the component library knows what a track is, and these pieces are built only from what it exposes.</p>
+      <ol class="chapter-index" data-auto></ol>
+    </div>
+  </header>
+
+  <!-- 08.01 PlayingBars -->
+  <article class="entry" id="playing-bars">
+    <div class="entry-meta">
+      <div class="entry-num">08.01</div>
+      <h3 class="entry-title">PlayingBars</h3>
+      <p class="entry-desc">The “this one is playing” glyph: a few bars on periods that never fall into lockstep. It measures nothing and costs one value per bar. <b>Rows that aren’t playing render their number, not a paused glyph.</b></p>
+      <dl class="spec">
+        <div><dt>Bars</dt><dd><b>2.5</b> wide · gap 2 · ×3</dd></div>
+        <div><dt>Periods</dt><dd>500 · 400 · 600 ms</dd></div>
+        <div><dt>Ranges</dt><dd>.25–1 · .40–.75 · .20–.90</dd></div>
+        <div><dt>Pause</dt><dd>settles to floor · 180 ms</dd></div>
+        <div><dt>Reduced</dt><dd>rest heights, never armed</dd></div>
+        <div><dt>A11y</dt><dd>hidden unless labelled</dd></div>
+      </dl>
+      <p class="motion-note"><span>Unrelated periods are what make three bars read as noise instead of one blinking shape. Height is <b>scaleY</b> from the foot — never an animated height.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="plate-tools"><button class="plate-btn" id="p90-bars-toggle" aria-pressed="true"><svg class="ic s14" aria-hidden="true"><use href="#i-pause-f"/></svg><span>Pause</span></button></div>
+      <div class="p90-sizes">
+        <div class="p90-size"><span class="hj-bars" data-bars="3" data-size="16"></span><span class="p90-cap"><b>16</b> · 3 bars</span></div>
+        <div class="p90-size"><span class="hj-bars" data-bars="4" data-size="24"></span><span class="p90-cap"><b>24</b> · 4 bars</span></div>
+        <div class="p90-size"><span class="hj-bars" data-bars="5" data-size="40" style="--bw:4px;--gap:3px"></span><span class="p90-cap"><b>40</b> · 5 bars</span></div>
+      </div>
+      <div class="p90-rows" aria-label="Track list">
+        <div class="p90-row"><span class="lead">06</span><span class="hj-cover" style="width:40px;height:40px;border-radius:var(--r-xs)" data-art="Paper Lanterns"></span><span class="tt"><b>Paper Lanterns</b><span>Jun-seo Park</span></span><span class="tr">3:32</span></div>
+        <div class="p90-row on"><span class="lead"><span class="hj-bars" data-bars="3" data-size="16" aria-label="Playing"></span></span><span class="hj-cover" style="width:40px;height:40px;border-radius:var(--r-xs)" data-art="Saltmarsh"></span><span class="tt"><b>The Long Way Round the Harbour</b><span>Ilse Brandt</span></span><span class="tr">4:07</span></div>
+        <div class="p90-row"><span class="lead">08</span><span class="hj-cover" style="width:40px;height:40px;border-radius:var(--r-xs)" data-art="Harbour Lights"></span><span class="tt"><b>Night Bus Home</b><span>Noor Haddad</span></span><span class="tr">5:01</span></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Pause to watch them settle</span></div>
+    </div>
+  </article>
+
+  <!-- 08.02 DotSpectrum -->
+  <article class="entry" id="dot-spectrum">
+    <div class="entry-meta">
+      <div class="entry-num">08.02</div>
+      <h3 class="entry-title">DotSpectrum</h3>
+      <p class="entry-desc">An ambient level display: columns of dots that ignite bottom-up from a signal the app supplies. Decoration — so it is the first thing reduced motion removes, and <b>paused, hidden or switched off, it costs nothing at all.</b></p>
+      <dl class="spec">
+        <div><dt>Grid</dt><dd><b>28 × 7</b> · 3 px · gap 4</dd></div>
+        <div><dt>Source</dt><dd>12 Hz, throttled at source</dd></div>
+        <div><dt>Ignition</dt><dd>eighths · scale .6 → 1</dd></div>
+        <div><dt>Presence</dt><dd>α .22 · tapers to 40%</dd></div>
+        <div><dt>Shaping</dt><dd>1.65·raw<sup>.6</sup> per delivery</dd></div>
+        <div><dt>Idle</dt><dd>one silent write, no timer</dd></div>
+      </dl>
+      <p class="motion-note"><span>Quantised output lets unchanged dots skip the write entirely — the counter below shows how few actually change on a tick (PRINCIPLES §17).</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="p90-specs">
+        <div class="p90-dock">
+          <div class="hj-spectrum p90-dock-spec" id="p90-spectrum" aria-hidden="true"></div>
+          <div class="p90-dock-row">
+            <span class="hj-cover" style="width:44px;height:44px;border-radius:var(--r-xs)" data-art="Afterglow Studies"></span>
+            <span class="tt"><b>Glass Weather</b><span>Mira Okafor · Afterglow Studies</span></span>
+            <button class="p90-play hj-press" id="p90-spec-play" aria-label="Pause"><svg class="ic s24" aria-hidden="true"><use href="#i-pause-f"/></svg></button>
+          </div>
+        </div>
+        <span class="p90-cap">In a dock — texture at α .22, behind the content, edge to edge</span>
+        <div class="hj-spectrum p90-bare" id="p90-spectrum-bare" aria-hidden="true"></div>
+        <span class="p90-cap">The same field unmasked at α 1 — one source, one timer, two subscribers</span>
+      </div>
+      <div class="p90-readout" aria-live="off">
+        <span class="arm" id="p90-spec-arm">source armed</span>
+        <span><b id="p90-spec-writes">0</b> of 196 dots written this tick</span>
+        <span><b id="p90-spec-ticks">0</b> deliveries</span>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Scroll it away — the timer disarms</span></div>
+    </div>
+  </article>
+
+  <!-- 08.03 Scrubber -->
+  <article class="entry" id="scrubber">
+    <div class="entry-meta">
+      <div class="entry-num">08.03</div>
+      <h3 class="entry-title">Scrubber</h3>
+      <p class="entry-desc">A seek bar over a fixed-point anchor <span class="t-mono">{value, at, rate}</span>. Motion is projected every frame, labels tick once a second, and <b>nothing ever polls the player.</b></p>
+      <dl class="spec">
+        <div><dt>Track</dt><dd><b>4</b> · tint .24 · scaleX fill</dd></div>
+        <div><dt>Thumb</dt><dd><b>12</b> → ×1.6 while held</dd></div>
+        <div><dt>Anchor</dt><dd>on seek · pause · resume</dd></div>
+        <div><dt>Labels</dt><dd>1 Hz shared clock · mono</dd></div>
+        <div><dt>Hold</dt><dd>until within 2% · ≤ 2.5 s</dd></div>
+        <div><dt>Keys</dt><dd>← → 5 s · PgUp/Dn 30 s</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>A tap springs the thumb to the finger; a drag rides the same spring, so it can always be interrupted.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="plate-tools"><button class="plate-btn" id="p90-slow" aria-pressed="false"><svg class="ic s14" aria-hidden="true"><use href="#i-clock"/></svg><span>Slow host</span></button></div>
+      <div class="p90-scrubs">
+        <div>
+          <div class="p90-scrub-head">
+            <button class="p90-play hj-press" id="p90-scrub-play" aria-label="Play"><svg class="ic s18" aria-hidden="true"><use href="#i-play-f"/></svg></button>
+            <span class="tt"><b>The Long Way Round the Harbour</b><span>Ilse Brandt · Saltmarsh</span></span>
+          </div>
+          <div id="p90-scrub-a"></div>
+          <div class="p90-anchor"><span class="st" id="p90-scrub-st">paused</span><span>anchor <b id="p90-scrub-anchor">{ value: 83 000, rate: 0 }</b></span></div>
+        </div>
+        <div>
+          <div class="p90-scrub-head">
+            <span class="hj-cover" style="width:44px;height:44px;border-radius:var(--r-xs)" data-art="The Northern Line"></span>
+            <span class="tt"><b>The Northern Line, ep. 41</b><span>Dev Malhotra · paused, over an hour — the readouts reserve room</span></span>
+          </div>
+          <div id="p90-scrub-b"></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap, drag, or use the arrow keys</span></div>
+    </div>
+  </article>
+
+  <!-- 08.04 Generated art -->
+  <article class="entry" id="generated-art">
+    <div class="entry-meta">
+      <div class="entry-num">08.04</div>
+      <h3 class="entry-title">Generated art</h3>
+      <p class="entry-desc">A painted stand-in for anything with no image: twelve palettes and eight compositions, chosen by hashing the id. A subject never changes its face. <b>Rendered instead of an image, never under one.</b></p>
+      <dl class="spec">
+        <div><dt>Hash</dt><dd>FNV-1a → fmix32 · 3 salts</dd></div>
+        <div><dt>Palettes</dt><dd><b>12</b> · deep / mid / bright</dd></div>
+        <div><dt>Shapes</dt><dd><b>8</b> compositions</dd></div>
+        <div><dt>Cost</dt><dd>pure SVG · ≤ 25 nodes</dd></div>
+        <div><dt>A11y</dt><dd>hidden — row says the name</dd></div>
+        <div><dt>API</dt><dd>H.art(id, size) → svg</dd></div>
+      </dl>
+      <p class="motion-note"><span>Art is the one thing on a hanji screen allowed a shadow: one soft drop, so a cover reads as an object rather than a hole in the page.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p90-reseed"><svg class="ic s14" aria-hidden="true"><use href="#i-shuffle"/></svg><span>New ids</span></button></div>
+      <div class="p90-art">
+        <div class="p90-art-live">
+          <label class="sr" for="p90-title">Type any title</label>
+          <input class="p90-input" id="p90-title" value="Seoul, 4 a.m." autocomplete="off" spellcheck="false" placeholder="Type any title">
+          <span class="hj-cover p90-big" id="p90-big"></span>
+          <dl class="p90-spec" id="p90-big-spec"></dl>
+        </div>
+        <div class="p90-wall" id="p90-wall" data-cascade></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Same id, same face — type to see</span></div>
+    </div>
+  </article>
+
+  <!-- 08.05 Collage -->
+  <article class="entry" id="collage">
+    <div class="entry-meta">
+      <div class="entry-num">08.05</div>
+      <h3 class="entry-title">Collage</h3>
+      <p class="entry-desc">A playlist cover made from the first covers inside it. The cells tile the box exactly — no gaps, no seams left to rounding. <b>Four at most: a fifth is a mosaic, not a cover.</b></p>
+      <dl class="spec">
+        <div><dt>Plan</dt><dd>full · halves · thirds · 2×2</dd></div>
+        <div><dt>Seam</dt><dd>vertical, for two</dd></div>
+        <div><dt>Decode</dt><dd>each cell one tier down</dd></div>
+        <div><dt>Empty</dt><dd>one fallback, never a hole</dd></div>
+        <div><dt>Shape</dt><dd>sm · 12</dd></div>
+      </dl>
+    </div>
+    <div class="plate plate--col">
+      <div class="p90-collages" id="p90-collages"></div>
+      <div class="p90-rows" id="p90-collage-rows"></div>
+      <div class="plate-cap"><span class="live">Live</span><span>The first tile leads</span></div>
+    </div>
+  </article>
+
+  <!-- 08.06 Glyph cover -->
+  <article class="entry" id="glyph-cover">
+    <div class="entry-meta">
+      <div class="entry-num">08.06</div>
+      <h3 class="entry-title">Glyph cover</h3>
+      <p class="entry-desc">A cover for things with no art by construction — a folder, a category, a smart list. A generated wash, a flat scrim, one glyph. <b>Art alone says “we couldn’t read the image”; a glyph cover says “there is nothing to read”.</b></p>
+      <dl class="spec">
+        <div><dt>Glyph</dt><dd><b>16 · 20 · 24 · 28</b></dd></div><div><dt>Steps</dt><dd>at 48 · 72 · 120 px</dd></div>
+        <div><dt>Scrim</dt><dd>black · α .38 · flat</dd></div>
+        <div><dt>Ink</dt><dd>on-scrim, on every paper</dd></div>
+        <div><dt>Icon</dt><dd>app adapter · bold</dd></div>
+      </dl>
+      <p class="motion-note"><span>Stepped, never interpolated: a 56 px row cover and a 240 px hero are recognisably the same object, not one photo scaled.</span></p>
+    </div>
+    <div class="plate plate--col">
+      <div class="p90-glyphs" id="p90-glyphs"></div>
+      <div class="p90-cats" id="p90-cats"></div>
+      <div class="plate-cap"><span class="live">Live</span><span>Press any cover</span></div>
+    </div>
+  </article>
+</section>
+
+<script>
+(function(){
+  const { $, $$ } = H;
+
+  /* ======================= generated art (generated-art.ts) ======================= */
+  const ART = [
+    { name:'ember', deep:'#2b0f0a', mid:'#7a2417', bright:'#e2653a' },
+    { name:'iris', deep:'#120b2e', mid:'#3a2b8c', bright:'#8e7bf0' },
+    { name:'moss', deep:'#0a1a12', mid:'#1e5240', bright:'#6fcf97' },
+    { name:'rose', deep:'#2a0a1c', mid:'#8a2452', bright:'#f58bb0' },
+    { name:'azure', deep:'#04182b', mid:'#14567f', bright:'#62c4e8' },
+    { name:'amber', deep:'#241305', mid:'#8a5a0e', bright:'#f2b33d' },
+    { name:'teal', deep:'#041d1e', mid:'#10585c', bright:'#4fd1c5' },
+    { name:'cobalt', deep:'#060c2c', mid:'#23368f', bright:'#6e8cf5' },
+    { name:'violet', deep:'#1b0a24', mid:'#5b2287', bright:'#c083e8' },
+    { name:'clay', deep:'#201510', mid:'#6e4632', bright:'#d9a17a' },
+    { name:'slate', deep:'#0c1116', mid:'#33454f', bright:'#8fa6b5' },
+    { name:'plum', deep:'#1a0b18', mid:'#5d2455', bright:'#c77bb8' }
+  ];
+  function fnv1a(input){
+    let hash = 0x811c9dc5;
+    for (let i = 0; i < input.length; i++){
+      hash ^= input.charCodeAt(i) & 0xff; hash = Math.imul(hash, 0x01000193);
+      const high = input.charCodeAt(i) >>> 8;
+      if (high !== 0){ hash ^= high; hash = Math.imul(hash, 0x01000193); }
+    }
+    return hash >>> 0;
+  }
+  function fmix32(h){ h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h >>> 0; }
+  const channelHash = (salt, id) => fmix32(fnv1a(`${salt}:${id}`));
+  const pick = (seed, channel, n) => n > 0 ? channelHash(`v${channel}`, String(seed)) % Math.trunc(n) : 0;
+  const BOX = 100;
+  const C = (cx, cy, r, f, o) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${f}"${o != null ? ` opacity="${o}"` : ''}/>`;
+  const R = (x, y, w, h, f, o, rx) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${o != null ? ` opacity="${o}"` : ''}${rx ? ` rx="${rx}"` : ''}/>`;
+  const compositions = [
+    function rings(p, s){ const cx = 30 + pick(s,1,40), cy = 28 + pick(s,2,44); return C(cx,cy,46,p.mid,.75) + C(cx,cy,30,p.deep) + C(cx,cy,15,p.bright); },
+    function bands(p, s){ const sh = pick(s,1,30); return `<g transform="rotate(-28 50 50)">${R(-60,-20+sh,220,26,p.mid)}${R(-60,26+sh,220,12,p.bright)}${R(-60,58+sh,220,20,p.mid,.6)}</g>`; },
+    function dots(p, s){ const cells = 4 + pick(s,1,2), step = BOX/cells; let o = ''; for (let y = 0; y < cells; y++) for (let x = 0; x < cells; x++){ const n = y*cells + x; const big = pick(s, n+2, 3) > 0; o += C(+(step*(x+.5)).toFixed(2), +(step*(y+.5)).toFixed(2), +(big ? step*.36 : step*.18).toFixed(2), (x+y) % 2 === 0 ? p.bright : p.mid); } return o; },
+    function orbs(p, s){ const d = 18 + pick(s,1,22); return C(50 - d/2, 44, 34, p.mid) + C(50 + d/2, 60, 30, p.bright, .82); },
+    function stripes(p, s){ let y = 0, o = ''; for (let i = 0; y < BOX; i++){ const h = 6 + pick(s, i+1, 16); o += R(0, y, BOX, Math.min(h, BOX - y), i % 3 === 0 ? p.bright : p.mid, i % 3 === 1 ? .55 : null); y += h + 4; } return o; },
+    function arcs(p, s){ const r = 52 + pick(s,1,26); return `<path d="M0,0 L${r},0 A${r},${r} 0 0 1 0,${r} Z" fill="${p.mid}"/><path d="M${BOX},${BOX} L${BOX-r},${BOX} A${r},${r} 0 0 1 ${BOX},${BOX-r} Z" fill="${p.bright}"/>`; },
+    function wedge(p, s){ const a = 20 + pick(s,1,60); return `<polygon points="0,${BOX} ${a},0 ${BOX},${BOX}" fill="${p.mid}"/><polygon points="${a},0 ${BOX},${BOX} ${BOX},${BOX*.45}" fill="${p.bright}" opacity=".85"/>`; },
+    function nested(p, s){ const ang = 8 + pick(s,1,30); return `<g transform="rotate(${ang} 50 50)">${R(12,12,76,76,p.mid,null,10)}${R(26,26,48,48,p.deep,null,8)}${R(38,38,24,24,p.bright,null,6)}</g>`; }
+  ];
+  function artSpec(id){
+    id = String(id);
+    const s = { paletteIndex: channelHash('p', id) % ART.length, composition: channelHash('c', id) % compositions.length, seed: channelHash('s', id) };
+    return Object.assign(s, { palette: ART[s.paletteIndex], compositionName: compositions[s.composition].name });
+  }
+  /** H.art(id, size?, opts?) → an <svg> string. `opts.slice` crops non-square cells. */
+  H.art = function(id, size, opts){
+    opts = opts || {};
+    const sp = artSpec(id); const p = sp.palette;
+    const dim = size ? ` width="${size}" height="${size}"` : '';
+    return `<svg viewBox="0 0 ${BOX} ${BOX}"${dim} preserveAspectRatio="${opts.slice ? 'xMidYMid slice' : 'xMidYMid meet'}" aria-hidden="true" focusable="false">${R(0,0,BOX,BOX,p.deep)}${compositions[sp.composition](p, sp.seed)}</svg>`;
+  };
+  H.artSpec = artSpec;
+  H.artPalettes = ART;
+
+  /* ======================= collage (collage-grid.ts) ======================= */
+  const PLANS = {
+    1: [[0,0,1,1]],
+    2: [[0,0,.5,1],[.5,0,.5,1]],
+    3: [[0,0,.5,1],[.5,0,.5,.5],[.5,.5,.5,.5]],
+    4: [[0,0,.5,.5],[.5,0,.5,.5],[0,.5,.5,.5],[.5,.5,.5,.5]]
+  };
+  /** H.collage(ids, fallbackId) → inner HTML for a .hj-cover box. */
+  H.collage = function(ids, fallbackId){
+    const tiles = Math.min(4, Math.max(0, ids.length));
+    if (tiles === 0) return H.art(fallbackId || 'empty collage');
+    return PLANS[tiles].map((c, i) => `<span class="hj-cell" style="left:${c[0]*100}%;top:${c[1]*100}%;width:${c[2]*100}%;height:${c[3]*100}%">${H.art(ids[i], null, { slice:true })}</span>`).join('');
+  };
+
+  /* ======================= glyph cover (glyph-cover.ts) ======================= */
+  const glyphFor = box => box >= 120 ? 28 : box >= 72 ? 24 : box >= 48 ? 20 : 16;
+  /** H.glyphCover(icon, id, size) → inner HTML for a .hj-cover box of that size. */
+  H.glyphCover = function(icon, id, size){
+    const g = glyphFor(size);
+    return `${H.art(id)}<span class="hj-cover-scrim"></span><span class="hj-cover-glyph"><svg class="ic" style="width:${g}px;height:${g}px" aria-hidden="true"><use href="#i-${icon}"/></svg></span>`;
+  };
+
+  /* fill any [data-art] cover on the page that is still empty */
+  H.paintArt = function(scope){ $$('[data-art]', scope).forEach(el => { if (!el.firstChild) el.innerHTML = H.art(el.dataset.art); }); };
+
+  /* ======================= visibility helper ======================= */
+  H.visible = H.visible || function(el, fn){
+    if (!('IntersectionObserver' in window)){ fn(true); return () => {}; }
+    const io = new IntersectionObserver(es => es.forEach(e => fn(e.isIntersecting)), { rootMargin:'80px 0px' });
+    io.observe(el); return () => io.disconnect();
+  };
+
+  /* ======================= PlayingBars (bar-metrics.ts) ======================= */
+  const BAR_SCALE = [1, .8, 1.2], BAR_RANGES = [[.25,1],[.4,.75],[.2,.9]], BAR_BASE = 500, BAR_SETTLE = 180;
+  const barSpec = i => { const r = BAR_RANGES[i % 3]; return { min:Math.min(r[0], r[1]), max:Math.max(r[0], r[1]), periodMs:Math.max(1, Math.round(BAR_BASE * BAR_SCALE[i % 3])) }; };
+  /** H.playingBars(el, {count, size}) → { set(playing) } — dances only when playing, visible and motion is full. */
+  H.playingBars = function(el, o){
+    o = o || {};
+    const count = Math.max(1, o.count || +el.dataset.bars || 3), size = o.size || +el.dataset.size || 16;
+    el.classList.add('hj-bars'); el.style.setProperty('--h', size + 'px');
+    if (!el.hasAttribute('aria-label')) el.setAttribute('aria-hidden', 'true'); else el.setAttribute('role', 'img');
+    const specs = Array.from({ length:count }, (_, i) => barSpec(i));
+    el.innerHTML = specs.map(s => `<i style="--min:${s.min};--max:${s.max};--period:${s.periodMs}ms"></i>`).join('');
+    const bars = Array.from(el.children);
+    let playing = o.playing !== false;
+    function apply(settle){
+      const dances = playing && !H.reduced();
+      if (dances){ bars.forEach(b => { b.style.transition = ''; b.style.transform = ''; }); el.classList.add('dance'); return; }
+      if (!el.classList.contains('dance')){ bars.forEach(b => { b.style.transition = ''; b.style.transform = ''; }); return; }
+      // cancel where it stands, THEN settle — a bar frozen mid-bounce reads as a dropped frame
+      const now = bars.map(b => { const m = getComputedStyle(b).transform; const mm = /matrix\(([^)]+)\)/.exec(m); return mm ? parseFloat(mm[1].split(',')[3]) : 1; });
+      el.classList.remove('dance');
+      bars.forEach((b, i) => { b.style.transition = 'none'; b.style.transform = `scaleY(${now[i]})`; });
+      void el.offsetWidth;
+      bars.forEach(b => { b.style.transition = (settle && !H.reduced()) ? `transform ${BAR_SETTLE}ms var(--ease-out)` : 'none'; b.style.transform = ''; });
+    }
+    if (barIO) barIO.observe(el);
+    const ctl = { set(p){ playing = !!p; apply(true); }, get playing(){ return playing; }, el, _apply:() => apply(false) };
+    liveBars.add(ctl);
+    apply(false);
+    return ctl;
+  };
+  /* one observer and one policy listener for every glyph on the page, however many rows re-render */
+  const liveBars = new Set();
+  const barIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('offscreen', !e.isIntersecting)), { rootMargin:'80px 0px' }) : null;
+  H.on('motion', () => liveBars.forEach(c => { if (!c.el.isConnected){ liveBars.delete(c); if (barIO) barIO.unobserve(c.el); } else c._apply(); }));
+
+  /* ======================= DotSpectrum (spectrum-shape.ts) ======================= */
+  const BANDS = 28, DOTS = 7, FPS = 12, LIT = .22, STEPS = 8, FLOOR = .4;
+  const shapeLevel = raw => (!isFinite(raw) || raw <= 0) ? 0 : Math.min(1, 1.65 * Math.pow(raw, .6));
+  const dotThreshold = (row, dots) => (dots - row - .5) / dots;
+  const dotPresence = (row, dots, lit) => dots <= 1 ? lit : lit * (FLOOR + (1 - FLOOR) * Math.min(1, Math.max(0, row / (dots - 1))));
+  const ignition = (level, th, dots) => { const raw = (level - th + .5 / dots) * dots; const c = raw < 0 ? 0 : raw > 1 ? 1 : raw; return Math.round(c * STEPS) / STEPS; };
+
+  /** A fake level source: arms its 12 Hz timer on the first subscriber, disarms on the last. */
+  H.levelSource = H.levelSource || (function(){
+    const subs = new Set(); let timer = 0; const t0 = performance.now(); const walk = new Float32Array(BANDS);
+    const gauss = (i, c, w) => Math.exp(-Math.pow((i - c) / w, 2));
+    function deliver(){
+      // A believable mix — kick, snare, hats, a wandering melody and a slow swell — designed as a
+      // level, then handed over RAW (un-shaped) so the component's own shaping does its job.
+      const t = (performance.now() - t0) / 1000, q = t * 112 / 60, beat = q % 1, bar = Math.floor(q) % 4;
+      const kick = Math.exp(-beat * 5), snare = bar % 2 === 1 ? Math.exp(-beat * 7) : 0, hat = Math.exp(-((q * 2) % 1) * 9);
+      const centre = 11 + 6 * Math.sin(t * .8); const out = new Array(BANDS);
+      for (let i = 0; i < BANDS; i++){
+        walk[i] = Math.min(.09, Math.max(-.09, walk[i] + (Math.random() - .5) * .06));
+        let L = .3 + .28 * Math.sin(2 * Math.PI * (i / BANDS * 1.3 - t * .35)) * (1 - i / 40) - .12 * (i / (BANDS - 1));
+        L += .34 * kick * Math.max(0, 1 - i / 7);
+        L += .22 * snare * gauss(i, 13, 4);
+        L += .26 * hat * Math.max(0, (i - 17) / 10) * (.55 + Math.random() * .45);
+        L += .3 * gauss(i, centre, 2.4) * (.65 + .35 * Math.sin(t * 2.7));
+        L = Math.min(1, Math.max(0, L + walk[i]));
+        out[i] = Math.pow(L / 1.65, 1 / .6);
+      }
+      subs.forEach(fn => fn(out));
+    }
+    return {
+      subscribe(fn, req){ subs.add(fn); if (!timer) timer = setInterval(deliver, 1000 / ((req && req.fps) || FPS)); return () => { subs.delete(fn); if (!subs.size && timer){ clearInterval(timer); timer = 0; } }; },
+      get armed(){ return !!timer; }, get subscribers(){ return subs.size; }
+    };
+  })();
+
+  /** H.dotSpectrum(el, {source, onTick}) → { set(active) } */
+  H.dotSpectrum = function(el, o){
+    o = o || {};
+    const source = o.source || H.levelSource;
+    el.classList.add('hj-spectrum');
+    const lit0 = o.litAlpha == null ? LIT : o.litAlpha;
+    const rows = Array.from({ length:DOTS }, (_, r) => ({ th:dotThreshold(r, DOTS), presence:dotPresence(r, DOTS, lit0) }));
+    el.innerHTML = Array.from({ length:BANDS }, () => `<span>${'<i></i>'.repeat(DOTS)}</span>`).join('');
+    const dots = $$('i', el); const last = new Float32Array(BANDS * DOTS);
+    let unsub = null, wanted = o.active !== false, visible = true;
+    function write(levels){
+      let writes = 0;
+      for (let b = 0; b < BANDS; b++){
+        const level = levels ? shapeLevel(levels[b] || 0) : 0;
+        for (let r = 0; r < DOTS; r++){
+          const k = b * DOTS + r; const lit = levels ? ignition(level, rows[r].th, DOTS) : 0;
+          if (lit === last[k]) continue; // quantised: unchanged dots cost nothing
+          last[k] = lit; writes++;
+          const d = dots[k]; d.style.opacity = (lit * rows[r].presence).toFixed(3); d.style.transform = `scale(${(.6 + lit * .4).toFixed(3)})`;
+        }
+      }
+      o.onTick && o.onTick(writes, !!levels);
+    }
+    function sync(){
+      const runs = wanted && visible && !H.reduced();
+      if (runs && !unsub){ unsub = source.subscribe(write, { bands:BANDS, fps:FPS }); }
+      if (!runs && unsub){ unsub(); unsub = null; write(null); }
+      o.onArm && o.onArm(!!unsub);
+    }
+    H.visible(el, v => { visible = v; sync(); });
+    H.on('motion', sync);
+    sync();
+    return { set(a){ wanted = !!a; sync(); }, get armed(){ return !!unsub; } };
+  };
+
+  /* ======================= Scrubber (anchor.ts · clock-format.ts · slider-hold.ts) ======================= */
+  const SECOND = 1000, MINUTE = 60 * SECOND, HOUR = 60 * MINUTE;
+  const pad = n => n < 10 ? '0' + n : '' + n;
+  function formatClock(ms){ if (!isFinite(ms) || ms <= 0) return '0:00'; const h = Math.floor(ms / HOUR), m = Math.floor((ms % HOUR) / MINUTE), s = Math.floor((ms % MINUTE) / SECOND); return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`; }
+  function formatRemaining(ms, span){ if (!(span > 0) || !isFinite(ms)) return '--:--'; const left = Math.max(0, span - Math.max(0, ms)); return '-' + formatClock(Math.ceil(left / SECOND) * SECOND); }
+  function projectAnchor(a, now, span){ if (!isFinite(a.value)) return 0; const el = now - a.at; const adv = a.rate > 0 && el > 0 ? a.value + el * a.rate : a.value; if (!(adv > 0)) return 0; return span > 0 && adv > span ? span : adv; }
+  const ratioOf = (pos, span) => (!(span > 0) || !isFinite(pos)) ? 0 : Math.min(1, Math.max(0, pos / span));
+  const positionAt = (ratio, span) => (!(span > 0) || !isFinite(ratio)) ? 0 : Math.round(Math.min(1, Math.max(0, ratio)) * span);
+  const HOLD_AGREEMENT = .02, HOLD_STALE_MS = 2500;
+  H.formatClock = formatClock; H.formatRemaining = formatRemaining;
+  H.anchorAt = (value, at, rate) => ({ value, at, rate });
+  H.projectAnchor = projectAnchor;
+
+  /** The app's out-of-band tick: one setInterval for every label on the page, armed on the first subscriber. */
+  H.clock = H.clock || (function(){
+    const ls = new Set(); let timer = 0;
+    return {
+      subscribe(fn){ ls.add(fn); if (!timer) timer = setInterval(() => { const now = performance.now(); ls.forEach(f => f(now)); }, 1000); return () => { ls.delete(fn); if (!ls.size && timer){ clearInterval(timer); timer = 0; } }; },
+      get armed(){ return !!timer; }
+    };
+  })();
+
+  /**
+   * H.scrubber(host, {span, anchor, onSeek(ms), label, clock}) → { setAnchor(a), anchor, position, setActive(b), el }
+   * Motion: a gated rAF re-projecting the anchor. Labels: the shared 1 Hz clock + every discontinuity.
+   */
+  H.scrubber = function(host, o){
+    const span = o.span; let anchor = o.anchor || { value:0, at:performance.now(), rate:0 };
+    const chars = formatClock(span).length + 1;
+    host.innerHTML = `<div class="hj-scrub"><span class="hj-scrub-time" style="min-width:${(chars * .62).toFixed(2)}em"></span><div class="hj-scrub-track" role="slider" tabindex="0" aria-label="${o.label || 'Position'}" aria-valuemin="0" aria-valuemax="${Math.round(span / 1000)}"><div class="hj-scrub-rail"><div class="hj-scrub-fill"></div></div><div class="hj-scrub-thumb"><i></i></div></div><span class="hj-scrub-time" style="min-width:${(chars * .62).toFixed(2)}em"></span></div>`;
+    const root = host.firstChild, [tEl, track, rEl] = root.children;
+    const fill = track.querySelector('.hj-scrub-fill'), thumb = track.querySelector('.hj-scrub-thumb');
+    let width = track.clientWidth || 1, raf = 0, visible = true, active = o.active !== false;
+    let dragging = false, springing = false, target = 0, held = -1, heldAt = 0, startX = 0;
+    const sp = H.spring(0, { spring:'snappy', onUpdate:() => paint(), onRest:() => { springing = false; paint(); kick(); } });
+
+    function projected(now){ return ratioOf(projectAnchor(anchor, now, span), span); }
+    function painted(now){ if (dragging || springing) return Math.min(1, Math.max(0, sp.x)); if (held >= 0) return held; return projected(now); }
+    function paint(){
+      const now = performance.now();
+      if (held >= 0 && !dragging && !springing){
+        const inc = projected(now);
+        if (Math.abs(inc - held) <= HOLD_AGREEMENT || now - heldAt > HOLD_STALE_MS){ held = -1; root.classList.remove('pending'); o.onAgree && o.onAgree(); }
+      }
+      const r = painted(now);
+      fill.style.transform = `scaleX(${r.toFixed(5)})`; thumb.style.transform = `translateX(${(r * width).toFixed(2)}px)`;
+      return r;
+    }
+    let lastLabels = '';
+    function labels(){
+      const now = performance.now();
+      const pos = (dragging || springing) ? positionAt(target, span) : held >= 0 ? positionAt(held, span) : projectAnchor(anchor, now, span);
+      const e = formatClock(pos), rm = formatRemaining(pos, span);
+      if (e + rm !== lastLabels){ lastLabels = e + rm; H.counter(tEl, e); H.counter(rEl, rm); }
+      track.setAttribute('aria-valuenow', String(Math.round(pos / 1000)));
+      track.setAttribute('aria-valuetext', `${formatClock(pos)} of ${formatClock(span)}`);
+      return pos;
+    }
+    function frame(){ raf = 0; paint(); if (running()) raf = requestAnimationFrame(frame); }
+    function running(){ return active && visible && anchor.rate > 0 && !dragging; }
+    function kick(){ if (running() && !raf) raf = requestAnimationFrame(frame); if (!running() && raf){ cancelAnimationFrame(raf); raf = 0; } }
+    let unclock = null;
+    function syncClock(){ const want = active && visible && anchor.rate > 0; if (want && !unclock) unclock = (o.clock || H.clock).subscribe(labels); if (!want && unclock){ unclock(); unclock = null; } }
+
+    const ratioFromX = x => { const r = track.getBoundingClientRect(); return Math.min(1, Math.max(0, (x - r.left) / r.width)); };
+    function commit(ratio){
+      held = ratio; heldAt = performance.now(); root.classList.add('pending');
+      o.onSeek && o.onSeek(positionAt(ratio, span));
+      labels(); paint();
+    }
+    track.addEventListener('pointerdown', e => {
+      if (e.button) return; e.preventDefault(); track.focus({ preventScroll:true });
+      const cur = sp.raf ? sp.x : painted(performance.now());
+      track.setPointerCapture(e.pointerId); dragging = true; springing = true; startX = e.clientX;
+      if (!sp.raf) sp.set(cur);
+      target = ratioFromX(e.clientX); sp.to(target); root.classList.add('held'); kick(); labels();
+    });
+    track.addEventListener('pointermove', e => { if (!dragging) return; target = ratioFromX(e.clientX); sp.to(target); labels(); });
+    const end = e => { if (!dragging) return; dragging = false; root.classList.remove('held'); commit(target); kick(); };
+    track.addEventListener('pointerup', end); track.addEventListener('pointercancel', end);
+    track.addEventListener('keydown', e => {
+      const pos = labels(); let next = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = pos + 5000;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = pos - 5000;
+      else if (e.key === 'PageUp') next = pos + 30000; else if (e.key === 'PageDown') next = pos - 30000;
+      else if (e.key === 'Home') next = 0; else if (e.key === 'End') next = span;
+      if (next == null) return; e.preventDefault();
+      const r = ratioOf(Math.min(span, Math.max(0, next)), span);
+      const cur = sp.raf ? sp.x : painted(performance.now());
+      springing = true; if (!sp.raf) sp.set(cur); target = r; sp.to(r); commit(r);
+    });
+    const ro = new ResizeObserver(() => { width = track.clientWidth || 1; paint(); }); ro.observe(track);
+    const unvis = H.visible(root, v => { visible = v; kick(); syncClock(); });
+
+    function setAnchor(a){ anchor = a; paint(); labels(); kick(); syncClock(); }
+    setAnchor(anchor);
+    return {
+      setAnchor, get anchor(){ return anchor; }, get position(){ return projectAnchor(anchor, performance.now(), span); },
+      get pending(){ return held >= 0; }, setActive(b){ active = !!b; kick(); syncClock(); root.classList.toggle('disabled', !b); }, el:root, span,
+      destroy(){ active = false; kick(); syncClock(); sp.stop(); ro.disconnect(); unvis(); }
+    };
+  };
+
+  /* ============================== plates ============================== */
+  H.paintArt($('#showcase'));
+
+  /* 08.01 bars */
+  const bars = $$('#playing-bars [data-bars]').map(el => H.playingBars(el));
+  const barsBtn = $('#p90-bars-toggle');
+  barsBtn.addEventListener('click', () => {
+    const on = barsBtn.getAttribute('aria-pressed') !== 'true';
+    barsBtn.setAttribute('aria-pressed', String(on));
+    barsBtn.innerHTML = `<svg class="ic s14" aria-hidden="true"><use href="#i-${on ? 'pause' : 'play'}-f"/></svg><span>${on ? 'Pause' : 'Play'}</span>`;
+    bars.forEach(b => b.set(on));
+  });
+
+  /* 08.02 spectrum */
+  const wEl = $('#p90-spec-writes'), tkEl = $('#p90-spec-ticks'), armEl = $('#p90-spec-arm'); let ticks = 0;
+  const paintArm = () => { const on = H.levelSource.armed; armEl.classList.toggle('on', on); armEl.textContent = on ? `source armed · 12 Hz · ${H.levelSource.subscribers} subscriber${H.levelSource.subscribers === 1 ? '' : 's'}` : (H.reduced() ? 'reduced motion — never armed' : 'source disarmed · 0 timers'); };
+  const spec = H.dotSpectrum($('#p90-spectrum'), {
+    onTick(w, live){ wEl.textContent = w; if (live) tkEl.textContent = H.fmt(++ticks); },
+    onArm(){ setTimeout(paintArm, 0); }
+  });
+  const specBare = H.dotSpectrum($('#p90-spectrum-bare'), { litAlpha:1, onArm(){ setTimeout(paintArm, 0); } });
+  const specBtn = $('#p90-spec-play'); let specOn = true;
+  specBtn.addEventListener('click', () => {
+    specOn = !specOn; spec.set(specOn); specBare.set(specOn);
+    specBtn.setAttribute('aria-label', specOn ? 'Pause' : 'Play');
+    specBtn.innerHTML = `<svg class="ic s24" aria-hidden="true"><use href="#i-${specOn ? 'pause' : 'play'}-f"/></svg>`;
+  });
+
+  /* 08.03 scrubber — the host owns the anchor and answers seeks after a latency */
+  const SPAN = 247000; let slow = false; let playing = false;
+  const stEl = $('#p90-scrub-st'), anEl = $('#p90-scrub-anchor');
+  const showAnchor = a => { anEl.textContent = `{ value: ${H.fmt(Math.round(a.value)).replace(/,/g, ' ')}, rate: ${a.rate} }`; };
+  const scrubA = H.scrubber($('#p90-scrub-a'), {
+    span:SPAN, anchor:H.anchorAt(83000, performance.now(), 0), label:'Position in The Long Way Round the Harbour',
+    onSeek(ms){
+      stEl.className = 'st wait'; stEl.textContent = `seeking — holding ${H.formatClock(ms)}`;
+      setTimeout(() => { const a = H.anchorAt(ms, performance.now(), playing ? 1 : 0); scrubA.setAnchor(a); showAnchor(a); }, slow ? 1400 : 320);
+    },
+    onAgree(){ stEl.className = 'st ok'; stEl.textContent = 'host agreed'; setTimeout(() => { if (!scrubA.pending){ stEl.className = 'st'; stEl.textContent = playing ? 'playing' : 'paused'; } }, 1200); }
+  });
+  showAnchor(scrubA.anchor);
+  const playBtn = $('#p90-scrub-play');
+  playBtn.addEventListener('click', () => {
+    playing = !playing;
+    const pos = scrubA.position; const a = H.anchorAt(pos >= SPAN ? 0 : pos, performance.now(), playing ? 1 : 0);
+    scrubA.setAnchor(a); showAnchor(a);
+    playBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    playBtn.innerHTML = `<svg class="ic s18" aria-hidden="true"><use href="#i-${playing ? 'pause' : 'play'}-f"/></svg>`;
+    if (!scrubA.pending){ stEl.className = 'st'; stEl.textContent = playing ? 'playing' : 'paused'; }
+  });
+  const slowBtn = $('#p90-slow');
+  slowBtn.addEventListener('click', () => { slow = !slow; slowBtn.setAttribute('aria-pressed', String(slow)); slowBtn.querySelector('span').textContent = slow ? 'Slow host · 1.4 s' : 'Slow host'; });
+  const LONG = 4120000;
+  const scrubB = H.scrubber($('#p90-scrub-b'), { span:LONG, anchor:H.anchorAt(3000000, performance.now(), 0), label:'Position in The Northern Line, episode 41',
+    onSeek(ms){ setTimeout(() => scrubB.setAnchor(H.anchorAt(ms, performance.now(), 0)), 320); } });
+
+  /* 08.04 generated art */
+  const input = $('#p90-title'), big = $('#p90-big'), bigSpec = $('#p90-big-spec');
+  function paintBig(){
+    const id = input.value.trim() || 'untitled'; const sp = H.artSpec(id);
+    big.innerHTML = H.art(id);
+    bigSpec.innerHTML = `<div><dt>palette</dt><dd>${sp.palette.name}</dd></div><div><dt>composition</dt><dd>${sp.compositionName}</dd></div><div><dt>seed</dt><dd>0x${sp.seed.toString(16).padStart(8, '0')}</dd></div>`;
+  }
+  input.addEventListener('input', paintBig); paintBig();
+  const TITLES = ['Saltmarsh','Paper Lanterns','Afterglow Studies','Small Hours','Low Tide, Early','Harbour Lights','Field Recordings, Jeju','Two for the Road','Quiet Machines','Seoul, 4 a.m.','Kite Season','Mulberry'];
+  const wall = $('#p90-wall'); let gen = 0;
+  function paintWall(){ wall.innerHTML = TITLES.map(t => { const id = gen ? `${t} · ${gen}` : t; return `<span class="hj-cover" title="${t}" style="--i:0">${H.art(id)}</span>`; }).join(''); Array.from(wall.children).forEach((c, i) => c.style.setProperty('--i', i)); }
+  paintWall();
+  $('#p90-reseed').addEventListener('click', () => { gen++; paintWall(); H.replay(wall); });
+
+  /* 08.05 collage */
+  const C4 = ['Saltmarsh','Paper Lanterns','Cedar & Salt','Low Tide, Early'];
+  $('#p90-collages').innerHTML = [4,3,2,1,0].map(n => `<div class="p90-size"><span class="hj-cover">${H.collage(C4.slice(0, n), 'Late Light, Vol. 2')}</span><span class="p90-cap">${n === 0 ? '<b>none</b> · fallback' : `<b>${n}</b> ${n === 1 ? 'cover' : 'covers'}`}</span></div>`).join('');
+  $('#p90-collage-rows').innerHTML = [
+    ['Late Light, Vol. 2', 'Playlist · 24 songs · 1 h 32 min', C4],
+    ['Two for the Road', 'Playlist · Aiko Sato · 2 songs', ['Afterglow Studies','Small Hours']]
+  ].map(r => `<div class="p90-row" style="grid-template-columns:48px 1fr auto"><span class="hj-cover" style="width:48px;height:48px;border-radius:var(--r-xs)">${H.collage(r[2])}</span><span class="tt"><b>${r[0]}</b><span>${r[1]}</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></div>`).join('');
+
+  /* 08.06 glyph cover */
+  $('#p90-glyphs').innerHTML = [[144,'download','Downloads','folder:Downloads'],[96,'heart','Liked songs','smart:liked'],[56,'clock','Recently played','Recent'],[40,'mic','Podcasts','cat:podcasts']].map(g => `<div class="p90-size"><span class="hj-cover hj-press" role="img" aria-label="${g[2]}" style="width:${g[0]}px;height:${g[0]}px">${H.glyphCover(g[1], g[3], g[0])}</span><span class="p90-cap"><b>${g[0]}</b> · glyph ${glyphFor(g[0])}</span></div>`).join('');
+  $('#p90-cats').innerHTML = [['layers','Local files','cat:local'],['mic','Podcasts','genre:podcasts'],['bookmark','Saved episodes','cat:saved'],['pin','Near you','genre:near'],['moon-z','Sleep','Sleep sounds'],['flag','Charts','Charts this week']].map(c => `<button class="p90-cat"><span class="hj-cover hj-press" style="width:72px;height:72px">${H.glyphCover(c[0], c[2], 72)}</span><span>${c[1]}</span></button>`).join('');
+})();
+</script>

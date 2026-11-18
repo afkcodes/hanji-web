@@ -1,0 +1,1371 @@
+<!-- ==========================================================================
+     06 · NAVIGATION — tab bar, top bar, section header, accordion, pager,
+     search, swipe actions, pull to refresh, steps, fast scroll.
+     ========================================================================== -->
+<style>
+/* ---------- shared demo pieces (p70) ---------- */
+.p70-scroll{ flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:none; overscroll-behavior:contain; position:relative }
+.p70-scroll::-webkit-scrollbar{ display:none }
+.p70-side{ width:256px; display:flex; flex-direction:column; gap:22px; align-self:center }
+.p70-side-label{ font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute); margin-bottom:10px; display:flex; justify-content:space-between }
+.p70-readout{ white-space:pre; font:500 12px/1.6 var(--mono); color:var(--fg-dim); font-variant-numeric:tabular-nums }
+.p70-note{ font-size:13px; line-height:1.55; color:var(--fg-dim); margin:0 }
+.p70-note b{ color:var(--fg); font-weight:600 }
+.p70-pad{ padding:4px 20px 0 }
+.p70-lt{ margin:0; padding:2px 20px 2px; font:700 34px/38px var(--font); letter-spacing:-.5px }
+.p70-lt-sub{ margin:2px 20px 14px; font-size:12.5px; line-height:17px; color:var(--fg-dim) }
+.p70-row{
+  position:relative; display:flex; align-items:center; gap:12px; min-height:56px; padding:8px 20px;
+  text-decoration:none; color:inherit; width:100%; text-align:left;
+}
+.p70-row::after{ content:""; position:absolute; left:72px; right:0; bottom:0; height:1px; background:var(--line) }
+.p70-row:last-child::after{ display:none }
+.p70-row-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px }
+.p70-row-title{ font-weight:500; font-size:15px; line-height:20px; letter-spacing:-.005em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p70-row-sub{ font-size:12.5px; line-height:17px; color:var(--fg-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p70-row-trail{ color:var(--fg-mute); display:flex; align-items:center; gap:6px; font:500 12px/1 var(--mono); font-variant-numeric:tabular-nums }
+.p70-art{
+  --c:var(--data-1); width:40px; height:40px; flex:none; border-radius:var(--r-xs); display:grid; place-items:center;
+  background:color-mix(in srgb, var(--c) 20%, var(--surface)); color:var(--c); font-weight:700; font-size:15px; letter-spacing:-.02em;
+}
+.p70-art .ic{ width:20px; height:20px }
+.p70-av{
+  --c:var(--data-1); width:36px; height:36px; flex:none; border-radius:50%; display:grid; place-items:center;
+  background:color-mix(in srgb, var(--c) 20%, var(--surface)); color:var(--c); font-weight:600; font-size:13px; letter-spacing:.01em;
+}
+@supports (corner-shape: squircle){ .p70-art{ corner-shape:superellipse(1.6) } }
+@keyframes p70-rise{ from{ opacity:0; transform:translateY(calc(10px * var(--travel))) } }
+.p70-enter{ animation:p70-rise var(--dur-base) var(--ease-out) both }
+.p70-lin{ flex:none; width:34px; height:22px; margin-top:1px; color:var(--accent) }
+
+/* ---------- 06.01 Tab bar ---------- */
+.hj-tabbar{
+  --inset:20px; flex:none; position:relative; display:grid; grid-template-columns:repeat(5, 1fr);
+  height:calc(56px + var(--inset)); padding-bottom:var(--inset);
+  background:var(--bg); border-top:1px solid var(--line);
+}
+.hj-tabbar.bare{ --inset:0px; border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden }
+.hj-tabbar::after{ /* home indicator, part of the inset */
+  content:""; position:absolute; left:50%; bottom:7px; width:120px; height:4px; margin-left:-60px; border-radius:2px; background:var(--fg); opacity:.85;
+}
+.hj-tabbar.bare::after{ display:none }
+.hj-tab{
+  position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  min-height:44px; color:var(--fg-dim); font-weight:600; font-size:10.5px; line-height:13px; letter-spacing:.15px;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.hj-tab[aria-selected="true"]{ color:var(--accent) }
+.hj-tab[aria-selected="true"] .ic{ stroke-width:1.75 }
+.hj-tab .tab-ic{ position:relative; display:block; width:24px; height:24px; will-change:transform }
+.hj-tab .tab-ic .ic{ width:24px; height:24px }
+.hj-tab:focus-visible{ outline-offset:-6px; border-radius:var(--r-sm) }
+.hj-tab-badge{
+  position:absolute; top:-5px; left:15px; min-width:18px; height:18px; padding:0 5px; border-radius:var(--r-pill);
+  background:var(--accent); color:var(--on-accent); font:600 10.5px/18px var(--font); text-align:center; font-variant-numeric:tabular-nums;
+  box-shadow:0 0 0 2px var(--bg);
+  transition:transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+.hj-tab-badge.gone{ transform:scale(0); opacity:0 }
+.hj-tabbar.bare .hj-tab-badge{ box-shadow:0 0 0 2px var(--bg) }
+.p70-tab-panel[hidden]{ display:none }
+.p70-hello{ margin:6px 20px 2px; font:700 22px/26px var(--font); letter-spacing:-.3px }
+.p70-hello-sub{ margin:0 20px 18px; font-size:13.5px; line-height:19px; color:var(--fg-dim) }
+.p70-mini-head{ display:flex; justify-content:space-between; align-items:baseline; padding:10px 20px 4px }
+.p70-mini-head h4{ margin:0; font:600 17px/22px var(--font); letter-spacing:-.2px }
+.p70-mini-head a{ font-weight:600; font-size:13px; color:var(--accent); text-decoration:none }
+.p70-tiles{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:4px 20px 20px }
+.p70-tile{
+  --c:var(--data-1); height:84px; border-radius:var(--r-sm); padding:12px; display:flex; align-items:flex-end;
+  background:color-mix(in srgb, var(--c) 18%, var(--surface)); font-weight:600; font-size:14px; letter-spacing:-.01em;
+}
+.p70-field{ margin:0 20px 16px; height:40px; border-radius:var(--r-pill); background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); display:flex; align-items:center; gap:8px; padding:0 14px; color:var(--fg-mute); font-size:14.5px }
+.p70-unread{ width:8px; height:8px; border-radius:50%; background:var(--accent); flex:none }
+.p70-you{ display:flex; align-items:center; gap:14px; padding:8px 20px 18px }
+.p70-you .p70-av{ width:56px; height:56px; font-size:19px }
+.p70-tabs-side .hj-tabbar{ width:256px }
+.p70-tabs-side .hj-tab{ font-size:10px }
+
+/* ---------- 06.02 Top bar & large title ---------- */
+.hj-topbar{
+  --p:0; --lp:0; flex:none; position:relative; z-index:2; height:44px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+  padding:0 6px; background:var(--bg);
+}
+.hj-topbar::after{ content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; background:var(--line); opacity:var(--lp) }
+.hj-topbar-back{ justify-self:start; display:inline-flex; align-items:center; gap:0; height:44px; padding:0 10px 0 2px; color:var(--accent); font-weight:500; font-size:16px; letter-spacing:-.01em }
+.hj-topbar-back .ic{ width:24px; height:24px; stroke-width:1.75 }
+.hj-topbar-title{
+  font-weight:600; font-size:17px; line-height:22px; letter-spacing:-.2px; white-space:nowrap;
+  opacity:var(--p); transform:translateY(calc((1 - var(--p)) * 6px * var(--travel)));
+}
+.hj-topbar-act{ justify-self:end; width:44px; height:44px; display:grid; place-items:center; color:var(--accent); border-radius:50% }
+.hj-topbar-act .ic{ width:22px; height:22px; stroke-width:1.75 }
+
+/* ---------- 06.03 Section header ---------- */
+.p70-sh-wrap{ width:min(100%, 480px); display:flex; flex-direction:column; gap:34px }
+.hj-sechead{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:12px }
+.hj-sechead-text{ min-width:0 }
+.hj-sechead-eyebrow{ display:block; margin-bottom:5px; font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.hj-sechead h4{ margin:0; font:600 19px/24px var(--font); letter-spacing:-.2px; display:flex; align-items:baseline; gap:8px }
+.hj-sechead-count{ font:500 12.5px/1 var(--mono); color:var(--fg-mute); letter-spacing:.2px; font-variant-numeric:tabular-nums }
+.hj-sechead-act{
+  position:relative; flex:none; display:inline-flex; align-items:center; gap:1px; height:24px; color:var(--accent);
+  font-weight:600; font-size:13.5px; letter-spacing:-.005em; text-decoration:none;
+}
+.hj-sechead-act::before{ content:""; position:absolute; inset:-10px -8px; } /* 44 target */
+.hj-sechead-act .ic{ width:16px; height:16px; stroke-width:1.75; transition:transform var(--dur-snappy) var(--ease-snappy) }
+.hj-sechead-act:hover .ic, .hj-sechead-act:focus-visible .ic{ transform:translateX(2px) }
+.p70-sh-tiles{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px }
+.p70-sh-tile{ display:flex; flex-direction:column; gap:7px; font-size:12.5px; line-height:16px }
+.p70-sh-tile .p70-art{ width:100%; height:auto; aspect-ratio:1; border-radius:var(--r-sm); font-size:24px }
+.p70-sh-tile > span:not(.p70-art){ color:var(--fg-dim) }
+.p70-sh-tile b{ font-weight:600; color:var(--fg); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p70-sh-rows .p70-row{ padding-left:0; padding-right:0 }
+.p70-sh-rows .p70-row::after{ left:52px }
+
+/* ---------- 06.04 Accordion ---------- */
+.hj-accordion{ width:min(100%, 540px); border-top:1px solid var(--line) }
+.hj-accordion-item{ border-bottom:1px solid var(--line) }
+.hj-accordion h4{ margin:0 }
+.hj-accordion-btn{
+  width:100%; min-height:56px; padding:15px 2px; display:flex; align-items:center; justify-content:space-between; gap:20px;
+  text-align:left; font:600 15px/1.35 var(--font); letter-spacing:-.01em; color:var(--fg);
+}
+.hj-accordion-btn:focus-visible{ outline-offset:-2px }
+.hj-accordion-chev{ flex:none; width:20px; height:20px; color:var(--fg-dim); transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle) }
+.hj-accordion-item.open .hj-accordion-chev{ transform:rotate(180deg); color:var(--fg) }
+.hj-accordion-panel{ display:grid; grid-template-rows:0fr; transition:grid-template-rows var(--dur-fast) var(--ease-out) }
+.hj-accordion-item.open .hj-accordion-panel{ grid-template-rows:1fr; transition:grid-template-rows var(--dur-gentle-settle) var(--ease-gentle-settle) }
+.hj-accordion-inner{ overflow:hidden; min-height:0 }
+.hj-accordion-inner p{
+  margin:0; padding:0 44px 18px 2px; font-size:14px; line-height:1.6; color:var(--fg-dim);
+  opacity:0; transform:translateY(calc(-4px * var(--travel)));
+  transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.hj-accordion-item.open .hj-accordion-inner p{
+  opacity:1; transform:none;
+  transition:opacity var(--dur-base) var(--ease-out) 50ms, transform var(--dur-gentle-settle) var(--ease-gentle-settle) 50ms;
+}
+.hj-accordion-inner p b{ color:var(--fg); font-weight:600 }
+
+/* ---------- 06.05 Pager ---------- */
+.hj-pager{ flex:1; min-height:0; display:flex; flex-direction:column; position:relative }
+.hj-pager-track{
+  flex:1; min-height:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none;
+  overscroll-behavior-x:contain; outline:none;
+}
+.hj-pager-track::-webkit-scrollbar{ display:none }
+.hj-pager-track:focus-visible{ box-shadow:inset 0 0 0 2px var(--accent); border-radius:var(--r-lg) }
+.hj-pager-page{ flex:0 0 100%; scroll-snap-align:start; scroll-snap-stop:always; display:flex; flex-direction:column; padding:0 28px; overflow:hidden }
+.hj-pager-art{ flex:1; display:grid; place-items:center; will-change:transform }
+.hj-pager-mark{
+  width:176px; height:176px; border-radius:44px; display:grid; place-items:center; position:relative;
+  background:var(--accent-soft); color:var(--accent);
+}
+@supports (corner-shape: squircle){ .hj-pager-mark{ corner-shape:superellipse(1.6) } }
+.hj-pager-mark .ic{ width:76px; height:76px; stroke-width:1 }
+.hj-pager-mark small{ position:absolute; left:16px; top:14px; font:500 11px/1 var(--mono); color:var(--accent); opacity:.7 }
+.hj-pager-copy{ padding-bottom:22px }
+.hj-pager-copy h4{ margin:0 0 8px; font:700 26px/30px var(--font); letter-spacing:-.6px }
+.hj-pager-copy p{ margin:0; font-size:15px; line-height:22px; color:var(--fg-dim); max-width:290px }
+.hj-pager-foot{ flex:none; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:12px 20px 30px }
+.hj-pager-foot .hj-btn.quiet{ justify-self:start; color:var(--fg-dim); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.hj-pager-foot .hj-btn.quiet.hide{ opacity:0; pointer-events:none }
+.hj-pager-foot .p70-next{ justify-self:end; min-width:104px }
+.hj-dots{ position:relative; display:flex; gap:10px; height:6px; padding:0 7px }
+.hj-dot{ position:relative; width:6px; height:6px; border-radius:3px; background:rgba(var(--fg-rgb), .2) }
+.hj-dot::before{ content:""; position:absolute; inset:-19px -4px; } /* 44 tall target */
+.hj-dot:focus-visible{ outline-offset:3px }
+.hj-dots-ind{
+  position:absolute; left:7px; top:0; width:36px; height:6px; border-radius:3px; background:var(--accent);
+  transform-origin:left center; pointer-events:none; will-change:transform;
+}
+
+/* ---------- 06.06 Search ---------- */
+.hj-search{ width:min(100%, 440px); align-self:flex-start; min-height:420px }
+.hj-search-field{
+  height:44px; display:flex; align-items:center; gap:10px; padding:0 8px 0 14px; border-radius:var(--r-pill);
+  background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); color:var(--fg-mute);
+  transition:box-shadow var(--dur-fast) var(--ease-out);
+}
+.hj-search-field:focus-within{ box-shadow:inset 0 0 0 1.5px var(--accent) }
+.hj-search-field .ic{ flex:none }
+.hj-search-field input{ flex:1; min-width:0; height:100%; border:0; outline:0; background:transparent; font-size:15px; font-weight:500; color:var(--fg); caret-color:var(--accent) }
+.hj-search-field input::placeholder{ color:var(--fg-mute); font-weight:400 }
+.hj-search-field input::-webkit-search-cancel-button{ display:none }
+.hj-search-clear{
+  position:relative; flex:none; width:24px; height:24px; border-radius:50%; display:grid; place-items:center; background:rgba(var(--fg-rgb), .1); color:var(--fg-dim);
+  opacity:0; transform:scale(.6); pointer-events:none;
+  transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy);
+}
+.hj-search-clear::before{ content:""; position:absolute; inset:-10px }
+.hj-search-clear .ic{ width:13px; height:13px; stroke-width:2 }
+.hj-search.has .hj-search-clear{ opacity:1; transform:none; pointer-events:auto }
+.hj-search-head{ display:flex; justify-content:space-between; align-items:center; padding:18px 2px 6px }
+.hj-search-head span{ font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.hj-search-head button{ font-weight:600; font-size:13px; color:var(--accent); height:28px }
+.hj-search-list{ margin:0; padding:0; list-style:none }
+.hj-search-opt{
+  position:relative; display:flex; align-items:center; gap:12px; min-height:52px; padding:6px 8px; border-radius:var(--r-sm); cursor:pointer;
+}
+.hj-search-opt[aria-selected="true"]{ background:rgba(var(--fg-rgb), .055) }
+.hj-search-opt .p70-art, .hj-search-opt .p70-av{ width:36px; height:36px; font-size:13px }
+.hj-search-opt .p70-av{ font-size:12px }
+.hj-search-opt .nm{ font-size:15px; font-weight:500; color:var(--fg-dim); letter-spacing:-.005em }
+.hj-search-opt .nm b{ color:var(--fg); font-weight:700 }
+.hj-search-opt .kd{ font-size:12.5px; color:var(--fg-mute) }
+.hj-search-opt .rm{ position:relative; margin-left:auto; width:28px; height:28px; display:grid; place-items:center; border-radius:50%; color:var(--fg-mute) }
+.hj-search-opt .rm::before{ content:""; position:absolute; inset:-8px }
+.hj-search-opt .rm:hover{ color:var(--fg); background:rgba(var(--fg-rgb), .06) }
+.hj-search-opt .rm .ic{ width:15px; height:15px }
+.hj-search-opt .clk{ width:36px; height:36px; display:grid; place-items:center; color:var(--fg-mute); flex:none }
+.hj-search-empty{ padding:36px 2px 8px }
+.hj-search-empty h5{ margin:0 0 6px; font:600 17px/22px var(--font); letter-spacing:-.2px; color:var(--fg) }
+.hj-search-empty p{ margin:0; font-size:14px; line-height:1.55; color:var(--fg-dim) }
+.hj-search-empty button{ color:var(--accent); font-weight:600 }
+.hj-search-quiet{ padding:16px 2px; font-size:13.5px; color:var(--fg-mute) }
+
+/* ---------- 06.07 Swipe actions ---------- */
+.hj-swipe{ width:min(100%, 440px); align-self:flex-start }
+.hj-swipe-list{ border-top:1px solid var(--line) }
+.hj-swipe-row{ position:relative; overflow:hidden; border-bottom:1px solid var(--line); touch-action:pan-y; user-select:none; -webkit-user-select:none }
+.hj-swipe-content{
+  position:relative; z-index:1; display:flex; align-items:flex-start; gap:12px; padding:13px 4px 13px 2px; min-height:72px;
+  background:var(--bg-soft); cursor:grab; will-change:transform;
+}
+.hj-swipe-row.dragging .hj-swipe-content{ cursor:grabbing }
+.hj-swipe-content .p70-av{ margin-top:1px }
+.hj-swipe-text{ flex:1; min-width:0 }
+.hj-swipe-top{ display:flex; justify-content:space-between; align-items:baseline; gap:12px }
+.hj-swipe-name{ font-weight:600; font-size:15px; line-height:20px; letter-spacing:-.01em }
+.hj-swipe-time{ font:500 11.5px/1 var(--mono); color:var(--fg-mute); font-variant-numeric:tabular-nums; flex:none }
+.hj-swipe-prev{ margin-top:2px; font-size:13.5px; line-height:19px; color:var(--fg-dim); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden }
+.hj-swipe-more{
+  position:relative; flex:none; width:32px; height:32px; margin:-4px -2px 0 0; border-radius:50%; display:grid; place-items:center; color:var(--fg-mute);
+  opacity:0; transition:opacity var(--dur-fast) var(--ease-out);
+}
+.hj-swipe-more::before{ content:""; position:absolute; inset:-6px }
+.hj-swipe-row:hover .hj-swipe-more, .hj-swipe-more:focus-visible, .hj-swipe-row.open .hj-swipe-more{ opacity:1 }
+.hj-swipe-more:hover{ background:rgba(var(--fg-rgb), .06); color:var(--fg) }
+.hj-swipe-act{
+  position:absolute; top:0; bottom:0; left:0; width:100%; display:flex; align-items:center; padding-left:0;
+  font-weight:600; font-size:11.5px; letter-spacing:.1px; will-change:transform;
+}
+.hj-swipe-act > span{ width:76px; display:flex; flex-direction:column; align-items:center; gap:5px; will-change:transform, opacity }
+.hj-swipe-act .ic{ width:20px; height:20px }
+.hj-swipe-act.del{ background:var(--danger-soft); color:var(--danger); z-index:0 }
+.hj-swipe-act.arc{ background:var(--fg); color:var(--bg); z-index:0 }
+.hj-swipe-act:focus-visible{ outline-offset:-3px }
+.hj-swipe-undo{
+  margin-top:14px; display:flex; align-items:center; gap:12px; min-height:48px; padding:0 6px 0 16px; border-radius:var(--r-md);
+  background:var(--fg); color:var(--bg); font-size:13.5px; position:relative; overflow:hidden;
+  opacity:0; transform:translateY(calc(8px * var(--travel))); pointer-events:none;
+  transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.hj-swipe-undo.show{ opacity:1; transform:none; pointer-events:auto; transition:opacity var(--dur-base) var(--ease-out), transform var(--dur-gentle-settle) var(--ease-gentle-settle) }
+.hj-swipe-undo .ic{ width:18px; height:18px; flex:none }
+.hj-swipe-undo span{ flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.hj-swipe-undo button{ height:36px; padding:0 12px; border-radius:var(--r-pill); font-weight:600; color:var(--bg); background:rgba(var(--bg-rgb), .14) }
+.hj-swipe-undo i{ position:absolute; left:0; right:0; bottom:0; height:2px; background:rgba(var(--bg-rgb), .45); transform-origin:left center }
+.hj-swipe-reset{ margin-top:14px; font-size:13px; color:var(--fg-mute) }
+.hj-swipe-reset button{ color:var(--accent); font-weight:600 }
+
+/* ---------- 06.08 Pull to refresh ---------- */
+.p70-ptr-view{ position:relative; flex:1; min-height:0; display:flex; flex-direction:column; user-select:none; -webkit-user-select:none }
+.p70-ptr-view .p70-scroll{ cursor:grab }
+.p70-ptr-view.dragging .p70-scroll{ cursor:grabbing }
+.p70-ptr-content{ will-change:transform; background:var(--bg); position:relative; z-index:1; min-height:100% }
+.hj-ptr{
+  position:absolute; left:50%; top:0; width:28px; height:28px; margin-left:-14px; z-index:0; color:var(--accent);
+  opacity:0; will-change:transform, opacity;
+}
+.hj-ptr svg{ width:28px; height:28px; display:block; transition:transform var(--dur-snappy) var(--ease-snappy) }
+.hj-ptr.armed svg{ transform:scale(1.12) }
+.hj-ptr .trk{ stroke:rgba(var(--fg-rgb), .1) }
+.hj-ptr .arc{ stroke:currentColor; transform-origin:14px 14px }
+.hj-ptr.spin .rot{ animation:p70-spin 820ms linear infinite; transform-origin:14px 14px }
+html[data-motion="reduced"] .hj-ptr.spin .rot{ animation:none }
+@keyframes p70-spin{ to{ transform:rotate(360deg) } }
+.hj-ptr-label{
+  position:absolute; left:50%; top:34px; transform:translateX(-50%); white-space:nowrap; font-size:11.5px; font-weight:600; color:var(--fg-mute);
+  opacity:0; transition:opacity var(--dur-fast) var(--ease-out);
+}
+.hj-ptr.armed .hj-ptr-label, .hj-ptr.spin .hj-ptr-label{ opacity:1 }
+.p70-feed .p70-row{ align-items:flex-start; padding-top:12px; padding-bottom:12px }
+.p70-feed .p70-row-title{ white-space:normal; font-size:14.5px; line-height:20px }
+.p70-feed .p70-row-title b{ font-weight:600 }
+.p70-feed .p70-row-trail{ padding-top:3px }
+.p70-feed .p70-row.fresh{ animation:p70-rise var(--dur-base) var(--ease-out) both, p70-tint 1600ms var(--ease-out) both }
+@keyframes p70-tint{ from{ background:var(--accent-soft) } to{ background:transparent } }
+.p70-updated{ transition:color var(--dur-base) var(--ease-out) }
+.p70-updated.now{ color:var(--accent) }
+
+/* ---------- 06.09 Steps ---------- */
+.hj-steps{ width:min(100%, 480px) }
+.hj-steps-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px }
+.hj-steps-count{ font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.hj-steps-count b{ color:var(--fg); font-weight:600 }
+.hj-steps-pct{ font:500 12px/1 var(--mono); color:var(--fg-mute); font-variant-numeric:tabular-nums }
+.hj-steps-bar{ display:grid; grid-template-columns:repeat(4, 1fr); gap:4px }
+.hj-steps-seg{ height:4px; border-radius:2px; overflow:hidden; background:rgba(var(--accent-rgb), .22) }
+.hj-steps-seg i{ display:block; height:100%; background:var(--accent); transform:scaleX(0); transform-origin:left center; transition:transform var(--dur-fast) var(--ease-out) }
+.hj-steps-seg.done i, .hj-steps-seg.cur i{ transform:scaleX(1); transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle) }
+.hj-steps-labels{ display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; margin-top:10px }
+.hj-steps-labels span{ display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500; color:var(--fg-mute); transition:color var(--dur-fast) var(--ease-out) }
+.hj-steps-labels span .ic{ width:13px; height:13px; stroke-width:2.2; color:var(--accent); display:none }
+.hj-steps-labels span.done{ color:var(--fg-dim) }
+.hj-steps-labels span.done .ic{ display:block }
+.hj-steps-labels span.cur{ color:var(--fg); font-weight:600 }
+.hj-steps-stage{ position:relative; min-height:128px; margin-top:34px; overflow:hidden }
+.hj-steps-body{ position:absolute; inset:0 0 auto 0 }
+.hj-steps-body h4{ margin:0 0 8px; font:700 26px/30px var(--font); letter-spacing:-.6px }
+.hj-steps-body p{ margin:0; font-size:15px; line-height:23px; color:var(--fg-dim); max-width:420px }
+.hj-steps-body.in-r{ animation:p70-from-r var(--dur-gentle-settle) var(--ease-gentle-settle) both }
+.hj-steps-body.in-l{ animation:p70-from-l var(--dur-gentle-settle) var(--ease-gentle-settle) both }
+@keyframes p70-from-r{ from{ opacity:0; transform:translateX(calc(12px * var(--travel))) } }
+@keyframes p70-from-l{ from{ opacity:0; transform:translateX(calc(-12px * var(--travel))) } }
+.hj-steps-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:18px; padding-top:18px; border-top:1px solid var(--line) }
+.hj-steps-foot .hint{ font-size:12.5px; color:var(--fg-mute) }
+.hj-steps-foot .btns{ display:flex; gap:8px }
+
+/* ---------- 06.10 Fast scroll ---------- */
+.p70-fs-view{ position:relative; flex:1; min-height:0; display:flex; flex-direction:column }
+.p70-fs-head{
+  position:sticky; top:0; z-index:1; padding:7px 44px 5px 20px; background:var(--bg);
+  font-weight:600; font-size:10px; line-height:12px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute);
+}
+.p70-fs-list .p70-row{ min-height:52px; padding-right:44px }
+.p70-fs-list .p70-row::after{ left:68px; right:36px }
+.p70-fs-list .p70-av{ width:36px; height:36px; font-size:12.5px }
+.hj-fast{
+  position:absolute; right:2px; top:96px; bottom:30px; width:24px; z-index:3; display:flex; flex-direction:column; justify-content:space-between; align-items:center;
+  padding:4px 0; touch-action:none; user-select:none; -webkit-user-select:none; cursor:ns-resize; border-radius:12px;
+}
+.hj-fast:focus-visible{ outline:2px solid var(--accent); outline-offset:0 }
+.hj-fast span{ font-weight:600; font-size:9.5px; line-height:1; color:var(--fg-dim); transition:color var(--dur-fast) var(--ease-out) }
+.hj-fast span.empty{ color:var(--fg-mute); opacity:.55 }
+.hj-fast span.on{ color:var(--accent) }
+.hj-fast-bubble{
+  position:absolute; right:40px; top:0; width:56px; height:56px; z-index:4; border-radius:var(--r-md); display:grid; place-items:center;
+  background:var(--accent); color:var(--on-accent); font:700 26px/1 var(--font); letter-spacing:-.02em; pointer-events:none;
+  opacity:0; transform:translateY(var(--y, 0px)) scale(.6); transform-origin:right center;
+  transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+@supports (corner-shape: squircle){ .hj-fast-bubble{ corner-shape:superellipse(1.6) } }
+.hj-fast-bubble.on{ opacity:1; transform:translateY(var(--y, 0px)) scale(1); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.hj-fast-bubble.track{ transition:opacity var(--dur-fast) var(--ease-out) }
+.hj-fast-bubble b{ font-weight:700; display:block }
+.hj-fast-bubble b.pop{ animation:p70-pop var(--dur-snappy) var(--ease-snappy) }
+@keyframes p70-pop{ from{ transform:scale(.82) } }
+
+@media (max-width: 1100px){ .p70-side{ width:100%; max-width:360px } }
+</style>
+
+<section class="chapter" id="navigation" data-num="06" data-title="Navigation">
+  <header class="chapter-head">
+    <div class="chapter-line"><h2 class="chapter-title">Navigation</h2><span class="chapter-rule"></span><span class="chapter-num">06</span></div>
+    <div class="chapter-body">
+      <p class="chapter-lede">Navigation is chrome, and hanji keeps chrome plain — five equal tabs, a title that steps aside as you scroll, a bar that knows where you are — so the content gets the character. <b>Every gesture here follows the finger first and the spring second.</b></p>
+      <ol class="chapter-index" data-auto></ol>
+    </div>
+  </header>
+
+  <!-- 06.01 TAB BAR ===================================================== -->
+  <article class="entry" id="tab-bar">
+    <div class="entry-meta">
+      <div class="entry-num">06.01</div>
+      <h3 class="entry-title">Tab bar</h3>
+      <p class="entry-desc">The app's top-level destinations, always one tap away. Five equal tabs, icon over label, nothing raised in the middle. <b>Not for actions</b> — a tab never opens a sheet or starts a recording.</p>
+      <dl class="spec">
+        <div><dt>Height</dt><dd><b>56</b> + bottom inset</dd></div>
+        <div><dt>Tabs</dt><dd>2–5 equal · icon 24 · label 10.5/600</dd></div>
+        <div><dt>Paint</dt><dd>bg · top hairline · on accent · idle fg-dim</dd></div>
+        <div><dt>Badge</dt><dd>18 · accent · 2px bg ring · 99+</dd></div>
+        <div><dt>Motion</dt><dd>chosen icon settles once on bouncy</dd></div>
+        <div><dt>A11y</dt><dd>role=tablist · ← → · labels always shown</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="bouncy"></span><span>The only bouncy thing in the chrome: one small settle on the icon you chose, because it confirms a choice. The screen itself just rises in.</span></p>
+    </div>
+    <div class="plate plate--phone">
+      <div class="plate-tools"><button class="plate-btn" id="p70-tab-reset">Reset badge</button></div>
+      <div class="phone" id="p70-tabs">
+        <div class="phone-status"><span class="num">9:41</span><span class="ind"><b></b><i></i></span></div>
+        <div class="p70-scroll" data-panel id="p70-tp-0" role="tabpanel" aria-labelledby="p70-t-0">
+          <h4 class="p70-hello">Good evening, Aiko</h4>
+          <p class="p70-hello-sub">Two new releases from artists you follow, and your Friday mix is ready.</p>
+          <div class="p70-mini-head"><h4>Jump back in</h4><a href="#tab-bar">See all</a></div>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-1)">L</span><span class="p70-row-text"><span class="p70-row-title">Late Trains</span><span class="p70-row-sub">Playlist · 42 songs</span></span><span class="p70-row-trail">2:31:08</span></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-2)">B</span><span class="p70-row-text"><span class="p70-row-title">Breakwater</span><span class="p70-row-sub">EP · Harbour Lights · new</span></span><span class="p70-row-trail">24:12</span></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-3)">S</span><span class="p70-row-text"><span class="p70-row-title">Sunday, slowly</span><span class="p70-row-sub">Playlist · Ilse Brandt</span></span><span class="p70-row-trail">1:04:40</span></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-4)">F</span><span class="p70-row-text"><span class="p70-row-title">Friday mix</span><span class="p70-row-sub">Made for you · 30 songs</span></span><span class="p70-row-trail">1:52:19</span></a>
+        </div>
+        <div class="p70-scroll" data-panel id="p70-tp-1" role="tabpanel" aria-labelledby="p70-t-1" hidden>
+          <h4 class="p70-lt">Search</h4>
+          <div class="p70-field" style="margin-top:12px"><svg class="ic s18" aria-hidden="true"><use href="#i-search"/></svg>Artists, songs, playlists</div>
+          <div class="p70-mini-head"><h4>Browse</h4></div>
+          <div class="p70-tiles">
+            <div class="p70-tile" style="--c:var(--data-1)">New releases</div><div class="p70-tile" style="--c:var(--data-2)">Focus</div>
+            <div class="p70-tile" style="--c:var(--data-3)">Calm mornings</div><div class="p70-tile" style="--c:var(--data-5)">Live sessions</div>
+            <div class="p70-tile" style="--c:var(--data-4)">Podcasts</div><div class="p70-tile" style="--c:var(--data-6)">Charts</div>
+          </div>
+        </div>
+        <div class="p70-scroll" data-panel id="p70-tp-2" role="tabpanel" aria-labelledby="p70-t-2" hidden>
+          <h4 class="p70-lt">Library</h4>
+          <p class="p70-lt-sub">1,284 songs · 4.2 GB downloaded</p>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-1)"><svg class="ic" aria-hidden="true"><use href="#i-queue"/></svg></span><span class="p70-row-text"><span class="p70-row-title">Playlists</span><span class="p70-row-sub">24</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-2)"><svg class="ic" aria-hidden="true"><use href="#i-disc"/></svg></span><span class="p70-row-text"><span class="p70-row-title">Albums</span><span class="p70-row-sub">96</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-3)"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span class="p70-row-text"><span class="p70-row-title">Artists</span><span class="p70-row-sub">48</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-art" style="--c:var(--data-4)"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></span><span class="p70-row-text"><span class="p70-row-title">Downloads</span><span class="p70-row-sub">312 songs · 4.2 GB</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+        </div>
+        <div class="p70-scroll" data-panel id="p70-tp-3" role="tabpanel" aria-labelledby="p70-t-3" hidden>
+          <h4 class="p70-lt">Inbox</h4>
+          <p class="p70-lt-sub" id="p70-inbox-sub">3 new since this morning</p>
+          <div class="p70-row"><span class="p70-av" style="--c:var(--data-1)">NH</span><span class="p70-row-text"><span class="p70-row-title">Noor Haddad shared Late Trains</span><span class="p70-row-sub">42 songs for the 7:14 to Leeds</span></span><span class="p70-unread" aria-label="Unread"></span></div>
+          <div class="p70-row"><span class="p70-av" style="--c:var(--data-3)">JP</span><span class="p70-row-text"><span class="p70-row-title">Jun-seo Park replied</span><span class="p70-row-sub">“Is Lossless per device?”</span></span><span class="p70-unread" aria-label="Unread"></span></div>
+          <div class="p70-row"><span class="p70-av" style="--c:var(--data-5)">TR</span><span class="p70-row-text"><span class="p70-row-title">Tomás Reyes invited you</span><span class="p70-row-sub">Edit “Sunday, slowly”</span></span><span class="p70-unread" aria-label="Unread"></span></div>
+          <div class="p70-row"><span class="p70-av" style="--c:var(--data-2)">IB</span><span class="p70-row-text"><span class="p70-row-title">Ilse Brandt liked your mix</span><span class="p70-row-sub">Yesterday</span></span></div>
+        </div>
+        <div class="p70-scroll" data-panel id="p70-tp-4" role="tabpanel" aria-labelledby="p70-t-4" hidden>
+          <h4 class="p70-lt">You</h4>
+          <div class="p70-you" style="margin-top:10px"><span class="p70-av" style="--c:var(--data-6)">AS</span><div><div class="p70-row-title" style="font-weight:600">Aiko Sato</div><div class="p70-row-sub">Member since 2021 · 3 devices</div></div></div>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-row-text"><span class="p70-row-title">Account</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-row-text"><span class="p70-row-title">Playback</span></span><span class="p70-row-trail">Lossless</span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-row-text"><span class="p70-row-title">Storage</span></span><span class="p70-row-trail">4.2 GB</span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+          <a class="p70-row row-press hj-press" href="#tab-bar"><span class="p70-row-text"><span class="p70-row-title">Notifications</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>
+        </div>
+        <nav class="hj-tabbar" role="tablist" aria-label="Main">
+          <button class="hj-tab" role="tab" id="p70-t-0" aria-controls="p70-tp-0" aria-selected="true"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg></span>Home</button>
+          <button class="hj-tab" role="tab" id="p70-t-1" aria-controls="p70-tp-1" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span>Search</button>
+          <button class="hj-tab" role="tab" id="p70-t-2" aria-controls="p70-tp-2" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-library"/></svg></span>Library</button>
+          <button class="hj-tab" role="tab" id="p70-t-3" aria-controls="p70-tp-3" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg><span class="hj-tab-badge" aria-label="3 unread">3</span></span>Inbox</button>
+          <button class="hj-tab" role="tab" id="p70-t-4" aria-controls="p70-tp-4" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>You</button>
+        </nav>
+      </div>
+      <div class="p70-side p70-tabs-side">
+        <div>
+          <div class="p70-side-label"><span>Ink</span><span>same bar</span></div>
+          <div data-theme="ink"><nav class="hj-tabbar bare p70-tb-copy" role="tablist" aria-label="Main, ink specimen">
+            <button class="hj-tab" role="tab" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg></span>Home</button>
+            <button class="hj-tab" role="tab" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span>Search</button>
+            <button class="hj-tab" role="tab" aria-selected="true"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-library"/></svg></span>Library</button>
+            <button class="hj-tab" role="tab" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg><span class="hj-tab-badge" aria-label="12 unread">12</span></span>Inbox</button>
+            <button class="hj-tab" role="tab" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span>You</button>
+          </nav></div>
+        </div>
+        <div>
+          <div class="p70-side-label"><span>Charcoal · four tabs</span><span>99+</span></div>
+          <div data-theme="charcoal"><nav class="hj-tabbar bare p70-tb-copy" role="tablist" aria-label="Main, charcoal specimen" style="grid-template-columns:repeat(4,1fr)">
+            <button class="hj-tab" role="tab" aria-selected="true"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg></span>Today</button>
+            <button class="hj-tab" role="tab" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg></span>Plan</button>
+            <button class="hj-tab" role="tab" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg><span class="hj-tab-badge" aria-label="more than 99 unread">99+</span></span>Mail</button>
+            <button class="hj-tab" role="tab" aria-selected="false"><span class="tab-ic"><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg></span>Settings</button>
+          </nav></div>
+        </div>
+        <p class="p70-note">Labels never hide. An icon alone is a guessing game; <b>a word costs 13 px and removes it.</b></p>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap a tab · ← → when focused</span></div>
+    </div>
+  </article>
+
+  <!-- 06.02 TOP BAR ====================================================== -->
+  <article class="entry" id="top-bar">
+    <div class="entry-meta">
+      <div class="entry-num">06.02</div>
+      <h3 class="entry-title">Top bar &amp; large title <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A screen's name, set large where there is room and handed to the bar as you scroll. Back on the left, <b>at most one action</b> on the right — more than one belongs in a menu.</p>
+      <dl class="spec">
+        <div><dt>Bar</dt><dd><b>44</b> · back + title + 1 action</dd></div>
+        <div><dt>Large</dt><dd>display 34/38 · 700 · −0.5</dd></div>
+        <div><dt>Inline</dt><dd>17/22 · 600 · in over 28 px of scroll</dd></div>
+        <div><dt>Hairline</dt><dd>fades in as content passes under</dd></div>
+        <div><dt>Driver</dt><dd>scroll position · no clock, no spring</dd></div>
+        <div><dt>A11y</dt><dd>one heading; inline title aria-hidden</dd></div>
+      </dl>
+      <p class="motion-note"><svg class="p70-lin" viewBox="0 0 34 22" aria-hidden="true"><path d="M1 4H33" stroke="currentColor" stroke-opacity=".25" stroke-dasharray="2 2" fill="none"/><path d="M1 19 L33 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><span>Scroll-driven, not timed: the title is exactly where your thumb puts it, at any speed, in either direction.</span></p>
+    </div>
+    <div class="plate plate--phone">
+      <div class="phone" id="p70-tb">
+        <div class="phone-status"><span class="num">9:41</span><span class="ind"><b></b><i></i></span></div>
+        <div class="hj-topbar" id="p70-tb-bar">
+          <button class="hj-topbar-back hj-press"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg>Library</button>
+          <span class="hj-topbar-title" aria-hidden="true">Playlists</span>
+          <button class="hj-topbar-act hj-press" aria-label="New playlist"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        </div>
+        <div class="p70-scroll" id="p70-tb-scroll" tabindex="0" aria-label="Playlists list">
+          <h4 class="p70-lt">Playlists</h4>
+          <p class="p70-lt-sub">24 playlists · 112 hours</p>
+          <div id="p70-tb-rows"></div>
+        </div>
+      </div>
+      <div class="p70-side">
+        <div>
+          <div class="p70-side-label"><span>Scroll</span><span>live</span></div>
+          <div class="p70-readout" id="p70-tb-read">scrollY     0 px
+title      0.00
+hairline   0.00</div>
+        </div>
+        <p class="p70-note">The large title lives in the content and scrolls away with it; the bar title fades and rises <b>6 px</b> in over the next <b>28 px</b>. Under reduced motion the rise is dropped and only the fade remains.</p>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Scroll the list</span></div>
+    </div>
+  </article>
+
+  <!-- 06.03 SECTION HEADER =============================================== -->
+  <article class="entry" id="section-header">
+    <div class="entry-meta">
+      <div class="entry-num">06.03</div>
+      <h3 class="entry-title">Section header</h3>
+      <p class="entry-desc">Names a group on a long screen and offers the way into all of it. <b>One action at most</b>, and only when the group is a preview of something longer.</p>
+      <dl class="spec">
+        <div><dt>Title</dt><dd>heading 19/24 · 600 · −0.2</dd></div>
+        <div><dt>Action</dt><dd>13.5/600 · accent · 44 hit area</dd></div>
+        <div><dt>Count</dt><dd>mono 12.5 · fg-mute · tabular</dd></div>
+        <div><dt>Eyebrow</dt><dd>10/12 · +1.6 · uppercase · fg-mute</dd></div>
+        <div><dt>Spacing</dt><dd>s3 to content · s8 between sections</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>The chevron leans 2 px toward where it goes on hover and focus, and comes back on snappy.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p70-sh-wrap">
+        <div>
+          <div class="hj-sechead"><div class="hj-sechead-text"><h4>Recently played</h4></div><a class="hj-sechead-act" href="#section-header">See all<svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></a></div>
+          <div class="p70-sh-tiles">
+            <div class="p70-sh-tile"><span class="p70-art" style="--c:var(--data-1)">L</span><b>Late Trains</b><span>Playlist</span></div>
+            <div class="p70-sh-tile"><span class="p70-art" style="--c:var(--data-2)">B</span><b>Breakwater</b><span>Harbour Lights</span></div>
+            <div class="p70-sh-tile"><span class="p70-art" style="--c:var(--data-3)">P</span><b>Paper Cranes</b><span>Aiko Sato</span></div>
+            <div class="p70-sh-tile"><span class="p70-art" style="--c:var(--data-4)">N</span><b>Night bus home</b><span>Playlist</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="hj-sechead"><div class="hj-sechead-text"><h4>Downloads <span class="hj-sechead-count">12</span></h4></div><a class="hj-sechead-act" href="#section-header">Manage<svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></a></div>
+          <div class="p70-sh-rows">
+            <div class="p70-row"><span class="p70-art" style="--c:var(--data-5);width:36px;height:36px;font-size:13px">K</span><span class="p70-row-text"><span class="p70-row-title">Kitchen radio</span><span class="p70-row-sub">64 songs · 412 MB</span></span><span class="p70-row-trail">Done</span></div>
+            <div class="p70-row"><span class="p70-art" style="--c:var(--data-6);width:36px;height:36px;font-size:13px">R</span><span class="p70-row-text"><span class="p70-row-title">Rain on the skylight</span><span class="p70-row-sub">Paused — waiting for Wi-Fi</span></span><span class="p70-row-trail">18 / 40</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="hj-sechead"><div class="hj-sechead-text"><span class="hj-sechead-eyebrow">This week</span><h4>Made for Aiko</h4></div><a class="hj-sechead-act" href="#section-header">See all<svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></a></div>
+          <div class="p70-sh-tiles" style="grid-template-columns:repeat(3,1fr)">
+            <div class="p70-sh-tile"><span class="p70-art" style="--c:var(--data-2);aspect-ratio:4/3">F</span><b>Friday mix</b><span>30 songs</span></div>
+            <div class="p70-sh-tile"><span class="p70-art" style="--c:var(--data-1);aspect-ratio:4/3">D</span><b>Discovery</b><span>Updated Mon</span></div>
+            <div class="p70-sh-tile"><span class="p70-art" style="--c:var(--data-3);aspect-ratio:4/3">R</span><b>Repeat rewind</b><span>2024</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span>Specimen</span><span>Three variants</span></div>
+    </div>
+  </article>
+
+  <!-- 06.04 ACCORDION ===================================================== -->
+  <article class="entry" id="accordion">
+    <div class="entry-meta">
+      <div class="entry-num">06.04</div>
+      <h3 class="entry-title">Accordion</h3>
+      <p class="entry-desc">Questions whose answers most people won't need. Folding them keeps the screen scannable. <b>Don't hide anything someone needs to complete a task</b> behind one.</p>
+      <dl class="spec">
+        <div><dt>Header</dt><dd>56 min · 15/600 · whole row is the button</dd></div>
+        <div><dt>Chevron</dt><dd>20 · turns 180° · snappy-settle</dd></div>
+        <div><dt>Reveal</dt><dd>height, clipped — the one layout transition</dd></div>
+        <div><dt>Timing</dt><dd>opens gentle-settle · closes fast 180</dd></div>
+        <div><dt>Modes</dt><dd>single · multiple</dd></div>
+        <div><dt>A11y</dt><dd>aria-expanded · ↑ ↓ Home End</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Height can't be faked with a transform, so it is the one layout animation hanji allows: short, clipped, and the text inside arrives 50 ms after its room.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><div class="hj-seg sm" id="p70-acc-mode" aria-label="Accordion mode"><button data-value="single" aria-checked="true">Single</button><button data-value="multi">Multiple</button></div></div>
+      <div class="hj-accordion" id="p70-acc">
+        <div class="hj-accordion-item open"><h4><button class="hj-accordion-btn" aria-expanded="true" aria-controls="p70-acc-p0" id="p70-acc-b0">Where are my downloads stored?<svg class="ic hj-accordion-chev" aria-hidden="true"><use href="#i-chev-d"/></svg></button></h4>
+          <div class="hj-accordion-panel" id="p70-acc-p0" role="region" aria-labelledby="p70-acc-b0"><div class="hj-accordion-inner"><p>On this device only, in the app's private storage. They don't appear in Files, and they're removed if you sign out.</p></div></div></div>
+        <div class="hj-accordion-item"><h4><button class="hj-accordion-btn" aria-expanded="false" aria-controls="p70-acc-p1" id="p70-acc-b1">Why did a download stop halfway?<svg class="ic hj-accordion-chev" aria-hidden="true"><use href="#i-chev-d"/></svg></button></h4>
+          <div class="hj-accordion-panel" id="p70-acc-p1" role="region" aria-labelledby="p70-acc-b1"><div class="hj-accordion-inner"><p>Downloads pause on mobile data unless <b>Download over cellular</b> is on. They pick up on Wi-Fi where they left off — nothing starts over.</p></div></div></div>
+        <div class="hj-accordion-item"><h4><button class="hj-accordion-btn" aria-expanded="false" aria-controls="p70-acc-p2" id="p70-acc-b2">How much space will downloads use?<svg class="ic hj-accordion-chev" aria-hidden="true"><use href="#i-chev-d"/></svg></button></h4>
+          <div class="hj-accordion-panel" id="p70-acc-p2" role="region" aria-labelledby="p70-acc-b2"><div class="hj-accordion-inner"><p>About 1.4 GB per hour at Lossless and 140 MB at High. Your total is in <b>You › Storage</b>, broken down by playlist.</p></div></div></div>
+        <div class="hj-accordion-item"><h4><button class="hj-accordion-btn" aria-expanded="false" aria-controls="p70-acc-p3" id="p70-acc-b3">Can I download on more than one device?<svg class="ic hj-accordion-chev" aria-hidden="true"><use href="#i-chev-d"/></svg></button></h4>
+          <div class="hj-accordion-panel" id="p70-acc-p3" role="region" aria-labelledby="p70-acc-b3"><div class="hj-accordion-inner"><p>Yes — up to five. Removing a device frees its slot within 24 hours, and its downloads are deleted the next time it connects.</p></div></div></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap a question</span></div>
+    </div>
+  </article>
+
+  <!-- 06.05 PAGER ========================================================= -->
+  <article class="entry" id="pager">
+    <div class="entry-meta">
+      <div class="entry-num">06.05</div>
+      <h3 class="entry-title">Pager <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A short run of whole-screen pages you swipe through in order: onboarding, a what's-new, a photo set. <b>Four pages or fewer</b>, and always a way out on page one.</p>
+      <dl class="spec">
+        <div><dt>Snap</dt><dd>one page per swipe · snap-stop always</dd></div>
+        <div><dt>Dots</dt><dd>6 · gap 10 · active pill 20 · accent</dd></div>
+        <div><dt>Pill</dt><dd>drawn at 36, scaleX — never width</dd></div>
+        <div><dt>Art</dt><dd>parallax at 0.65 × page speed</dd></div>
+        <div><dt>Buttons</dt><dd>Skip quiet · Next primary · last “Get started”</dd></div>
+        <div><dt>A11y</dt><dd>carousel region · ← → · dots labelled</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Leading edge first, trailing edge after — the pill stretches between dots the way ink drags behind a brush. Next scrolls on gentle, clamped.</span></p>
+    </div>
+    <div class="plate plate--phone">
+      <div class="phone" id="p70-pg">
+        <div class="phone-status"><span class="num">9:41</span><span class="ind"><b></b><i></i></span></div>
+        <div class="hj-pager">
+          <div class="hj-pager-track" id="p70-pg-track" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Welcome">
+            <section class="hj-pager-page" role="group" aria-roledescription="slide" aria-label="1 of 4">
+              <div class="hj-pager-art"><div class="hj-pager-mark"><small>01</small><svg class="ic" aria-hidden="true"><use href="#i-cast"/></svg></div></div>
+              <div class="hj-pager-copy"><h4>Your library, everywhere</h4><p>Start on your phone, carry on at the speaker in the kitchen. Playback follows you.</p></div>
+            </section>
+            <section class="hj-pager-page" role="group" aria-roledescription="slide" aria-label="2 of 4">
+              <div class="hj-pager-art"><div class="hj-pager-mark"><small>02</small><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></div></div>
+              <div class="hj-pager-copy"><h4>Downloads that behave</h4><p>Save albums for the train. They pause on mobile data and resume on Wi-Fi.</p></div>
+            </section>
+            <section class="hj-pager-page" role="group" aria-roledescription="slide" aria-label="3 of 4">
+              <div class="hj-pager-art"><div class="hj-pager-mark"><small>03</small><svg class="ic" aria-hidden="true"><use href="#i-moon-z"/></svg></div></div>
+              <div class="hj-pager-copy"><h4>Quieter by default</h4><p>No autoplaying video, no badges for things you didn't ask for.</p></div>
+            </section>
+            <section class="hj-pager-page" role="group" aria-roledescription="slide" aria-label="4 of 4">
+              <div class="hj-pager-art"><div class="hj-pager-mark"><small>04</small><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></div></div>
+              <div class="hj-pager-copy"><h4>Ready when you are</h4><p>Pick three artists to start. You can change them any time.</p></div>
+            </section>
+          </div>
+          <div class="hj-pager-foot">
+            <button class="hj-btn sm quiet" id="p70-pg-skip">Skip</button>
+            <div class="hj-dots" id="p70-pg-dots"><span class="hj-dots-ind" id="p70-pg-ind"></span></div>
+            <button class="hj-btn sm p70-next" id="p70-pg-next">Next</button>
+          </div>
+        </div>
+      </div>
+      <div class="p70-side">
+        <div>
+          <div class="p70-side-label"><span>Indicator</span><span>live</span></div>
+          <div class="p70-readout" id="p70-pg-read">page    1.00
+lead    0.00
+trail   0.00</div>
+        </div>
+        <p class="p70-note">Drag slowly and watch the pill: its <b>leading edge</b> reaches the next dot by halfway, its <b>trailing edge</b> only lets go after. Under reduced motion the parallax stops; the pages still slide, because that slide is the content moving, not decoration.</p>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Swipe, drag, or Next</span></div>
+    </div>
+  </article>
+
+  <!-- 06.06 SEARCH ======================================================== -->
+  <article class="entry" id="search">
+    <div class="entry-meta">
+      <div class="entry-num">06.06</div>
+      <h3 class="entry-title">Search <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A field that answers while you type: recent searches when it's empty, suggestions as letters arrive, and <b>a way forward when nothing matches</b> — never a dead end.</p>
+      <dl class="spec">
+        <div><dt>Field</dt><dd><b>44</b> · pill · surface · focus ring accent</dd></div>
+        <div><dt>Rows</dt><dd>52 · glyph by kind · match set in 700</dd></div>
+        <div><dt>Recents</dt><dd>5 max · each removable · Clear all</dd></div>
+        <div><dt>Entrance</dt><dd>cascade 24 ms, once per change of kind</dd></div>
+        <div><dt>Empty</dt><dd>says what was searched + a nearest match</dd></div>
+        <div><dt>A11y</dt><dd>combobox · ↑ ↓ Enter Esc</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle-settle"></span><span>Results cascade when the list changes kind (recent → suggestions → none), not on every keystroke — typing should feel instant. Removed rows fade; the rest close the gap on snappy.</span></p>
+    </div>
+    <div class="plate plate--top">
+      <div class="hj-search" id="p70-search">
+        <label class="hj-search-field">
+          <svg class="ic s18" aria-hidden="true"><use href="#i-search"/></svg>
+          <input type="search" id="p70-search-in" placeholder="Artists, albums, playlists" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="p70-search-list" aria-autocomplete="list" aria-label="Search">
+          <button class="hj-search-clear" type="button" aria-label="Clear search"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+        </label>
+        <div id="p70-search-out"></div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Try “ha”, “sun” or “zzq”</span></div>
+    </div>
+  </article>
+
+  <!-- 06.07 SWIPE ACTIONS ================================================= -->
+  <article class="entry" id="swipe-actions">
+    <div class="entry-meta">
+      <div class="entry-num">06.07</div>
+      <h3 class="entry-title">Swipe actions <span class="tag-new">New</span></h3>
+      <p class="entry-desc">A shortcut to the one or two things people do to a row most. <b>Always a shortcut, never the only way</b> — the same actions live behind the row's More button.</p>
+      <dl class="spec">
+        <div><dt>Reveal</dt><dd>2 × 76 · Delete danger tint · Archive ink</dd></div>
+        <div><dt>Release</dt><dd>position + velocity × 0.15 decides</dd></div>
+        <div><dt>Commit</dt><dd>full swipe past 55 % archives</dd></div>
+        <div><dt>Overdrag</dt><dd>resistance 3 · rubber beyond reveal</dd></div>
+        <div><dt>Undo</dt><dd><b>5.0 s</b> · 3.2 + 1.8 for the action</dd></div>
+        <div><dt>A11y</dt><dd>More button · Esc closes · actions focusable when open</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>Let go and the row keeps your flick's velocity: a quick flick opens, a slow drag goes home. Past the line, Archive takes the whole row before it leaves.</span></p>
+    </div>
+    <div class="plate plate--top">
+      <div class="hj-swipe" id="p70-swipe">
+        <div class="hj-swipe-list" id="p70-swipe-list"></div>
+        <div class="hj-swipe-undo" id="p70-swipe-undo" role="status" aria-live="polite"><svg class="ic" aria-hidden="true"><use href="#i-check-c"/></svg><span></span><button type="button">Undo</button><i></i></div>
+      </div>
+      <div class="plate-tools"><button class="plate-btn" id="p70-swipe-reset">Reset</button></div>
+      <div class="plate-cap"><span class="live">Live</span><span>Drag a row left · or hover → More</span></div>
+    </div>
+  </article>
+
+  <!-- 06.08 PULL TO REFRESH =============================================== -->
+  <article class="entry" id="pull-to-refresh">
+    <div class="entry-meta">
+      <div class="entry-num">06.08</div>
+      <h3 class="entry-title">Pull to refresh <span class="tag-new">New</span></h3>
+      <p class="entry-desc">For feeds that change while you're away. The pull is the progress bar: the ring fills as you drag and tells you when letting go will work. <b>Not for lists that update themselves.</b></p>
+      <dl class="spec">
+        <div><dt>Threshold</dt><dd><b>64</b> px of visible travel</dd></div>
+        <div><dt>Resistance</dt><dd>exponential · asymptote 160</dd></div>
+        <div><dt>Ring</dt><dd>28 · stroke 3 · accent on fg @ .10</dd></div>
+        <div><dt>Hold</dt><dd>56 px while working · gentle</dd></div>
+        <div><dt>Arrival</dt><dd>new row rises 12 · accent-soft fades</dd></div>
+        <div><dt>Reduced</dt><dd>ring holds still · says “Refreshing”</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="gentle"></span><span>The list hangs on a gentle spring while it works, then lets go. Crossing the line gives one small pulse — the visual twin of a haptic tick.</span></p>
+    </div>
+    <div class="plate plate--phone">
+      <div class="plate-tools"><button class="plate-btn" id="p70-ptr-btn"><svg class="ic s14" aria-hidden="true"><use href="#i-refresh"/></svg>Refresh</button></div>
+      <div class="phone">
+        <div class="phone-status"><span class="num">9:41</span><span class="ind"><b></b><i></i></span></div>
+        <div class="p70-ptr-view" id="p70-ptr">
+          <div class="hj-ptr" id="p70-ptr-ring" aria-hidden="true">
+            <svg viewBox="0 0 28 28"><g class="rot"><circle class="trk" cx="14" cy="14" r="11" fill="none" stroke-width="3"/><circle class="arc" cx="14" cy="14" r="11" fill="none" stroke-width="3" stroke-linecap="round" transform="rotate(-90 14 14)"/></g></svg>
+            <span class="hj-ptr-label">Release to refresh</span>
+          </div>
+          <div class="p70-scroll" id="p70-ptr-scroll">
+            <div class="p70-ptr-content" id="p70-ptr-content">
+              <h4 class="p70-lt" style="padding-top:8px">Activity</h4>
+              <p class="p70-lt-sub p70-updated" id="p70-ptr-upd" role="status" aria-live="polite">Updated 4 min ago</p>
+              <div class="p70-feed" id="p70-ptr-feed">
+                <div class="p70-row"><span class="p70-av" style="--c:var(--data-3)">JP</span><span class="p70-row-text"><span class="p70-row-title"><b>Jun-seo Park</b> added 3 songs to Late Trains</span></span><span class="p70-row-trail">4m</span></div>
+                <div class="p70-row"><span class="p70-art" style="--c:var(--data-2);width:36px;height:36px;font-size:13px">B</span><span class="p70-row-text"><span class="p70-row-title">New from <b>Harbour Lights</b>: Breakwater, an EP</span></span><span class="p70-row-trail">1h</span></div>
+                <div class="p70-row"><span class="p70-av" style="--c:var(--data-1)">IB</span><span class="p70-row-text"><span class="p70-row-title"><b>Ilse Brandt</b> shared Sunday, slowly</span></span><span class="p70-row-trail">3h</span></div>
+                <div class="p70-row"><span class="p70-art" style="--c:var(--data-4);width:36px;height:36px"><svg class="ic s18" aria-hidden="true"><use href="#i-download"/></svg></span><span class="p70-row-text"><span class="p70-row-title">Paper Cranes downloaded — 12 songs, 214 MB</span></span><span class="p70-row-trail">Yday</span></div>
+                <div class="p70-row"><span class="p70-av" style="--c:var(--data-5)">TR</span><span class="p70-row-text"><span class="p70-row-title"><b>Tomás Reyes Trio</b> announced Leeds, 22 Nov</span></span><span class="p70-row-trail">Yday</span></div>
+                <div class="p70-row"><span class="p70-av" style="--c:var(--data-6)">NH</span><span class="p70-row-text"><span class="p70-row-title"><b>Noor Haddad</b> joined from your invite</span></span><span class="p70-row-trail">Mon</span></div>
+                <div class="p70-row"><span class="p70-art" style="--c:var(--data-1);width:36px;height:36px;font-size:13px">F</span><span class="p70-row-text"><span class="p70-row-title">Friday mix updated — 30 songs, 1 h 52 min</span></span><span class="p70-row-trail">Mon</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p70-side">
+        <div>
+          <div class="p70-side-label"><span>Pull</span><span>live</span></div>
+          <div class="p70-readout" id="p70-ptr-read">finger      0 px
+list        0 px
+ring       0.00</div>
+        </div>
+        <p class="p70-note">The finger moves the list less and less the further it goes, so a pull never feels like it will tear. <b>Release past the line</b> and the list holds open while the new row is fetched.</p>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Drag the list down</span></div>
+    </div>
+  </article>
+
+  <!-- 06.09 STEPS ========================================================= -->
+  <article class="entry" id="steps">
+    <div class="entry-meta">
+      <div class="entry-num">06.09</div>
+      <h3 class="entry-title">Steps <span class="tag-new">New</span></h3>
+      <p class="entry-desc">Where you are in a short, ordered setup, and how much is left. <b>Three to five steps</b>; past that, the flow needs fewer questions, not a longer bar.</p>
+      <dl class="spec">
+        <div><dt>Bar</dt><dd>4 segments · gap 4 · track 4 (progress)</dd></div>
+        <div><dt>Paint</dt><dd>accent on accent @ .22</dd></div>
+        <div><dt>Fill</dt><dd>scaleX from the left · snappy-settle</dd></div>
+        <div><dt>Labels</dt><dd>done ✓ fg-dim · now fg 600 · next fg-mute</dd></div>
+        <div><dt>Content</dt><dd>slides 12 px the way you're going</dd></div>
+        <div><dt>A11y</dt><dd>progressbar · “Step 2 of 4, Sound”</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>Forward fills on a clamped spring; back empties on a fast ease-out. Undoing should feel lighter than progress.</span></p>
+    </div>
+    <div class="plate">
+      <div class="hj-steps" id="p70-steps">
+        <div class="hj-steps-top"><span class="hj-steps-count" id="p70-st-count">Step <b>2</b> of 4</span><span class="hj-steps-pct" id="p70-st-pct">50%</span></div>
+        <div class="hj-steps-bar" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="2" aria-valuetext="Step 2 of 4, Sound" id="p70-st-bar">
+          <span class="hj-steps-seg"><i></i></span><span class="hj-steps-seg"><i></i></span><span class="hj-steps-seg"><i></i></span><span class="hj-steps-seg"><i></i></span>
+        </div>
+        <div class="hj-steps-labels" aria-hidden="true">
+          <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Account</span><span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Sound</span><span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Downloads</span><span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Done</span>
+        </div>
+        <div class="hj-steps-stage" id="p70-st-stage" aria-live="polite"></div>
+        <div class="hj-steps-foot">
+          <span class="hint" id="p70-st-hint">About a minute left</span>
+          <div class="btns"><button class="hj-btn sm secondary" id="p70-st-back">Back</button><button class="hj-btn sm" id="p70-st-next">Continue</button></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Continue · Back</span></div>
+    </div>
+  </article>
+
+  <!-- 06.10 FAST SCROLL =================================================== -->
+  <article class="entry" id="fast-scroll">
+    <div class="entry-meta">
+      <div class="entry-num">06.10</div>
+      <h3 class="entry-title">Fast scroll</h3>
+      <p class="entry-desc">An A–Z rail for long, alphabetised lists — artists, contacts, countries. <b>Only when the list is sorted by name</b> and longer than about three screens.</p>
+      <dl class="spec">
+        <div><dt>Rail</dt><dd><b>24</b> wide · A–Z + # · 9.5/600</dd></div>
+        <div><dt>Bubble</dt><dd>56 · squircle · accent · on-accent</dd></div>
+        <div><dt>Jump</dt><dd>direct — no scroll animation</dd></div>
+        <div><dt>Gaps</dt><dd>empty letters dim, land on the next</dd></div>
+        <div><dt>Spy</dt><dd>rail marks the letter on screen</dd></div>
+        <div><dt>A11y</dt><dd>slider · ↑ ↓ letters · Home End</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>The bubble pops in on snappy, then follows your finger exactly. There is no spring between a thumb and the letter under it.</span></p>
+    </div>
+    <div class="plate plate--phone">
+      <div class="phone">
+        <div class="phone-status"><span class="num">9:41</span><span class="ind"><b></b><i></i></span></div>
+        <div class="p70-fs-view" id="p70-fs">
+          <div class="p70-scroll" id="p70-fs-scroll">
+            <h4 class="p70-lt">Artists</h4>
+            <p class="p70-lt-sub" id="p70-fs-count">48 artists</p>
+            <div class="p70-fs-list" id="p70-fs-list"></div>
+          </div>
+          <div class="hj-fast" id="p70-fs-rail" tabindex="0" role="slider" aria-label="Jump to letter" aria-valuemin="0" aria-valuemax="26"></div>
+          <div class="hj-fast-bubble" id="p70-fs-bubble" aria-hidden="true"><b>A</b></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Drag the A–Z rail</span></div>
+    </div>
+  </article>
+</section>
+
+<script>
+(function(){
+  const { $, $$ } = H;
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  const travel = () => H.reduced() ? 0 : 1;
+
+  /* FLIP: siblings that move because something was added or removed glide
+     there on a transform — layout changes, animation stays on transform. */
+  function flip(container, mutate){
+    const kids = Array.from(container.children);
+    const before = new Map(kids.map(k => [k, k.getBoundingClientRect().top]));
+    mutate();
+    Array.from(container.children).forEach(k => {
+      if (!before.has(k)) return;
+      const d = before.get(k) - k.getBoundingClientRect().top; if (!d) return;
+      k.style.transition = 'none'; k.style.transform = `translateY(${d}px)`; void k.offsetWidth;
+      k.style.transition = 'transform var(--dur-snappy-settle) var(--ease-snappy-settle)'; k.style.transform = '';
+      setTimeout(() => { k.style.transition = ''; }, 600);
+    });
+  }
+  function fadeOut(el, done){
+    el.style.transition = 'opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out)';
+    el.style.opacity = '0'; el.style.transform = `translateX(${-8 * travel()}px)`;
+    setTimeout(done, H.reduced() ? 120 : 170);
+  }
+
+  /* ---------------- 06.01 Tab bar ---------------- */
+  function settleIcon(tab){
+    const ic = tab.querySelector('.tab-ic');
+    ic.style.transition = 'none'; ic.style.transform = 'scale(.82)'; void ic.offsetWidth;
+    ic.style.transition = 'transform var(--dur-bouncy) var(--ease-bouncy)'; ic.style.transform = '';
+  }
+  function tabBar(bar, onSelect){
+    const tabs = $$('.hj-tab', bar);
+    function select(i, focus){
+      tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(j === i)); t.tabIndex = j === i ? 0 : -1; });
+      settleIcon(tabs[i]); if (focus) tabs[i].focus();
+      onSelect && onSelect(i);
+    }
+    tabs.forEach((t, i) => {
+      t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
+      t.addEventListener('click', () => { if (t.getAttribute('aria-selected') === 'true'){ settleIcon(t); return; } select(i); });
+      t.addEventListener('keydown', e => {
+        const k = e.key; let n = -1;
+        if (k === 'ArrowRight') n = (i + 1) % tabs.length; else if (k === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+        else if (k === 'Home') n = 0; else if (k === 'End') n = tabs.length - 1;
+        if (n >= 0){ e.preventDefault(); select(n, true); }
+      });
+    });
+  }
+  const tabsPhone = $('#p70-tabs');
+  const panels = $$('[data-panel]', tabsPhone);
+  const mainBadge = $('.hj-tab-badge', tabsPhone);
+  tabBar($('.hj-tabbar', tabsPhone), i => {
+    panels.forEach((p, j) => {
+      if (j === i){ p.hidden = false; p.scrollTop = 0; p.classList.remove('p70-enter'); void p.offsetWidth; p.classList.add('p70-enter'); }
+      else p.hidden = true;
+    });
+    if (i === 3 && !mainBadge.classList.contains('gone')){
+      setTimeout(() => { mainBadge.classList.add('gone'); $('#p70-inbox-sub').textContent = '3 new since this morning — marked as seen'; }, 900);
+    }
+  });
+  $$('.p70-tb-copy').forEach(b => tabBar(b));
+  $('#p70-tab-reset').addEventListener('click', () => { mainBadge.classList.remove('gone'); $('#p70-inbox-sub').textContent = '3 new since this morning'; });
+
+  /* ---------------- 06.02 Top bar & large title ---------------- */
+  const playlists = [
+    ['Late Trains', '42 songs · 2 h 31 min', 1], ['Sunday, slowly', '18 songs · 1 h 04 min', 3], ['Kitchen radio', '64 songs · 3 h 50 min', 5],
+    ['Run club, 5k', '19 songs · 58 min', 2], ['Focus — no words', '90 songs · 5 h 20 min', 4], ['Breakwater sessions', '12 songs · 48 min', 6],
+    ['For Ilse', '9 songs · 36 min', 1], ['Night bus home', '27 songs · 1 h 39 min', 3], ['Cassette rips', '31 songs · 1 h 58 min', 2],
+    ['Rain on the skylight', '40 songs · 2 h 22 min', 4], ['Leeds, November', '15 songs · 58 min', 5], ['Morning pages', '26 songs · 1 h 31 min', 6],
+    ['Old favourites', '112 songs · 7 h 03 min', 1], ['Dinner, not background', '33 songs · 2 h 05 min', 2]
+  ];
+  $('#p70-tb-rows').innerHTML = playlists.map(([t, s, c]) =>
+    `<a class="p70-row row-press hj-press" href="#top-bar"><span class="p70-art" style="--c:var(--data-${c})">${t.charAt(0)}</span><span class="p70-row-text"><span class="p70-row-title">${esc(t)}</span><span class="p70-row-sub">${s}</span></span><svg class="ic s18 mute" aria-hidden="true"><use href="#i-chev-r"/></svg></a>`).join('');
+  const tbScroll = $('#p70-tb-scroll'), tbBar = $('#p70-tb-bar'), tbRead = $('#p70-tb-read');
+  function onTbScroll(){
+    const y = tbScroll.scrollTop;
+    // large title (38 tall + 2 pad) is under the bar by y≈24; the inline title takes over across the next 28 px
+    const p = clamp((y - 24) / 28, 0, 1), lp = clamp((y - 30) / 14, 0, 1);
+    tbBar.style.setProperty('--p', p.toFixed(3)); tbBar.style.setProperty('--lp', lp.toFixed(3));
+    tbRead.textContent = `scrollY  ${String(Math.round(y)).padStart(4)} px\ntitle      ${p.toFixed(2)}\nhairline   ${lp.toFixed(2)}`;
+  }
+  tbScroll.addEventListener('scroll', onTbScroll, { passive:true }); onTbScroll();
+  $$('.p70-row', tbScroll).forEach(a => a.addEventListener('click', e => e.preventDefault()));
+
+  /* ---------------- 06.03 Section header ---------------- */
+  $$('#section-header .hj-sechead-act').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+  $$('#tab-bar a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+
+  /* ---------------- 06.04 Accordion ---------------- */
+  const acc = $('#p70-acc'); let accMode = 'single';
+  const accItems = $$('.hj-accordion-item', acc), accBtns = accItems.map(it => $('.hj-accordion-btn', it));
+  function setOpen(it, on){ it.classList.toggle('open', on); $('.hj-accordion-btn', it).setAttribute('aria-expanded', String(on)); }
+  accItems.forEach((it, i) => {
+    const b = accBtns[i];
+    b.addEventListener('click', () => {
+      const on = !it.classList.contains('open');
+      if (on && accMode === 'single') accItems.forEach(o => o !== it && setOpen(o, false));
+      setOpen(it, on);
+    });
+    b.addEventListener('keydown', e => {
+      let n = -1;
+      if (e.key === 'ArrowDown') n = (i + 1) % accBtns.length; else if (e.key === 'ArrowUp') n = (i - 1 + accBtns.length) % accBtns.length;
+      else if (e.key === 'Home') n = 0; else if (e.key === 'End') n = accBtns.length - 1;
+      if (n >= 0){ e.preventDefault(); accBtns[n].focus(); }
+    });
+  });
+  H.segmented($('#p70-acc-mode'), v => {
+    accMode = v;
+    if (v === 'single'){ const open = accItems.filter(it => it.classList.contains('open')); open.slice(1).forEach(it => setOpen(it, false)); }
+  });
+
+  /* ---------------- 06.05 Pager ---------------- */
+  const pgTrack = $('#p70-pg-track'), pgPages = $$('.hj-pager-page', pgTrack), pgArts = pgPages.map(p => $('.hj-pager-art', p));
+  const pgDots = $('#p70-pg-dots'), pgInd = $('#p70-pg-ind'), pgNext = $('#p70-pg-next'), pgSkip = $('#p70-pg-skip'), pgRead = $('#p70-pg-read');
+  const N = pgPages.length, STEP = 16, DOT = 6, PILL = 20, MAXW = PILL + STEP;
+  pgDots.insertAdjacentHTML('beforeend', pgPages.map((_, i) => `<button class="hj-dot" type="button" aria-label="Page ${i + 1} of ${N}"></button>`).join(''));
+  const dots = $$('.hj-dot', pgDots);
+  let pgCur = -1, pgAnim = null;
+  function pgPaint(){
+    const w = pgTrack.clientWidth || 1; const f = clamp(pgTrack.scrollLeft / w, 0, N - 1);
+    const i = Math.min(Math.floor(f), N - 2), t = f - i;
+    const lead = i + clamp(t * 2, 0, 1), trail = i + clamp(t * 2 - 1, 0, 1);
+    const left = trail * STEP + DOT / 2 - PILL / 2, width = (lead - trail) * STEP + PILL;
+    pgInd.style.transform = `translateX(${left.toFixed(2)}px) scaleX(${(width / MAXW).toFixed(4)})`;
+    const tr = travel();
+    pgArts.forEach((a, j) => { a.style.transform = tr ? `translateX(${((f - j) * w * 0.35).toFixed(1)}px)` : ''; });
+    pgRead.textContent = `page    ${(f + 1).toFixed(2)}\nlead    ${(lead - i).toFixed(2)}\ntrail   ${(trail - i).toFixed(2)}`;
+    const cur = Math.round(f);
+    if (cur !== pgCur){
+      pgCur = cur;
+      dots.forEach((d, j) => d.setAttribute('aria-current', j === cur ? 'true' : 'false'));
+      pgNext.textContent = cur === N - 1 ? 'Get started' : 'Next';
+      pgSkip.classList.toggle('hide', cur === N - 1);
+    }
+  }
+  function pgGo(k){
+    k = clamp(k, 0, N - 1); const target = k * pgTrack.clientWidth;
+    if (pgAnim) pgAnim.stop();
+    if (H.reduced()){ pgTrack.scrollLeft = target; return; }
+    pgTrack.style.scrollSnapType = 'none';
+    pgAnim = H.spring(pgTrack.scrollLeft, { spring:'gentle', clamp:true, onUpdate: v => { pgTrack.scrollLeft = v; }, onRest: () => { pgTrack.style.scrollSnapType = ''; pgAnim = null; } });
+    pgAnim.to(target);
+  }
+  pgTrack.addEventListener('scroll', () => requestAnimationFrame(pgPaint), { passive:true });
+  pgTrack.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight'){ e.preventDefault(); pgGo(pgCur + 1); }
+    else if (e.key === 'ArrowLeft'){ e.preventDefault(); pgGo(pgCur - 1); }
+  });
+  dots.forEach((d, i) => d.addEventListener('click', () => pgGo(i)));
+  pgNext.addEventListener('click', () => pgGo(pgCur === N - 1 ? 0 : pgCur + 1));
+  pgSkip.addEventListener('click', () => pgGo(N - 1));
+  // mouse drag for desktop (touch and trackpads scroll natively)
+  (function(){
+    let down = false, sx = 0, sl = 0, moved = false;
+    pgTrack.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button !== 0) return; down = true; moved = false; sx = e.clientX; sl = pgTrack.scrollLeft; if (pgAnim) pgAnim.stop(); pgTrack.style.scrollSnapType = 'none'; pgTrack.setPointerCapture(e.pointerId); });
+    pgTrack.addEventListener('pointermove', e => { if (!down) return; const dx = e.clientX - sx; if (Math.abs(dx) > 3) moved = true; pgTrack.scrollLeft = sl - dx; });
+    const up = e => { if (!down) return; down = false; const w = pgTrack.clientWidth; const dx = e.clientX - sx; const f = pgTrack.scrollLeft / w; let k = Math.round(f); if (Math.abs(dx) > w * 0.12) k = dx < 0 ? Math.ceil(sl / w + 0.001) : Math.floor(sl / w - 0.001); pgGo(clamp(k, 0, N - 1)); };
+    pgTrack.addEventListener('pointerup', up); pgTrack.addEventListener('pointercancel', up);
+  })();
+  new ResizeObserver(() => pgPaint()).observe(pgTrack);
+  H.on('motion', pgPaint);
+  pgPaint();
+
+  /* ---------------- 06.06 Search ---------------- */
+  const catalog = [
+    ['Harbour Lights', 'artist', 'Artist · 214k monthly listeners'], ['Hanji Sessions', 'playlist', 'Playlist · 26 songs'],
+    ['Hye-jin Choi', 'artist', 'Artist'], ['Late Trains', 'playlist', 'Playlist · Noor Haddad'], ['Paper Cranes', 'album', 'Album · Aiko Sato · 2024'],
+    ['Saltwater Hymns', 'artist', 'Artist'], ['Sunday, slowly', 'playlist', 'Playlist · Ilse Brandt'], ['Sunniva Berg', 'artist', 'Artist'],
+    ['Low Tide, High Noon', 'album', 'Album · Saltwater Hymns'], ['Moonlit Ferry', 'artist', 'Artist'], ['Mira Okafor', 'artist', 'Artist · 1.2M monthly listeners'],
+    ['Breakwater', 'album', 'EP · Harbour Lights · 2026'], ['Night bus home', 'playlist', 'Playlist · 27 songs'], ['Aiko Sato', 'artist', 'Artist'],
+    ['Tomás Reyes Trio', 'artist', 'Artist'], ['Rain on the skylight', 'playlist', 'Playlist · 40 songs'], ['Half Light', 'album', 'Album · Mira Okafor'],
+    ['Dev Malhotra', 'artist', 'Artist'], ['Kitchen radio', 'playlist', 'Playlist · 64 songs'], ['Shore Road', 'album', 'Album · Moonlit Ferry']
+  ];
+  const kindIcon = { artist:null, album:'disc', playlist:'queue' };
+  const initials = n => n.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const colorOf = n => 1 + (Array.from(n).reduce((a, c) => a + c.charCodeAt(0), 0) % 6);
+  let recents = ['Mira Okafor', 'Breakwater', 'lossless live sessions', 'Sunday, slowly'];
+  const sIn = $('#p70-search-in'), sOut = $('#p70-search-out'), sRoot = $('#p70-search');
+  let sKind = '', sActive = -1, sOpts = [];
+  function lev(a, b){
+    const m = a.length, n = b.length; const d = Array.from({ length:m + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= n; j++) d[0][j] = j;
+    for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+    return d[m][n];
+  }
+  function lead(name, kind){
+    if (kind === 'artist') return `<span class="p70-av" style="--c:var(--data-${colorOf(name)})">${initials(name)}</span>`;
+    return `<span class="p70-art" style="--c:var(--data-${colorOf(name)})"><svg class="ic s18" aria-hidden="true"><use href="#i-${kindIcon[kind]}"/></svg></span>`;
+  }
+  function mark(name, q){
+    const i = name.toLowerCase().indexOf(q.toLowerCase()); if (i < 0) return esc(name);
+    return esc(name.slice(0, i)) + '<b>' + esc(name.slice(i, i + q.length)) + '</b>' + esc(name.slice(i + q.length));
+  }
+  function sRender(){
+    const q = sIn.value.trim(); sRoot.classList.toggle('has', sIn.value.length > 0);
+    let kind, html = '';
+    sOpts = []; sActive = -1; sIn.removeAttribute('aria-activedescendant');
+    if (!q){
+      if (recents.length){
+        kind = 'recent';
+        html = `<div class="hj-search-head"><span>Recent</span><button type="button" data-clear>Clear all</button></div><ul class="hj-search-list" id="p70-search-list" role="listbox" aria-label="Recent searches" data-cascade>` +
+          recents.map((r, i) => `<li class="hj-search-opt" role="option" id="p70-so-${i}" data-val="${esc(r)}"><span class="clk"><svg class="ic s18" aria-hidden="true"><use href="#i-clock"/></svg></span><span class="nm" style="color:var(--fg)">${esc(r)}</span><button class="rm" type="button" aria-label="Remove ${esc(r)} from recent searches" data-rm="${esc(r)}"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button></li>`).join('') + '</ul>';
+      } else { kind = 'none-recent'; html = `<div class="hj-search-quiet">No recent searches. What you look for appears here, on this device only.</div>`; }
+    } else {
+      const ql = q.toLowerCase();
+      const hits = catalog.filter(c => c[0].toLowerCase().includes(ql))
+        .sort((a, b) => (b[0].toLowerCase().startsWith(ql) - a[0].toLowerCase().startsWith(ql)) || a[0].localeCompare(b[0])).slice(0, 6);
+      if (hits.length){
+        kind = 'hits';
+        html = `<div class="hj-search-head"><span>${hits.length === 1 ? '1 match' : hits.length + ' matches'}</span></div><ul class="hj-search-list" id="p70-search-list" role="listbox" aria-label="Suggestions" data-cascade>` +
+          hits.map((c, i) => `<li class="hj-search-opt" role="option" id="p70-so-${i}" data-val="${esc(c[0])}">${lead(c[0], c[1])}<span class="p70-row-text"><span class="nm">${mark(c[0], q)}</span><span class="kd">${c[2]}</span></span></li>`).join('') + '</ul>';
+      } else {
+        kind = 'none';
+        let best = null, bd = 99;
+        catalog.forEach(c => { const words = [c[0].toLowerCase(), ...c[0].toLowerCase().split(/\s+/)]; words.forEach(w => { const d = lev(ql, w.slice(0, Math.max(ql.length, 3))); if (d < bd){ bd = d; best = c[0]; } }); });
+        const sugg = bd <= Math.max(1, Math.ceil(ql.length / 2)) ? `Did you mean <button type="button" data-sugg="${esc(best)}">${esc(best)}</button>?` : 'Check the spelling, or search for an artist instead of a song title.';
+        html = `<div class="hj-search-empty" role="status"><h5>No results for “${esc(q)}”</h5><p>${sugg}</p></div>`;
+      }
+    }
+    const fresh = kind !== sKind; sKind = kind;
+    sOut.innerHTML = html;
+    const list = $('.hj-search-list', sOut);
+    sIn.setAttribute('aria-expanded', String(!!list));
+    if (list){
+      sOpts = $$('.hj-search-opt', list);
+      sOpts.forEach((o, i) => o.style.setProperty('--i', i));
+      if (fresh && !document.documentElement.classList.contains('static')){ requestAnimationFrame(() => requestAnimationFrame(() => list.classList.add('in'))); }
+      else list.classList.add('in');
+    } else if (fresh){ const b = sOut.firstElementChild; if (b){ b.classList.add('p70-enter'); } }
+  }
+  function sSetActive(i){
+    sOpts.forEach((o, j) => o.setAttribute('aria-selected', String(j === i)));
+    sActive = i;
+    if (i >= 0) sIn.setAttribute('aria-activedescendant', sOpts[i].id); else sIn.removeAttribute('aria-activedescendant');
+  }
+  function sChoose(val){
+    sIn.value = val; recents = [val, ...recents.filter(r => r !== val)].slice(0, 5); sRender(); sIn.focus();
+  }
+  sIn.addEventListener('input', sRender);
+  sIn.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' && sOpts.length){ e.preventDefault(); sSetActive((sActive + 1) % sOpts.length); }
+    else if (e.key === 'ArrowUp' && sOpts.length){ e.preventDefault(); sSetActive((sActive - 1 + sOpts.length) % sOpts.length); }
+    else if (e.key === 'Enter'){ e.preventDefault(); if (sActive >= 0) sChoose(sOpts[sActive].dataset.val); else if (sIn.value.trim()) sChoose(sIn.value.trim()); }
+    else if (e.key === 'Escape'){ sIn.value = ''; sRender(); }
+  });
+  $('.hj-search-clear', sRoot).addEventListener('click', e => { e.preventDefault(); sIn.value = ''; sRender(); sIn.focus(); });
+  sOut.addEventListener('click', e => {
+    const rm = e.target.closest('[data-rm]');
+    if (rm){
+      e.stopPropagation(); const li = rm.closest('li'); const list = li.parentNode; const val = rm.dataset.rm;
+      fadeOut(li, () => {
+        recents = recents.filter(r => r !== val);
+        if (!recents.length){ sRender(); return; }
+        flip(list, () => li.remove());
+        sOpts = $$('.hj-search-opt', list);
+      });
+      return;
+    }
+    if (e.target.closest('[data-clear]')){
+      const list = $('.hj-search-list', sOut); $$('li', list).forEach((li, i) => { li.style.transitionDelay = (i * 24) + 'ms'; fadeOut(li, () => {}); });
+      setTimeout(() => { recents = []; sRender(); }, 260); return;
+    }
+    const sg = e.target.closest('[data-sugg]'); if (sg){ sIn.value = sg.dataset.sugg; sRender(); sIn.focus(); return; }
+    const opt = e.target.closest('.hj-search-opt'); if (opt) sChoose(opt.dataset.val);
+  });
+  sRender();
+
+  /* ---------------- 06.07 Swipe actions ---------------- */
+  const threads = [
+    ['Noor Haddad', 'NH', 1, '09:41', 'Shared “Late Trains” with you — 42 songs for the 7:14 to Leeds.'],
+    ['Jun-seo Park', 'JP', 3, '08:02', 'Is the Lossless switch per device or per account? Mine reset after the update.'],
+    ['Ilse Brandt', 'IB', 2, 'Yesterday', 'Thanks for the mix. Track 6 is the one — who is that?'],
+    ['Tomás Reyes', 'TR', 5, 'Mon', 'Invited you to edit “Sunday, slowly”. Add whatever you want.'],
+    ['Aiko Sato', 'AS', 6, 'Sun', 'Two tickets for the 22nd if you want one. Doors at 7.']
+  ];
+  const swList = $('#p70-swipe-list'), swUndo = $('#p70-swipe-undo');
+  const ACT = 76, REVEAL = ACT * 2;
+  let swOpen = null, undoTimer = 0, lastRemoved = null;
+  function buildRow(t){
+    const row = document.createElement('div'); row.className = 'hj-swipe-row';
+    row.innerHTML = `
+      <button class="hj-swipe-act del" type="button" tabindex="-1"><span><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>Delete</span></button>
+      <button class="hj-swipe-act arc" type="button" tabindex="-1"><span><svg class="ic" aria-hidden="true"><use href="#i-archive"/></svg>Archive</span></button>
+      <div class="hj-swipe-content">
+        <span class="p70-av" style="--c:var(--data-${t[2]})">${t[1]}</span>
+        <div class="hj-swipe-text"><div class="hj-swipe-top"><span class="hj-swipe-name">${esc(t[0])}</span><span class="hj-swipe-time">${t[3]}</span></div><div class="hj-swipe-prev">${esc(t[4])}</div></div>
+        <button class="hj-swipe-more" type="button" aria-label="Actions for ${esc(t[0])}" aria-expanded="false"><svg class="ic s18" aria-hidden="true"><use href="#i-more"/></svg></button>
+      </div>`;
+    row._t = t; wireRow(row); return row;
+  }
+  function wireRow(row){
+    const content = $('.hj-swipe-content', row), del = $('.del', row), arc = $('.arc', row), more = $('.hj-swipe-more', row);
+    const delIn = del.firstElementChild, arcIn = arc.firstElementChild;
+    let W = row.clientWidth || 440, takeover = 0;
+    const take = H.spring(0, { spring:'snappy', onUpdate: v => { takeover = v; paint(spring.x); } });
+    function paint(x){
+      W = row.clientWidth || W;
+      content.style.transform = `translateX(${x.toFixed(2)}px)`;
+      const r = Math.max(0, -x);
+      del.style.transform = `translateX(${(W - r).toFixed(2)}px)`;
+      arc.style.transform = `translateX(${(W - r / 2 - takeover * r / 2).toFixed(2)}px)`;
+      const a = clamp(r / 2 / ACT, 0, 1);
+      delIn.style.opacity = (a * (1 - takeover)).toFixed(3); delIn.style.transform = `scale(${(0.7 + 0.3 * a).toFixed(3)})`;
+      arcIn.style.opacity = a.toFixed(3); arcIn.style.transform = `scale(${(0.7 + 0.3 * a).toFixed(3)})`;
+      const vis = r > 1; del.style.visibility = arc.style.visibility = vis ? 'visible' : 'hidden';
+    }
+    const spring = H.spring(0, { spring:'snappy', onUpdate: paint });
+    row._spring = spring; row._take = take;
+    paint(0);
+    function setOpen(on){
+      if (on && swOpen && swOpen !== row) swOpen._close();
+      row.classList.toggle('open', on); more.setAttribute('aria-expanded', String(on));
+      del.tabIndex = arc.tabIndex = on ? 0 : -1;
+      if (on) swOpen = row; else if (swOpen === row) swOpen = null;
+    }
+    row._close = () => { take.to(0); spring.to(0); setOpen(false); };
+    row._setOpen = setOpen;
+    function commit(kind){
+      setOpen(false); take.to(kind === 'archive' ? 1 : 0);
+      const target = -(W + 8);
+      const out = H.spring(spring.x, { spring:'snappy', clamp:true, onUpdate: v => paint(v), onRest: () => removeRow(row, kind) });
+      spring.stop(); out.to(target, { velocity: spring.v || -1400 });
+    }
+    row._commit = commit;
+    // pointer
+    let tracking = false, locked = null, sx = 0, sy = 0, base = 0, samples = [], pid = 0;
+    row.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || e.target.closest('.hj-swipe-act, .hj-swipe-more')) return;
+      tracking = true; locked = null; sx = e.clientX; sy = e.clientY; base = spring.x; pid = e.pointerId; samples = [{ x:e.clientX, t:performance.now() }];
+    });
+    row.addEventListener('pointermove', e => {
+      if (!tracking) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (locked === null){
+        if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)){ locked = 'x'; row.setPointerCapture(pid); row.classList.add('dragging'); spring.stop(); if (swOpen && swOpen !== row) swOpen._close(); }
+        else if (Math.abs(dy) > 6){ tracking = false; return; } else return;
+      }
+      let x = base + dx;
+      if (x > 0) x = x / 3;                                   // hanji OVERDRAG_RESISTANCE
+      spring.set(x);
+      const full = -x > W * 0.55;
+      if (full !== (take.target === 1)) take.to(full ? 1 : 0);
+      const now = performance.now(); samples.push({ x:e.clientX, t:now }); samples = samples.filter(s => now - s.t < 100);
+    });
+    const end = () => {
+      if (!tracking) return; tracking = false; row.classList.remove('dragging');
+      if (locked !== 'x') return;
+      const a = samples[0], b = samples[samples.length - 1]; const v = b && a && b.t > a.t ? (b.x - a.x) / (b.t - a.t) * 1000 : 0;
+      const projected = spring.x + v * 0.15;                  // velocity projection
+      if (spring.x < -REVEAL && projected < -W * 0.55){ commit('archive'); return; }   // a flick opens; only a long drag commits
+      take.to(0);
+      if (projected < -ACT){ spring.to(-REVEAL, { velocity:v }); setOpen(true); }
+      else { spring.to(0, { velocity:v }); setOpen(false); }
+    };
+    row.addEventListener('pointerup', end); row.addEventListener('pointercancel', end);
+    content.addEventListener('click', e => { if (e.target.closest('.hj-swipe-more')) return; if (row.classList.contains('open')) row._close(); });
+    more.addEventListener('click', () => { if (row.classList.contains('open')) row._close(); else { spring.to(-REVEAL); setOpen(true); setTimeout(() => del.focus({ preventScroll:true }), 60); } });
+    row.addEventListener('keydown', e => { if (e.key === 'Escape' && row.classList.contains('open')){ row._close(); more.focus(); } });
+    del.addEventListener('click', () => commit('delete'));
+    arc.addEventListener('click', () => commit('archive'));
+  }
+  function removeRow(row, kind){
+    const idx = Array.from(swList.children).indexOf(row);
+    lastRemoved = { t: row._t, idx, kind };
+    flip(swList, () => row.remove());
+    showUndo(kind === 'archive' ? `Archived ${row._t[0]}` : `Deleted conversation with ${row._t[0]}`);
+  }
+  function showUndo(msg){
+    clearTimeout(undoTimer);
+    $('span', swUndo).textContent = msg;
+    const bar = $('i', swUndo);
+    bar.style.transition = 'none'; bar.style.transform = 'scaleX(1)'; void bar.offsetWidth;
+    if (!H.reduced()){ bar.style.transition = 'transform 5000ms linear'; bar.style.transform = 'scaleX(0)'; }
+    swUndo.classList.add('show');
+    undoTimer = setTimeout(() => swUndo.classList.remove('show'), 5000);   // TOAST_BASE_MS 3200 + TOAST_ACTION_BONUS_MS 1800
+  }
+  $('button', swUndo).addEventListener('click', () => {
+    if (!lastRemoved) return; clearTimeout(undoTimer); swUndo.classList.remove('show');
+    const row = buildRow(lastRemoved.t); const ref = swList.children[lastRemoved.idx] || null;
+    flip(swList, () => swList.insertBefore(row, ref));
+    row.classList.add('p70-enter'); lastRemoved = null;
+  });
+  function swReset(){
+    swList.innerHTML = ''; threads.forEach(t => swList.appendChild(buildRow(t))); swOpen = null; swUndo.classList.remove('show');
+    const second = swList.children[1]; if (second){ second._spring.set(-REVEAL); second._setOpen(true); }   // shown open, so the plate explains itself at rest
+  }
+  $('#p70-swipe-reset').addEventListener('click', swReset);
+  swReset();
+  // a one-time hint: the first row peeks open and closes when the plate first comes into view
+  if ('IntersectionObserver' in window && !document.documentElement.classList.contains('static')){
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return; io.disconnect(); if (H.reduced()) return;
+      const r = swList.firstElementChild; if (!r) return;
+      setTimeout(() => { r._spring.to(-56); setTimeout(() => r._spring.to(0), 520); }, 400);
+    }), { threshold:.6 });
+    io.observe(swList);
+  }
+
+  /* ---------------- 06.08 Pull to refresh ---------------- */
+  const ptr = $('#p70-ptr'), ptrScroll = $('#p70-ptr-scroll'), ptrContent = $('#p70-ptr-content'), ring = $('#p70-ptr-ring'), arcEl = $('.arc', ring), feed = $('#p70-ptr-feed'), upd = $('#p70-ptr-upd'), ptrRead = $('#p70-ptr-read');
+  const THRESH = 64, HOLD = 56, MAXP = 160, C = 2 * Math.PI * 11;
+  arcEl.style.strokeDasharray = `0 ${C}`;
+  let refreshing = false, finger = 0;
+  const pull = H.spring(0, { spring:'gentle', onUpdate: y => paintPull(y) });
+  function paintPull(y){
+    ptrContent.style.transform = y ? `translateY(${y.toFixed(2)}px)` : '';
+    const p = clamp(y / THRESH, 0, 1);
+    ring.style.opacity = clamp(y / 28, 0, 1).toFixed(3);
+    ring.style.transform = `translateY(${(Math.max(y, 0) / 2 - 14 + 2).toFixed(2)}px)`;
+    if (!refreshing){ arcEl.style.strokeDasharray = `${(p * C * 0.82).toFixed(2)} ${C}`; arcEl.style.transform = `rotate(${(p * 200).toFixed(1)}deg)`; }
+    ptrRead.textContent = `finger   ${String(Math.round(finger)).padStart(4)} px\nlist     ${String(Math.round(y)).padStart(4)} px\nring       ${p.toFixed(2)}`;
+  }
+  const resist = d => d <= 0 ? 0 : MAXP * (1 - Math.exp(-d / (MAXP * 1.4)));
+  const news = [
+    ['MO', 4, '<b>Mira Okafor</b> started following you', 'now'],
+    ['SH', 2, '<b>Saltwater Hymns</b> released Low Tide, High Noon', 'now'],
+    ['DM', 6, '<b>Dev Malhotra</b> liked Late Trains', 'now']
+  ];
+  let newsIdx = 0;
+  function doRefresh(){
+    refreshing = true; ring.classList.remove('armed'); ring.classList.add('spin');
+    $('.hj-ptr-label', ring).textContent = 'Refreshing';
+    arcEl.style.strokeDasharray = `${(C * 0.28).toFixed(2)} ${C}`; arcEl.style.transform = '';
+    pull.to(HOLD);
+    setTimeout(() => {
+      const n = news[newsIdx++ % news.length];
+      const row = document.createElement('div'); row.className = 'p70-row fresh';
+      row.innerHTML = `<span class="p70-av" style="--c:var(--data-${n[1]})">${n[0]}</span><span class="p70-row-text"><span class="p70-row-title">${n[2]}</span></span><span class="p70-row-trail">${n[3]}</span>`;
+      feed.insertBefore(row, feed.firstChild);
+      upd.textContent = 'Updated just now'; upd.classList.add('now'); setTimeout(() => upd.classList.remove('now'), 1600);
+      refreshing = false; ring.classList.remove('spin'); $('.hj-ptr-label', ring).textContent = 'Release to refresh';
+      finger = 0; pull.to(0);
+    }, 1300);
+  }
+  (function(){
+    let down = false, sy = 0, active = false, pid = 0;
+    ptr.addEventListener('pointerdown', e => { if (refreshing || e.button !== 0) return; if (ptrScroll.scrollTop > 0) return; down = true; active = false; sy = e.clientY; pid = e.pointerId; });
+    ptr.addEventListener('pointermove', e => {
+      if (!down) return; const dy = e.clientY - sy;
+      if (!active){ if (dy > 4){ active = true; ptr.setPointerCapture(pid); ptr.classList.add('dragging'); pull.stop(); } else if (dy < -4){ down = false; return; } else return; }
+      e.preventDefault(); finger = Math.max(0, dy); const y = resist(finger); pull.set(y);
+      const armed = y >= THRESH; if (armed !== ring.classList.contains('armed')) ring.classList.toggle('armed', armed);
+    });
+    const up = () => { if (!down) return; down = false; ptr.classList.remove('dragging'); if (!active) return; active = false; if (pull.x >= THRESH) doRefresh(); else { ring.classList.remove('armed'); finger = 0; pull.to(0); } };
+    ptr.addEventListener('pointerup', up); ptr.addEventListener('pointercancel', up);
+  })();
+  $('#p70-ptr-btn').addEventListener('click', () => {
+    if (refreshing) return; ptrScroll.scrollTop = 0;
+    const s = H.spring(0, { spring:'snappy', clamp:true, onUpdate: y => { pull.set(y); }, onRest: () => doRefresh() });
+    ring.classList.add('armed'); s.to(THRESH + 4);
+  });
+  paintPull(0);
+
+  /* ---------------- 06.09 Steps ---------------- */
+  const steps = [
+    ['Account', 'Create your account', 'Use your email address. We’ll send a six-digit code — there’s no password to remember.', 'About two minutes left'],
+    ['Sound', 'Choose your sound', 'Lossless uses about 1.4 GB per hour; High uses 140 MB. You can set each network differently later.', 'About a minute left'],
+    ['Downloads', 'Download on Wi-Fi only?', 'Recommended if your plan has a data cap. Downloads already in progress will finish where they are.', 'Nearly there'],
+    ['Done', 'You’re set', 'Your library is syncing — 1,284 songs, about six minutes on this connection.', 'Finished']
+  ];
+  let stCur = 1;
+  const stSegs = $$('.hj-steps-seg', $('#p70-steps')), stLabels = $$('.hj-steps-labels span', $('#p70-steps')), stStage = $('#p70-st-stage');
+  const stBack = $('#p70-st-back'), stNext = $('#p70-st-next');
+  function stPaint(dir){
+    stSegs.forEach((s, i) => { s.classList.toggle('done', i < stCur); s.classList.toggle('cur', i === stCur); });
+    stLabels.forEach((l, i) => { l.className = i < stCur ? 'done' : i === stCur ? 'cur' : ''; });
+    const s = steps[stCur];
+    $('#p70-st-count').innerHTML = `Step <b>${stCur + 1}</b> of 4`;
+    $('#p70-st-pct').textContent = Math.round((stCur + 1) / 4 * 100) + '%';
+    const bar = $('#p70-st-bar'); bar.setAttribute('aria-valuenow', stCur + 1); bar.setAttribute('aria-valuetext', `Step ${stCur + 1} of 4, ${s[0]}`);
+    const old = $('.hj-steps-body', stStage);
+    const nb = document.createElement('div'); nb.className = 'hj-steps-body' + (dir ? (dir > 0 ? ' in-r' : ' in-l') : '');
+    nb.innerHTML = `<h4>${s[1]}</h4><p>${s[2]}</p>`;
+    if (old){ old.remove(); }
+    stStage.appendChild(nb);
+    $('#p70-st-hint').textContent = s[3];
+    stBack.disabled = stCur === 0;
+    stNext.textContent = stCur === 3 ? 'Start again' : stCur === 2 ? 'Finish' : 'Continue';
+    stNext.classList.toggle('ink', stCur === 3);
+  }
+  stNext.addEventListener('click', () => { if (stCur === 3){ stCur = 0; stPaint(-1); return; } stCur++; stPaint(1); });
+  stBack.addEventListener('click', () => { if (stCur > 0){ stCur--; stPaint(-1); } });
+  stPaint(0);
+
+  /* ---------------- 06.10 Fast scroll ---------------- */
+  const artists = ['Aiko Sato','Alba Torres','Amara Nwosu','Bastian Kohl','Beatriz Lima','Cass Mercer','Chen Yuqi','Clementine Hart','Dev Malhotra','Dorothea Vance',
+    'Elif Kaya','Ezra Bloom','Farah Siddiqui','Finn Larsen','Greta Aalto','Harbour Lights','Hye-jin Choi','Ilse Brandt','Ines Moreau','Jun-seo Park','Juno Reyes',
+    'Kasia Nowak','Kofi Mensah','Leila Farouk','Luca Bianchi','Mateo Ruiz','Mira Okafor','Moonlit Ferry','Nils Ekman','Noor Haddad','Oona Kiviniemi','Otis Grey',
+    'Paper Lanterns','Priya Raman','Rafael Ortega','Rin Takahashi','Saltwater Hymns','Sunniva Berg','Sven Holm','Talia Shapiro','Tomás Reyes Trio',
+    'Valentina Cruz','Vik Sharma','Wren Adair','Yara Haddad','Yusuf Demir','Zainab Okoye','Zoë Martin','1975 Ensemble'];
+  const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
+  const groups = {}; artists.forEach(a => { const L = /[A-Z]/i.test(a[0]) ? a[0].toUpperCase() : '#'; (groups[L] = groups[L] || []).push(a); });
+  const fsList = $('#p70-fs-list'), fsScroll = $('#p70-fs-scroll'), rail = $('#p70-fs-rail'), bubble = $('#p70-fs-bubble'), bubbleB = $('b', bubble);
+  $('#p70-fs-count').textContent = `${artists.length} artists`;
+  fsList.innerHTML = LETTERS.filter(L => groups[L]).map(L => `<div class="p70-fs-sec" data-l="${L}"><div class="p70-fs-head">${L}</div>` +
+    groups[L].sort((a, b) => a.localeCompare(b)).map(n => `<div class="p70-row"><span class="p70-av" style="--c:var(--data-${colorOf(n)})">${initials(n) || '#'}</span><span class="p70-row-text"><span class="p70-row-title">${esc(n)}</span></span></div>`).join('') + '</div>').join('');
+  rail.innerHTML = LETTERS.map(L => `<span class="${groups[L] ? '' : 'empty'}" data-l="${L}">${L}</span>`).join('');
+  const railSpans = $$('span', rail);
+  let fsLetter = null, fsDragging = false;
+  function landing(i){ for (let k = i; k < LETTERS.length; k++) if (groups[LETTERS[k]]) return LETTERS[k]; for (let k = i; k >= 0; k--) if (groups[LETTERS[k]]) return LETTERS[k]; return 'A'; }
+  function markRail(L){ railSpans.forEach(s => s.classList.toggle('on', s.dataset.l === L)); rail.setAttribute('aria-valuenow', LETTERS.indexOf(L)); rail.setAttribute('aria-valuetext', L); }
+  function jump(i, showBubble, y){
+    i = clamp(i, 0, LETTERS.length - 1);
+    const L = landing(i); const sec = $(`.p70-fs-sec[data-l="${L}"]`, fsList);
+    fsScroll.scrollTop = sec.offsetTop;                       // direct: no animation between finger and list
+    if (showBubble){
+      const rr = rail.getBoundingClientRect(), vr = $('#p70-fs').getBoundingClientRect();
+      const span = railSpans[i].getBoundingClientRect();
+      const cy = (y != null ? clamp(y, rr.top + 6, rr.bottom - 6) : span.top + span.height / 2) - vr.top;
+      bubble.style.setProperty('--y', (cy - 28).toFixed(1) + 'px');
+      const shown = LETTERS[i];
+      if (bubbleB.textContent !== shown){ bubbleB.textContent = shown; bubbleB.classList.remove('pop'); void bubbleB.offsetWidth; bubbleB.classList.add('pop'); }
+    }
+    fsLetter = L; markRail(L);
+  }
+  const idxAt = y => { const r = rail.getBoundingClientRect(); return clamp(Math.floor((y - r.top) / (r.height / LETTERS.length)), 0, LETTERS.length - 1); };
+  rail.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return; e.preventDefault(); fsDragging = true; rail.setPointerCapture(e.pointerId);
+    jump(idxAt(e.clientY), true, e.clientY);
+    bubble.classList.add('on'); setTimeout(() => fsDragging && bubble.classList.add('track'), 200);
+  });
+  rail.addEventListener('pointermove', e => { if (!fsDragging) return; jump(idxAt(e.clientY), true, e.clientY); });
+  const fsUp = () => { if (!fsDragging) return; fsDragging = false; bubble.classList.remove('on', 'track'); };
+  rail.addEventListener('pointerup', fsUp); rail.addEventListener('pointercancel', fsUp);
+  rail.addEventListener('keydown', e => {
+    let i = LETTERS.indexOf(fsLetter || 'A');
+    if (e.key === 'ArrowDown'){ i++; while (i < LETTERS.length - 1 && !groups[LETTERS[i]]) i++; }
+    else if (e.key === 'ArrowUp'){ i--; while (i > 0 && !groups[LETTERS[i]]) i--; }
+    else if (e.key === 'Home') i = 0; else if (e.key === 'End') i = LETTERS.length - 1; else return;
+    e.preventDefault(); jump(i, true); bubble.classList.add('on');
+    clearTimeout(rail._t); rail._t = setTimeout(() => bubble.classList.remove('on'), 700);
+  });
+  rail.addEventListener('blur', () => bubble.classList.remove('on'));
+  fsScroll.addEventListener('scroll', () => {
+    if (fsDragging) return;
+    const top = fsScroll.scrollTop + 8; let cur = null;
+    $$('.p70-fs-sec', fsList).forEach(s => { if (s.offsetTop <= top) cur = s.dataset.l; });
+    if (cur !== fsLetter){ fsLetter = cur; markRail(cur); }
+  }, { passive:true });
+  markRail(null);
+})();
+</script>

@@ -73,6 +73,13 @@ only. One stable context read per component. Per-module ESM output (tree-shakes 
 `'use client'` preserved). `createTheme` ships without zod. Reduced motion is a token swap, not a
 per-component branch.
 
+## Design system
+
+[`design/hanji.html`](design/hanji.html) is the hanji design language this library is built from —
+papers, accents, type, springs and every component as a printed specimen — in one self-contained
+page. Open it in a browser. It is assembled from `design/parts/*.html`; edit a part and rebuild with
+`python3 design/build.py` (`design/CONTRACT.md` describes the markup and runtime contract).
+
 ## Tooling
 
 pnpm workspaces + catalog · TypeScript 7 (native) with `isolatedDeclarations` · tsdown (Rolldown + oxc

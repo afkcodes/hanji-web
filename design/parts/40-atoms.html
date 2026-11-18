@@ -1,0 +1,1019 @@
+<section class="chapter" id="atoms" data-num="03" data-title="Atoms">
+<style>
+/* ==========================================================================
+   03 · ATOMS — components owned here are .hj-<name>; demo layout is .p40-*
+   ========================================================================== */
+.p40-rows{ display:flex; flex-direction:column; gap:12px; width:100% }
+.p40-rows > .p40-rl:not(:first-child){ margin-top:20px }
+.p40-rl{ font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--fg-mute) }
+.p40-rc{ display:flex; flex-wrap:wrap; align-items:center; gap:12px }
+.p40-fig{ display:flex; flex-direction:column; align-items:center; gap:9px }
+.p40-fig > figcaption, .p40-cap{ font:400 10.5px/1 var(--mono); color:var(--fg-mute); letter-spacing:0 }
+.p40-mono{ font:400 11.5px/1.4 var(--mono); color:var(--fg-mute) }
+.p40-vr{ width:1px; align-self:stretch; background:var(--line) }
+
+/* ---------- Button: label · busy ring · done tick ---------- */
+.hj-btn-lbl{ display:inline-flex; align-items:center; gap:inherit; transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy-settle) var(--ease-snappy-settle) }
+.hj-btn-busy{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none }
+.hj-btn-busy > *{ grid-area:1 / 1; opacity:0; transform:scale(.6); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.hj-btn.is-loading .hj-btn-lbl, .hj-btn.is-done .hj-btn-lbl{ opacity:0; transform:scale(.94) }
+.hj-btn.is-loading .hj-btn-busy .hj-spin{ opacity:1; transform:none }
+.hj-btn.is-done .hj-btn-busy .hj-btn-done{ opacity:1; transform:none }
+.hj-btn.is-loading, .hj-btn.is-done{ cursor:progress }
+.hj-btn .hj-spin{ color:inherit }
+.hj-btn-done{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+.hj-btn-done path{ stroke-dasharray:1; stroke-dashoffset:1 }
+.hj-btn.is-done .hj-btn-done path{ stroke-dashoffset:0; transition:stroke-dashoffset 340ms var(--ease-out) 80ms }
+.p40-hit{ position:relative; width:44px; height:44px; display:grid; place-items:center; border-radius:50% }
+.p40-hit::before{ content:""; position:absolute; inset:0; border-radius:50%; border:1px dashed rgba(var(--fg-rgb),.24); pointer-events:none }
+
+/* ---------- Icon ---------- */
+.p40-iconwrap{ display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:28px; width:100%; align-items:start }
+.p40-code{ margin:0; font:400 11.5px/1.75 var(--mono); color:var(--fg-dim); background:var(--surface); border-radius:var(--r-sm); box-shadow:inset 0 0 0 1px var(--line); padding:14px 16px; white-space:pre; overflow:auto; letter-spacing:0 }
+.p40-code i{ font-style:normal; color:var(--fg-mute) }
+.p40-code b{ font-weight:500; color:var(--fg) }
+.p40-scale{ display:flex; flex-direction:column; gap:18px }
+.p40-scale-row{ display:flex; align-items:flex-end; gap:20px }
+.p40-scale-row .p40-fig{ gap:8px }
+.p40-icons{ display:grid; grid-template-columns:repeat(8, minmax(0,1fr)); width:100%; border-top:1px solid var(--line); border-left:1px solid var(--line) }
+.p40-icons button{ display:flex; flex-direction:column; align-items:center; gap:9px; padding:16px 4px 13px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); color:var(--fg); font:400 10.5px/1 var(--mono); letter-spacing:0; position:relative }
+.p40-icons button span{ color:var(--fg-mute); transition:color var(--dur-fast) var(--ease-out) }
+.p40-icons button .ic{ transition:color var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.p40-icons button:hover .ic{ color:var(--accent) }
+.p40-icons button:active .ic{ transform:scale(.88); transition-duration:70ms }
+.p40-icons button.copied span{ color:var(--accent) }
+.p40-icons button:focus-visible{ outline-offset:-2px; border-radius:0 }
+
+/* ---------- Pressable ---------- */
+.p40-press{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:44px; align-items:center; width:100% }
+.p40-press-l{ display:flex; flex-direction:column; align-items:flex-start; gap:20px }
+.p40-tile{ width:176px; padding:16px; border-radius:var(--r-lg); background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--line); display:flex; flex-direction:column; gap:26px; cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation; will-change:transform; text-align:left }
+.p40-tile-ic{ width:36px; height:36px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center }
+.p40-tile-t{ font-weight:600; font-size:15px; letter-spacing:-.01em; line-height:1.2 }
+.p40-tile-s{ font:400 12px/1.4 var(--mono); color:var(--fg-mute); margin-top:3px }
+.p40-prow{ display:grid; grid-template-columns:40px minmax(0,1fr) 20px; gap:12px; align-items:center; width:300px; padding:8px 10px 8px 0; cursor:pointer; text-align:left; transition:opacity var(--dur-snappy) var(--ease-snappy) }
+.p40-prow:active{ opacity:var(--press-opacity); transition-duration:70ms }
+.p40-prow .ic{ color:var(--fg-mute) }
+.p40-t{ font-weight:600; font-size:14.5px; letter-spacing:-.01em; line-height:1.25 }
+.p40-s{ font-size:12.5px; color:var(--fg-mute); line-height:1.35; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.p40-trace{ display:flex; flex-direction:column; gap:10px; min-width:0 }
+.p40-trace svg{ width:100%; height:128px; overflow:visible }
+.p40-trace .axis{ stroke:var(--fg-mute); stroke-opacity:.35; stroke-dasharray:2 3; fill:none }
+.p40-trace .lbl{ font:400 10px var(--mono); fill:var(--fg-mute) }
+.p40-trace .ln{ fill:none; stroke:var(--accent); stroke-width:1.75; stroke-linejoin:round; stroke-linecap:round }
+.p40-readout{ display:flex; align-items:baseline; gap:10px }
+.p40-readout b{ font-weight:600; font-size:30px; letter-spacing:-.03em; font-variant-numeric:tabular-nums; line-height:1 }
+.p40-slow .hj-btn{ transition-duration:calc(var(--dur-snappy) * 5), var(--dur-base), var(--dur-base), var(--dur-fast) }
+.p40-slow .hj-btn:active{ transition-duration:350ms, var(--dur-base), var(--dur-base), var(--dur-fast) }
+.p40-slow .p40-prow{ transition-duration:calc(var(--dur-snappy) * 5) }
+.p40-slow .p40-prow:active{ transition-duration:350ms }
+.plate-btn[aria-pressed="true"]{ color:var(--accent); background:var(--accent-soft) }
+
+/* ---------- Squircle ---------- */
+.p40-sq{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:44px; align-items:center; width:100% }
+.p40-sq-big svg{ width:268px; height:268px; overflow:hidden; -webkit-mask-image:linear-gradient(to right, transparent 0, #000 22%), linear-gradient(to top, transparent 0, #000 22%); -webkit-mask-composite:source-in; mask-image:linear-gradient(to right, transparent 0, #000 22%), linear-gradient(to top, transparent 0, #000 22%); mask-composite:intersect }
+.p40-sq .sqf{ fill:var(--accent-soft); stroke:var(--accent); stroke-width:1.5 }
+.p40-sq .ccl{ fill:none; stroke:var(--fg); stroke-opacity:.55; stroke-width:1; stroke-dasharray:3 3 }
+.p40-sq .tok{ fill:var(--surface-2); stroke:var(--fg); stroke-opacity:.2; stroke-width:1 }
+.p40-sq .tokc{ fill:none; stroke:var(--accent); stroke-width:1; stroke-dasharray:2 2; opacity:0; transition:opacity var(--dur-base) var(--ease-out) }
+.p40-sq-tok:hover .tokc, .p40-sq.show-c .tokc{ opacity:.9 }
+.p40-sq-legend{ display:flex; gap:20px; margin-top:16px; font-size:12px; color:var(--fg-dim) }
+.p40-sq-legend span{ display:inline-flex; align-items:center; gap:8px }
+.p40-sq-legend i{ display:inline-block; width:22px; height:0; border-top:1.5px solid var(--accent) }
+.p40-sq-legend i.c{ border-top:1px dashed var(--fg) ; opacity:.55 }
+.p40-sq-toks{ display:flex; flex-wrap:wrap; gap:18px 22px; align-items:flex-end }
+.p40-sq-tok{ display:flex; flex-direction:column; align-items:center; gap:10px; cursor:default }
+.p40-sq-tok svg{ overflow:visible }
+.p40-sq-note{ margin:22px 0 0; font-size:12.5px; line-height:1.55; color:var(--fg-dim); max-width:380px }
+
+/* ---------- Divider ---------- */
+.hj-divider{ border:0; height:1px; background:var(--line); margin:0 }
+.hj-divider.inset{ margin-left:72px }
+.hj-divider-l{ display:flex; align-items:center; gap:14px; font-size:12.5px; font-weight:500; color:var(--fg-mute); margin:0 }
+.hj-divider-l::before, .hj-divider-l::after{ content:""; flex:1; height:1px; background:var(--line); transition:transform 520ms var(--ease-out) 120ms }
+.hj-divider-l::before{ transform-origin:right center } .hj-divider-l::after{ transform-origin:left center }
+html.js .hj-divider-l:not(.in)::before, html.js .hj-divider-l:not(.in)::after{ transform:scaleX(0) }
+html.static .hj-divider-l::before, html.static .hj-divider-l::after{ transform:none!important }
+.p40-dv{ display:grid; grid-template-columns:360px 88px; column-gap:16px; align-items:center }
+.p40-dv > .p40-ann{ font:400 10.5px/1 var(--mono); color:var(--fg-mute); display:flex; align-items:center; gap:6px }
+.p40-dv > .p40-ann::before{ content:""; width:12px; height:1px; background:var(--fg-mute); opacity:.5 }
+.p40-drow{ display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:16px; align-items:center; padding:12px 16px; height:64px }
+.p40-dm{ font-size:12px; color:var(--fg-mute) }
+.p40-gap{ height:22px } .p40-gap-s{ height:14px }
+
+/* ---------- Spinner (new) ---------- */
+.hj-spin{ --sz:20px; --w:2px; position:relative; display:inline-block; width:var(--sz); height:var(--sz); color:var(--accent); flex:none; line-height:0 }
+.hj-spin.lg{ --w:3px }
+/* one element turns at a constant speed; the ink tail fades behind a round head */
+.hj-spin > i{ position:absolute; inset:0; border-radius:50%; animation:hj-spin-turn 900ms linear infinite }
+.hj-spin > i::before{ content:""; position:absolute; inset:0; border-radius:50%;
+  background:conic-gradient(from 0deg, transparent 0deg 40deg, currentColor 360deg);
+  -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - var(--w) - .5px), #000 calc(100% - var(--w)));
+          mask:radial-gradient(farthest-side, transparent calc(100% - var(--w) - .5px), #000 calc(100% - var(--w))) }
+.hj-spin > i::after{ content:""; position:absolute; top:0; left:50%; width:var(--w); height:var(--w); margin-left:calc(var(--w) / -2); border-radius:50%; background:currentColor }
+@keyframes hj-spin-turn{ to{ transform:rotate(360deg) } }
+@keyframes hj-pulse{ from{ opacity:.55 } to{ opacity:.9 } }
+html[data-motion="reduced"] .hj-spin > i{ animation:hj-pulse 1100ms ease-in-out infinite alternate }
+.p40-spin{ display:grid; grid-template-columns:auto 1px minmax(0,1fr); gap:36px; align-items:center; width:100% }
+.p40-spin-sizes{ display:flex; align-items:flex-end; gap:28px }
+.p40-spin-ctx{ display:flex; flex-direction:column; gap:16px; align-items:flex-start }
+.p40-inline{ display:inline-flex; align-items:center; gap:10px; font-size:13.5px; color:var(--fg-dim) }
+.p40-delay{ display:flex; align-items:center; gap:14px; min-height:40px; padding:10px 14px 10px 12px; border-radius:var(--r-sm); background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); width:100%; max-width:380px }
+.p40-delay .slot{ width:20px; height:20px; display:grid; place-items:center; flex:none }
+.p40-delay .slot .hj-spin{ opacity:0; transform:scale(.6); transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.p40-delay.spinning .slot .hj-spin{ opacity:1; transform:none }
+.p40-delay .slot .ic{ position:absolute; opacity:0; color:var(--success); transition:opacity var(--dur-fast) var(--ease-out) }
+.p40-delay.ok .slot .ic{ opacity:1 }
+.p40-delay .slot{ position:relative }
+.p40-delay .slot .idle{ position:absolute; opacity:1; color:var(--fg-mute); transition:opacity var(--dur-fast) var(--ease-out) }
+.p40-delay.spinning .slot .idle, .p40-delay.ok .slot .idle, .p40-delay.busy .slot .idle{ opacity:0 }
+.p40-delay-t{ font-size:13px; line-height:1.4; color:var(--fg-dim) }
+.p40-delay-t b{ color:var(--fg); font-weight:600 }
+
+/* ---------- Skeleton ---------- */
+.p40-screen{ background:var(--bg); border-radius:var(--r-lg); box-shadow:inset 0 0 0 1px var(--line); padding:8px 16px 12px; width:100%; max-width:640px; display:grid; grid-template-columns:minmax(0,1fr) 210px; gap:28px; position:relative; min-height:236px }
+.p40-sk-layer{ grid-area:1 / 1 / 2 / 3; display:grid; grid-template-columns:minmax(0,1fr) 210px; gap:28px; transition:opacity var(--dur-fast) var(--ease-out) }
+.p40-sk-layer.gone{ opacity:0; pointer-events:none }
+.hj-bone{ position:relative; overflow:hidden; background:var(--surface-2); border-radius:var(--r-xs) }
+html[data-theme="paper"] .p40-screen .hj-bone, [data-theme="paper"] .p40-screen .hj-bone{ background:rgba(var(--fg-rgb),.06) }
+.hj-bone::after{ content:""; position:absolute; top:0; bottom:0; left:0; width:70%; background:linear-gradient(90deg, rgba(var(--fg-rgb),0), rgba(var(--fg-rgb),.09) 50%, rgba(var(--fg-rgb),0)); transform:translateX(-100%); animation:hj-sweep 1450ms linear infinite }
+@keyframes hj-sweep{ 0%{ transform:translateX(-100%); animation-timing-function:cubic-bezier(.45,.05,.55,.95) } 69%{ transform:translateX(143%) } 100%{ transform:translateX(143%) } }
+html[data-motion="reduced"] .hj-bone::after{ display:none }
+.p40-skrow{ display:grid; grid-template-columns:48px minmax(0,1fr); gap:14px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line) }
+.p40-skrow:last-child{ border-bottom:0 }
+.p40-sklines{ display:flex; flex-direction:column; gap:8px }
+.p40-art{ width:48px; height:48px; border-radius:var(--r-xs); flex:none; background-color:var(--surface-2) }
+.p40-skcard{ padding-top:12px; display:flex; flex-direction:column; gap:10px }
+.p40-content{ grid-area:1 / 1 / 2 / 3; display:grid; grid-template-columns:minmax(0,1fr) 210px; gap:28px; visibility:hidden }
+.p40-content.on{ visibility:visible }
+.p40-content-list{ display:flex; flex-direction:column }
+.p40-card-art{ width:100%; aspect-ratio:16/9; border-radius:var(--r-md) }
+.p40-card-t{ font-weight:600; font-size:14.5px; letter-spacing:-.01em; margin-top:2px }
+
+/* ---------- Badge ---------- */
+.p40-host{ position:relative; display:inline-grid; place-items:center }
+.p40-iconhost{ width:44px; height:44px; border-radius:50%; background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); color:var(--fg) }
+.hj-badge{ position:absolute; top:-4.5px; right:-4.5px; min-width:18px; height:18px; padding:0 5px; border-radius:var(--r-pill); background:var(--accent); color:var(--on-accent); font:600 11px/18px var(--font); font-variant-numeric:tabular-nums; text-align:center; box-shadow:0 0 0 2px var(--ring, var(--bg-soft)); transform:scale(var(--bs,1)); transform-origin:center; letter-spacing:.01em; white-space:nowrap }
+.hj-badge.dot{ min-width:8px; width:8px; height:8px; padding:0; top:-2px; right:-2px }
+.hj-badge.danger{ background:var(--danger); color:var(--bg) }
+.hj-badge.neutral{ position:static; display:inline-block; background:var(--surface-2); color:var(--fg-dim); box-shadow:inset 0 0 0 1px var(--line); transform:none }
+.hj-badge.gone{ visibility:hidden }
+.p40-badges{ display:flex; align-items:center; gap:44px; flex-wrap:wrap }
+.p40-inbox{ display:flex; flex-direction:column; width:220px }
+.p40-inrow{ display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); font-size:14px; font-weight:500 }
+.p40-inrow:last-child{ border-bottom:0 }
+.p40-inrow .ic{ color:var(--fg-dim) }
+.p40-inrow .sp{ flex:1 }
+.p40-inrow .hj-badge.inl{ position:static; transform:scale(var(--bs,1)); box-shadow:none }
+
+/* ---------- Avatar ---------- */
+.hj-avatar{ --sz:40px; position:relative; width:var(--sz); height:var(--sz); border-radius:50%; flex:none; display:grid; place-items:center; font-weight:600; font-size:calc(var(--sz) * .38); letter-spacing:-.01em; line-height:1; user-select:none; background:var(--surface-2); color:var(--fg) }
+.hj-avatar .pres{ position:absolute; right:0; bottom:0; width:max(8px, calc(var(--sz) * .25)); height:max(8px, calc(var(--sz) * .25)); border-radius:50%; background:var(--success); box-shadow:0 0 0 2px var(--ring, var(--bg-soft)) }
+.hj-avatar .pres.away{ background:var(--bg-soft); box-shadow:inset 0 0 0 2px var(--warning), 0 0 0 2px var(--ring, var(--bg-soft)) }
+.hj-avatar.glyph{ background:var(--surface-2); color:var(--fg-dim); box-shadow:inset 0 0 0 1px var(--line) }
+.hj-avatar.glyph .ic{ width:calc(var(--sz) * .5); height:calc(var(--sz) * .5) }
+.hj-avgroup{ display:flex; align-items:center }
+.hj-avgroup .hj-avatar{ box-shadow:0 0 0 2px var(--ring, var(--bg-soft)); transition:transform var(--dur-snappy-settle) var(--ease-snappy-settle); transition-delay:calc(var(--i,0) * var(--stagger)) }
+.hj-avgroup .hj-avatar + .hj-avatar{ margin-left:-8px }
+.hj-avgroup:hover .hj-avatar{ transform:translateX(calc(var(--i,0) * 6px * var(--travel))) }
+.hj-avatar.more{ background:var(--surface-2); color:var(--fg-dim); font-size:calc(var(--sz) * .3); font-variant-numeric:tabular-nums }
+.p40-avs{ display:grid; grid-template-columns:auto 1px auto; gap:40px; align-items:center }
+.p40-avsizes{ display:flex; align-items:flex-end; gap:22px }
+.p40-avright{ display:flex; flex-direction:column; gap:26px }
+.p40-pres{ display:flex; gap:22px; align-items:center }
+.p40-pres .p40-fig{ gap:8px }
+
+/* ---------- Chip ---------- */
+.hj-chip{ position:relative; height:32px; padding:0 13px; display:inline-flex; align-items:center; gap:6px; border-radius:var(--r-pill); font-weight:600; font-size:13px; letter-spacing:-.005em; color:var(--fg-dim); isolation:isolate; white-space:nowrap; transition:color var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.hj-chip::before{ content:""; position:absolute; inset:-6px -2px }
+.hj-chip-bg{ position:absolute; inset:0; z-index:-1; border-radius:inherit; background:var(--surface); box-shadow:inset 0 0 0 1px var(--line); transform-origin:left center; transition:background-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out) }
+.hj-chip:hover{ color:var(--fg) }
+.hj-chip:active{ transform:scale(var(--press)); transition-duration:var(--dur-base), var(--dur-fast), 70ms }
+.hj-chip-lbl{ display:inline-block }
+.hj-chip[aria-pressed="true"]{ color:var(--accent) }
+.hj-chip[aria-pressed="true"] .hj-chip-bg{ background:var(--accent-soft); box-shadow:inset 0 0 0 1px transparent }
+.hj-chip-chk{ display:none; width:14px; height:14px; margin-left:-3px; stroke-width:2 }
+.hj-chip[aria-pressed="true"] .hj-chip-chk{ display:block; animation:p40-chk var(--dur-snappy) var(--ease-snappy) both }
+@keyframes p40-chk{ from{ transform:scale(0) rotate(-25deg); opacity:0 } to{ transform:none; opacity:1 } }
+.hj-chip:disabled{ opacity:.4; cursor:not-allowed; transform:none }
+.hj-chip.input{ padding-right:4px; color:var(--fg) }
+.hj-chip.assist{ color:var(--fg) }
+.hj-chip.assist .ic{ color:var(--fg-dim); width:16px; height:16px; margin-left:-2px }
+.hj-chip-x{ width:24px; height:24px; border-radius:50%; display:grid; place-items:center; color:var(--fg-mute); position:relative; z-index:1; transition:background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out) }
+.hj-chip-x:hover{ background:rgba(var(--fg-rgb),.08); color:var(--fg) }
+.hj-chip-x .ic{ width:14px; height:14px; stroke-width:1.75 }
+.hj-chip.flipping{ transition:color var(--dur-base) var(--ease-out), opacity var(--dur-fast) var(--ease-out) }
+.hj-chip.leaving{ opacity:0; transform:scale(.82)!important; transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out) }
+.p40-chiprow{ display:flex; flex-wrap:wrap; align-items:center; gap:8px }
+.p40-clear{ margin-left:6px; opacity:0; transform:scale(.9); pointer-events:none; transition:opacity var(--dur-fast) var(--ease-out), transform var(--dur-snappy) var(--ease-snappy) }
+.p40-clear.on{ opacity:1; transform:none; pointer-events:auto }
+.p40-count{ font:400 11.5px/1 var(--mono); color:var(--fg-mute); margin-left:4px }
+
+/* ---------- Status (new) ---------- */
+.hj-status{ --x:var(--fg-dim); --xs:rgba(var(--fg-rgb),.07); display:inline-flex; align-items:center; gap:6px; height:24px; padding:0 10px 0 8px; border-radius:var(--r-pill); background:var(--xs); color:var(--x); font-weight:600; font-size:12px; letter-spacing:.005em; white-space:nowrap; flex:none }
+.hj-status .ic{ width:14px; height:14px; stroke-width:1.8 }
+.hj-status.ok{ --x:var(--success); --xs:var(--success-soft) }
+.hj-status.warn{ --x:var(--warning); --xs:var(--warning-soft) }
+.hj-status.bad{ --x:var(--danger); --xs:var(--danger-soft) }
+.hj-status.info{ --x:var(--info); --xs:var(--info-soft) }
+.hj-status-pend{ width:12px; height:12px; border-radius:50%; box-shadow:inset 0 0 0 1.5px currentColor; display:grid; place-items:center; margin:0 1px }
+.hj-status-pend::after{ content:""; width:4px; height:4px; border-radius:50%; background:currentColor; animation:hj-pulse 1100ms ease-in-out infinite alternate }
+html[data-motion="reduced"] .hj-status-pend::after{ animation:none; opacity:.9 }
+.p40-stats{ display:flex; flex-direction:column; gap:22px; width:100%; max-width:600px }
+.p40-tags{ display:flex; flex-wrap:wrap; gap:8px }
+.p40-slist{ border-top:1px solid var(--line) }
+.p40-srow{ display:grid; grid-template-columns:20px minmax(0,1fr) auto; gap:14px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line) }
+.p40-srow > .ic{ color:var(--fg-dim) }
+.p40-srow .r{ display:flex; align-items:center; gap:8px }
+.p40-srow time{ font-size:12px; color:var(--fg-mute); font-variant-numeric:tabular-nums }
+
+/* ---------- Scrim ---------- */
+.p40-scrim{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:48px; align-items:center; width:100% }
+.p40-cover{ position:relative; width:272px; aspect-ratio:1; border-radius:var(--r-md); overflow:hidden; flex:none; box-shadow:0 12px 24px -6px rgba(0,0,0,.45) }
+.p40-cover .hj-scrim{ position:absolute; inset:0; background:linear-gradient(to top, color-mix(in srgb, var(--scrim) 72%, transparent) 0%, color-mix(in srgb, var(--scrim) 40%, transparent) 26%, color-mix(in srgb, var(--scrim) 0%, transparent) 55%); transition:opacity var(--dur-base) var(--ease-out) }
+.p40-cover.no-scrim .hj-scrim{ opacity:0 }
+.p40-cover-txt{ position:absolute; left:18px; right:18px; bottom:16px; color:var(--on-scrim) }
+.p40-cover-e{ font-weight:600; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; opacity:.86 }
+.p40-cover-t{ font-weight:700; font-size:24px; letter-spacing:-.03em; line-height:1.05; margin-top:6px }
+.p40-cover-s{ font-size:12.5px; margin-top:4px; opacity:.86 }
+.p40-cover-play{ position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; color:var(--on-scrim); background:color-mix(in srgb, var(--scrim) 32%, transparent) }
+.p40-rule{ display:flex; flex-direction:column; gap:18px; min-width:0 }
+.p40-strip{ display:flex; flex-direction:column; gap:8px }
+.p40-strip > .p40-bar{ height:56px; border-radius:var(--r-sm); box-shadow:inset 0 0 0 1px var(--line) }
+.p40-strip-h{ display:flex; justify-content:space-between; align-items:baseline; gap:10px }
+.p40-strip-h b{ font-weight:600; font-size:13px; display:inline-flex; align-items:center; gap:6px }
+.p40-strip-h b .ic{ stroke-width:2 }
+.p40-strip-h span{ font:400 10.5px/1.3 var(--mono); color:var(--fg-mute); text-align:right }
+.p40-x{ color:var(--danger) } .p40-ok{ color:var(--success) }
+
+@media (max-width:1100px){
+  .p40-iconwrap, .p40-press, .p40-sq, .p40-spin, .p40-avs, .p40-scrim{ grid-template-columns:1fr }
+  .p40-vr{ display:none }
+  .p40-icons{ grid-template-columns:repeat(6, minmax(0,1fr)) }
+  .p40-screen, .p40-sk-layer, .p40-content{ grid-template-columns:1fr }
+}
+@media (max-width:720px){
+  .p40-rows{ grid-template-columns:1fr; gap:10px }
+  .p40-icons{ grid-template-columns:repeat(4, minmax(0,1fr)) }
+  .p40-dv{ grid-template-columns:minmax(0,1fr) }
+  .p40-dv > .p40-ann{ display:none }
+  .p40-prow{ width:100% }
+}
+</style>
+
+  <header class="chapter-head">
+    <div class="chapter-line"><h2 class="chapter-title">Atoms</h2><span class="chapter-rule"></span><span class="chapter-num">03</span></div>
+    <div class="chapter-body">
+      <p class="chapter-lede">Atoms are the smallest parts with an opinion. hanji has three, and holds them everywhere: <b>actions are pills, depth is a hairline rather than a shadow, and there is one accent</b> — it means “act here” or “this one”, never decoration.</p>
+      <ol class="chapter-index" data-auto></ol>
+    </div>
+  </header>
+
+  <!-- 03.01 Button ======================================================== -->
+  <article class="entry" id="button">
+    <div class="entry-meta">
+      <div class="entry-num">03.01</div>
+      <h3 class="entry-title">Button</h3>
+      <p class="entry-desc">The verb on a screen. One filled button per view; everything else steps down a weight. <b>Danger is a tint and a verb, never a solid red slab.</b></p>
+      <dl class="spec">
+        <div><dt>Height</dt><dd><b>34 · 44 · 52</b> · pill</dd></div>
+        <div><dt>Primary</dt><dd>accent / on-accent</dd></div>
+        <div><dt>Ink <span class="tag-new">New</span></dt><dd>fg / bg — for when the accent sits near danger</dd></div>
+        <div><dt>Secondary</dt><dd>fg @ 8% / fg</dd></div>
+        <div><dt>Danger</dt><dd>danger @ 14% / danger</dd></div>
+        <div><dt>Press</dt><dd>.97 in 70 ms · release snappy</dd></div>
+        <div><dt>Loading</dt><dd>label fades, ring in, width held</dd></div>
+        <div><dt>A11y</dt><dd>aria-busy · 44 hit · result announced</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>The dip lands in one frame; the release overshoots by about 4%, so the button feels sprung rather than stamped.</span></p>
+    </div>
+    <div class="plate plate--stack">
+      <div class="p40-rows">
+        <span class="p40-rl">Variants</span>
+        <div class="p40-rc" style="gap:16px;align-items:flex-start">
+          <figure class="p40-fig" style="margin:0"><button class="hj-btn">Save changes</button><figcaption>primary</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><button class="hj-btn ink">Continue</button><figcaption>ink</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><button class="hj-btn secondary">Cancel</button><figcaption>secondary</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><button class="hj-btn quiet">Skip for now</button><figcaption>quiet</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><button class="hj-btn danger"><svg class="ic s18" aria-hidden="true"><use href="#i-trash"/></svg>Delete playlist</button><figcaption>danger</figcaption></figure>
+        </div>
+        <span class="p40-rl">Sizes</span>
+        <div class="p40-rc">
+          <button class="hj-btn sm"><svg class="ic s16" aria-hidden="true"><use href="#i-plus"/></svg>Follow</button>
+          <button class="hj-btn">Add to library</button>
+          <button class="hj-btn lg"><svg class="ic" aria-hidden="true"><use href="#i-play-f"/></svg>Play album</button>
+          <span class="p40-cap" style="margin-left:6px">34 · 44 · 52</span>
+        </div>
+        <span class="p40-rl">Icon</span>
+        <div class="p40-rc">
+          <button class="hj-btn icon secondary" aria-label="Like"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg></button>
+          <button class="hj-btn icon secondary" aria-label="Share"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg></button>
+          <button class="hj-btn icon quiet" aria-label="More options"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></button>
+          <span class="p40-hit" id="p40-hit"><button class="hj-btn sm icon quiet" aria-label="Close"><svg class="ic s18" aria-hidden="true"><use href="#i-x"/></svg></button></span>
+          <span class="p40-cap">34 drawn · 44 hit</span>
+        </div>
+        <span class="p40-rl">States</span>
+        <div class="p40-rc">
+          <button class="hj-btn" id="p40-save"><span class="hj-btn-lbl">Save changes</span><span class="hj-btn-busy" aria-hidden="true"><span class="hj-spin" style="--sz:18px"><i aria-hidden="true"></i></span><svg class="hj-btn-done" viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2 8.8-9.2" pathLength="1"/></svg></span></button>
+          <button class="hj-btn" disabled>Save changes</button>
+          <button class="hj-btn secondary" disabled>Cancel</button>
+          <span class="sr" aria-live="polite" id="p40-save-live"></span>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tap the first “Save changes” — loading, then done</span></div>
+    </div>
+  </article>
+
+  <!-- 03.02 Icon ========================================================== -->
+  <article class="entry" id="icon">
+    <div class="entry-meta">
+      <div class="entry-num">03.02</div>
+      <h3 class="entry-title">Icon</h3>
+      <p class="entry-desc">hanji ships no icon set. <b>The app implements one function</b>, and every component asks it for a glyph by name, size and tone — so the library never fights your brand’s icons.</p>
+      <dl class="spec">
+        <div><dt>Contract</dt><dd>render({ name, size, weight, tone, color })</dd></div>
+        <div><dt>Sizes</dt><dd><b>16</b> inline · <b>20</b> rows · <b>24</b> tabs · 28</dd></div>
+        <div><dt>Stroke</dt><dd>1.5 · round caps and joins</dd></div>
+        <div><dt>Tones</dt><dd>fg · fgDim · fgMute · accent · onAccent · danger · onScrim</dd></div>
+        <div><dt>Weight</dt><dd>linear · bold for the active tab</dd></div>
+        <div><dt>A11y</dt><dd>decorative; label the control, not the glyph</dd></div>
+      </dl>
+      <p class="motion-note"><span>Glyphs never animate on their own. The control around them does.</span></p>
+    </div>
+    <div class="plate plate--stack" style="gap:28px">
+      <div class="p40-iconwrap">
+<pre class="p40-code"><i>// The app owns its icons. hanji asks for one function.</i>
+const icons: <b>IconAdapter</b> = {
+  render: ({ name, size, color }) =&gt;
+    &lt;Lucide name={name} size={size}
+            color={color} strokeWidth={1.5} /&gt;,
+};
+
+&lt;<b>HanjiProvider</b> icons={icons}&gt; … &lt;/HanjiProvider&gt;
+&lt;<b>Icon</b> name="heart" size={20} tone="fgDim" /&gt;</pre>
+        <div class="p40-scale">
+          <div class="p40-scale-row">
+            <figure class="p40-fig" style="margin:0"><svg class="ic s16" aria-hidden="true"><use href="#i-heart"/></svg><figcaption>16</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg><figcaption>20</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><svg class="ic s24" aria-hidden="true"><use href="#i-heart"/></svg><figcaption>24</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><svg class="ic" style="width:28px;height:28px" aria-hidden="true"><use href="#i-heart"/></svg><figcaption>28</figcaption></figure>
+          </div>
+          <div class="p40-scale-row">
+            <figure class="p40-fig" style="margin:0"><svg class="ic s24" aria-hidden="true"><use href="#i-bell"/></svg><figcaption>fg</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><svg class="ic s24 dim" aria-hidden="true"><use href="#i-bell"/></svg><figcaption>fgDim</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><svg class="ic s24 mute" aria-hidden="true"><use href="#i-bell"/></svg><figcaption>fgMute</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><svg class="ic s24 acc" aria-hidden="true"><use href="#i-bell"/></svg><figcaption>accent</figcaption></figure>
+          </div>
+        </div>
+      </div>
+      <div class="p40-icons" id="p40-icons" aria-label="Icon set — press to copy a name"></div>
+      <div class="plate-cap"><span class="live">Live</span><span>Press a glyph to copy its name</span></div>
+    </div>
+  </article>
+
+  <!-- 03.03 Pressable ===================================================== -->
+  <article class="entry" id="pressable">
+    <div class="entry-meta">
+      <div class="entry-num">03.03</div>
+      <h3 class="entry-title">Pressable</h3>
+      <p class="entry-desc">The base of every control: it answers the finger before the finger lifts. <b>Controls dip; rows dim</b> — a row that shrank would nudge a whole list.</p>
+      <dl class="spec">
+        <div><dt>Control</dt><dd>scale <b>.97</b> in ≤ 70 ms</dd></div>
+        <div><dt>Row</dt><dd>opacity <b>.75</b> · no scale</dd></div>
+        <div><dt>Release</dt><dd>snappy · k 380 · c 28 · m 1</dd></div>
+        <div><dt>Switches</dt><dd>no dip; the knob moves instead</dd></div>
+        <div><dt>Haptics</dt><dd>adapter · a light tick on commit, optional</dd></div>
+        <div><dt>Hit area</dt><dd>grown to 44 with hit-slop, never by padding the art</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>Down is a timing because it must land now. Up is a spring because the next tap may interrupt it.</span></p>
+    </div>
+    <div class="plate" id="p40-pressplate">
+      <div class="plate-tools"><button class="plate-btn" id="p40-slow" aria-pressed="false">Slow ×5</button></div>
+      <div class="p40-press">
+        <div class="p40-press-l">
+          <button class="p40-tile" id="p40-tile" aria-label="Liked songs, 248 songs">
+            <span class="p40-tile-ic"><svg class="ic s18" aria-hidden="true"><use href="#i-heart-f"/></svg></span>
+            <span><span class="p40-tile-t" style="display:block">Liked songs</span><span class="p40-tile-s" style="display:block">248 songs</span></span>
+          </button>
+          <button class="p40-prow">
+            <span class="hj-avatar" data-name="Jun-seo Park"></span>
+            <span style="min-width:0"><span class="p40-t" style="display:block">Jun-seo Park</span><span class="p40-s" style="display:block">Shared “Night Bus” · 2 h ago</span></span>
+            <svg class="ic s18" aria-hidden="true"><use href="#i-chev-r"/></svg>
+          </button>
+        </div>
+        <div class="p40-trace">
+          <div class="p40-readout"><b id="p40-scale-v">1.000</b><span class="p40-mono">tile scale</span></div>
+          <svg viewBox="0 0 320 128" preserveAspectRatio="none" id="p40-trace-svg" aria-hidden="true">
+            <line class="axis" x1="34" x2="320" y1="18" y2="18"/>
+            <line class="axis" x1="34" x2="320" y1="104" y2="104"/>
+            <text class="lbl" x="0" y="21">1.00</text>
+            <text class="lbl" x="0" y="107">0.97</text>
+            <polyline class="ln" id="p40-trace-ln" points="34,18 320,18"/>
+          </svg>
+          <div class="p40-mono">Press and hold the tile. The line is its scale over the last 1.6 s — a fast drop, a sprung return.</div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Tile and row both press</span></div>
+    </div>
+  </article>
+
+  <!-- 03.04 Squircle ====================================================== -->
+  <article class="entry" id="squircle">
+    <div class="entry-meta">
+      <div class="entry-num">03.04</div>
+      <h3 class="entry-title">Squircle</h3>
+      <p class="entry-desc">hanji’s corners are continuous, not circular: the curve starts earlier and eases into the straight, the way a machined edge does. <b>At small radii you feel it more than see it</b> — so here it is drawn large.</p>
+      <dl class="spec">
+        <div><dt>Smoothing</dt><dd><b>.72</b> surfaces · .6 small corners</dd></div>
+        <div><dt>Radii</dt><dd>xs 8 · sm 12 · md 16 · lg 20 · xl 28 · pill</dd></div>
+        <div><dt>Native</dt><dd>react-native-fast-squircle</dd></div>
+        <div><dt>Web</dt><dd>corner-shape: superellipse() where supported</dd></div>
+        <div><dt>Rule</dt><dd>one radius per element class</dd></div>
+      </dl>
+      <p class="motion-note"><span>Shape never animates between radii; a pressed surface keeps its corners.</span></p>
+    </div>
+    <div class="plate" id="p40-sqplate">
+      <div class="plate-tools"><button class="plate-btn" id="p40-sqc" aria-pressed="false">Show circular</button></div>
+      <div class="p40-sq" id="p40-sq">
+        <div class="p40-sq-big">
+          <svg viewBox="232 -26 316 316" id="p40-sq-big" aria-label="The top-right corner of a 520 point square with a 130 point radius, drawn continuous and circular"></svg>
+          <div class="p40-sq-legend"><span><i></i>continuous · .72</span><span><i class="c"></i>circular</span></div>
+        </div>
+        <div>
+          <div class="p40-sq-toks" id="p40-sq-toks"></div>
+          <p class="p40-sq-note">The circular corner leaves the straight at <b>r</b>; the continuous one starts bending at <b>p = 1.72 r</b> and eases in, so it never shows the kink where an arc meets a line. Hover a token to see its circular twin.</p>
+        </div>
+      </div>
+      <div class="plate-cap"><span>Corner at ×1 · figma-squircle construction</span><span>r 130 · s .72</span></div>
+    </div>
+  </article>
+
+  <!-- 03.05 Divider ======================================================= -->
+  <article class="entry" id="divider">
+    <div class="entry-meta">
+      <div class="entry-num">03.05</div>
+      <h3 class="entry-title">Divider</h3>
+      <p class="entry-desc">Hairlines do the work cards do elsewhere. <b>An inset divider starts where the text starts</b>, so a list reads as one object rather than a stack of boxes.</p>
+      <dl class="spec">
+        <div><dt>Weight</dt><dd><b>1 px</b> · line</dd></div>
+        <div><dt>Inset</dt><dd><b>72</b> = 16 gutter + 40 art + 16 gap</dd></div>
+        <div><dt>Full</dt><dd>between sections, edge to edge</dd></div>
+        <div><dt>Labelled</dt><dd>12.5 fg-mute, rules either side</dd></div>
+        <div><dt>Rule</dt><dd>none under the last row; never a shadow instead</dd></div>
+      </dl>
+      <p class="motion-note"><span>A labelled rule draws outward from its word when it arrives — 520 ms, ease-out, once.</span></p>
+    </div>
+    <div class="plate">
+      <div>
+        <div class="p40-dv">
+          <div class="p40-drow"><span class="hj-avatar" data-name="Ilse Brandt"></span><span><span class="p40-t" style="display:block">Ilse Brandt</span><span class="p40-s" style="display:block">Owner · Berlin</span></span><span class="p40-dm">You</span></div><span></span>
+          <hr class="hj-divider inset"><span class="p40-ann">inset 72</span>
+          <div class="p40-drow"><span class="hj-avatar" data-name="Dev Malhotra"></span><span><span class="p40-t" style="display:block">Dev Malhotra</span><span class="p40-s" style="display:block">Editor · Mumbai</span></span><span class="p40-dm">Edit</span></div><span></span>
+          <hr class="hj-divider inset"><span class="p40-ann">inset 72</span>
+          <div class="p40-drow"><span class="hj-avatar" data-name="Noor Haddad"></span><span><span class="p40-t" style="display:block">Noor Haddad</span><span class="p40-s" style="display:block">Invited 3 days ago</span></span><span class="p40-dm">View</span></div><span class="p40-ann" style="opacity:.8">no rule</span>
+          <div class="p40-gap"></div><span></span>
+          <hr class="hj-divider"><span class="p40-ann">full</span>
+          <div class="p40-gap"></div><span></span>
+          <div style="padding:0 16px"><button class="hj-btn block">Continue with email</button></div><span></span>
+          <div class="p40-gap-s"></div><span></span>
+          <p class="hj-divider-l" style="padding:0 16px" id="p40-or" role="separator">or</p><span class="p40-ann">labelled</span>
+          <div class="p40-gap-s"></div><span></span>
+          <div style="padding:0 16px"><button class="hj-btn block secondary"><svg class="ic s18" aria-hidden="true"><use href="#i-lock"/></svg>Sign in with a passkey</button></div><span></span>
+        </div>
+      </div>
+      <div class="plate-cap"><span>Hairlines, not boxes</span><span>1 px · line</span></div>
+    </div>
+  </article>
+
+  <!-- 03.06 Spinner ======================================================= -->
+  <article class="entry" id="spinner">
+    <div class="entry-meta">
+      <div class="entry-num">03.06</div>
+      <h3 class="entry-title">Spinner <span class="tag-new">New</span></h3>
+      <p class="entry-desc">An ink ring for work that takes a moment. <b>It waits 400 ms before it appears</b>, so fast work never flashes a spinner at all — and once shown it stays long enough to be read.</p>
+      <dl class="spec">
+        <div><dt>Ring</dt><dd>2 px ink tail to a round head (3 px at 40)</dd></div>
+        <div><dt>Sizes</dt><dd><b>16</b> inline · <b>20</b> buttons · <b>40</b> page</dd></div>
+        <div><dt>Cadence</dt><dd>one turn / <b>900 ms</b> · linear, never eased</dd></div>
+        <div><dt>Delay</dt><dd>appears after 400 ms · stays ≥ 600 ms</dd></div>
+        <div><dt>Reduced</dt><dd>no rotation — opacity .55 ↔ .9</dd></div>
+        <div><dt>A11y</dt><dd>role=progressbar · aria-busy on the region</dd></div>
+      </dl>
+      <p class="motion-note"><span>A constant turn with a fading tail. Any change of speed in a spinner reads as a stall, so this is the one loop in hanji with no easing.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" data-load="200">Fast load · 200 ms</button><button class="plate-btn" data-load="2400">Slow load · 2.4 s</button></div>
+      <div class="p40-spin">
+        <div class="p40-spin-sizes">
+          <figure class="p40-fig" style="margin:0"><span class="hj-spin" style="--sz:16px" role="progressbar" aria-label="Loading"><i aria-hidden="true"></i></span><figcaption>16</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><span class="hj-spin" style="--sz:20px" role="progressbar" aria-label="Loading"><i aria-hidden="true"></i></span><figcaption>20</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><span class="hj-spin lg" style="--sz:40px" role="progressbar" aria-label="Loading"><i aria-hidden="true"></i></span><figcaption>40</figcaption></figure>
+        </div>
+        <span class="p40-vr"></span>
+        <div class="p40-spin-ctx">
+          <button class="hj-btn sm secondary" style="cursor:progress" aria-busy="true"><span class="hj-spin" style="--sz:16px;color:var(--fg)"><i aria-hidden="true"></i></span>Syncing 14 of 32</button>
+          <span class="p40-inline"><span class="hj-spin" style="--sz:16px;color:var(--fg-mute)"><i aria-hidden="true"></i></span>Fetching lyrics…</span>
+          <div class="p40-delay" id="p40-delay" aria-live="polite">
+            <span class="slot"><svg class="ic s18 idle" aria-hidden="true"><use href="#i-library"/></svg><span class="hj-spin" style="--sz:18px"><i aria-hidden="true"></i></span><svg class="ic s18" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="p40-delay-t" id="p40-delay-t">Try a fast and a slow load. Only one of them earns a ring.</span>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Delay 400 · minimum 600</span></div>
+    </div>
+  </article>
+
+  <!-- 03.07 Skeleton ====================================================== -->
+  <article class="entry" id="skeleton">
+    <div class="entry-meta">
+      <div class="entry-num">03.07</div>
+      <h3 class="entry-title">Skeleton</h3>
+      <p class="entry-desc">A still block in the shape of what is coming, with one soft highlight passing over it. <b>One calm signal</b> — hanji tried a breathing pulse first and retired it on a real phone.</p>
+      <dl class="spec">
+        <div><dt>Block</dt><dd>surface-2 · the radius of what it stands for</dd></div>
+        <div><dt>Sweep</dt><dd>fg ≤ 9%, band 70% wide, translated across</dd></div>
+        <div><dt>Cadence</dt><dd>1000 ms pass · 450 ms rest · one clock</dd></div>
+        <div><dt>Swap</dt><dd>blocks leave fast; content cascades in, 24 ms apart</dd></div>
+        <div><dt>Reduced</dt><dd>still block; the sweep never mounts</dd></div>
+        <div><dt>Why</dt><dd>the breath vanished on dark papers; breath + sweep read “weirdly alive” (device, 2026-08-21)</dd></div>
+      </dl>
+      <p class="motion-note"><span>The 450 ms rest is the point: a relentless sweep reads as urgency.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p40-skbtn">Load</button></div>
+      <div class="p40-screen" id="p40-screen" aria-busy="true">
+        <div class="p40-sk-layer" id="p40-sk" aria-hidden="true">
+          <div>
+            <div class="p40-skrow"><span class="hj-bone p40-art" style="width:48px;height:48px"></span><span class="p40-sklines"><span class="hj-bone" style="height:12px;width:62%"></span><span class="hj-bone" style="height:10px;width:44%"></span></span></div>
+            <div class="p40-skrow"><span class="hj-bone p40-art" style="width:48px;height:48px"></span><span class="p40-sklines"><span class="hj-bone" style="height:12px;width:54%"></span><span class="hj-bone" style="height:10px;width:38%"></span></span></div>
+            <div class="p40-skrow"><span class="hj-bone p40-art" style="width:48px;height:48px"></span><span class="p40-sklines"><span class="hj-bone" style="height:12px;width:58%"></span><span class="hj-bone" style="height:10px;width:46%"></span></span></div>
+          </div>
+          <div class="p40-skcard"><span class="hj-bone" style="width:100%;aspect-ratio:16/9;border-radius:var(--r-md)"></span><span class="hj-bone" style="height:12px;width:80%"></span><span class="hj-bone" style="height:10px;width:52%"></span></div>
+        </div>
+        <div class="p40-content" id="p40-content">
+          <div class="p40-content-list" data-cascade id="p40-content-list">
+            <div class="p40-skrow"><span class="p40-art" data-art="Morning Pages"></span><span style="min-width:0"><span class="p40-t" style="display:block">Morning Pages</span><span class="p40-s" style="display:block">Playlist · Aiko Sato · 32 songs</span></span></div>
+            <div class="p40-skrow"><span class="p40-art" data-art="Field Recordings, Vol. 2"></span><span style="min-width:0"><span class="p40-t" style="display:block">Field Recordings, Vol. 2</span><span class="p40-s" style="display:block">Album · Noor Haddad · 2025</span></span></div>
+            <div class="p40-skrow"><span class="p40-art" data-art="The Long Quiet"></span><span style="min-width:0"><span class="p40-t" style="display:block">The Long Quiet</span><span class="p40-s" style="display:block">Episode 48 · 52 min · new</span></span></div>
+          </div>
+          <div class="p40-skcard" data-cascade id="p40-content-card">
+            <div class="p40-card-art" data-art="Studio Session"></div>
+            <div><div class="p40-card-t">Studio Session: Jun-seo Park</div><div class="p40-s">Live from Seoul · 1 h 12 min</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span id="p40-sk-cap">Loading · press Load</span></div>
+    </div>
+  </article>
+
+  <!-- 03.08 Badge ========================================================= -->
+  <article class="entry" id="badge">
+    <div class="entry-meta">
+      <div class="entry-num">03.08</div>
+      <h3 class="entry-title">Badge</h3>
+      <p class="entry-desc">A count or a dot pinned to the thing it is about. <b>Accent for “new to you”, danger only for a real problem, neutral for a plain count.</b></p>
+      <dl class="spec">
+        <div><dt>Count</dt><dd><b>18</b> tall · min-width 18 · 11 / 600 tabular</dd></div>
+        <div><dt>Dot</dt><dd><b>8</b></dd></div>
+        <div><dt>Max</dt><dd>99 → “99+”</dd></div>
+        <div><dt>Anchor</dt><dd>centred on the corner, pulled in ¼ badge</dd></div>
+        <div><dt>Ring</dt><dd>2 px of the surface behind it</dd></div>
+        <div><dt>Tones</dt><dd>accent · danger (ink bg) · neutral (surface-2 / fg)</dd></div>
+        <div><dt>Change</dt><dd>pops on bouncy · leaves on fast</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="bouncy"></span><span>A new count is good news, so it is the one atom allowed to bounce. Clearing is quiet.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p40-b1">+1</button><button class="plate-btn" id="p40-b40">+40</button><button class="plate-btn" id="p40-b0">Mark all read</button></div>
+      <div class="p40-badges">
+        <figure class="p40-fig" style="margin:0"><span class="p40-host p40-iconhost"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg><span class="hj-badge" id="p40-bdg">3</span></span><figcaption>count</figcaption></figure>
+        <figure class="p40-fig" style="margin:0"><span class="p40-host p40-iconhost"><svg class="ic" aria-hidden="true"><use href="#i-library"/></svg><span class="hj-badge" id="p40-bdg2">99+</span></span><figcaption>max</figcaption></figure>
+        <figure class="p40-fig" style="margin:0"><span class="p40-host"><span class="hj-avatar" data-name="Mira Okafor"></span><span class="hj-badge dot" id="p40-bdot"></span></span><figcaption>dot</figcaption></figure>
+        <figure class="p40-fig" style="margin:0"><span class="p40-host p40-iconhost"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span class="hj-badge danger">!</span></span><figcaption>danger</figcaption></figure>
+        <div class="p40-inbox">
+          <div class="p40-inrow"><svg class="ic s18" aria-hidden="true"><use href="#i-mail"/></svg><span class="sp">Inbox</span><span class="hj-badge inl" id="p40-bdg3">3</span></div>
+          <div class="p40-inrow"><svg class="ic s18" aria-hidden="true"><use href="#i-heart"/></svg><span class="sp">Liked songs</span><span class="hj-badge neutral">248</span></div>
+          <div class="p40-inrow"><svg class="ic s18" aria-hidden="true"><use href="#i-download"/></svg><span class="sp">Downloads</span><span class="hj-badge neutral">16</span></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span id="p40-bdg-cap">3 unread</span></div>
+    </div>
+  </article>
+
+  <!-- 03.09 Avatar ======================================================== -->
+  <article class="entry" id="avatar">
+    <div class="entry-meta">
+      <div class="entry-num">03.09</div>
+      <h3 class="entry-title">Avatar</h3>
+      <p class="entry-desc">A person, as a photo or as their initials. <b>The fallback is deterministic</b>: the same name gets the same pigment on every device, every time.</p>
+      <dl class="spec">
+        <div><dt>Sizes</dt><dd>24 · 32 · <b>40</b> · 56 · pill</dd></div>
+        <div><dt>Initials</dt><dd>2 letters · 600 · 38% of size</dd></div>
+        <div><dt>Tint</dt><dd>paletteFor(name) → art mid · ink by contrastOn</dd></div>
+        <div><dt>Group</dt><dd>−8 overlap · 2 px ring · “+N” neutral</dd></div>
+        <div><dt>Presence</dt><dd>¼ size · success · away is a ring</dd></div>
+        <div><dt>Fallback</dt><dd>image → initials → glyph, never two at once</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy-settle"></span><span>A group fans open on hover — each face moves 6 px, one stagger step apart.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p40-avs">
+        <div class="p40-avsizes">
+          <figure class="p40-fig" style="margin:0"><span class="hj-avatar" style="--sz:56px" data-name="Mira Okafor"></span><figcaption>56</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><span class="hj-avatar" style="--sz:40px" data-name="Jun-seo Park"></span><figcaption>40</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><span class="hj-avatar" style="--sz:32px" data-name="Tomás Reyes"></span><figcaption>32</figcaption></figure>
+          <figure class="p40-fig" style="margin:0"><span class="hj-avatar" style="--sz:24px" data-name="Aiko Sato"></span><figcaption>24</figcaption></figure>
+        </div>
+        <span class="p40-vr"></span>
+        <div class="p40-avright">
+          <div>
+            <div class="hj-avgroup" aria-label="Shared with Ilse Brandt, Dev Malhotra, Noor Haddad, Tomás Reyes, Aiko Sato and 4 others">
+              <span class="hj-avatar" style="--i:0" data-name="Ilse Brandt"></span>
+              <span class="hj-avatar" style="--i:1" data-name="Dev Malhotra"></span>
+              <span class="hj-avatar" style="--i:2" data-name="Noor Haddad"></span>
+              <span class="hj-avatar" style="--i:3" data-name="Tomás Reyes"></span>
+              <span class="hj-avatar" style="--i:4" data-name="Aiko Sato"></span>
+              <span class="hj-avatar more" style="--i:5">+4</span>
+            </div>
+            <div class="p40-cap" style="margin-top:10px">group · hover to fan</div>
+          </div>
+          <div class="p40-pres">
+            <figure class="p40-fig" style="margin:0"><span class="hj-avatar" data-name="Mira Okafor"><span class="pres" aria-label="Online"></span></span><figcaption>online</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><span class="hj-avatar" data-name="Dev Malhotra"><span class="pres away" aria-label="Away"></span></span><figcaption>away</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><span class="hj-avatar" data-name="Noor Haddad"></span><figcaption>offline</figcaption></figure>
+            <figure class="p40-fig" style="margin:0"><span class="hj-avatar glyph" aria-label="Guest"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><figcaption>no name</figcaption></figure>
+          </div>
+        </div>
+      </div>
+      <div class="plate-cap"><span>Pigments from hanji’s art palettes</span><span>FNV-1a of the name</span></div>
+    </div>
+  </article>
+
+  <!-- 03.10 Chip ========================================================== -->
+  <article class="entry" id="chip">
+    <div class="entry-meta">
+      <div class="entry-num">03.10</div>
+      <h3 class="entry-title">Chip</h3>
+      <p class="entry-desc">Small, tappable facts: a filter, a picked value, a quick action. <b>32 tall on purpose</b> — the hit area grows to 44, the drawing does not.</p>
+      <dl class="spec">
+        <div><dt>Height</dt><dd><b>32</b> · pill · 0 13</dd></div>
+        <div><dt>Off</dt><dd>surface / fg-dim + hairline</dd></div>
+        <div><dt>On</dt><dd>accent-soft / accent, a check leads</dd></div>
+        <div><dt>Motion</dt><dd>neighbours glide (FLIP) · snappy, clamped · check scales in</dd></div>
+        <div><dt>Input</dt><dd>× removes · the chip leaves fast, the row closes up</dd></div>
+        <div><dt>Disabled</dt><dd>.4 · not focusable</dd></div>
+        <div><dt>A11y</dt><dd>filter = aria-pressed · “Remove Jazz”</dd></div>
+      </dl>
+      <p class="motion-note"><span data-curve="snappy"></span><span>When a chip grows, the ones after it slide rather than jump — only transforms move.</span></p>
+    </div>
+    <div class="plate plate--stack">
+      <div class="plate-tools"><button class="plate-btn" id="p40-chreset">Reset</button></div>
+      <div class="p40-rows">
+        <span class="p40-rl">Filter</span>
+        <div class="p40-chiprow" id="p40-filters">
+          <button class="hj-chip" aria-pressed="true"><span class="hj-chip-bg"></span><svg class="ic hj-chip-chk" aria-hidden="true"><use href="#i-check"/></svg><span class="hj-chip-lbl">Albums</span></button>
+          <button class="hj-chip" aria-pressed="false"><span class="hj-chip-bg"></span><svg class="ic hj-chip-chk" aria-hidden="true"><use href="#i-check"/></svg><span class="hj-chip-lbl">Playlists</span></button>
+          <button class="hj-chip" aria-pressed="false"><span class="hj-chip-bg"></span><svg class="ic hj-chip-chk" aria-hidden="true"><use href="#i-check"/></svg><span class="hj-chip-lbl">Artists</span></button>
+          <button class="hj-chip" aria-pressed="false"><span class="hj-chip-bg"></span><svg class="ic hj-chip-chk" aria-hidden="true"><use href="#i-check"/></svg><span class="hj-chip-lbl">Downloaded</span></button>
+          <button class="hj-chip" aria-pressed="false" disabled title="No podcasts in your library yet"><span class="hj-chip-bg"></span><svg class="ic hj-chip-chk" aria-hidden="true"><use href="#i-check"/></svg><span class="hj-chip-lbl">Podcasts</span></button>
+          <button class="hj-btn sm quiet p40-clear" id="p40-clear">Clear</button>
+        </div>
+        <span class="p40-rl">Input</span>
+        <div class="p40-chiprow" id="p40-inputs"></div>
+        <span class="p40-rl">Assist</span>
+        <div class="p40-chiprow">
+          <button class="hj-chip assist"><span class="hj-chip-bg"></span><svg class="ic" aria-hidden="true"><use href="#i-queue"/></svg><span class="hj-chip-lbl">Add to queue</span></button>
+          <button class="hj-chip assist"><span class="hj-chip-bg"></span><svg class="ic" aria-hidden="true"><use href="#i-disc"/></svg><span class="hj-chip-lbl">Start radio</span></button>
+          <button class="hj-chip assist"><span class="hj-chip-bg"></span><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg><span class="hj-chip-lbl">Share</span></button>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span id="p40-chcap">1 filter · 214 results</span></div>
+    </div>
+  </article>
+
+  <!-- 03.11 Status ======================================================== -->
+  <article class="entry" id="status">
+    <div class="entry-meta">
+      <div class="entry-num">03.11</div>
+      <h3 class="entry-title">Status <span class="tag-new">New</span></h3>
+      <p class="entry-desc">State, said in words. <b>A glyph, a word and a tint — never colour alone — and always a time</b>, because “Pending” without “since” is a guess.</p>
+      <dl class="spec">
+        <div><dt>Anatomy</dt><dd>glyph 14 · word 12 / 600 · time in fg-mute</dd></div>
+        <div><dt>Height</dt><dd>24 · pill · role-soft fill, role ink</dd></div>
+        <div><dt>Tones</dt><dd>success · warning · danger · info · neutral · pending</dd></div>
+        <div><dt>Roles</dt><dd>success, warning, info <span class="tag-new tag-prop">Proposed</span> from the moss, amber, azure ramps</dd></div>
+        <div><dt>Pending</dt><dd>ring dot breathes on the pulse token (.55 ↔ .9, 1.1 s)</dd></div>
+        <div><dt>Reduced</dt><dd>the dot holds still</dd></div>
+      </dl>
+      <p class="motion-note"><span>Status changes cross-fade in 260 ms; nothing slides, because a status is not news.</span></p>
+    </div>
+    <div class="plate">
+      <div class="p40-stats">
+        <div class="p40-tags">
+          <span class="hj-status ok"><svg class="ic" aria-hidden="true"><use href="#i-check-c"/></svg>Synced</span>
+          <span class="hj-status warn"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>Almost full</span>
+          <span class="hj-status bad"><svg class="ic" aria-hidden="true"><use href="#i-x-c"/></svg>Failed</span>
+          <span class="hj-status info"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Available</span>
+          <span class="hj-status"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Private</span>
+          <span class="hj-status"><span class="hj-status-pend" aria-hidden="true"></span>Sending</span>
+        </div>
+        <div class="p40-slist">
+          <div class="p40-srow"><svg class="ic" aria-hidden="true"><use href="#i-refresh"/></svg><span style="min-width:0"><span class="p40-t" style="display:block">Backup</span><span class="p40-s" style="display:block"><time id="p40-synced" title="Today, 14:29">Synced 2 min ago</time></span></span><span class="hj-status ok"><svg class="ic" aria-hidden="true"><use href="#i-check-c"/></svg>Synced</span></div>
+          <div class="p40-srow"><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><span style="min-width:0"><span class="p40-t" style="display:block">Storage</span><span class="p40-s" style="display:block">38.2 of 40 GB used · full in about 9 days</span></span><span class="hj-status warn"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>Almost full</span></div>
+          <div class="p40-srow"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg><span style="min-width:0"><span class="p40-t" style="display:block">Night Bus (demo).wav</span><span class="p40-s" style="display:block">212 MB · failed at 64% · 14:12</span></span><span class="r"><button class="hj-btn sm quiet">Retry</button><span class="hj-status bad"><svg class="ic" aria-hidden="true"><use href="#i-x-c"/></svg>Failed</span></span></div>
+          <div class="p40-srow"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg><span style="min-width:0"><span class="p40-t" style="display:block">Version 0.9.2</span><span class="p40-s" style="display:block">Adds offline lyrics · released 11 Nov</span></span><span class="hj-status info"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Available</span></div>
+          <div class="p40-srow"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg><span style="min-width:0"><span class="p40-t" style="display:block">Export to Noor Haddad</span><span class="p40-s" style="display:block">Queued since 14:31 · waiting for Wi-Fi</span></span><span class="hj-status"><span class="hj-status-pend" aria-hidden="true"></span>Sending</span></div>
+        </div>
+      </div>
+      <div class="plate-cap"><span>Word + glyph + tint + time</span><span>never colour alone</span></div>
+    </div>
+  </article>
+
+  <!-- 03.12 Scrim ========================================================= -->
+  <article class="entry" id="scrim">
+    <div class="entry-meta">
+      <div class="entry-num">03.12</div>
+      <h3 class="entry-title">Scrim</h3>
+      <p class="entry-desc">Text over imagery sits on a scrim: black, faded by opacity alone. <b>A light scrim on a paper theme would hide nothing</b>, so the scrim is black on every theme and the ink over it is always light.</p>
+      <dl class="spec">
+        <div><dt>Colour</dt><dd>black on every theme</dd></div>
+        <div><dt>Fade</dt><dd>one RGB · .72 → 0 over the lower 55%</dd></div>
+        <div><dt>Ink</dt><dd>on-scrim — never fg-mute over art</dd></div>
+        <div><dt>Art shadow</dt><dd>0 12 24 · .45 — imagery’s one drop</dd></div>
+        <div><dt>Rule</dt><dd>helpers build every fade; components never hand-roll stops (§23)</dd></div>
+      </dl>
+      <p class="motion-note"><span>Scrims fade with their content and never on their own; a scrim that arrives late flashes the art.</span></p>
+    </div>
+    <div class="plate">
+      <div class="plate-tools"><button class="plate-btn" id="p40-scrimbtn" aria-pressed="true">Scrim on</button></div>
+      <div class="p40-scrim">
+        <div class="p40-cover" id="p40-cover" data-art="Low Tide Hours">
+          <span class="hj-scrim"></span>
+          <span class="p40-cover-play"><svg class="ic s18" aria-hidden="true"><use href="#i-play-f"/></svg></span>
+          <div class="p40-cover-txt"><div class="p40-cover-e">New album</div><div class="p40-cover-t">Low Tide Hours</div><div class="p40-cover-s">Aiko Sato · 2026 · 9 songs</div></div>
+        </div>
+        <div class="p40-rule">
+          <div class="p40-strip"><div class="p40-strip-h"><b><svg class="ic s14 p40-x" aria-hidden="true"><use href="#i-x"/></svg>Through transparent</b><span>accent → transparent black</span></div><div class="p40-bar" id="p40-bad"></div></div>
+          <div class="p40-strip"><div class="p40-strip-h"><b><svg class="ic s14 p40-ok" aria-hidden="true"><use href="#i-check"/></svg>One RGB, by opacity</b><span>accent @ 1 → accent @ 0</span></div><div class="p40-bar" id="p40-good"></div></div>
+          <p class="p40-sq-note" style="margin:4px 0 0">Unpremultiplied interpolation — React Native, SVG gradients — passes through black on its way to <span class="t-mono" style="font-size:11.5px">transparent</span>, leaving a grey band. hanji’s gradient helpers keep the RGB and move only the alpha.</p>
+        </div>
+      </div>
+      <div class="plate-cap"><span class="live">Live</span><span>Toggle the scrim; change the accent</span></div>
+    </div>
+  </article>
+
+<script>
+(function(){
+  const { $, $$ } = H;
+  const root = $('#atoms');
+  // rAF can stamp a frame slightly before the tween started; keep every tweened value inside its range
+  const tween = (from, to, o) => { const lo = Math.min(from, to), hi = Math.max(from, to); const f = o.onUpdate; return H.tween(from, to, Object.assign({}, o, { onUpdate: (v, t) => f(Math.min(hi, Math.max(lo, v)), t) })); };
+
+  /* ---- art pigments (core/tokens/palettes.ts) + paletteFor (FNV-1a) ---- */
+  const ART = [
+    ['ember','#2b0f0a','#7a2417','#e2653a'], ['iris','#120b2e','#3a2b8c','#8e7bf0'], ['moss','#0a1a12','#1e5240','#6fcf97'],
+    ['rose','#2a0a1c','#8a2452','#f58bb0'], ['azure','#04182b','#14567f','#62c4e8'], ['amber','#241305','#8a5a0e','#f2b33d'],
+    ['teal','#041d1e','#10585c','#4fd1c5'], ['cobalt','#060c2c','#23368f','#6e8cf5'], ['violet','#1b0a24','#5b2287','#c083e8'],
+    ['clay','#201510','#6e4632','#d9a17a'], ['slate','#0c1116','#33454f','#8fa6b5'], ['plum','#1a0b18','#5d2455','#c77bb8']
+  ].map(([name, deep, mid, bright]) => ({ name, deep, mid, bright }));
+  function paletteFor(key){ let h = 0x811c9dc5; for (let i = 0; i < key.length; i++){ h ^= key.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return ART[h % ART.length]; }
+  const rgba = H.color.rgba;
+  function artCSS(key){
+    const p = paletteFor(key);
+    // every fade keeps one RGB and moves only alpha (§23)
+    return `radial-gradient(120% 90% at 16% 10%, ${rgba(p.bright,.9)} 0%, ${rgba(p.bright,0)} 52%),` +
+           `radial-gradient(80% 70% at 96% 100%, ${rgba(p.bright,.35)} 0%, ${rgba(p.bright,0)} 60%),` +
+           `linear-gradient(155deg, ${p.mid} 0%, ${p.deep} 100%)`;
+  }
+  $$('[data-art]', root).forEach(el => { el.style.background = artCSS(el.dataset.art); });
+
+  /* ---- avatars: initials on the name's pigment ---- */
+  function initials(name){ const w = name.trim().split(/[\s-]+/).filter(Boolean); return ((w[0]||'')[0] + (w.length > 1 ? w[w.length-1][0] : (w[0]||'')[1] || '')).toUpperCase(); }
+  $$('.hj-avatar[data-name]', root).forEach(el => {
+    const p = paletteFor(el.dataset.name.toLowerCase());
+    el.style.background = p.mid; el.style.color = H.color.contrastOn(p.mid);
+    const pres = el.querySelector('.pres');
+    el.textContent = initials(el.dataset.name); if (pres) el.appendChild(pres);
+    if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', el.dataset.name);
+    el.setAttribute('role', 'img');
+  });
+
+  /* ---- 03.01 Button: loading → done ---- */
+  const save = $('#p40-save'), live = $('#p40-save-live'); let busy = false;
+  save.addEventListener('click', async () => {
+    if (busy) return; busy = true;
+    save.classList.add('is-loading'); save.setAttribute('aria-busy', 'true'); live.textContent = 'Saving';
+    await H.wait(1500);
+    save.classList.remove('is-loading'); save.classList.add('is-done'); save.removeAttribute('aria-busy'); live.textContent = 'Saved';
+    await H.wait(1100);
+    save.classList.remove('is-done'); busy = false;
+  });
+  $('#p40-hit').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.querySelector('button').focus(); });
+
+  /* ---- 03.02 Icon grid ---- */
+  const names = ['play-f','pause-f','next','prev','shuffle','repeat','heart','search','home','library','user','sliders','bell','download','share','trash','pen','copy','info','alert','clock','calendar','queue','more'];
+  const grid = $('#p40-icons');
+  grid.innerHTML = names.map(n => `<button data-n="${n}" aria-label="Copy icon name ${n}">${H.icon(n)}<span>${n}</span></button>`).join('');
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('button[data-n]'); if (!b) return;
+    try { navigator.clipboard && navigator.clipboard.writeText(b.dataset.n); } catch(err){}
+    const s = b.querySelector('span'); b.classList.add('copied'); s.textContent = 'copied';
+    clearTimeout(b._t); b._t = setTimeout(() => { b.classList.remove('copied'); s.textContent = b.dataset.n; }, 900);
+  });
+
+  /* ---- 03.03 Pressable: a trace of the tile's scale ---- */
+  const tile = $('#p40-tile'), ln = $('#p40-trace-ln'), out = $('#p40-scale-v'), plate = $('#p40-pressplate');
+  let s = 1, slow = false, tw = null, sp = null, raf = 0, lastActive = 0; const buf = [];
+  const WIN = 1600, X0 = 34, X1 = 320, Y1 = 18, Y97 = 104;
+  const yOf = v => Y1 + (1 - v) / .03 * (Y97 - Y1);
+  function apply(){ tile.style.transform = `scale(${s})`; out.textContent = s.toFixed(3); lastActive = performance.now(); }
+  function draw(){
+    const now = performance.now(), from = now - WIN;
+    while (buf.length && buf[0].t < from - 50) buf.shift();
+    if (!buf.length){ ln.setAttribute('points', `${X0},${Y1} ${X1},${Y1}`); return; }
+    const pts = [`${X0},${yOf(buf[0].v).toFixed(1)}`];
+    for (const p of buf){ const x = X0 + Math.max(0, (p.t - from) / WIN) * (X1 - X0); pts.push(`${x.toFixed(1)},${yOf(p.v).toFixed(1)}`); }
+    pts.push(`${X1},${yOf(s).toFixed(1)}`);
+    ln.setAttribute('points', pts.join(' '));
+  }
+  function loop(){ buf.push({ t:performance.now(), v:s }); draw(); if (performance.now() - lastActive < WIN + 100) raf = requestAnimationFrame(loop); else { raf = 0; buf.length = 0; draw(); } }
+  function kick(){ lastActive = performance.now(); if (!raf) raf = requestAnimationFrame(loop); }
+  function down(){ if (sp) sp.stop(); if (tw) tw.stop(); const from = s; tw = tween(from, .97, { duration: 70 * (slow ? 5 : 1), onUpdate: v => { s = v; apply(); } }); kick(); }
+  function up(){
+    if (tw) tw.stop(); if (sp) sp.stop();
+    const cfg = slow ? { damping:28/5, stiffness:380/25, mass:1 } : 'snappy';
+    sp = H.spring(s, { spring:cfg, onUpdate: v => { s = v; apply(); } }); sp.to(1); kick();
+  }
+  let pressed = false;
+  tile.addEventListener('pointerdown', e => { pressed = true; tile.setPointerCapture && tile.setPointerCapture(e.pointerId); down(); });
+  const release = () => { if (!pressed) return; pressed = false; up(); };
+  tile.addEventListener('pointerup', release); tile.addEventListener('pointercancel', release); tile.addEventListener('lostpointercapture', release);
+  tile.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat){ e.preventDefault(); pressed = true; down(); } });
+  tile.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') release(); });
+  $('#p40-slow').addEventListener('click', e => { slow = !slow; e.currentTarget.setAttribute('aria-pressed', String(slow)); plate.classList.toggle('p40-slow', slow); });
+
+  /* ---- 03.04 Squircle geometry (figma-squircle construction) ---- */
+  function sqPath(w, h, r, sm){
+    const budget = Math.min(w, h) / 2; r = Math.min(r, budget);
+    let p = (1 + sm) * r; sm = Math.min(sm, budget / r - 1); p = Math.min(p, budget);
+    const rad = d => d * Math.PI / 180;
+    const arcM = 90 * (1 - sm), arc = Math.sin(rad(arcM / 2)) * r * Math.SQRT2;
+    const alpha = (90 - arcM) / 2, p34 = r * Math.tan(rad(alpha / 2)), beta = 45 * sm;
+    const c = p34 * Math.cos(rad(beta)), d = c * Math.tan(rad(beta));
+    const b = (p - arc - c - d) / 3, a = 2 * b; const f = n => +n.toFixed(3);
+    return `M ${f(w-p)} 0 c ${f(a)} 0 ${f(a+b)} 0 ${f(a+b+c)} ${f(d)} a ${f(r)} ${f(r)} 0 0 1 ${f(arc)} ${f(arc)} c ${f(d)} ${f(c)} ${f(d)} ${f(b+c)} ${f(d)} ${f(a+b+c)} ` +
+      `L ${f(w)} ${f(h-p)} c 0 ${f(a)} 0 ${f(a+b)} ${f(-d)} ${f(a+b+c)} a ${f(r)} ${f(r)} 0 0 1 ${f(-arc)} ${f(arc)} c ${f(-c)} ${f(d)} ${f(-(b+c))} ${f(d)} ${f(-(a+b+c))} ${f(d)} ` +
+      `L ${f(p)} ${f(h)} c ${f(-a)} 0 ${f(-(a+b))} 0 ${f(-(a+b+c))} ${f(-d)} a ${f(r)} ${f(r)} 0 0 1 ${f(-arc)} ${f(-arc)} c ${f(-d)} ${f(-c)} ${f(-d)} ${f(-(b+c))} ${f(-d)} ${f(-(a+b+c))} ` +
+      `L 0 ${f(p)} c 0 ${f(-a)} 0 ${f(-(a+b))} ${f(d)} ${f(-(a+b+c))} a ${f(r)} ${f(r)} 0 0 1 ${f(arc)} ${f(-arc)} c ${f(c)} ${f(-d)} ${f(b+c)} ${f(-d)} ${f(a+b+c)} ${f(-d)} Z`;
+  }
+  // the top-right corner of a 520 square, r 130: p = 1.72 r = 223.6
+  $('#p40-sq-big').innerHTML = `<path class="sqf" d="${sqPath(520, 520, 130, .72)}"/><rect class="ccl" x="0" y="0" width="520" height="520" rx="130"/>` +
+    `<g stroke="var(--fg)" stroke-opacity=".35" fill="none"><path d="M 296.4 -10 v 20 M 390 -10 v 20"/><path d="M 530 223.6 h 12 M 530 130 h 12" /></g>` +
+    `<text x="296.4" y="-14" style="font:400 11px var(--mono);fill:var(--accent)" text-anchor="middle">p</text><text x="390" y="-14" style="font:400 11px var(--mono);fill:var(--fg-mute)" text-anchor="middle">r</text>`;
+  const toks = [['xs',8],['sm',12],['md',16],['lg',20],['xl',28]];
+  $('#p40-sq-toks').innerHTML = toks.map(([n, r]) => `<div class="p40-sq-tok"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><path class="tok" d="${sqPath(64, 64, r, .72)}"/><rect class="tokc" x=".5" y=".5" width="63" height="63" rx="${r}"/></svg><span class="p40-cap">${n} · ${r}</span></div>`).join('') +
+    `<div class="p40-sq-tok"><svg width="104" height="64" viewBox="0 0 104 64" aria-hidden="true"><path class="tok" d="${sqPath(104, 40, 20, .72)}" transform="translate(0 12)"/></svg><span class="p40-cap">pill · 999</span></div>`;
+  $('#p40-sqc').addEventListener('click', e => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', String(on)); $('#p40-sq').classList.toggle('show-c', on); });
+
+  /* ---- 03.05 labelled divider draws outward on arrival ---- */
+  const or = $('#p40-or');
+  if ('IntersectionObserver' in window && !document.documentElement.classList.contains('static')){
+    const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ or.classList.add('in'); io.disconnect(); } }), { threshold:1 });
+    io.observe(or);
+  } else or.classList.add('in');
+
+  /* ---- 03.06 Spinner: 400 ms delay, 600 ms minimum ---- */
+  const delay = $('#p40-delay'), dt = $('#p40-delay-t'); let run = 0;
+  $$('[data-load]', root).forEach(b => b.addEventListener('click', () => {
+    const ms = +b.dataset.load, id = ++run, t0 = performance.now(); let shownAt = 0;
+    delay.classList.remove('spinning', 'ok'); delay.classList.add('busy'); delay.setAttribute('aria-busy', 'true');
+    dt.innerHTML = `Loading your library…`;
+    const show = setTimeout(() => { if (id !== run) return; shownAt = performance.now(); delay.classList.add('spinning'); }, 400);
+    setTimeout(() => {
+      if (id !== run) return; clearTimeout(show);
+      const finish = () => {
+        if (id !== run) return;
+        delay.classList.remove('spinning', 'busy'); delay.classList.add('ok'); delay.removeAttribute('aria-busy');
+        const total = Math.round(performance.now() - t0);
+        dt.innerHTML = shownAt ? `<b>Loaded in ${(total/1000).toFixed(1)} s.</b> The ring showed for ${((performance.now() - shownAt)/1000).toFixed(1)} s.` : `<b>Loaded in ${total} ms.</b> Too quick to need a ring — none was drawn.`;
+      };
+      const held = shownAt ? performance.now() - shownAt : 0;
+      if (shownAt && held < 600) setTimeout(finish, 600 - held); else finish();
+    }, ms);
+  }));
+
+  /* ---- 03.07 Skeleton → content ---- */
+  const sk = $('#p40-sk'), content = $('#p40-content'), skbtn = $('#p40-skbtn'), screen = $('#p40-screen'), skcap = $('#p40-sk-cap'); let loaded = false;
+  skbtn.addEventListener('click', () => {
+    loaded = !loaded;
+    if (loaded){
+      sk.classList.add('gone'); content.classList.add('on'); screen.setAttribute('aria-busy', 'false');
+      H.replay($('#p40-content-list')); H.replay($('#p40-content-card'));
+      skbtn.textContent = 'Reset'; skcap.textContent = 'Loaded · content cascaded in';
+    } else {
+      content.classList.remove('on'); sk.classList.remove('gone'); screen.setAttribute('aria-busy', 'true');
+      $('#p40-content-list').classList.remove('in'); $('#p40-content-card').classList.remove('in');
+      skbtn.textContent = 'Load'; skcap.textContent = 'Loading · press Load';
+    }
+  });
+
+  /* ---- 03.08 Badge: pop on bouncy, leave fast ---- */
+  const bdg = $('#p40-bdg'), bdg3 = $('#p40-bdg3'), bdot = $('#p40-bdot'), bcap = $('#p40-bdg-cap'); let count = 3;
+  const fmt = n => n > 99 ? '99+' : String(n);
+  function springFor(el){ if (!el._sp) el._sp = H.spring(1, { spring:'bouncy', onUpdate: v => el.style.setProperty('--bs', v.toFixed(4)) }); return el._sp; }
+  function pop(el, fromZero){
+    el.classList.remove('gone'); el.style.opacity = '';
+    const sp = springFor(el);
+    if (H.reduced()){ sp.set(1); return; }
+    if (fromZero){ sp.set(0); sp.to(1); } else { sp.set(.7); sp.to(1, { velocity:7 }); }
+  }
+  function leave(el){
+    if (el._sp) el._sp.stop();
+    tween(1, 0, { duration:180, onUpdate: v => { el.style.setProperty('--bs', (.6 + .4*v).toFixed(4)); el.style.opacity = v; }, onDone: () => el.classList.add('gone') });
+  }
+  function setCount(n){
+    const was = count; count = n;
+    if (n === 0){ if (was) [bdg, bdg3, bdot].forEach(leave); bcap.textContent = 'All caught up'; return; }
+    bdg.textContent = fmt(n); bdg3.textContent = fmt(n);
+    [bdg, bdg3].forEach(el => pop(el, was === 0)); if (was === 0) pop(bdot, true);
+    bcap.textContent = `${n} unread`;
+  }
+  $('#p40-b1').addEventListener('click', () => setCount(count + 1));
+  $('#p40-b40').addEventListener('click', () => setCount(count + 40));
+  $('#p40-b0').addEventListener('click', () => setCount(0));
+
+  /* ---- 03.10 Chips: FLIP so neighbours glide, transforms only ---- */
+  function flip(row, mutate){
+    const kids = $$('.hj-chip, .p40-clear', row);
+    const before = new Map(kids.map(k => { const l = k.querySelector('.hj-chip-lbl'); return [k, { r:k.getBoundingClientRect(), w:k.offsetWidth, l:l && l.getBoundingClientRect() }]; }));
+    mutate();
+    kids.forEach(k => {
+      if (!k.isConnected) return;
+      const b = before.get(k), r = k.getBoundingClientRect(), w = k.offsetWidth;
+      const dx = b.r.left - r.left, dy = b.r.top - r.top, sx = w ? b.w / w : 1;
+      const lbl = k.querySelector('.hj-chip-lbl'), lr = lbl && lbl.getBoundingClientRect();
+      const ldx = lbl && b.l ? (b.l.left - lr.left) - dx : 0;
+      if (Math.abs(dx) < .5 && Math.abs(dy) < .5 && Math.abs(sx - 1) < .004 && Math.abs(ldx) < .5) return;
+      const bg = k.querySelector('.hj-chip-bg');
+      if (k._sp) k._sp.stop();
+      k.classList.add('flipping'); // a CSS transition on transform would chase every frame and overshoot
+      const paint = p => {
+        k.style.transform = (Math.abs(dx) > .1 || Math.abs(dy) > .1) ? `translate(${(dx*p).toFixed(2)}px, ${(dy*p).toFixed(2)}px)` : '';
+        if (bg) bg.style.transform = `scaleX(${(1 + (sx - 1)*p).toFixed(4)})`;
+        if (lbl) lbl.style.transform = `translateX(${(ldx*p).toFixed(2)}px)`;
+      };
+      // clamped: a reflow settles, it never bounces (principle 07)
+      k._sp = H.spring(1, { spring:'snappy', clamp:true, onUpdate:paint, onRest: () => { k.style.transform = ''; if (bg) bg.style.transform = ''; if (lbl) lbl.style.transform = ''; requestAnimationFrame(() => k.classList.remove('flipping')); } });
+      paint(1); k._sp.to(0);
+    });
+  }
+  const filters = $('#p40-filters'), clear = $('#p40-clear'), chcap = $('#p40-chcap');
+  const RESULTS = { Albums:214, Playlists:58, Artists:131, Downloaded:46 };
+  function syncFilters(){
+    const on = $$('.hj-chip[aria-pressed="true"]', filters);
+    clear.classList.toggle('on', on.length > 0);
+    const total = on.reduce((t, c) => t + (RESULTS[c.textContent.trim()] || 0), 0);
+    chcap.textContent = on.length ? `${on.length} filter${on.length > 1 ? 's' : ''} · ${total} results` : 'No filters · 449 results';
+  }
+  filters.addEventListener('click', e => {
+    const c = e.target.closest('.hj-chip'); if (!c || c.disabled) return;
+    flip(filters, () => c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true'))); syncFilters();
+  });
+  clear.addEventListener('click', () => { flip(filters, () => $$('.hj-chip', filters).forEach(c => c.setAttribute('aria-pressed', 'false'))); syncFilters(); });
+
+  const inputs = $('#p40-inputs'); const PICKS = ['Jazz', '1960s', 'Under 10 min', 'Live recordings'];
+  function renderInputs(){
+    inputs.innerHTML = PICKS.map(p => `<span class="hj-chip input"><span class="hj-chip-bg"></span><span class="hj-chip-lbl">${p}</span><button class="hj-chip-x" aria-label="Remove ${p}">${H.icon('x')}</button></span>`).join('');
+  }
+  renderInputs();
+  inputs.addEventListener('click', e => {
+    const x = e.target.closest('.hj-chip-x'); if (!x) return;
+    const chip = x.closest('.hj-chip'); chip.classList.add('leaving');
+    setTimeout(() => flip(inputs, () => chip.remove()), H.reduced() ? 120 : 180);
+  });
+  $('#p40-chreset').addEventListener('click', () => {
+    renderInputs();
+    flip(filters, () => $$('.hj-chip', filters).forEach((c, i) => c.setAttribute('aria-pressed', String(i === 0)))); syncFilters();
+  });
+  syncFilters();
+
+  /* ---- 03.11 relative time that stays honest ---- */
+  const synced = $('#p40-synced'); const at = Date.now() - 2 * 60 * 1000;
+  const syncedAt = new Date(at); synced.setAttribute('datetime', syncedAt.toISOString());
+  synced.title = 'Today, ' + syncedAt.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  setInterval(() => { const m = Math.round((Date.now() - at) / 60000); synced.textContent = m < 1 ? 'Synced just now' : `Synced ${m} min ago`; }, 30000);
+
+  /* ---- 03.12 Scrim + the gradient hue rule ---- */
+  const cover = $('#p40-cover');
+  $('#p40-scrimbtn').addEventListener('click', e => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', String(on)); e.currentTarget.textContent = on ? 'Scrim on' : 'Scrim off'; cover.classList.toggle('no-scrim', !on); });
+  function paintRule(){
+    const a = H.current().accent, { r, g, b } = H.color.parseHex(a);
+    // unpremultiplied path to rgba(0,0,0,0): colour and alpha fall together
+    const bad = [0, .2, .4, .6, .8, 1].map(t => `rgba(${Math.round(r*(1-t))}, ${Math.round(g*(1-t))}, ${Math.round(b*(1-t))}, ${(1-t).toFixed(2)}) ${Math.round(t*100)}%`).join(', ');
+    $('#p40-bad').style.background = `linear-gradient(90deg, ${bad})`;
+    $('#p40-good').style.background = `linear-gradient(90deg, rgba(${r}, ${g}, ${b}, 1), rgba(${r}, ${g}, ${b}, 0))`;
+  }
+  paintRule(); H.on('accent', paintRule); H.on('theme', paintRule);
+})();
+</script>
+</section>
